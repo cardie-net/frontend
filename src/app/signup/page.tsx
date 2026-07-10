@@ -34,29 +34,8 @@ export default function SignupPage() {
       });
 
       if (response.ok) {
-        // Automatically log in the user after successful registration
-        const formData = new URLSearchParams();
-        formData.append('username', email);
-        formData.append('password', password);
-
-        const loginResponse = await fetch(`${API_BASE_URL}/auth/jwt/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: formData,
-        });
-
-        if (loginResponse.ok) {
-          const data = await loginResponse.json();
-          if (data.access_token) {
-            localStorage.setItem('jwt_token', data.access_token);
-            router.push('/');
-          }
-        } else {
-          // If auto-login fails, redirect to login page
-          router.push('/login');
-        }
+        // Redirect to verify page after successful registration
+        router.push('/verify');
       } else {
         const errData = await response.json().catch(() => ({}));
 
@@ -65,7 +44,7 @@ export default function SignupPage() {
           if (typeof errData.detail === 'string') {
             setError(errData.detail);
           } else if (Array.isArray(errData.detail)) {
-            setError(errData.detail.map((d: any) => d.msg).join(', '));
+            setError(errData.detail.map((d: { msg: string }) => d.msg).join(', '));
           } else {
             setError('Registration failed. Please check your inputs.');
           }
