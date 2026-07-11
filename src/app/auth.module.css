@@ -3,51 +3,41 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
-  color: #fff;
+  background-color: #fafafa;
+  color: #171717;
   padding: 1rem;
 }
 
 .card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 1.5rem;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 1rem;
   padding: 2.5rem;
   width: 100%;
-  max-width: 440px;
+  max-width: 400px;
   box-shadow:
-    0 25px 50px -12px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.card:hover {
-  transform: translateY(-5px);
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .title {
-  font-size: 2.25rem;
-  font-weight: 800;
+  font-size: 1.75rem;
+  font-weight: 700;
   margin-bottom: 0.5rem;
   text-align: center;
-  background: linear-gradient(to right, #60a5fa 0%, #3b82f6 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #171717;
   letter-spacing: -0.025em;
 }
 
 .subtitle {
   text-align: center;
-  color: #94a3b8;
-  margin-bottom: 2.5rem;
-  font-size: 1rem;
+  color: #737373;
+  margin-bottom: 2rem;
+  font-size: 0.95rem;
 }
 
 .formGroup {
-  margin-bottom: 1.5rem;
-  position: relative;
+  margin-bottom: 1.25rem;
 }
 
 .label {
@@ -55,49 +45,48 @@
   font-size: 0.875rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
-  color: #e2e8f0;
+  color: #404040;
 }
 
 .input {
   width: 100%;
-  padding: 0.875rem 1rem;
-  border-radius: 0.75rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background: #ffffff;
+  border: 1px solid #d4d4d4;
+  color: #171717;
   font-size: 1rem;
   outline: none;
-  transition: all 0.2s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .input::placeholder {
-  color: #64748b;
+  color: #a3a3a3;
 }
 
 .input:focus {
-  border-color: #3b82f6;
-  background: rgba(0, 0, 0, 0.3);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .button {
   width: 100%;
-  padding: 1rem;
-  border-radius: 0.75rem;
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-  color: #fff;
-  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  background-color: #171717;
+  color: #ffffff;
+  font-weight: 500;
   font-size: 1rem;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-  margin-top: 1rem;
-  box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);
+  transition: background-color 0.15s ease;
+  margin-top: 0.5rem;
 }
 
 .button:hover {
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.23);
-  transform: translateY(-1px);
+  background-color: #262626;
 }
 
 .button:active {
@@ -105,19 +94,19 @@
 }
 
 .button:disabled {
-  opacity: 0.7;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
 .error {
-  color: #f87171;
-  background: rgba(239, 68, 68, 0.1);
+  color: #dc2626;
+  background: #fef2f2;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  border: 1px solid #fecaca;
   display: flex;
   align-items: center;
 }
@@ -125,19 +114,17 @@
 .linkText {
   text-align: center;
   margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: #94a3b8;
+  font-size: 0.875rem;
+  color: #737373;
 }
 
 .link {
-  color: #60a5fa;
+  color: #2563eb;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.2s ease;
   margin-left: 0.25rem;
 }
 
 .link:hover {
-  color: #93c5fd;
   text-decoration: underline;
 }
