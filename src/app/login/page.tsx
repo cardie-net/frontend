@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL } from '@/lib/config';
 import styles from '../auth.module.css';
 
 export default function LoginPage() {
@@ -23,7 +22,7 @@ export default function LoginPage() {
       formData.append('username', email); // fastapi_users expects 'username' for email in OAuth2 password flow
       formData.append('password', password);
 
-      const response = await fetch(`${API_BASE_URL}/auth/jwt/login`, {
+      const response = await fetch(`/api/v1/auth/jwt/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

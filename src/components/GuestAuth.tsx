@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { API_BASE_URL } from '@/lib/config';
 
 export function GuestAuth() {
   useEffect(() => {
@@ -9,7 +8,7 @@ export function GuestAuth() {
       const token = localStorage.getItem('jwt_token');
       if (!token) {
         try {
-          const response = await fetch(`${API_BASE_URL}/auth/guest`, {
+          const response = await fetch(`/api/v1/auth/guest`, {
             method: 'POST',
             headers: {
               accept: 'application/json',

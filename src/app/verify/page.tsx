@@ -3,7 +3,6 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { API_BASE_URL } from '@/lib/config';
 import styles from '../auth.module.css';
 
 function VerifyContent() {
@@ -21,7 +20,7 @@ function VerifyContent() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/verify`, {
+      const response = await fetch(`/api/v1/auth/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

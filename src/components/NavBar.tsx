@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '@/lib/config';
 
 export function NavBar() {
   const router = useRouter();
@@ -20,7 +19,7 @@ export function NavBar() {
     const checkUser = async () => {
       if (!token) return;
       try {
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
+        const response = await fetch(`/api/v1/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.ok) {
@@ -38,7 +37,7 @@ export function NavBar() {
     const token = localStorage.getItem('jwt_token');
     if (token) {
       try {
-        await fetch(`${API_BASE_URL}/auth/jwt/logout`, {
+        await fetch(`/api/v1/auth/jwt/logout`, {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
         });

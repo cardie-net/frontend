@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { API_BASE_URL } from '@/lib/config';
 
 interface User {
   id: string;
@@ -23,7 +22,7 @@ export default function Home() {
       }
 
       try {
-        const response = await fetch(`${API_BASE_URL}/users/me`, {
+        const response = await fetch(`/api/v1/users/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
