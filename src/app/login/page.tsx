@@ -9,7 +9,7 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<React.ReactNode>('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,7 +38,21 @@ export default function LoginPage() {
         }
       } else {
         const errData = await response.json().catch(() => ({}));
-        setError(errData.detail || 'Invalid email or password');
+        if (errData.detail === 'USER_NOT_VERIFIED') {
+          setError(
+            <span>
+              Your email is not verified.{' '}
+              <Link
+                href={`/verify?email=${encodeURIComponent(email)}`}
+                style={{ textDecoration: 'underline' }}
+              >
+                Verify now
+              </Link>
+            </span>
+          );
+        } else {
+          setError(errData.detail || 'Invalid email or password');
+        }
       }
     } catch (err) {
       setError('An error occurred while logging in. Please try again.');
@@ -72,9 +86,18 @@ export default function LoginPage() {
           </div>
 
           <div className={styles.formGroup}>
-            <label className={styles.label} htmlFor="password">
-              Password
-            </label>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <label className={styles.label} htmlFor="password">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className={styles.link}
+                style={{ fontSize: '0.875rem' }}
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               id="password"
               type="password"
@@ -92,7 +115,7 @@ export default function LoginPage() {
         </form>
 
         <p className={styles.linkText}>
-          Don't have an account?
+          Don&apos;t have an account?
           <Link href="/signup" className={styles.link}>
             Sign up
           </Link>
