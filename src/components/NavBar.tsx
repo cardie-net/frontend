@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
+import { NavbarButton } from './NavbarButton';
+import { Home, Layers, LogIn, UserPlus, LogOut } from 'lucide-react';
 
 export function NavBar() {
   const router = useRouter();
@@ -53,14 +55,14 @@ export function NavBar() {
   };
 
   return (
-    <nav className="flex h-[42px] relative items-center justify-between bg-foreground px-4 text-background">
-      <div className="flex items-center gap-4 z-10">
-        <Link href="/" className="hover:text-primary transition-colors">
+    <nav className="flex h-[42px] relative items-center justify-between bg-foreground px-3 text-background">
+      <div className="flex items-center gap-3">
+        <NavbarButton href="/" icon={Home}>
           Home
-        </Link>
-        <Link href="/decks" className="hover:text-primary transition-colors">
+        </NavbarButton>
+        <NavbarButton href="/decks" icon={Layers}>
           Decks
-        </Link>
+        </NavbarButton>
       </div>
 
       <Link
@@ -74,22 +76,19 @@ export function NavBar() {
         />
       </Link>
 
-      <div className="flex items-center gap-4 z-10">
+      <div className="flex items-center gap-3 z-10">
         {isLoggedIn ? (
-          <button
-            onClick={handleLogout}
-            className="rounded bg-red-500 px-3 py-1 text-sm text-white transition-colors hover:bg-red-600"
-          >
+          <NavbarButton onClick={handleLogout} icon={LogOut}>
             Log out
-          </button>
+          </NavbarButton>
         ) : (
           <>
-            <Link href="/login" className="text-sm transition-colors hover:text-primary">
+            <NavbarButton href="/login" icon={LogIn}>
               Log in
-            </Link>
-            <Link href="/signup" className="text-sm transition-colors hover:text-primary">
+            </NavbarButton>
+            <NavbarButton href="/signup" icon={UserPlus}>
               Sign up
-            </Link>
+            </NavbarButton>
           </>
         )}
         <ThemeToggle />

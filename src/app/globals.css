@@ -8,17 +8,19 @@
   --color-primary: #9d7772;
   --color-secondary: #bfb4ab;
   --color-accent: #a69d8c;
+  --color-navbar-btn: var(--navbar-btn);
 }
 
 :root {
   --background: #f7f2e8;
   --foreground: #493d3c;
+  --navbar-btn: #7e6b69;
 }
 
 :root.dark {
   --background: #0b0804;
-  /* Providing a light text color for dark mode since dark text on dark bg is unreadable */
   --foreground: #f7f2e8;
+  --navbar-btn: #ffffff;
 }
 
 html {
@@ -40,12 +42,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
 }
 
 a {
