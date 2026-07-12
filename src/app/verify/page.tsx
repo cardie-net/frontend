@@ -3,7 +3,6 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import styles from '../auth.module.css';
 
 function VerifyContent() {
   const router = useRouter();
@@ -90,14 +89,18 @@ function VerifyContent() {
   };
 
   return (
-    <div className={styles.card}>
-      <h1 className={styles.title}>Verify Email</h1>
-      <p className={styles.subtitle}>Enter your verification token</p>
+    <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+      <h1 className="text-3xl font-extrabold mb-2 text-foreground">Verify Email</h1>
+      <p className="text-foreground/80 mb-6 font-medium">Enter your verification token</p>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm font-medium border border-red-200 dark:border-red-800">
+          {error}
+        </div>
+      )}
       {success && (
         <div
-          className={styles.success}
+          className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-6 text-sm font-medium border border-green-200 dark:border-green-800"
           style={{ color: 'green', marginBottom: '1rem', textAlign: 'center' }}
         >
           Email verified successfully! Redirecting to login...
@@ -105,7 +108,7 @@ function VerifyContent() {
       )}
       {resendSuccess && (
         <div
-          className={styles.success}
+          className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-6 text-sm font-medium border border-green-200 dark:border-green-800"
           style={{ color: 'green', marginBottom: '1rem', textAlign: 'center' }}
         >
           Verification email sent successfully. Please check your inbox.
@@ -113,14 +116,14 @@ function VerifyContent() {
       )}
 
       <form onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="token">
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="token">
             Verification Token
           </label>
           <input
             id="token"
             type="text"
-            className={styles.input}
+            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="Paste your token here"
             value={token}
             onChange={(e) => setToken(e.target.value)}
@@ -128,20 +131,24 @@ function VerifyContent() {
           />
         </div>
 
-        <button type="submit" className={styles.button} disabled={isLoading || success}>
+        <button
+          type="submit"
+          className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+          disabled={isLoading || success}
+        >
           {isLoading ? 'Verifying...' : 'Verify'}
         </button>
       </form>
 
       <div style={{ marginTop: '2rem', paddingTop: '1rem', borderTop: '1px solid #eaeaea' }}>
-        <p className={styles.subtitle} style={{ marginBottom: '1rem' }}>
+        <p className="text-foreground/80 mb-6 font-medium" style={{ marginBottom: '1rem' }}>
           Didn&apos;t receive the email?
         </p>
-        <div className={styles.formGroup}>
+        <div className="mb-4">
           <input
             id="email"
             type="email"
-            className={styles.input}
+            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="Enter email to resend"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -150,7 +157,7 @@ function VerifyContent() {
         <button
           type="button"
           onClick={handleResend}
-          className={styles.button}
+          className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={isResending || cooldown > 0 || success}
           style={{ backgroundColor: '#f0f0f0', color: '#333' }}
         >
@@ -162,8 +169,11 @@ function VerifyContent() {
         </button>
       </div>
 
-      <p className={styles.linkText} style={{ marginTop: '1rem' }}>
-        <Link href="/login" className={styles.link}>
+      <p
+        className="mt-6 text-center text-sm font-medium text-foreground/80 flex gap-2 justify-center"
+        style={{ marginTop: '1rem' }}
+      >
+        <Link href="/login" className="text-foreground hover:underline font-bold">
           Back to login
         </Link>
       </p>
@@ -173,8 +183,14 @@ function VerifyContent() {
 
 export default function VerifyPage() {
   return (
-    <div className={styles.container}>
-      <Suspense fallback={<div className={styles.card}>Loading...</div>}>
+    <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
+      <Suspense
+        fallback={
+          <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+            Loading...
+          </div>
+        }
+      >
         <VerifyContent />
       </Suspense>
     </div>

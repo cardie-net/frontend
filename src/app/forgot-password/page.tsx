@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import styles from '../auth.module.css';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -39,20 +38,29 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.card}>
-        <h1 className={styles.title}>Reset Password</h1>
-        <p className={styles.subtitle}>Enter your email to receive a reset link</p>
+    <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
+      <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+        <h1 className="text-3xl font-extrabold mb-2 text-foreground">Reset Password</h1>
+        <p className="text-foreground/80 mb-6 font-medium">
+          Enter your email to receive a reset link
+        </p>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && (
+          <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm font-medium border border-red-200 dark:border-red-800">
+            {error}
+          </div>
+        )}
         {success ? (
           <div style={{ textAlign: 'center' }}>
-            <div className={styles.success} style={{ color: 'green', marginBottom: '1.5rem' }}>
+            <div
+              className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-6 text-sm font-medium border border-green-200 dark:border-green-800"
+              style={{ color: 'green', marginBottom: '1.5rem' }}
+            >
               Password reset link sent! Please check your email inbox.
             </div>
             <Link
               href="/login"
-              className={styles.button}
+              className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
               style={{ display: 'inline-block', textDecoration: 'none' }}
             >
               Return to Login
@@ -60,14 +68,14 @@ export default function ForgotPasswordPage() {
           </div>
         ) : (
           <form onSubmit={handleSubmit}>
-            <div className={styles.formGroup}>
-              <label className={styles.label} htmlFor="email">
+            <div className="mb-4">
+              <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="email">
                 Email address
               </label>
               <input
                 id="email"
                 type="email"
-                className={styles.input}
+                className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -75,16 +83,23 @@ export default function ForgotPasswordPage() {
               />
             </div>
 
-            <button type="submit" className={styles.button} disabled={isLoading}>
+            <button
+              type="submit"
+              className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={isLoading}
+            >
               {isLoading ? 'Sending...' : 'Send Reset Link'}
             </button>
           </form>
         )}
 
         {!success && (
-          <p className={styles.linkText} style={{ marginTop: '1.5rem' }}>
+          <p
+            className="mt-6 text-center text-sm font-medium text-foreground/80 flex gap-2 justify-center"
+            style={{ marginTop: '1.5rem' }}
+          >
             Remember your password?{' '}
-            <Link href="/login" className={styles.link}>
+            <Link href="/login" className="text-foreground hover:underline font-bold">
               Log in
             </Link>
           </p>

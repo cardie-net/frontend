@@ -3,7 +3,6 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import styles from '../auth.module.css';
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -58,14 +57,17 @@ function ResetPasswordContent() {
 
   if (success) {
     return (
-      <div className={styles.card}>
+      <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
         <div style={{ textAlign: 'center' }}>
-          <div className={styles.success} style={{ color: 'green', marginBottom: '1.5rem' }}>
+          <div
+            className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-6 text-sm font-medium border border-green-200 dark:border-green-800"
+            style={{ color: 'green', marginBottom: '1.5rem' }}
+          >
             Password reset successfully! Redirecting to login...
           </div>
           <Link
             href="/login"
-            className={styles.button}
+            className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             style={{ display: 'inline-block', textDecoration: 'none' }}
           >
             Go to Login now
@@ -76,21 +78,25 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className={styles.card}>
-      <h1 className={styles.title}>Set New Password</h1>
-      <p className={styles.subtitle}>Enter your token and new password</p>
+    <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+      <h1 className="text-3xl font-extrabold mb-2 text-foreground">Set New Password</h1>
+      <p className="text-foreground/80 mb-6 font-medium">Enter your token and new password</p>
 
-      {error && <div className={styles.error}>{error}</div>}
+      {error && (
+        <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm font-medium border border-red-200 dark:border-red-800">
+          {error}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="token">
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="token">
             Reset Token
           </label>
           <input
             id="token"
             type="text"
-            className={styles.input}
+            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="Paste your token here"
             value={token}
             onChange={(e) => setToken(e.target.value)}
@@ -98,14 +104,14 @@ function ResetPasswordContent() {
           />
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="password">
+        <div className="mb-4">
+          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="password">
             New Password
           </label>
           <input
             id="password"
             type="password"
-            className={styles.input}
+            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -114,14 +120,17 @@ function ResetPasswordContent() {
           />
         </div>
 
-        <div className={styles.formGroup}>
-          <label className={styles.label} htmlFor="confirmPassword">
+        <div className="mb-4">
+          <label
+            className="block text-sm font-bold mb-1.5 text-foreground"
+            htmlFor="confirmPassword"
+          >
             Confirm New Password
           </label>
           <input
             id="confirmPassword"
             type="password"
-            className={styles.input}
+            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
@@ -130,7 +139,11 @@ function ResetPasswordContent() {
           />
         </div>
 
-        <button type="submit" className={styles.button} disabled={isLoading}>
+        <button
+          type="submit"
+          className="w-full flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+          disabled={isLoading}
+        >
           {isLoading ? 'Resetting...' : 'Reset Password'}
         </button>
       </form>
@@ -140,8 +153,14 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className={styles.container}>
-      <Suspense fallback={<div className={styles.card}>Loading...</div>}>
+    <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
+      <Suspense
+        fallback={
+          <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+            Loading...
+          </div>
+        }
+      >
         <ResetPasswordContent />
       </Suspense>
     </div>
