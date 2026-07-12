@@ -5,37 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 import { NavbarButton } from './NavbarButton';
-import { Home, Layers, LogIn, UserPlus, LogOut, Menu, X } from 'lucide-react';
+import { Home, Layers, Menu, X } from 'lucide-react';
+import { AccountDropdown } from './AccountDropdown';
 
 export function NavBar() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    // Check if we have a valid token on load
-    const token = localStorage.getItem('jwt_token');
-    // In a real app we'd decode the JWT to check expiry or use context,
-    // but here we just check if it exists. Guest tokens also exist.
-    // We should differentiate between guest and logged-in user.
-    // Since guest tokens are automatic, just having a token doesn't mean "logged in".
-    // A simple check is to fetch /users/me and see if is_guest is false.
-    const checkUser = async () => {
-      if (!token) return;
-      try {
-        const response = await fetch(`/api/v1/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        if (response.ok) {
-          const user = await response.json();
-          setIsLoggedIn(!user.is_guest);
-        }
-      } catch (err) {
-        // Ignore
-      }
-    };
-    checkUser();
-  }, []);
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -47,24 +22,6 @@ export function NavBar() {
       document.body.style.overflow = 'unset';
     };
   }, [isMenuOpen]);
-
-  const handleLogout = async () => {
-    const token = localStorage.getItem('jwt_token');
-    if (token) {
-      try {
-        await fetch(`/api/v1/auth/jwt/logout`, {
-          method: 'POST',
-          headers: { Authorization: `Bearer ${token}` },
-        });
-      } catch (err) {
-        // Ignore network errors on logout
-      }
-    }
-    localStorage.removeItem('jwt_token');
-    setIsLoggedIn(false);
-    // Reload the page to reset state and trigger GuestAuth
-    window.location.href = '/';
-  };
 
   return (
     <nav className="flex h-[46px] relative items-center justify-between bg-foreground px-3 text-background z-50">
@@ -100,28 +57,10 @@ export function NavBar() {
         />
       </Link>
 
-      {/* Desktop Right */}
-      <div className="hidden md:flex items-center gap-3 z-10">
-        {isLoggedIn ? (
-          <NavbarButton onClick={handleLogout} icon={LogOut}>
-            Log out
-          </NavbarButton>
-        ) : (
-          <>
-            <NavbarButton href="/login" icon={LogIn}>
-              Log in
-            </NavbarButton>
-            <NavbarButton href="/signup" icon={UserPlus}>
-              Sign up
-            </NavbarButton>
-          </>
-        )}
+      {/* Right */}
+      <div className="flex items-center gap-3 z-10">
         <ThemeToggle />
-      </div>
-
-      {/* Mobile Right */}
-      <div className="flex md:hidden items-center z-10">
-        <ThemeToggle />
+        <AccountDropdown />
       </div>
 
       {/* Mobile Menu */}
@@ -133,26 +72,6 @@ export function NavBar() {
           <NavbarButton href="/decks" icon={Layers} onClick={() => setIsMenuOpen(false)}>
             Decks
           </NavbarButton>
-          {isLoggedIn ? (
-            <NavbarButton
-              onClick={() => {
-                handleLogout();
-                setIsMenuOpen(false);
-              }}
-              icon={LogOut}
-            >
-              Log out
-            </NavbarButton>
-          ) : (
-            <>
-              <NavbarButton href="/login" icon={LogIn} onClick={() => setIsMenuOpen(false)}>
-                Log in
-              </NavbarButton>
-              <NavbarButton href="/signup" icon={UserPlus} onClick={() => setIsMenuOpen(false)}>
-                Sign up
-              </NavbarButton>
-            </>
-          )}
         </div>
       )}
     </nav>
