@@ -5,11 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { ThemeToggle } from './ThemeToggle';
 import { NavbarButton } from './NavbarButton';
-import { Home, Layers, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Home, Layers, LogIn, UserPlus, LogOut, Menu, X } from 'lucide-react';
 
 export function NavBar() {
   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     // Check if we have a valid token on load
@@ -36,6 +37,17 @@ export function NavBar() {
     checkUser();
   }, []);
 
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
   const handleLogout = async () => {
     const token = localStorage.getItem('jwt_token');
     if (token) {
@@ -55,8 +67,9 @@ export function NavBar() {
   };
 
   return (
-    <nav className="flex h-[46px] relative items-center justify-between bg-foreground px-3 text-background">
-      <div className="flex items-center gap-3">
+    <nav className="flex h-[46px] relative items-center justify-between bg-foreground px-3 text-background z-50">
+      {/* Desktop Left */}
+      <div className="hidden md:flex items-center gap-3">
         <NavbarButton href="/" icon={Home}>
           Home
         </NavbarButton>
@@ -65,9 +78,20 @@ export function NavBar() {
         </NavbarButton>
       </div>
 
+      {/* Mobile Left */}
+      <div className="flex md:hidden items-center">
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="p-1 hover:opacity-80 transition-opacity"
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
       <Link
         href="/"
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-auto"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-auto z-10"
       >
         <img
           src="/logo.svg"
@@ -76,7 +100,8 @@ export function NavBar() {
         />
       </Link>
 
-      <div className="flex items-center gap-3 z-10">
+      {/* Desktop Right */}
+      <div className="hidden md:flex items-center gap-3 z-10">
         {isLoggedIn ? (
           <NavbarButton onClick={handleLogout} icon={LogOut}>
             Log out
@@ -93,6 +118,43 @@ export function NavBar() {
         )}
         <ThemeToggle />
       </div>
+
+      {/* Mobile Right */}
+      <div className="flex md:hidden items-center z-10">
+        <ThemeToggle />
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 top-[46px] bg-background text-foreground z-40 flex flex-col items-center pt-12 gap-6 md:hidden">
+          <NavbarButton href="/" icon={Home} onClick={() => setIsMenuOpen(false)}>
+            Home
+          </NavbarButton>
+          <NavbarButton href="/decks" icon={Layers} onClick={() => setIsMenuOpen(false)}>
+            Decks
+          </NavbarButton>
+          {isLoggedIn ? (
+            <NavbarButton
+              onClick={() => {
+                handleLogout();
+                setIsMenuOpen(false);
+              }}
+              icon={LogOut}
+            >
+              Log out
+            </NavbarButton>
+          ) : (
+            <>
+              <NavbarButton href="/login" icon={LogIn} onClick={() => setIsMenuOpen(false)}>
+                Log in
+              </NavbarButton>
+              <NavbarButton href="/signup" icon={UserPlus} onClick={() => setIsMenuOpen(false)}>
+                Sign up
+              </NavbarButton>
+            </>
+          )}
+        </div>
+      )}
     </nav>
   );
 }

@@ -22,7 +22,7 @@ export function NavbarButton({ href, onClick, icon: Icon, children }: NavbarButt
 
   if (href) {
     return (
-      <Link href={href} className={className}>
+      <Link href={href} className={className} onClick={onClick}>
         {content}
       </Link>
     );
