@@ -13,7 +13,12 @@ export function ThemeToggle() {
   }, []);
 
   if (!mounted) {
-    return <div className="w-[26px] h-[26px]" />;
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground opacity-50">
+        <div className="w-[24px] h-[24px]" />
+        <span className="text-sm font-bold">Theme</span>
+      </div>
+    );
   }
 
   const isDark = resolvedTheme === 'dark';
@@ -21,10 +26,11 @@ export function ThemeToggle() {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex items-center justify-center w-[36px] h-[36px] rounded-md bg-[#7e6b69] dark:bg-white text-background transition-all border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none"
+      className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors"
       aria-label="Toggle theme"
     >
-      {isDark ? <Sun size={18} /> : <Moon size={18} />}
+      {isDark ? <Sun size={24} /> : <Moon size={24} />}
+      <span className="text-sm font-bold">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
     </button>
   );
 }

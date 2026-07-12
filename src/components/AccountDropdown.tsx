@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { User, LogIn, UserPlus, LogOut, Settings } from 'lucide-react';
 import Link from 'next/link';
+import { ThemeToggle } from './ThemeToggle';
 
 export function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,6 +72,8 @@ export function AccountDropdown() {
               <LogOut size={24} />
               <span className="text-sm font-bold">Log out</span>
             </button>
+
+            <ThemeToggle />
           </div>
         </div>
       )}
