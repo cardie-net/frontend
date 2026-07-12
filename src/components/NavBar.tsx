@@ -53,8 +53,8 @@ export function NavBar() {
   };
 
   return (
-    <nav className="flex h-[42px] items-center justify-between bg-foreground px-4 text-background">
-      <div className="flex items-center gap-4">
+    <nav className="flex h-[42px] relative items-center justify-between bg-foreground px-4 text-background">
+      <div className="flex items-center gap-4 z-10">
         <Link href="/" className="hover:text-primary transition-colors">
           Home
         </Link>
@@ -62,7 +62,19 @@ export function NavBar() {
           Decks
         </Link>
       </div>
-      <div className="flex items-center gap-4">
+
+      <Link
+        href="/"
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center justify-center pointer-events-auto"
+      >
+        <img
+          src="/logo.svg"
+          alt="Cardie.net Logo"
+          className="h-[24px] dark:invert transition-all"
+        />
+      </Link>
+
+      <div className="flex items-center gap-4 z-10">
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
