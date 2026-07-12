@@ -55,7 +55,7 @@ export function NavBar() {
   };
 
   return (
-    <nav className="flex h-[42px] relative items-center justify-between bg-foreground px-3 text-background">
+    <nav className="flex h-[46px] relative items-center justify-between bg-foreground px-3 text-background">
       <div className="flex items-center gap-3">
         <NavbarButton href="/" icon={Home}>
           Home

@@ -18,7 +18,7 @@ export function NavbarButton({ href, onClick, icon: Icon, children }: NavbarButt
   );
 
   const className =
-    'flex items-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background hover:opacity-90 transition-opacity rounded-md px-4 py-1 text-base font-bold';
+    'flex items-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-4 py-1 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none';
 
   if (href) {
     return (
