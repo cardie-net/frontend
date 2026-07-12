@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 
 export function NavBar() {
   const router = useRouter();
@@ -52,41 +53,34 @@ export function NavBar() {
   };
 
   return (
-    <nav
-      style={{
-        padding: '1rem',
-        borderBottom: '1px solid #ccc',
-        display: 'flex',
-        gap: '1rem',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}
-    >
-      <div style={{ display: 'flex', gap: '1rem' }}>
-        <Link href="/">Home</Link>
-        <Link href="/decks">Decks</Link>
+    <nav className="flex h-[42px] items-center justify-between bg-foreground px-4 text-background">
+      <div className="flex items-center gap-4">
+        <Link href="/" className="hover:text-primary transition-colors">
+          Home
+        </Link>
+        <Link href="/decks" className="hover:text-primary transition-colors">
+          Decks
+        </Link>
       </div>
-      <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+      <div className="flex items-center gap-4">
         {isLoggedIn ? (
           <button
             onClick={handleLogout}
-            style={{
-              padding: '0.5rem 1rem',
-              background: '#ef4444',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-            }}
+            className="rounded bg-red-500 px-3 py-1 text-sm text-white transition-colors hover:bg-red-600"
           >
             Log out
           </button>
         ) : (
           <>
-            <Link href="/login">Log in</Link>
-            <Link href="/signup">Sign up</Link>
+            <Link href="/login" className="text-sm transition-colors hover:text-primary">
+              Log in
+            </Link>
+            <Link href="/signup" className="text-sm transition-colors hover:text-primary">
+              Sign up
+            </Link>
           </>
         )}
+        <ThemeToggle />
       </div>
     </nav>
   );

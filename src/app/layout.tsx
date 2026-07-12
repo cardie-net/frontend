@@ -4,6 +4,7 @@ import Link from 'next/link';
 import './globals.css';
 import { GuestAuth } from '@/components/GuestAuth';
 import { NavBar } from '@/components/NavBar';
+import { ThemeProvider } from '@/components/ThemeProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,11 +27,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body>
-        <GuestAuth />
-        <NavBar />
-        {children}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <GuestAuth />
+          <NavBar />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
