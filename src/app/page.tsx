@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 interface User {
   id: string;
@@ -116,12 +117,12 @@ export default function Home() {
                 </svg>
               </div>
               <p className="text-foreground/80 font-medium mb-6">You are not logged in.</p>
-              <a
+              <Link
                 href="/login"
                 className="inline-flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-6 py-2.5 text-sm font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none w-full sm:w-auto"
               >
                 Sign In
-              </a>
+              </Link>
             </div>
           )}
         </div>
