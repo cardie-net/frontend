@@ -18,6 +18,18 @@ export default function SignupPage() {
     setError('');
     setIsLoading(true);
 
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await apiFetch(`/api/v1/auth/register`, {
         method: 'POST',

@@ -27,8 +27,8 @@ function VerifyContent() {
   }, [cooldown]);
 
   const handleResend = async () => {
-    if (!email) {
-      setError('Please enter your email below to resend the verification code.');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.');
       return;
     }
     setError('');
@@ -59,6 +59,12 @@ function VerifyContent() {
     e.preventDefault();
     setError('');
     setSuccess(false);
+
+    if (!token.trim()) {
+      setError('Please enter a verification token.');
+      return;
+    }
+
     setIsLoading(true);
 
     try {

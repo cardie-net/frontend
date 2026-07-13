@@ -63,6 +63,17 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
   const handleAddCard = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!newFront.trim()) {
+      setError('Front of the card is required.');
+      return;
+    }
+
+    if (!newBack.trim()) {
+      setError('Back of the card is required.');
+      return;
+    }
+
     setIsAdding(true);
     try {
       const res = await apiFetch(`/api/v1/decks/${deckId}/cards`, {

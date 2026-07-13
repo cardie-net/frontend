@@ -16,6 +16,32 @@ export default function NewDeckPage() {
   const handleCreateDeck = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+
+    if (!newDeckName.trim()) {
+      setError('Deck name is required.');
+      return;
+    }
+
+    if (newDeckName.length > 80) {
+      setError('Deck name must be at most 80 characters.');
+      return;
+    }
+
+    if (!newDeckSlug.trim()) {
+      setError('Deck slug is required.');
+      return;
+    }
+
+    if (newDeckSlug.length > 80) {
+      setError('Deck slug must be at most 80 characters.');
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9_-]+$/.test(newDeckSlug)) {
+      setError('Slug can only contain letters, numbers, hyphens, and underscores.');
+      return;
+    }
+
     setIsCreating(true);
 
     try {
@@ -90,6 +116,7 @@ export default function NewDeckPage() {
                 }
               }}
               required
+              maxLength={80}
               placeholder="e.g. Spanish Vocabulary"
             />
           </div>
@@ -100,6 +127,7 @@ export default function NewDeckPage() {
               value={newDeckSlug}
               onChange={(e) => setNewDeckSlug(e.target.value)}
               required
+              maxLength={80}
               pattern="^[a-zA-Z0-9_-]+$"
               title="Only letters, numbers, hyphens, and underscores allowed"
               placeholder="e.g. spanish-vocab"

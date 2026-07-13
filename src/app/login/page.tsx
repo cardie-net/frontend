@@ -16,6 +16,18 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.');
+      setIsLoading(false);
+      return;
+    }
+
+    if (!password) {
+      setError('Please enter your password.');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const formData = new URLSearchParams();
       formData.append('username', email); // fastapi_users expects 'username' for email in OAuth2 password flow

@@ -20,8 +20,13 @@ function ResetPasswordContent() {
     e.preventDefault();
     setError('');
 
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Passwords do not match.');
       return;
     }
 
