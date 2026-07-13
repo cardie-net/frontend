@@ -122,9 +122,14 @@ export function AccountDropdown() {
         title="Guest Account"
       >
         <div className="flex flex-col space-y-4">
-          <p>You are currently using a guest account. Your data is saved locally on this device.</p>
+          <p>You are currently using a guest account.</p>
           <p>
-            To save your data across devices and keep it safe, please sign up for a full account.
+            You can create and study decks, but you will lose access to them when your browser's
+            local storage is cleared.
+          </p>
+          <p>
+            To save your data across devices and keep it safe, please sign up for an account. Its
+            free!
           </p>
         </div>
       </Popup>
