@@ -3,9 +3,10 @@
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { AccountPopupButton } from './AccountPopupButton';
 
 export function ThemeToggle() {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -14,23 +15,20 @@ export function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground opacity-50">
-        <div className="w-[24px] h-[24px]" />
-        <span className="text-sm font-bold">Theme</span>
-      </div>
+      <AccountPopupButton icon={Sun} className="opacity-50" asDiv>
+        Theme
+      </AccountPopupButton>
     );
   }
 
   const isDark = resolvedTheme === 'dark';
 
   return (
-    <button
+    <AccountPopupButton
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors"
-      aria-label="Toggle theme"
+      icon={isDark ? Sun : Moon}
     >
-      {isDark ? <Sun size={24} /> : <Moon size={24} />}
-      <span className="text-sm font-bold">{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-    </button>
+      {isDark ? 'Light Mode' : 'Dark Mode'}
+    </AccountPopupButton>
   );
 }

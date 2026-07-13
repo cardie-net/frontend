@@ -2,8 +2,8 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { User, LogIn, UserPlus, LogOut, Settings } from 'lucide-react';
-import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
+import { AccountPopupButton } from './AccountPopupButton';
 
 export function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,41 +37,26 @@ export function AccountDropdown() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <Link
-              href="/login"
-              onClick={() => setIsOpen(false)}
-              className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors"
-            >
-              <LogIn size={24} />
-              <span className="text-sm font-bold">Log in</span>
-            </Link>
+            <AccountPopupButton href="/login" onClick={() => setIsOpen(false)} icon={LogIn}>
+              Log in
+            </AccountPopupButton>
 
-            <Link
-              href="/signup"
-              onClick={() => setIsOpen(false)}
-              className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors"
-            >
-              <UserPlus size={24} />
-              <span className="text-sm font-bold">Sign up</span>
-            </Link>
+            <AccountPopupButton href="/signup" onClick={() => setIsOpen(false)} icon={UserPlus}>
+              Sign up
+            </AccountPopupButton>
 
             {/* Placeholder for future conditional rendering based on auth state */}
-            <Link
-              href="/settings"
-              onClick={() => setIsOpen(false)}
-              className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors"
-            >
-              <Settings size={24} />
-              <span className="text-sm font-bold">Settings</span>
-            </Link>
+            <AccountPopupButton href="/settings" onClick={() => setIsOpen(false)} icon={Settings}>
+              Settings
+            </AccountPopupButton>
 
-            <button
+            <AccountPopupButton
               onClick={() => setIsOpen(false)}
-              className="flex flex-col items-center justify-center gap-2 p-3 rounded-lg border-2 border-foreground hover:bg-foreground/5 transition-colors text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500"
+              icon={LogOut}
+              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
             >
-              <LogOut size={24} />
-              <span className="text-sm font-bold">Log out</span>
-            </button>
+              Log out
+            </AccountPopupButton>
 
             <ThemeToggle />
           </div>
