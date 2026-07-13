@@ -10,6 +10,8 @@
   --color-secondary: #bfb4ab;
   --color-accent: #a69d8c;
   --color-navbar-btn: var(--navbar-btn);
+  --font-sans: var(--font-golos-text), sans-serif;
+  --font-mono: var(--font-golos-text), sans-serif;
 }
 
 :root {
@@ -40,7 +42,7 @@ body {
   flex-direction: column;
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-golos-text), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
