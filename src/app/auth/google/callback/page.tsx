@@ -67,6 +67,8 @@ function getErrorMessage(error: string): string {
     oauth_state_expired: 'Authentication session expired. Please try again.',
     oauth_csrf_mismatch: 'Security check failed. Please try again.',
     oauth_no_email: 'Could not retrieve your email from Google.',
+    oauth_profile_error:
+      'Could not retrieve your Google profile. Please make sure the Google People API is enabled in Google Cloud Console.',
     oauth_user_exists: 'An account with this email already exists with a different sign-in method.',
     oauth_user_inactive: 'Your account has been deactivated.',
   };
