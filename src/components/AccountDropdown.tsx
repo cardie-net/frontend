@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { User as UserIcon, LogIn, UserPlus, LogOut, Settings } from 'lucide-react';
+import { User as UserIcon, LogIn, UserPlus, LogOut, Settings, BarChart2 } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountPopupButton } from './AccountPopupButton';
 import { Popup } from './Popup';
@@ -90,28 +90,50 @@ export function AccountDropdown() {
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <AccountPopupButton href="/login" onClick={() => setIsOpen(false)} icon={LogIn}>
-              Log in
-            </AccountPopupButton>
+            {!user || user.is_guest ? (
+              <>
+                <AccountPopupButton href="/login" onClick={() => setIsOpen(false)} icon={LogIn}>
+                  Log in
+                </AccountPopupButton>
+                <AccountPopupButton href="/signup" onClick={() => setIsOpen(false)} icon={UserPlus}>
+                  Sign up
+                </AccountPopupButton>
+              </>
+            ) : (
+              <>
+                <AccountPopupButton
+                  href={`/profile/${user.username}`}
+                  onClick={() => setIsOpen(false)}
+                  icon={UserIcon}
+                >
+                  Profile
+                </AccountPopupButton>
+                <AccountPopupButton
+                  href="/settings"
+                  onClick={() => setIsOpen(false)}
+                  icon={Settings}
+                >
+                  Settings
+                </AccountPopupButton>
+              </>
+            )}
 
-            <AccountPopupButton href="/signup" onClick={() => setIsOpen(false)} icon={UserPlus}>
-              Sign up
-            </AccountPopupButton>
-
-            {/* Placeholder for future conditional rendering based on auth state */}
-            <AccountPopupButton href="/settings" onClick={() => setIsOpen(false)} icon={Settings}>
-              Settings
+            <ThemeToggle />
+            <AccountPopupButton
+              href="/statistics"
+              onClick={() => setIsOpen(false)}
+              icon={BarChart2}
+            >
+              Statistics
             </AccountPopupButton>
 
             <AccountPopupButton
               onClick={() => setIsOpen(false)}
               icon={LogOut}
-              className="text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
+              className="col-span-2 !flex-row text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
             >
               Log out
             </AccountPopupButton>
-
-            <ThemeToggle />
           </div>
         </div>
       )}
