@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { User as UserIcon, LogIn, UserPlus, LogOut, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountPopupButton } from './AccountPopupButton';
+import { Popup } from './Popup';
 import { apiFetch } from '@/lib/api';
 
 interface UserProfile {
@@ -17,6 +18,7 @@ interface UserProfile {
 
 export function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isGuestPopupOpen, setIsGuestPopupOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -77,6 +79,10 @@ export function AccountDropdown() {
               <button
                 className="flex flex-shrink-0 items-center justify-center w-6 h-6 rounded-full border-2 border-foreground text-xs font-bold hover:bg-foreground/10 transition-colors"
                 aria-label="Guest Mode Info"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsGuestPopupOpen(true);
+                }}
               >
                 ?
               </button>
@@ -109,6 +115,19 @@ export function AccountDropdown() {
           </div>
         </div>
       )}
+
+      <Popup
+        isOpen={isGuestPopupOpen}
+        onClose={() => setIsGuestPopupOpen(false)}
+        title="Guest Account"
+      >
+        <div className="flex flex-col space-y-4">
+          <p>You are currently using a guest account. Your data is saved locally on this device.</p>
+          <p>
+            To save your data across devices and keep it safe, please sign up for a full account.
+          </p>
+        </div>
+      </Popup>
     </div>
   );
 }
