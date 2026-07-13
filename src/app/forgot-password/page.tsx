@@ -47,15 +47,15 @@ export default function ForgotPasswordPage() {
         </p>
 
         {error && (
-          <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm font-medium border border-red-200 dark:border-red-800">
+          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
             {error}
           </div>
         )}
         {success ? (
           <div style={{ textAlign: 'center' }}>
             <div
-              className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 p-3 rounded-md mb-6 text-sm font-medium border border-green-200 dark:border-green-800"
-              style={{ color: 'green', marginBottom: '1.5rem' }}
+              className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)]"
+              style={{ marginBottom: '1.5rem' }}
             >
               Password reset link sent! Please check your email inbox.
             </div>

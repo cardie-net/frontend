@@ -62,7 +62,7 @@ export default function SignupPage() {
         <p className="text-foreground/80 mb-6 font-medium">Join Cardie to start learning</p>
 
         {error && (
-          <div className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 p-3 rounded-md mb-6 text-sm font-medium border border-red-200 dark:border-red-800">
+          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
             {error}
           </div>
         )}

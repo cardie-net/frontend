@@ -18,6 +18,15 @@
   --color-ac-btn-border: var(--ac-btn-border);
   --font-sans: var(--font-golos-text), sans-serif;
   --font-mono: var(--font-golos-text), sans-serif;
+
+  --color-success: var(--success);
+  --color-success-text: var(--success-text);
+  --color-error: var(--error);
+  --color-error-text: var(--error-text);
+  --color-info: var(--info);
+  --color-info-text: var(--info-text);
+  --color-warning: var(--warning);
+  --color-warning-text: var(--warning-text);
 }
 
 :root {
@@ -31,6 +40,19 @@
   --ac-btn-bg: rgba(0, 0, 0, 0.05);
   --ac-btn-text: #493d3c;
   --ac-btn-border: #493d3c;
+
+  /* Semantic UI Tokens (Light Mode) */
+  --success: #8ba382;
+  --success-text: #22301d;
+
+  --error: #c76a61;
+  --error-text: #f7f2e8;
+
+  --info: #788fa1;
+  --info-text: #1e2933;
+
+  --warning: #d9a05b;
+  --warning-text: #3d2711;
 }
 
 :root.dark {
@@ -44,6 +66,19 @@
   --ac-btn-bg: #7e6b69;
   --ac-btn-text: #f7f2e8;
   --ac-btn-border: #5f4f4e;
+
+  /* Semantic UI Tokens (Dark Mode) */
+  --success: #3b4a37;
+  --success-text: #e1edd8;
+
+  --error: #5c2a25;
+  --error-text: #fccbc5;
+
+  --info: #2e3d4a;
+  --info-text: #d4e3f0;
+
+  --warning: #5c4121;
+  --warning-text: #fce7cf;
 }
 
 html {
