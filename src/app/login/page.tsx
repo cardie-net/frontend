@@ -1,15 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle } from 'lucide-react';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
+import AuthDivider from '@/components/AuthDivider';
+
+const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  oauth_invalid_state: 'Authentication failed. Please try again.',
+  oauth_state_expired: 'Authentication session expired. Please try again.',
+  oauth_csrf_mismatch: 'Security check failed. Please try again.',
+  oauth_no_email: 'Could not retrieve your email from Google.',
+  oauth_user_exists: 'An account with this email already exists with a different sign-in method.',
+  oauth_user_inactive: 'Your account has been deactivated.',
+};
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<React.ReactNode>('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Show OAuth error messages passed via URL
+  useEffect(() => {
+    const oauthError = searchParams.get('error');
+    if (oauthError && OAUTH_ERROR_MESSAGES[oauthError]) {
+      setError(OAUTH_ERROR_MESSAGES[oauthError]);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,6 +109,10 @@ export default function LoginPage() {
             <div>{error}</div>
           </div>
         )}
+
+        <GoogleSignInButton />
+
+        <AuthDivider />
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">

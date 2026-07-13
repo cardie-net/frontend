@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle } from 'lucide-react';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
+import AuthDivider from '@/components/AuthDivider';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -82,6 +84,10 @@ export default function SignupPage() {
             <div>{error}</div>
           </div>
         )}
+
+        <GoogleSignInButton />
+
+        <AuthDivider />
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
