@@ -60,10 +60,22 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
     }
   }
 
-  const response = await fetch(endpoint, {
+  let response = await fetch(endpoint, {
     ...options,
     headers,
   });
+
+  if (response.status === 401 && !isAuthEndpoint && typeof window !== 'undefined') {
+    localStorage.removeItem('jwt_token');
+    const guestToken = await getGuestToken();
+    if (guestToken) {
+      headers.set('Authorization', `Bearer ${guestToken}`);
+      response = await fetch(endpoint, {
+        ...options,
+        headers,
+      });
+    }
+  }
 
   return response;
 }
