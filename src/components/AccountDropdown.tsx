@@ -127,13 +127,24 @@ export function AccountDropdown() {
               Statistics
             </AccountPopupButton>
 
-            <AccountPopupButton
-              onClick={() => setIsOpen(false)}
-              icon={LogOut}
-              className="col-span-2 !flex-row text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
-            >
-              Log out
-            </AccountPopupButton>
+            {user && !user.is_guest && (
+              <AccountPopupButton
+                onClick={async () => {
+                  setIsOpen(false);
+                  try {
+                    await apiFetch('/api/v1/auth/jwt/logout', { method: 'POST' });
+                  } catch (error) {
+                    console.error('Failed to logout:', error);
+                  }
+                  localStorage.removeItem('jwt_token');
+                  window.location.href = '/';
+                }}
+                icon={LogOut}
+                className="col-span-2 !flex-row text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
+              >
+                Log out
+              </AccountPopupButton>
+            )}
           </div>
         </div>
       )}
