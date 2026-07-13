@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import Link from 'next/link';
 import './globals.css';
-import { GuestAuth } from '@/components/GuestAuth';
 import { NavBar } from '@/components/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
 
@@ -34,7 +33,6 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <GuestAuth />
           <NavBar />
           {children}
         </ThemeProvider>

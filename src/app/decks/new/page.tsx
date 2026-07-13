@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function NewDeckPage() {
   const router = useRouter();
@@ -15,20 +16,10 @@ export default function NewDeckPage() {
     e.preventDefault();
     setError('');
     setIsCreating(true);
-    const token = localStorage.getItem('jwt_token');
-
-    if (!token) {
-      router.push('/login');
-      return;
-    }
 
     try {
-      const res = await fetch(`/api/v1/decks`, {
+      const res = await apiFetch(`/api/v1/decks`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           name: newDeckName,
           slug: newDeckSlug,

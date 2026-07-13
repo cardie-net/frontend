@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface User {
   id: string;
@@ -25,23 +26,13 @@ export default function DecksPage() {
 
   useEffect(() => {
     const fetchUserAndDecks = async () => {
-      const token = localStorage.getItem('jwt_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const userRes = await fetch(`/api/v1/users/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const userRes = await apiFetch(`/api/v1/users/me`);
         if (!userRes.ok) throw new Error('Failed to fetch user');
         const userData = await userRes.json();
         setUser(userData);
 
-        const itemsRes = await fetch(`/api/v1/users/${userData.id}/items`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const itemsRes = await apiFetch(`/api/v1/users/${userData.id}/items`);
         if (!itemsRes.ok) throw new Error('Failed to fetch items');
         const itemsData = await itemsRes.json();
 
@@ -57,14 +48,9 @@ export default function DecksPage() {
 
   const handleCreateDeck = async (e: React.FormEvent) => {
     e.preventDefault();
-    const token = localStorage.getItem('jwt_token');
     try {
-      const res = await fetch(`/api/v1/decks/`, {
+      const res = await apiFetch(`/api/v1/decks/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           name: newDeckName,
           slug: newDeckSlug,
@@ -90,11 +76,9 @@ export default function DecksPage() {
     if (!confirm('Are you sure you want to delete this deck? All cards will be lost.')) return;
 
     setIsDeleting(deckId);
-    const token = localStorage.getItem('jwt_token');
     try {
-      const res = await fetch(`/api/v1/decks/${deckId}`, {
+      const res = await apiFetch(`/api/v1/decks/${deckId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Failed to delete deck');
       setDecks(decks.filter((d) => d.id !== deckId));

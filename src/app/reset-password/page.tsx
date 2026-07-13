@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -27,7 +28,7 @@ function ResetPasswordContent() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/v1/auth/reset-password`, {
+      const response = await apiFetch(`/api/v1/auth/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

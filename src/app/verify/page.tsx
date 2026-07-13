@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 function VerifyContent() {
   const router = useRouter();
@@ -34,7 +35,7 @@ function VerifyContent() {
     setIsResending(true);
 
     try {
-      const response = await fetch(`/api/v1/auth/request-verify-token`, {
+      const response = await apiFetch(`/api/v1/auth/request-verify-token`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
@@ -60,7 +61,7 @@ function VerifyContent() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/v1/auth/verify`, {
+      const response = await apiFetch(`/api/v1/auth/verify`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

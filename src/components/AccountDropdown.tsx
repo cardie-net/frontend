@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { User as UserIcon, LogIn, UserPlus, LogOut, Settings } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 import { AccountPopupButton } from './AccountPopupButton';
+import { apiFetch } from '@/lib/api';
 
 interface UserProfile {
   id: string;
@@ -22,18 +23,8 @@ export function AccountDropdown() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('jwt_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await fetch(`/api/v1/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiFetch(`/api/v1/users/me`);
 
         if (response.ok) {
           const data = await response.json();

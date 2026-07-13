@@ -3,6 +3,7 @@
 import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface CardElement {
   type: 'text';
@@ -37,24 +38,15 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
 
   useEffect(() => {
     const fetchDeckAndCards = async () => {
-      const token = localStorage.getItem('jwt_token');
-      if (!token) {
-        router.push('/login');
-        return;
-      }
       try {
-        const deckRes = await fetch(`/api/v1/decks/${deckId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const deckRes = await apiFetch(`/api/v1/decks/${deckId}`);
         if (!deckRes.ok) {
           if (deckRes.status === 404) router.push('/decks');
           throw new Error('Failed to fetch deck');
         }
         setDeck(await deckRes.json());
 
-        const cardsRes = await fetch(`/api/v1/decks/${deckId}/cards`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const cardsRes = await apiFetch(`/api/v1/decks/${deckId}/cards`);
         if (cardsRes.ok) {
           setCards(await cardsRes.json());
         }
@@ -71,14 +63,9 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
     e.preventDefault();
     setError('');
     setIsAdding(true);
-    const token = localStorage.getItem('jwt_token');
     try {
-      const res = await fetch(`/api/v1/decks/${deckId}/cards`, {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/cards`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           front: [{ type: 'text', content: newFront }],
           back: [{ type: 'text', content: newBack }],
@@ -103,11 +90,9 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
   const handleDeleteCard = async (cardId: string) => {
     if (!confirm('Are you sure you want to delete this card?')) return;
     setIsDeleting(cardId);
-    const token = localStorage.getItem('jwt_token');
     try {
-      const res = await fetch(`/api/v1/decks/${deckId}/cards/${cardId}`, {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/cards/${cardId}`, {
         method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error('Failed to delete card');
       setCards(cards.filter((c) => c.id !== cardId));

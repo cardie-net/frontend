@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 interface User {
   id: string;
@@ -16,18 +17,8 @@ export default function Home() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem('jwt_token');
-      if (!token) {
-        setLoading(false);
-        return;
-      }
-
       try {
-        const response = await fetch(`/api/v1/users/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await apiFetch(`/api/v1/users/me`);
 
         if (response.ok) {
           const data = await response.json();

@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { apiFetch } from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,7 +22,7 @@ export default function LoginPage() {
       formData.append('username', email); // fastapi_users expects 'username' for email in OAuth2 password flow
       formData.append('password', password);
 
-      const response = await fetch(`/api/v1/auth/jwt/login`, {
+      const response = await apiFetch(`/api/v1/auth/jwt/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
