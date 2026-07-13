@@ -1,12 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 
 export default function LoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<React.ReactNode>('');
@@ -34,7 +32,7 @@ export default function LoginPage() {
         const data = await response.json();
         if (data.access_token) {
           localStorage.setItem('jwt_token', data.access_token);
-          router.push('/');
+          window.location.href = '/';
         }
       } else {
         const errData = await response.json().catch(() => ({}));
