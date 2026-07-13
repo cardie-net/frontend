@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 /**
@@ -13,7 +13,7 @@ import { useSearchParams } from 'next/navigation';
  * On success, stores the JWT and redirects to the home page.
  * On failure, redirects to /login with the error.
  */
-export default function GoogleCallbackPage() {
+function GoogleCallbackContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<'processing' | 'error'>('processing');
   const [errorMessage, setErrorMessage] = useState('');
@@ -41,22 +41,35 @@ export default function GoogleCallbackPage() {
 
   if (status === 'error') {
     return (
-      <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
-        <div className="text-center">
-          <p className="text-lg font-bold mb-2">Sign-in failed</p>
-          <p className="text-foreground/80 font-medium">{errorMessage}</p>
-          <p className="text-foreground/60 text-sm mt-2">Redirecting to login...</p>
-        </div>
+      <div className="text-center">
+        <p className="text-lg font-bold mb-2">Sign-in failed</p>
+        <p className="text-foreground/80 font-medium">{errorMessage}</p>
+        <p className="text-foreground/60 text-sm mt-2">Redirecting to login...</p>
       </div>
     );
   }
 
   return (
+    <div className="text-center">
+      <div className="inline-block w-6 h-6 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin mb-4" />
+      <p className="text-lg font-bold">Signing you in...</p>
+    </div>
+  );
+}
+
+export default function GoogleCallbackPage() {
+  return (
     <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
-      <div className="text-center">
-        <div className="inline-block w-6 h-6 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin mb-4" />
-        <p className="text-lg font-bold">Signing you in...</p>
-      </div>
+      <Suspense
+        fallback={
+          <div className="text-center">
+            <div className="inline-block w-6 h-6 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin mb-4" />
+            <p className="text-lg font-bold">Loading...</p>
+          </div>
+        }
+      >
+        <GoogleCallbackContent />
+      </Suspense>
     </div>
   );
 }
