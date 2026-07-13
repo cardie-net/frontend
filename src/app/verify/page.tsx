@@ -84,13 +84,19 @@ function VerifyContent() {
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail) {
-          setError(typeof errData.detail === 'string' ? errData.detail : 'Verification failed.');
+          if (errData.detail === 'VERIFY_USER_BAD_TOKEN') {
+            setError('Invalid or expired verification code');
+          } else if (errData.detail === 'VERIFY_USER_ALREADY_VERIFIED') {
+            setError('Your email is already verified');
+          } else {
+            setError(typeof errData.detail === 'string' ? errData.detail : 'Verification failed');
+          }
         } else {
-          setError('Verification failed. Invalid or expired token.');
+          setError('Verification failed. Invalid or expired token');
         }
       }
     } catch (err) {
-      setError('An error occurred during verification. Please try again.');
+      setError('An error occurred during verification. Please try again');
     } finally {
       setIsLoading(false);
     }

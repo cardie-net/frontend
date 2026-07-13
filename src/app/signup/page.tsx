@@ -50,7 +50,9 @@ export default function SignupPage() {
 
         // Handle fastapi_users validation errors
         if (errData.detail) {
-          if (typeof errData.detail === 'string') {
+          if (errData.detail === 'REGISTER_USER_ALREADY_EXISTS') {
+            setError('A user with this email already exists');
+          } else if (typeof errData.detail === 'string') {
             setError(errData.detail);
           } else if (Array.isArray(errData.detail)) {
             setError(errData.detail.map((d: { msg: string }) => d.msg).join(', '));

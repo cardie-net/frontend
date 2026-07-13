@@ -36,10 +36,16 @@ export default function ForgotPasswordPage() {
         setSuccess(true);
       } else {
         const errData = await response.json().catch(() => ({}));
-        setError(errData.detail || 'Failed to request password reset.');
+        if (errData.detail === 'USER_NOT_EXISTS') {
+          setError('No account found with this email address');
+        } else {
+          setError(
+            typeof errData.detail === 'string' ? errData.detail : 'Failed to request password reset'
+          );
+        }
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError('An error occurred. Please try again');
     } finally {
       setIsLoading(false);
     }

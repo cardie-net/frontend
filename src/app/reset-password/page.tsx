@@ -49,11 +49,15 @@ function ResetPasswordContent() {
         }, 3000);
       } else {
         const errData = await response.json().catch(() => ({}));
-        setError(
-          typeof errData.detail === 'string'
-            ? errData.detail
-            : 'Failed to reset password. Invalid or expired token.'
-        );
+        if (errData.detail === 'RESET_PASSWORD_BAD_TOKEN') {
+          setError('Invalid or expired reset token');
+        } else {
+          setError(
+            typeof errData.detail === 'string'
+              ? errData.detail
+              : 'Failed to reset password. Invalid or expired token'
+          );
+        }
       }
     } catch (err) {
       setError('An error occurred. Please try again.');

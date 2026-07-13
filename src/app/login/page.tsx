@@ -61,8 +61,12 @@ export default function LoginPage() {
               </Link>
             </span>
           );
+        } else if (errData.detail === 'LOGIN_BAD_CREDENTIALS') {
+          setError('Invalid email or password');
         } else {
-          setError(errData.detail || 'Invalid email or password');
+          setError(
+            typeof errData.detail === 'string' ? errData.detail : 'Invalid email or password'
+          );
         }
       }
     } catch (err) {
