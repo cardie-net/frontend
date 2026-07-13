@@ -9,7 +9,13 @@
   --color-primary: #9d7772;
   --color-secondary: #bfb4ab;
   --color-accent: #a69d8c;
-  --color-navbar-btn: var(--navbar-btn);
+  --color-nav-btn-bg: var(--nav-btn-bg);
+  --color-nav-btn-text: var(--nav-btn-text);
+  --color-nav-btn-border: var(--nav-btn-border);
+
+  --color-ac-btn-bg: var(--ac-btn-bg);
+  --color-ac-btn-text: var(--ac-btn-text);
+  --color-ac-btn-border: var(--ac-btn-border);
   --font-sans: var(--font-golos-text), sans-serif;
   --font-mono: var(--font-golos-text), sans-serif;
 }
@@ -17,13 +23,27 @@
 :root {
   --background: #f7f2e8;
   --foreground: #493d3c;
-  --navbar-btn: #7e6b69;
+
+  --nav-btn-bg: #7e6b69;
+  --nav-btn-text: #f7f2e8;
+  --nav-btn-border: #5f4f4e;
+
+  --ac-btn-bg: rgba(0, 0, 0, 0.05);
+  --ac-btn-text: #493d3c;
+  --ac-btn-border: #493d3c;
 }
 
 :root.dark {
-  --background: #0b0804;
+  --background: #231d1c;
   --foreground: #f7f2e8;
-  --navbar-btn: #ffffff;
+
+  --nav-btn-bg: rgba(0, 0, 0, 0.05);
+  --nav-btn-text: #493d3c;
+  --nav-btn-border: #493d3c;
+
+  --ac-btn-bg: #7e6b69;
+  --ac-btn-text: #f7f2e8;
+  --ac-btn-border: #5f4f4e;
 }
 
 html {
