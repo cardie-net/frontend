@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -61,10 +62,11 @@ function ResetPasswordContent() {
       <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
         <div style={{ textAlign: 'center' }}>
           <div
-            className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)]"
+            className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)] flex items-start gap-2 text-left"
             style={{ marginBottom: '1.5rem' }}
           >
-            Password reset successfully! Redirecting to login...
+            <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>Password reset successfully! Redirecting to login...</div>
           </div>
           <Link
             href="/login"
@@ -84,8 +86,9 @@ function ResetPasswordContent() {
       <p className="text-foreground/80 mb-6 font-medium">Enter your token and new password</p>
 
       {error && (
-        <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
-          {error}
+        <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div>{error}</div>
         </div>
       )}
 

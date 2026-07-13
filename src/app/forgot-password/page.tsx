@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -47,17 +48,19 @@ export default function ForgotPasswordPage() {
         </p>
 
         {error && (
-          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
-            {error}
+          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>{error}</div>
           </div>
         )}
         {success ? (
           <div style={{ textAlign: 'center' }}>
             <div
-              className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)]"
+              className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)] flex items-start gap-2 text-left"
               style={{ marginBottom: '1.5rem' }}
             >
-              Password reset link sent! Please check your email inbox.
+              <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+              <div>Password reset link sent! Please check your email inbox.</div>
             </div>
             <Link
               href="/login"

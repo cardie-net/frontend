@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle } from 'lucide-react';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -62,8 +63,9 @@ export default function SignupPage() {
         <p className="text-foreground/80 mb-6 font-medium">Join Cardie to start learning</p>
 
         {error && (
-          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
-            {error}
+          <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>{error}</div>
           </div>
         )}
 

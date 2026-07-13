@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle } from 'lucide-react';
 
 export default function NewDeckPage() {
   const router = useRouter();
@@ -65,8 +66,9 @@ export default function NewDeckPage() {
         <h1 className="text-3xl font-extrabold mb-6">Create New Deck</h1>
 
         {error && (
-          <div className="text-red-500 mb-6 bg-red-100 dark:bg-red-900/30 p-3 rounded-md">
-            {error}
+          <div className="text-red-500 mb-6 bg-red-100 dark:bg-red-900/30 p-3 rounded-md flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>{error}</div>
           </div>
         )}
 

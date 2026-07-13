@@ -4,6 +4,7 @@ import { useEffect, useState, use } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle } from 'lucide-react';
 
 interface CardElement {
   type: 'text';
@@ -147,8 +148,9 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         {error && (
-          <div className="text-red-500 mb-4 bg-red-100 dark:bg-red-900/30 p-3 rounded-md">
-            {error}
+          <div className="text-red-500 mb-4 bg-red-100 dark:bg-red-900/30 p-3 rounded-md flex items-start gap-2">
+            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+            <div>{error}</div>
           </div>
         )}
 

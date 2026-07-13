@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
+import { AlertCircle, CheckCircle2 } from 'lucide-react';
 
 function VerifyContent() {
   const router = useRouter();
@@ -95,24 +96,27 @@ function VerifyContent() {
       <p className="text-foreground/80 mb-6 font-medium">Enter your verification token</p>
 
       {error && (
-        <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)]">
-          {error}
+        <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+          <div>{error}</div>
         </div>
       )}
       {success && (
         <div
-          className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)]"
-          style={{ marginBottom: '1rem', textAlign: 'center' }}
+          className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)] flex items-start gap-2"
+          style={{ marginBottom: '1rem', textAlign: 'left' }}
         >
-          Email verified successfully! Redirecting to login...
+          <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+          <div>Email verified successfully! Redirecting to login...</div>
         </div>
       )}
       {resendSuccess && (
         <div
-          className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)]"
-          style={{ marginBottom: '1rem', textAlign: 'center' }}
+          className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)] flex items-start gap-2"
+          style={{ marginBottom: '1rem', textAlign: 'left' }}
         >
-          Verification email sent successfully. Please check your inbox.
+          <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+          <div>Verification email sent successfully. Please check your inbox.</div>
         </div>
       )}
 
