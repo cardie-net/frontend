@@ -166,7 +166,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
+    <div className="flex-1 flex items-center justify-center text-foreground p-4 sm:p-8">
       <Suspense
         fallback={
           <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-6 sm:p-8 shadow-[8px_8px_0px_var(--color-border-heavy)] text-center font-bold">

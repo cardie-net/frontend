@@ -130,7 +130,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
     );
 
   return (
-    <div className="flex-1 bg-background text-foreground p-8">
+    <div className="flex-1 text-foreground p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link

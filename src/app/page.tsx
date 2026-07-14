@@ -9,7 +9,7 @@ export default function Home() {
   const { user, loading } = useAuth();
 
   return (
-    <main className="flex-1 bg-background text-foreground p-8 flex flex-col items-center justify-center font-sans">
+    <main className="flex-1 text-foreground p-8 flex flex-col items-center justify-center font-sans">
       <div className="max-w-2xl w-full flex flex-col items-center">
         <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-4 text-foreground text-center">
           Cardie

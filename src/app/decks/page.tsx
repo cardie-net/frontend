@@ -77,7 +77,7 @@ export default function DecksPage() {
     );
 
   return (
-    <div className="flex-1 bg-background text-foreground p-8">
+    <div className="flex-1 text-foreground p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-extrabold">My Decks</h1>

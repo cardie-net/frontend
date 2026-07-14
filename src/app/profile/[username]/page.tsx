@@ -155,7 +155,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex-1 bg-background text-foreground p-4 sm:p-8">
+    <div className="flex-1 text-foreground p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Card */}
         <div className="bg-background border-2 border-foreground rounded-2xl shadow-[4px_4px_0px_currentColor] p-6 sm:p-10 relative">
