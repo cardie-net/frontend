@@ -34,7 +34,7 @@ export function AccountDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-[36px] h-[36px] rounded-md bg-nav-btn-bg text-nav-btn-text transition-all border border-nav-btn-border shadow-[1px_1px_0px_var(--nav-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--nav-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
+        className="flex items-center justify-center w-[36px] h-[36px] rounded-md bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
         aria-label="Account Menu"
       >
         <UserIcon size={18} />
@@ -43,7 +43,7 @@ export function AccountDropdown() {
       {mounted &&
         createPortal(
           <div
-            className={`fixed inset-0 bg-black/50 backdrop-blur-sm z-40 sm:hidden transition-all duration-200 ${
+            className={`fixed inset-0 bg-foreground/50 backdrop-blur-sm z-40 sm:hidden transition-all duration-200 ${
               isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
             }`}
             onClick={() => setIsOpen(false)}
@@ -117,7 +117,7 @@ export function AccountDropdown() {
                 await logout();
               }}
               icon={LogOut}
-              className="col-span-2 !flex-row text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
+              className="col-span-2 !flex-row text-error hover:text-error/80 !border-error !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor]"
             >
               Log out
             </AccountPopupButton>

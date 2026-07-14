@@ -1,21 +1,15 @@
 @import 'tailwindcss';
 @plugin "tailwindcss-animate";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
-  --color-nav-btn-bg: var(--nav-btn-bg);
-  --color-nav-btn-text: var(--nav-btn-text);
-  --color-nav-btn-border: var(--nav-btn-border);
-
-  --color-ac-btn-bg: var(--ac-btn-bg);
-  --color-ac-btn-text: var(--ac-btn-text);
-  --color-ac-btn-border: var(--ac-btn-border);
+  --color-action-btn-bg: var(--action-btn-bg);
+  --color-action-btn-text: var(--action-btn-text);
+  --color-action-btn-border: var(--action-btn-border);
   --font-sans: var(--font-golos-text), sans-serif;
   --font-mono: var(--font-golos-text), sans-serif;
 
@@ -28,12 +22,12 @@
   --color-warning: var(--warning);
   --color-warning-text: var(--warning-text);
 
-  --color-general: var(--general);
-  --color-general-text: var(--general-text);
-  --color-stats: var(--stats);
-  --color-stats-text: var(--stats-text);
-  --color-donate: var(--donate);
-  --color-donate-text: var(--donate-text);
+  --color-green: var(--green);
+  --color-green-text: var(--green-text);
+  --color-purple: var(--purple);
+  --color-purple-text: var(--purple-text);
+  --color-pink: var(--pink);
+  --color-pink-text: var(--pink-text);
 
   --color-border-heavy: var(--border-heavy);
 }
@@ -49,13 +43,9 @@
   --secondary: #bfb4ab;
   --accent: #a69d8c;
 
-  --nav-btn-bg: #7e6b69;
-  --nav-btn-text: #f7f2e8;
-  --nav-btn-border: #5f4f4e;
-
-  --ac-btn-bg: #7e6b69;
-  --ac-btn-text: #f7f2e8;
-  --ac-btn-border: #5f4f4e;
+  --action-btn-bg: #7e6b69;
+  --action-btn-text: #f7f2e8;
+  --action-btn-border: #5f4f4e;
 
   /* Semantic UI Tokens (Light Mode) */
   --success: #8ba382;
@@ -70,14 +60,14 @@
   --warning: #d9a05b;
   --warning-text: #3d2711;
 
-  --general: #949c99;
-  --general-text: #222926;
+  --green: #949c99;
+  --green-text: #222926;
 
-  --stats: #9c84ab;
-  --stats-text: #2c1a38;
+  --purple: #9c84ab;
+  --purple-text: #2c1a38;
 
-  --donate: #c98595;
-  --donate-text: #3d1b24;
+  --pink: #c98595;
+  --pink-text: #3d1b24;
 
   --border-heavy: #5f4f4e;
 }
@@ -93,13 +83,9 @@
   --secondary: #f472b6;
   --accent: #d946ef;
 
-  --nav-btn-bg: #a67c9c;
-  --nav-btn-text: #f3e8f7;
-  --nav-btn-border: #805c75;
-
-  --ac-btn-bg: #a67c9c;
-  --ac-btn-text: #f3e8f7;
-  --ac-btn-border: #805c75;
+  --action-btn-bg: #a67c9c;
+  --action-btn-text: #f3e8f7;
+  --action-btn-border: #805c75;
 
   --success: #8ba382;
   --success-text: #22301d;
@@ -113,14 +99,14 @@
   --warning: #d9a05b;
   --warning-text: #3d2711;
 
-  --general: #9c84ab;
-  --general-text: #2c1a38;
+  --green: #9c84ab;
+  --green-text: #2c1a38;
 
-  --stats: #b08bb6;
-  --stats-text: #2c1a38;
+  --purple: #b08bb6;
+  --purple-text: #2c1a38;
 
-  --donate: #c98595;
-  --donate-text: #3d1b24;
+  --pink: #c98595;
+  --pink-text: #3d1b24;
 
   --border-heavy: #805c75;
 }
@@ -136,13 +122,9 @@
   --secondary: #444444;
   --accent: #333333;
 
-  --nav-btn-bg: #000000;
-  --nav-btn-text: #ffffff;
-  --nav-btn-border: #000000;
-
-  --ac-btn-bg: #000000;
-  --ac-btn-text: #ffffff;
-  --ac-btn-border: #000000;
+  --action-btn-bg: #000000;
+  --action-btn-text: #ffffff;
+  --action-btn-border: #000000;
 
   --success: #e0e0e0;
   --success-text: #000000;
@@ -156,14 +138,14 @@
   --warning: #999999;
   --warning-text: #000000;
 
-  --general: #bbbbbb;
-  --general-text: #000000;
+  --green: #bbbbbb;
+  --green-text: #000000;
 
-  --stats: #888888;
-  --stats-text: #ffffff;
+  --purple: #888888;
+  --purple-text: #ffffff;
 
-  --donate: #444444;
-  --donate-text: #ffffff;
+  --pink: #444444;
+  --pink-text: #ffffff;
 
   --border-heavy: #000000;
 }
@@ -179,13 +161,9 @@
   --secondary: #fbcfe8;
   --accent: #db2777;
 
-  --nav-btn-bg: #f8bbd0;
-  --nav-btn-text: #5c3a4a;
-  --nav-btn-border: #f48fb1;
-
-  --ac-btn-bg: #f8bbd0;
-  --ac-btn-text: #5c3a4a;
-  --ac-btn-border: #f48fb1;
+  --action-btn-bg: #f8bbd0;
+  --action-btn-text: #5c3a4a;
+  --action-btn-border: #f48fb1;
 
   --success: #a5d6a7;
   --success-text: #1b5e20;
@@ -199,14 +177,14 @@
   --warning: #ffe082;
   --warning-text: #ff6f00;
 
-  --general: #f48fb1;
-  --general-text: #880e4f;
+  --green: #f48fb1;
+  --green-text: #880e4f;
 
-  --stats: #f06292;
-  --stats-text: #ffffff;
+  --purple: #f06292;
+  --purple-text: #ffffff;
 
-  --donate: #e91e63;
-  --donate-text: #ffffff;
+  --pink: #e91e63;
+  --pink-text: #ffffff;
 
   --border-heavy: #f06292;
 }
@@ -238,9 +216,6 @@
     text-decoration: none;
   }
 
-  html.dark {
-    color-scheme: dark;
-  }
   html.purple-pink,
   html.pink-white {
     color-scheme: light;

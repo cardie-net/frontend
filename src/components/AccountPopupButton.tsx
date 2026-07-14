@@ -26,7 +26,7 @@ export function AccountPopupButton({
     </>
   );
 
-  const className = `flex flex-col items-center justify-center gap-2 p-3 rounded-lg bg-ac-btn-bg text-ac-btn-text transition-all border border-ac-btn-border shadow-[1px_1px_0px_var(--ac-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--ac-btn-border)] active:translate-y-px active:shadow-none ${customClassName || ''}`;
+  const className = `flex flex-col items-center justify-center gap-2 p-3 rounded-lg bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none ${customClassName || ''}`;
 
   if (asDiv) {
     return <div className={className}>{content}</div>;

@@ -19,8 +19,8 @@ export default function SettingsPage() {
           <p>General settings will go here.</p>
         </div>
       ),
-      activeBgClass: 'bg-general',
-      activeTextClass: 'text-general-text',
+      activeBgClass: 'bg-green',
+      activeTextClass: 'text-green-text',
     },
     {
       id: 'account',
@@ -51,8 +51,8 @@ export default function SettingsPage() {
           <p>Statistics and data will go here.</p>
         </div>
       ),
-      activeBgClass: 'bg-stats',
-      activeTextClass: 'text-stats-text',
+      activeBgClass: 'bg-purple',
+      activeTextClass: 'text-purple-text',
     },
     {
       id: 'info',
@@ -75,8 +75,8 @@ export default function SettingsPage() {
           <p>Support the project by donating.</p>
         </div>
       ),
-      activeBgClass: 'bg-donate',
-      activeTextClass: 'text-donate-text',
+      activeBgClass: 'bg-pink',
+      activeTextClass: 'text-pink-text',
     },
   ];
 

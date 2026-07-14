@@ -144,7 +144,7 @@ export default function ProfilePage() {
     return (
       <div className="flex-1 flex items-center justify-center text-foreground p-8">
         <div className="text-center p-8 border-2 border-foreground rounded-xl shadow-[4px_4px_0px_currentColor]">
-          <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+          <AlertCircle className="w-12 h-12 mx-auto mb-4 text-error" />
           <p className="font-bold text-xl">{error || 'Profile not found'}</p>
           <Link href="/" className="mt-4 inline-block font-bold underline hover:no-underline">
             Go back home
@@ -165,7 +165,7 @@ export default function ProfilePage() {
               <Link
                 href="/settings"
                 aria-label="Settings"
-                className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-ac-btn-bg text-ac-btn-text transition-all border border-ac-btn-border shadow-[1px_1px_0px_var(--ac-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--ac-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
+                className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
               >
                 <Settings className="w-4 h-4" />
               </Link>
@@ -202,7 +202,7 @@ export default function ProfilePage() {
                     />
                   </div>
                   {saveError && (
-                    <div className="text-red-500 text-sm font-bold flex items-center justify-center sm:justify-start gap-1 mt-2">
+                    <div className="text-error text-sm font-bold flex items-center justify-center sm:justify-start gap-1 mt-2">
                       <AlertCircle className="w-4 h-4" />
                       {saveError}
                     </div>

@@ -95,7 +95,7 @@ export default function AccountTab() {
           <input
             id="displayName"
             type="text"
-            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -108,7 +108,7 @@ export default function AccountTab() {
           <input
             id="username"
             type="text"
-            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -116,7 +116,7 @@ export default function AccountTab() {
 
         <button
           type="submit"
-          className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-[var(--color-primary)] text-[#f7f2e8] transition-all rounded-md px-6 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-6 py-2.5 text-base font-bold border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}

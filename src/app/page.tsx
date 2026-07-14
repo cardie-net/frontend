@@ -48,7 +48,7 @@ export default function Home() {
               </div>
               <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">Account Type</span>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-nav-btn-bg dark:bg-white text-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-action-btn-bg text-action-btn-text border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                   {user.is_guest ? 'Guest' : 'Member'}
                 </span>
               </div>

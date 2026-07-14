@@ -159,20 +159,20 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         {error && (
-          <div className="text-red-500 mb-4 bg-red-100 dark:bg-red-900/30 p-3 rounded-md flex items-start gap-2">
+          <div className="text-error mb-4 bg-error/10 p-3 rounded-md flex items-start gap-2">
             <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
             <div>{error}</div>
           </div>
         )}
 
-        <div className="mb-10 p-6 border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-lg shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4]">
+        <div className="mb-10 p-6 border border-border-heavy rounded-lg shadow-[4px_4px_0px_var(--color-border-heavy)]">
           <h2 className="text-2xl font-bold mb-4">Add New Card</h2>
           <form onSubmit={handleAddCard} className="flex flex-col gap-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold mb-2">Front (Question)</label>
                 <textarea
-                  className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-3 shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
+                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
                   value={newFront}
                   onChange={(e) => setNewFront(e.target.value)}
                   required
@@ -182,7 +182,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
               <div>
                 <label className="block text-sm font-bold mb-2">Back (Answer)</label>
                 <textarea
-                  className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-3 shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
+                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
                   value={newBack}
                   onChange={(e) => setNewBack(e.target.value)}
                   required
@@ -193,7 +193,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
             <button
               type="submit"
               disabled={isAdding}
-              className="w-fit bg-[#7e6b69] dark:bg-white text-background px-6 py-2.5 rounded-md font-bold mt-2 hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] transition-all disabled:opacity-70"
+              className="w-fit bg-action-btn-bg text-background px-6 py-2.5 rounded-md font-bold mt-2 hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] transition-all disabled:opacity-70"
             >
               {isAdding ? 'Adding...' : 'Add Card'}
             </button>
@@ -208,7 +208,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
           {cards.map((card, index) => (
             <div
               key={card.id}
-              className="p-5 border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-lg shadow-[2px_2px_0px_#5f4f4e] dark:shadow-[2px_2px_0px_#d4d4d4] flex flex-col md:flex-row justify-between items-start gap-6 bg-background"
+              className="p-5 border border-border-heavy rounded-lg shadow-[2px_2px_0px_var(--color-border-heavy)] flex flex-col md:flex-row justify-between items-start gap-6 bg-background"
             >
               <div className="flex-1 w-full grid grid-cols-1 md:grid-cols-2 gap-6 relative">
                 <div className="absolute left-1/2 top-0 bottom-0 w-px bg-foreground/10 hidden md:block -ml-3"></div>
@@ -240,7 +240,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
                 <button
                   onClick={() => handleDeleteCard(card.id)}
                   disabled={isDeleting === card.id}
-                  className="text-red-500 font-bold text-sm px-3 py-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors w-full md:w-auto text-center"
+                  className="text-error font-bold text-sm px-3 py-1.5 rounded hover:bg-error/10 transition-colors w-full md:w-auto text-center"
                 >
                   {isDeleting === card.id ? 'Deleting...' : 'Delete'}
                 </button>
