@@ -1,60 +1,54 @@
 'use client';
 
+import { Palette } from 'lucide-react';
+import { AccountPopupButton } from './AccountPopupButton';
+import { Popup } from './Popup';
+import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Palette } from 'lucide-react';
-import { useEffect, useState } from 'react';
+
+const THEMES = [
+  { id: 'default', name: 'Default' },
+  { id: 'purple-pink', name: 'Purple & Pink' },
+  { id: 'black-white', name: 'Black & White' },
+  { id: 'pink-white', name: 'Pink & White' },
+];
 
 export function ThemeToggle() {
-  const { setTheme, resolvedTheme } = useTheme();
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
-  const content = (isDark: boolean) => (
+  return (
     <>
-      <div className="flex w-full flex-1">
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            if (mounted) {
-              setTheme(isDark ? 'light' : 'dark');
-            }
-          }}
-          className="flex-1 flex items-center justify-center pt-3 pb-1 hover:bg-foreground/5 transition-colors border-r border-ac-btn-border outline-none focus:bg-foreground/5"
-          aria-label="Toggle Dark/Light Mode"
-        >
-          {isDark ? <Sun size={24} /> : <Moon size={24} />}
-        </button>
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            // to be implemented later
-          }}
-          className="flex-1 flex items-center justify-center pt-3 pb-1 hover:bg-foreground/5 transition-colors outline-none focus:bg-foreground/5"
-          aria-label="Change Theme"
-        >
-          <Palette size={24} />
-        </button>
-      </div>
-      <div className="w-full text-center pb-3 pt-1 text-sm font-bold pointer-events-none">
+      <AccountPopupButton icon={Palette} onClick={() => setIsPopupOpen(true)}>
         Theme
-      </div>
+      </AccountPopupButton>
+
+      <Popup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} title="Select Theme">
+        <div className="flex flex-col space-y-3">
+          {THEMES.map((t) => (
+            <button
+              key={t.id}
+              onClick={() => {
+                setTheme(t.id);
+                setIsPopupOpen(false);
+              }}
+              className={`flex items-center justify-between w-full p-3 rounded-lg border-2 transition-all ${
+                mounted && theme === t.id
+                  ? 'border-foreground bg-foreground/10 shadow-[2px_2px_0px_currentColor]'
+                  : 'border-border-heavy hover:bg-foreground/5 hover:border-foreground shadow-[1px_1px_0px_currentColor] hover:shadow-[2px_2px_0px_currentColor]'
+              }`}
+            >
+              <span className="font-bold">{t.name}</span>
+              {mounted && theme === t.id && <span className="w-3 h-3 rounded-full bg-foreground" />}
+            </button>
+          ))}
+        </div>
+      </Popup>
     </>
   );
-
-  const containerClass =
-    'flex flex-col items-center justify-center rounded-lg bg-ac-btn-bg text-ac-btn-text transition-all border border-ac-btn-border shadow-[1px_1px_0px_var(--ac-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--ac-btn-border)] active:translate-y-px active:shadow-none overflow-hidden h-full';
-
-  if (!mounted) {
-    return <div className={`${containerClass} opacity-50`}>{content(false)}</div>;
-  }
-
-  const isDark = resolvedTheme === 'dark';
-
-  return <div className={containerClass}>{content(isDark)}</div>;
 }

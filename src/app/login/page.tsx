@@ -101,7 +101,7 @@ function LoginContent() {
   };
 
   return (
-    <div className="w-full max-w-md bg-foreground text-background border border-[#231d1c] dark:border-[#111111] rounded-lg p-8 shadow-[8px_8px_0px_#231d1c] dark:shadow-[8px_8px_0px_#111111]">
+    <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-8 shadow-[8px_8px_0px_var(--color-border-heavy)]">
       <h1 className="text-3xl font-extrabold mb-2">Welcome Back</h1>
       <p className="opacity-80 mb-6 font-medium">Sign in to continue to Cardie</p>
 
@@ -169,7 +169,7 @@ export default function LoginPage() {
     <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-foreground text-background border border-[#231d1c] dark:border-[#111111] rounded-lg p-8 shadow-[8px_8px_0px_#231d1c] dark:shadow-[8px_8px_0px_#111111] text-center font-bold">
+          <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-8 shadow-[8px_8px_0px_var(--color-border-heavy)] text-center font-bold">
             Loading...
           </div>
         }

@@ -30,7 +30,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="default"
+          enableSystem={false}
+          themes={['default', 'purple-pink', 'black-white', 'pink-white']}
+        >
           <AuthProvider>
             <NavBar />
             {children}

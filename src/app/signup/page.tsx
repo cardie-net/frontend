@@ -8,6 +8,8 @@ import { AlertCircle } from 'lucide-react';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 import AuthDivider from '@/components/AuthDivider';
 
+import { Button } from '@/components/ui/Button';
+
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -74,7 +76,7 @@ export default function SignupPage() {
 
   return (
     <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
-      <div className="w-full max-w-md bg-foreground text-background border border-[#231d1c] dark:border-[#111111] shadow-[8px_8px_0px_#231d1c] dark:shadow-[8px_8px_0px_#111111] rounded-lg p-8">
+      <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
         <h1 className="text-3xl font-extrabold mb-2">Create Account</h1>
         <p className="opacity-80 mb-6 font-medium">Join Cardie to start learning</p>
 
@@ -121,13 +123,9 @@ export default function SignupPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full flex items-center justify-center gap-2.5 bg-[var(--color-primary)] dark:bg-[var(--color-primary)] text-[#f7f2e8] transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#231d1c] dark:border-[#111111] shadow-[2px_2px_0px_#231d1c] dark:shadow-[2px_2px_0px_#111111] hover:-translate-y-px hover:shadow-[4px_4px_0px_#231d1c] dark:hover:shadow-[4px_4px_0px_#111111] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
-            disabled={isLoading}
-          >
+          <Button type="submit" className="w-full mt-6" disabled={isLoading}>
             {isLoading ? 'Creating account...' : 'Sign Up'}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm font-medium opacity-80 flex gap-2 justify-center">

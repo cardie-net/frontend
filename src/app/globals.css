@@ -6,9 +6,9 @@
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-primary: #bd5c50;
-  --color-secondary: #bfb4ab;
-  --color-accent: #a69d8c;
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
   --color-nav-btn-bg: var(--nav-btn-bg);
   --color-nav-btn-text: var(--nav-btn-text);
   --color-nav-btn-border: var(--nav-btn-border);
@@ -41,6 +41,13 @@
 :root {
   --background: #f7f2e8;
   --foreground: #493d3c;
+
+  --logo-cardie: #ddb9b5;
+  --logo-net: #f7f2e8;
+
+  --primary: #bd5c50;
+  --secondary: #bfb4ab;
+  --accent: #a69d8c;
 
   --nav-btn-bg: #7e6b69;
   --nav-btn-text: #f7f2e8;
@@ -75,41 +82,133 @@
   --border-heavy: #5f4f4e;
 }
 
-:root.dark {
-  --background: #231d1c;
-  --foreground: #f7f2e8;
+:root.purple-pink {
+  --background: #f3e8f7;
+  --foreground: #3a2c42;
 
-  --nav-btn-bg: rgba(0, 0, 0, 0.05);
-  --nav-btn-text: #493d3c;
-  --nav-btn-border: #493d3c;
+  --logo-cardie: #f472b6;
+  --logo-net: #f3e8f7;
 
-  --ac-btn-bg: rgba(0, 0, 0, 0.05);
-  --ac-btn-text: #493d3c;
-  --ac-btn-border: #493d3c;
+  --primary: #a855f7;
+  --secondary: #f472b6;
+  --accent: #d946ef;
 
-  /* Semantic UI Tokens (Dark Mode) */
-  --success: #3b4a37;
-  --success-text: #e1edd8;
+  --nav-btn-bg: #a67c9c;
+  --nav-btn-text: #f3e8f7;
+  --nav-btn-border: #805c75;
 
-  --error: #5c2a25;
-  --error-text: #fccbc5;
+  --ac-btn-bg: #a67c9c;
+  --ac-btn-text: #f3e8f7;
+  --ac-btn-border: #805c75;
 
-  --info: #2e3d4a;
-  --info-text: #d4e3f0;
+  --success: #8ba382;
+  --success-text: #22301d;
 
-  --warning: #5c4121;
-  --warning-text: #fce7cf;
+  --error: #c76a61;
+  --error-text: #f7f2e8;
 
-  --general: #363d3a;
-  --general-text: #e0e8e4;
+  --info: #788fa1;
+  --info-text: #1e2933;
 
-  --stats: #483354;
-  --stats-text: #ead4f7;
+  --warning: #d9a05b;
+  --warning-text: #3d2711;
 
-  --donate: #542b35;
-  --donate-text: #f7d2dc;
+  --general: #9c84ab;
+  --general-text: #2c1a38;
 
-  --border-heavy: #d4d4d4;
+  --stats: #b08bb6;
+  --stats-text: #2c1a38;
+
+  --donate: #c98595;
+  --donate-text: #3d1b24;
+
+  --border-heavy: #805c75;
+}
+
+:root.black-white {
+  --background: #ffffff;
+  --foreground: #000000;
+
+  --logo-cardie: #ffffff;
+  --logo-net: #ffffff;
+
+  --primary: #666666;
+  --secondary: #444444;
+  --accent: #333333;
+
+  --nav-btn-bg: #000000;
+  --nav-btn-text: #ffffff;
+  --nav-btn-border: #000000;
+
+  --ac-btn-bg: #000000;
+  --ac-btn-text: #ffffff;
+  --ac-btn-border: #000000;
+
+  --success: #e0e0e0;
+  --success-text: #000000;
+
+  --error: #000000;
+  --error-text: #ffffff;
+
+  --info: #cccccc;
+  --info-text: #000000;
+
+  --warning: #999999;
+  --warning-text: #000000;
+
+  --general: #bbbbbb;
+  --general-text: #000000;
+
+  --stats: #888888;
+  --stats-text: #ffffff;
+
+  --donate: #444444;
+  --donate-text: #ffffff;
+
+  --border-heavy: #000000;
+}
+
+:root.pink-white {
+  --background: #fff0f5;
+  --foreground: #5c3a4a;
+
+  --logo-cardie: #f48fb1;
+  --logo-net: #fff0f5;
+
+  --primary: #ec4899;
+  --secondary: #fbcfe8;
+  --accent: #db2777;
+
+  --nav-btn-bg: #f8bbd0;
+  --nav-btn-text: #5c3a4a;
+  --nav-btn-border: #f48fb1;
+
+  --ac-btn-bg: #f8bbd0;
+  --ac-btn-text: #5c3a4a;
+  --ac-btn-border: #f48fb1;
+
+  --success: #a5d6a7;
+  --success-text: #1b5e20;
+
+  --error: #ef9a9a;
+  --error-text: #b71c1c;
+
+  --info: #90caf9;
+  --info-text: #0d47a1;
+
+  --warning: #ffe082;
+  --warning-text: #ff6f00;
+
+  --general: #f48fb1;
+  --general-text: #880e4f;
+
+  --stats: #f06292;
+  --stats-text: #ffffff;
+
+  --donate: #e91e63;
+  --donate-text: #ffffff;
+
+  --border-heavy: #f06292;
 }
 
 @layer base {
@@ -141,5 +240,12 @@
 
   html.dark {
     color-scheme: dark;
+  }
+  html.purple-pink,
+  html.pink-white {
+    color-scheme: light;
+  }
+  html.black-white {
+    color-scheme: light;
   }
 }
