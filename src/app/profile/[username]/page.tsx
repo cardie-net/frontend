@@ -143,7 +143,7 @@ export default function ProfilePage() {
   if (error || !profileUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-foreground p-8">
-        <div className="text-center p-8 border-2 border-foreground rounded-xl shadow-[4px_4px_0px_currentColor]">
+        <div className="text-center p-8 bg-foreground text-background border-2 border-border-heavy rounded-xl shadow-[8px_8px_0px_var(--color-border-heavy)]">
           <AlertCircle className="w-12 h-12 mx-auto mb-4 text-error" />
           <p className="font-bold text-xl">{error || 'Profile not found'}</p>
           <Link href="/" className="mt-4 inline-block font-bold underline hover:no-underline">
@@ -158,7 +158,7 @@ export default function ProfilePage() {
     <div className="flex-1 text-foreground p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Card */}
-        <div className="bg-background border-2 border-foreground rounded-2xl shadow-[4px_4px_0px_currentColor] p-6 sm:p-10 relative">
+        <div className="bg-foreground text-background border-2 border-border-heavy rounded-2xl shadow-[8px_8px_0px_var(--color-border-heavy)] p-6 sm:p-10 relative">
           {/* Header actions */}
           <div className="absolute top-6 right-6 flex gap-2">
             {isOwnProfile && !isEditing && (
@@ -175,7 +175,7 @@ export default function ProfilePage() {
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
             {/* PFP */}
             <div className="relative shrink-0">
-              <div className="w-32 h-32 rounded-full border-4 border-foreground bg-foreground/5 flex items-center justify-center overflow-hidden">
+              <div className="w-32 h-32 rounded-full border-4 border-background bg-background/10 flex items-center justify-center overflow-hidden">
                 <User className="w-16 h-16 opacity-50" />
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function ProfilePage() {
                     type="text"
                     value={editDisplayName}
                     onChange={(e) => setEditDisplayName(e.target.value)}
-                    className="text-4xl font-black mb-1 w-full bg-transparent border-b-2 border-foreground/30 focus:border-foreground focus:outline-none px-0 py-0"
+                    className="text-4xl font-black mb-1 w-full bg-transparent border-b-2 border-background/30 focus:border-background focus:outline-none px-0 py-0"
                     placeholder="Display Name"
                   />
                   <div className="flex items-center justify-center sm:justify-start text-lg font-mono opacity-70">
@@ -197,7 +197,7 @@ export default function ProfilePage() {
                       type="text"
                       value={editUsername}
                       onChange={(e) => setEditUsername(e.target.value)}
-                      className="bg-transparent border-b-2 border-foreground/30 focus:border-foreground focus:outline-none px-0 py-0 ml-px min-w-[150px] w-auto max-w-full"
+                      className="bg-transparent border-b-2 border-background/30 focus:border-background focus:outline-none px-0 py-0 ml-px min-w-[150px] w-auto max-w-full"
                       placeholder="username"
                     />
                   </div>
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                     <button
                       onClick={handleSaveProfile}
                       disabled={isSaving}
-                      className="px-4 py-1.5 bg-foreground text-background font-bold rounded-lg hover:opacity-90 disabled:opacity-50 text-sm"
+                      className="px-4 py-1.5 bg-background text-foreground font-bold rounded-lg hover:opacity-90 disabled:opacity-50 text-sm"
                     >
                       {isSaving ? 'Saving...' : 'Save'}
                     </button>
@@ -223,7 +223,7 @@ export default function ProfilePage() {
                         setSaveError(null);
                       }}
                       disabled={isSaving}
-                      className="px-4 py-1.5 border-2 border-foreground font-bold rounded-lg hover:bg-foreground/10 disabled:opacity-50 text-sm"
+                      className="px-4 py-1.5 border-2 border-background font-bold rounded-lg hover:bg-background/10 disabled:opacity-50 text-sm"
                     >
                       Cancel
                     </button>
@@ -234,7 +234,7 @@ export default function ProfilePage() {
                   <h1 className="text-4xl font-black mb-1">{profileUser.display_name}</h1>
                   <p className="text-lg font-mono opacity-70">@{profileUser.username}</p>
                   {profileUser.is_guest && (
-                    <span className="inline-block mt-3 px-2 py-1 text-xs font-bold uppercase tracking-wider border-2 border-foreground rounded">
+                    <span className="inline-block mt-3 px-2 py-1 text-xs font-bold uppercase tracking-wider border-2 border-background rounded">
                       Guest Account
                     </span>
                   )}
@@ -269,7 +269,7 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => (
                 <Link key={deck.id} href={`/decks/${deck.id}`}>
-                  <div className="group h-full p-6 border-2 border-foreground rounded-xl shadow-[4px_4px_0px_currentColor] hover:-translate-y-1 hover:shadow-[6px_6px_0px_currentColor] transition-all cursor-pointer flex flex-col justify-between bg-background">
+                  <div className="group h-full p-6 bg-foreground text-background border-2 border-border-heavy rounded-xl shadow-[8px_8px_0px_var(--color-border-heavy)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex flex-col justify-between">
                     <div>
                       <h3 className="text-xl font-bold group-hover:underline">{deck.name}</h3>
                       <p className="text-sm opacity-70 mt-2 font-mono">/{deck.slug}</p>
