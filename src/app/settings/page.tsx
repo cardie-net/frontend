@@ -15,6 +15,8 @@ export default function SettingsPage() {
       label: 'Account',
       icon: <User size={20} />,
       content: <AccountTab />,
+      activeBgClass: 'bg-success',
+      activeTextClass: 'text-success-text',
     },
     {
       id: 'appearance',
@@ -25,6 +27,8 @@ export default function SettingsPage() {
           <p>Appearance settings will go here.</p>
         </div>
       ),
+      activeBgClass: 'bg-warning',
+      activeTextClass: 'text-warning-text',
     },
     {
       id: 'info',
@@ -35,12 +39,14 @@ export default function SettingsPage() {
           <p>Information and about page will go here.</p>
         </div>
       ),
+      activeBgClass: 'bg-info',
+      activeTextClass: 'text-info-text',
     },
   ];
 
   return (
-    <div className="container mx-auto p-4 md:p-8 pt-12 max-w-7xl flex-grow">
-      <TabbedLayout title="Settings" tabs={tabs} defaultTabId="account" />
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl flex-grow flex items-center justify-center">
+      <TabbedLayout tabs={tabs} defaultTabId="account" />
     </div>
   );
 }

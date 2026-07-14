@@ -7,6 +7,8 @@ export interface TabItem {
   label: string;
   icon?: React.ReactNode;
   content: React.ReactNode;
+  activeBgClass?: string;
+  activeTextClass?: string;
 }
 
 interface TabbedLayoutProps {
@@ -38,7 +40,7 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
                 onClick={() => setActiveTabId(tab.id)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 text-left font-bold ${
                   isActive
-                    ? 'border-foreground bg-foreground text-background shadow-[4px_4px_0px_var(--foreground)] translate-x-[-2px] translate-y-[-2px]'
+                    ? `border-foreground shadow-[4px_4px_0px_var(--foreground)] translate-x-[-2px] translate-y-[-2px] ${tab.activeBgClass || 'bg-foreground'} ${tab.activeTextClass || 'text-background'}`
                     : 'border-transparent bg-transparent text-foreground hover:bg-foreground/5 hover:border-foreground hover:shadow-[4px_4px_0px_currentColor] hover:-translate-y-[2px] hover:-translate-x-[2px]'
                 }`}
               >
@@ -51,9 +53,6 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
 
         {/* Right side - Content */}
         <div className="flex-grow flex flex-col bg-background">
-          <div className="p-6 md:p-8 md:pt-10 border-b-2 border-foreground">
-            <h2 className="text-3xl font-bold">{activeTab?.label}</h2>
-          </div>
           <div className="p-6 md:p-8 flex-grow">{activeTab?.content}</div>
         </div>
       </div>

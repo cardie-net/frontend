@@ -73,8 +73,6 @@ export default function AccountTab() {
 
   return (
     <div className="max-w-md">
-      <h2 className="text-2xl font-bold mb-6 text-foreground">Account Settings</h2>
-
       {error && (
         <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
           <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
