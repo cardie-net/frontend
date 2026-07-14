@@ -7,7 +7,7 @@ import { AccountDropdown } from './AccountDropdown';
 
 export function NavBar() {
   return (
-    <nav className="flex h-[46px] items-center justify-between bg-foreground px-3 text-background z-50">
+    <nav className="relative flex h-[46px] items-center justify-between bg-foreground px-3 text-background z-50">
       {/* Left Navigation */}
       <div className="flex flex-1 items-center gap-2 md:gap-3">
         <NavbarButton href="/decks" icon={Layers} hideTextOnMobile>
