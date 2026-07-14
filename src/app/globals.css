@@ -46,9 +46,9 @@
   --nav-btn-text: #f7f2e8;
   --nav-btn-border: #5f4f4e;
 
-  --ac-btn-bg: rgba(0, 0, 0, 0.05);
-  --ac-btn-text: #493d3c;
-  --ac-btn-border: #493d3c;
+  --ac-btn-bg: #7e6b69;
+  --ac-btn-text: #f7f2e8;
+  --ac-btn-border: #5f4f4e;
 
   /* Semantic UI Tokens (Light Mode) */
   --success: #8ba382;
@@ -83,9 +83,9 @@
   --nav-btn-text: #493d3c;
   --nav-btn-border: #493d3c;
 
-  --ac-btn-bg: #7e6b69;
-  --ac-btn-text: #f7f2e8;
-  --ac-btn-border: #5f4f4e;
+  --ac-btn-bg: rgba(0, 0, 0, 0.05);
+  --ac-btn-text: #493d3c;
+  --ac-btn-border: #493d3c;
 
   /* Semantic UI Tokens (Dark Mode) */
   --success: #3b4a37;
