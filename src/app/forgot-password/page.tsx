@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
             </div>
             <Link
               href="/login"
-              className="w-full flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-primary-dark shadow-primary hover:-translate-y-px hover:shadow-primary-hover active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               Return to Login
             </Link>
@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
 
             <button
               type="submit"
-              className="w-full flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-4 py-2.5 text-base font-bold border border-primary-dark shadow-primary hover:-translate-y-px hover:shadow-primary-hover active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
               disabled={isLoading}
             >
               {isLoading ? 'Sending...' : 'Send Reset Link'}

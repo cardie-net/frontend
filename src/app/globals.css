@@ -5,8 +5,11 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-primary: var(--primary);
+  --color-primary-dark: color-mix(in srgb, var(--primary), black 25%);
   --color-secondary: var(--secondary);
+  --color-secondary-dark: color-mix(in srgb, var(--secondary), black 25%);
   --color-accent: var(--accent);
+  --color-accent-dark: color-mix(in srgb, var(--accent), black 25%);
   --color-action-btn-bg: var(--action-btn-bg);
   --color-action-btn-text: var(--action-btn-text);
   --color-action-btn-border: var(--action-btn-border);
@@ -30,6 +33,25 @@
   --color-pink-text: var(--pink-text);
 
   --color-border-heavy: var(--border-heavy);
+
+  /* Slightly increased corner radius */
+  --radius-sm: 0.25rem;
+  --radius: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+  --radius-3xl: 1.75rem;
+
+  /* Semantic shadows */
+  --shadow-primary: 2px 2px 0px var(--color-primary-dark);
+  --shadow-primary-hover: 4px 4px 0px var(--color-primary-dark);
+  --shadow-secondary: 1px 1px 0px var(--color-secondary-dark);
+  --shadow-secondary-hover: 2px 2px 0px var(--color-secondary-dark);
+  --shadow-accent: 2px 2px 0px var(--color-accent-dark);
+  --shadow-accent-hover: 4px 4px 0px var(--color-accent-dark);
+  --shadow-action: 1px 1px 0px var(--color-action-btn-border);
+  --shadow-action-hover: 2px 2px 0px var(--color-action-btn-border);
 }
 
 :root {
@@ -147,7 +169,7 @@
   --pink: #444444;
   --pink-text: #ffffff;
 
-  --border-heavy: #000000;
+  --border-heavy: #888888;
 }
 
 :root.pink-white {
@@ -180,13 +202,13 @@
   --green: #f48fb1;
   --green-text: #880e4f;
 
-  --purple: #f06292;
+  --purple: #9c27b0;
   --purple-text: #ffffff;
 
   --pink: #e91e63;
   --pink-text: #ffffff;
 
-  --border-heavy: #f06292;
+  --border-heavy: #784a5e;
 }
 
 @layer base {

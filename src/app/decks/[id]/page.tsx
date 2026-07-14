@@ -193,7 +193,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
             <button
               type="submit"
               disabled={isAdding}
-              className="w-fit bg-action-btn-bg text-background px-6 py-2.5 rounded-md font-bold mt-2 hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] transition-all disabled:opacity-70"
+              className="w-fit bg-action-btn-bg text-background px-6 py-2.5 rounded-md font-bold mt-2 hover:-translate-y-px hover:shadow-action-hover border border-action-btn-border shadow-action transition-all disabled:opacity-70"
             >
               {isAdding ? 'Adding...' : 'Add Card'}
             </button>

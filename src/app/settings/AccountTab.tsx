@@ -116,7 +116,7 @@ export default function AccountTab() {
 
         <button
           type="submit"
-          className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-6 py-2.5 text-base font-bold border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-6 py-2.5 text-base font-bold border border-primary-dark shadow-primary hover:-translate-y-px hover:shadow-primary-hover active:translate-y-px active:shadow-none focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
           disabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}

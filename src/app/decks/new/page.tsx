@@ -136,7 +136,7 @@ export default function NewDeckPage() {
           <button
             type="submit"
             disabled={isCreating}
-            className="w-full bg-action-btn-bg text-background px-4 py-3 rounded-md font-bold mt-4 hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-action-btn-bg text-background px-4 py-3 rounded-md font-bold mt-4 hover:-translate-y-px hover:shadow-action-hover border border-action-btn-border shadow-action transition-all disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isCreating ? 'Creating...' : 'Create Deck'}
           </button>

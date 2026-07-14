@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'accent' | 'danger' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   href?: string;
   children: React.ReactNode;
@@ -27,11 +27,13 @@ export function Button({
 
   const variantClasses = {
     primary:
-      'bg-primary text-background border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none',
+      'bg-primary text-background border border-primary-dark shadow-primary hover:-translate-y-px hover:shadow-primary-hover active:translate-y-px active:shadow-none',
     secondary:
-      'bg-background text-foreground border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none',
+      'bg-background text-foreground border border-secondary-dark shadow-secondary hover:-translate-y-px hover:shadow-secondary-hover active:translate-y-px active:shadow-none',
+    accent:
+      'bg-accent text-background border border-accent-dark shadow-accent hover:-translate-y-px hover:shadow-accent-hover active:translate-y-px active:shadow-none',
     danger:
-      'bg-error text-error-text border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none',
+      'bg-error text-error-text border border-border-heavy shadow-[1px_1px_0px_var(--color-error)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-error)] active:translate-y-px active:shadow-none',
     ghost: 'hover:bg-foreground/10 text-foreground',
   };
 
