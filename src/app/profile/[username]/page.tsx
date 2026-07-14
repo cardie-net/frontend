@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { Settings, User, AlertCircle, Camera } from 'lucide-react';
+import { Settings, User, AlertCircle } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
 
 interface UserProfile {
@@ -174,15 +174,10 @@ export default function ProfilePage() {
 
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
             {/* PFP */}
-            <div className="relative group cursor-pointer shrink-0">
+            <div className="relative shrink-0">
               <div className="w-32 h-32 rounded-full border-4 border-foreground bg-foreground/5 flex items-center justify-center overflow-hidden">
                 <User className="w-16 h-16 opacity-50" />
               </div>
-              {isOwnProfile && (
-                <div className="absolute inset-0 bg-background/80 rounded-full opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-                  <Camera className="w-8 h-8" />
-                </div>
-              )}
             </div>
 
             {/* User Info */}

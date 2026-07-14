@@ -1,6 +1,7 @@
 import React from 'react';
 import { User, Palette, Info } from 'lucide-react';
 import { TabbedLayout, TabItem } from '@/components/TabbedLayout';
+import AccountTab from './AccountTab';
 
 export const metadata = {
   title: 'Settings - Cardie',
@@ -13,11 +14,7 @@ export default function SettingsPage() {
       id: 'account',
       label: 'Account',
       icon: <User size={20} />,
-      content: (
-        <div className="text-foreground/80">
-          <p>Account settings will go here.</p>
-        </div>
-      ),
+      content: <AccountTab />,
     },
     {
       id: 'appearance',
