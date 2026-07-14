@@ -1,14 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { NavbarButton } from './NavbarButton';
 import { Layers, PlusSquare, Globe } from 'lucide-react';
 import { AccountDropdown } from './AccountDropdown';
 
 export function NavBar() {
-  const router = useRouter();
-
   return (
     <nav className="flex h-[46px] items-center justify-between bg-foreground px-3 text-background z-50">
       {/* Left Navigation */}
@@ -29,6 +26,7 @@ export function NavBar() {
       {/* Center Logo */}
       <div className="flex-shrink-0 flex items-center justify-center pointer-events-auto z-10 px-2">
         <Link href="/">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/logo.svg"
             alt="Cardie.net Logo"

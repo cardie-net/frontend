@@ -1,38 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
-
-interface User {
-  id: string;
-  email: string;
-  is_guest: boolean;
-  is_active: boolean;
-}
+import { useAuth } from '@/lib/AuthContext';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Spinner } from '@/components/ui/Spinner';
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await apiFetch(`/api/v1/users/me`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { user, loading } = useAuth();
 
   return (
     <main className="flex-1 bg-background text-foreground p-8 flex flex-col items-center justify-center font-sans">
@@ -44,7 +18,7 @@ export default function Home() {
           Welcome back. Explore your decks and continue learning today.
         </p>
 
-        <div className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+        <Card className="w-full">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Dashboard</h2>
             <div className="h-8 w-8 rounded-full border border-foreground/30 flex items-center justify-center">
@@ -65,25 +39,20 @@ export default function Home() {
           </div>
 
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-8">
-              <div className="w-8 h-8 border-2 border-foreground/30 border-t-foreground rounded-full animate-spin mb-4"></div>
-              <p className="text-foreground/80 font-medium animate-pulse">
-                Loading your profile...
-              </p>
-            </div>
+            <Spinner />
           ) : user ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">Email</span>
                 <span className="text-sm font-medium text-foreground/80">{user.email}</span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">Account Type</span>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-[#7e6b69] dark:bg-white text-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4]">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-nav-btn-bg dark:bg-white text-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                   {user.is_guest ? 'Guest' : 'Member'}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">User ID</span>
                 <span className="text-xs font-mono text-foreground/70 truncate max-w-[200px]">
                   {user.id}
@@ -108,15 +77,12 @@ export default function Home() {
                 </svg>
               </div>
               <p className="text-foreground/80 font-medium mb-6">You are not logged in.</p>
-              <Link
-                href="/login"
-                className="inline-flex items-center justify-center gap-2.5 bg-[#7e6b69] dark:bg-white text-background transition-all rounded-md px-6 py-2.5 text-sm font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none w-full sm:w-auto"
-              >
+              <Button href="/login" className="w-full sm:w-auto">
                 Sign In
-              </Link>
+              </Button>
             </div>
           )}
-        </div>
+        </Card>
       </div>
     </main>
   );

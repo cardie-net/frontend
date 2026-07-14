@@ -65,7 +65,7 @@ export default function SignupPage() {
           setError('Registration failed.');
         }
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during registration. Please try again.');
     } finally {
       setIsLoading(false);

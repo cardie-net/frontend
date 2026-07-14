@@ -4,9 +4,13 @@ import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
-import { AlertCircle } from 'lucide-react';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 import AuthDivider from '@/components/AuthDivider';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Alert } from '@/components/ui/Alert';
+import { useAuth } from '@/lib/AuthContext';
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_invalid_state: 'Authentication failed. Please try again',
@@ -24,11 +28,13 @@ function LoginContent() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<React.ReactNode>('');
   const [isLoading, setIsLoading] = useState(false);
+  const { refreshUser } = useAuth();
 
   // Show OAuth error messages passed via URL
   useEffect(() => {
     const oauthError = searchParams.get('error');
     if (oauthError && OAUTH_ERROR_MESSAGES[oauthError]) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(OAUTH_ERROR_MESSAGES[oauthError]);
     }
   }, [searchParams]);
@@ -64,6 +70,7 @@ function LoginContent() {
       });
 
       if (response.ok) {
+        await refreshUser();
         window.location.href = '/';
       } else {
         const errData = await response.json().catch(() => ({}));
@@ -87,7 +94,7 @@ function LoginContent() {
           );
         }
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred while logging in. Please try again.');
     } finally {
       setIsLoading(false);
@@ -95,16 +102,11 @@ function LoginContent() {
   };
 
   return (
-    <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
+    <Card className="w-full max-w-md">
       <h1 className="text-3xl font-extrabold mb-2 text-foreground">Welcome Back</h1>
       <p className="text-foreground/80 mb-6 font-medium">Sign in to continue to Cardie</p>
 
-      {error && (
-        <div className="bg-[var(--error)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--error-text)] flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-          <div>{error}</div>
-        </div>
-      )}
+      {error && <Alert className="mb-6">{error}</Alert>}
 
       <GoogleSignInButton />
 
@@ -115,10 +117,9 @@ function LoginContent() {
           <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="email">
             Email address
           </label>
-          <input
+          <Input
             id="email"
             type="email"
-            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -139,10 +140,9 @@ function LoginContent() {
               Forgot password?
             </Link>
           </div>
-          <input
+          <Input
             id="password"
             type="password"
-            className="w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] font-medium"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -150,13 +150,9 @@ function LoginContent() {
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full flex items-center justify-center gap-2.5 bg-[var(--color-primary)] text-[#f7f2e8] transition-all rounded-md px-4 py-2.5 text-base font-bold border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] active:translate-y-px active:shadow-none focus:outline-none mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
-          disabled={isLoading}
-        >
+        <Button type="submit" className="w-full mt-6" disabled={isLoading}>
           {isLoading ? 'Signing in...' : 'Sign In'}
-        </button>
+        </Button>
       </form>
 
       <p className="mt-6 text-center text-sm font-medium text-foreground/80 flex gap-2 justify-center">
@@ -165,7 +161,7 @@ function LoginContent() {
           Sign up
         </Link>
       </p>
-    </div>
+    </Card>
   );
 }
 
@@ -173,11 +169,7 @@ export default function LoginPage() {
   return (
     <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
       <Suspense
-        fallback={
-          <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8 text-center font-bold">
-            Loading...
-          </div>
-        }
+        fallback={<Card className="w-full max-w-md text-center font-bold">Loading...</Card>}
       >
         <LoginContent />
       </Suspense>

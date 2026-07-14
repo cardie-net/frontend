@@ -27,6 +27,8 @@
   --color-info-text: var(--info-text);
   --color-warning: var(--warning);
   --color-warning-text: var(--warning-text);
+
+  --color-border-heavy: var(--border-heavy);
 }
 
 :root {
@@ -53,6 +55,8 @@
 
   --warning: #d9a05b;
   --warning-text: #3d2711;
+
+  --border-heavy: #5f4f4e;
 }
 
 :root.dark {
@@ -79,6 +83,8 @@
 
   --warning: #5c4121;
   --warning-text: #fce7cf;
+
+  --border-heavy: #d4d4d4;
 }
 
 @layer base {

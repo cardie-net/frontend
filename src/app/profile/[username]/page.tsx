@@ -72,11 +72,11 @@ export default function ProfilePage() {
           const itemsData = await itemsRes.json();
           // Filter to only get decks (assuming folders might not have slug or something, or we just render them all as decks for now)
           // The backend returns Union[FolderRead, DeckRead]
-          const decksOnly = itemsData.filter((item: any) => 'slug' in item); // Folders might not have slug? Let's assume all have slug, wait. Actually Folders might be different. Let's assume decks.
+          const decksOnly = itemsData.filter((item: { slug?: string }) => 'slug' in item); // Folders might not have slug? Let's assume all have slug, wait. Actually Folders might be different. Let's assume decks.
           setDecks(decksOnly);
         }
-      } catch (err) {
-        console.error(err);
+      } catch {
+        console.error('An unexpected error occurred');
         setError('An unexpected error occurred');
       } finally {
         setLoading(false);
@@ -105,7 +105,7 @@ export default function ProfilePage() {
         let errorMsg = 'Failed to update profile';
         if (data.detail) {
           if (Array.isArray(data.detail)) {
-            errorMsg = data.detail.map((err: any) => err.msg).join(', ');
+            errorMsg = data.detail.map((err: { msg: string }) => err.msg).join(', ');
           } else if (typeof data.detail === 'string') {
             errorMsg = data.detail;
           } else {
@@ -125,8 +125,8 @@ export default function ProfilePage() {
       if (updatedUser.username !== username) {
         window.location.href = `/profile/${updatedUser.username}`;
       }
-    } catch (err) {
-      setSaveError('An unexpected error occurred while saving.');
+    } catch {
+      setSaveError('An error occurred. Please try again.');
     } finally {
       setIsSaving(false);
     }

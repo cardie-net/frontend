@@ -59,8 +59,8 @@ export default function NewDeckPage() {
       }
       const newDeck = await res.json();
       router.push(`/decks/${newDeck.id}`);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
       setIsCreating(false);
     }
   };

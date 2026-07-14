@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { Golos_Text } from 'next/font/google';
-import Link from 'next/link';
 import './globals.css';
 import { NavBar } from '@/components/NavBar';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { AuthProvider } from '@/lib/AuthContext';
 
 const golosText = Golos_Text({
   variable: '--font-golos-text',
@@ -31,8 +31,10 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <NavBar />
-          {children}
+          <AuthProvider>
+            <NavBar />
+            {children}
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

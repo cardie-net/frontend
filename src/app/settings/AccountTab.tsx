@@ -60,7 +60,7 @@ export default function AccountTab() {
           );
         }
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsSaving(false);

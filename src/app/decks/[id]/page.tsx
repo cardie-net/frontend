@@ -92,8 +92,8 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
       setCards([...cards, newCard]);
       setNewFront('');
       setNewBack('');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
       setIsAdding(false);
     }

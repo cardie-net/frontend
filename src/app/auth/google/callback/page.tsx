@@ -28,7 +28,9 @@ function GoogleCallbackContent() {
     }
 
     if (error) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setStatus('error');
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setErrorMessage(getErrorMessage(error));
 
       // Redirect to login after a brief delay so the user sees the message

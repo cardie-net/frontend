@@ -48,7 +48,7 @@ function VerifyContent() {
       } else {
         setError('Failed to resend verification email.');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred. Please try again.');
     } finally {
       setIsResending(false);
@@ -95,7 +95,7 @@ function VerifyContent() {
           setError('Verification failed. Invalid or expired token');
         }
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during verification. Please try again');
     } finally {
       setIsLoading(false);

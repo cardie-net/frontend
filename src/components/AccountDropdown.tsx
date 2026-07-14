@@ -5,42 +5,13 @@ import { User as UserIcon, LogIn, UserPlus, LogOut, Settings, BarChart2 } from '
 import { ThemeToggle } from './ThemeToggle';
 import { AccountPopupButton } from './AccountPopupButton';
 import { Popup } from './Popup';
-import { apiFetch } from '@/lib/api';
-
-interface UserProfile {
-  id: string;
-  email: string;
-  is_guest: boolean;
-  is_active: boolean;
-  display_name: string;
-  username: string;
-}
+import { useAuth } from '@/lib/AuthContext';
 
 export function AccountDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [isGuestPopupOpen, setIsGuestPopupOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const [user, setUser] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await apiFetch(`/api/v1/users/me`);
-
-        if (response.ok) {
-          const data = await response.json();
-          setUser(data);
-        }
-      } catch (error) {
-        console.error('Failed to fetch user:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
+  const { user, loading, logout } = useAuth();
 
   // Close the dropdown when clicking outside of it
   useEffect(() => {
@@ -131,12 +102,7 @@ export function AccountDropdown() {
               <AccountPopupButton
                 onClick={async () => {
                   setIsOpen(false);
-                  try {
-                    await apiFetch('/api/v1/auth/jwt/logout', { method: 'POST' });
-                  } catch (error) {
-                    console.error('Failed to logout:', error);
-                  }
-                  window.location.href = '/';
+                  await logout();
                 }}
                 icon={LogOut}
                 className="col-span-2 !flex-row text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-500 !border-red-500 !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor] dark:!border-red-400"
@@ -156,8 +122,8 @@ export function AccountDropdown() {
         <div className="flex flex-col space-y-4">
           <p>You are currently using a guest account.</p>
           <p>
-            You can create and study decks, but you will lose access to them when your browser's
-            local storage is cleared.
+            You can create and study decks, but you will lose access to them when your
+            browser&apos;s local storage is cleared.
           </p>
           <p>
             To save your data across devices and keep it safe, please sign up for an account. Its

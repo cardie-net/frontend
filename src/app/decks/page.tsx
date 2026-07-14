@@ -3,11 +3,11 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
-import { AlertCircle } from 'lucide-react';
-
-interface User {
-  id: string;
-}
+import { useAuth } from '@/lib/AuthContext';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
+import { Alert } from '@/components/ui/Alert';
+import { Spinner } from '@/components/ui/Spinner';
 
 interface Deck {
   id: string;
@@ -17,60 +17,34 @@ interface Deck {
 }
 
 export default function DecksPage() {
-  const [user, setUser] = useState<User | null>(null);
+  const { user, loading: authLoading } = useAuth();
   const [decks, setDecks] = useState<Deck[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [newDeckName, setNewDeckName] = useState('');
-  const [newDeckSlug, setNewDeckSlug] = useState('');
+  const [decksLoading, setDecksLoading] = useState(true);
   const [error, setError] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserAndDecks = async () => {
-      try {
-        const userRes = await apiFetch(`/api/v1/users/me`);
-        if (!userRes.ok) throw new Error('Failed to fetch user');
-        const userData = await userRes.json();
-        setUser(userData);
+    if (authLoading) return;
+    if (!user) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDecksLoading(false);
+      return;
+    }
 
-        const itemsRes = await apiFetch(`/api/v1/users/${userData.id}/items`);
+    const fetchDecks = async () => {
+      try {
+        const itemsRes = await apiFetch(`/api/v1/users/${user.id}/items`);
         if (!itemsRes.ok) throw new Error('Failed to fetch items');
         const itemsData = await itemsRes.json();
-
-        setDecks(itemsData.filter((item: any) => item.type === 'deck'));
+        setDecks(itemsData.filter((item: { type: string }) => item.type === 'deck'));
       } catch (err) {
         console.error(err);
       } finally {
-        setLoading(false);
+        setDecksLoading(false);
       }
     };
-    fetchUserAndDecks();
-  }, []);
-
-  const handleCreateDeck = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const res = await apiFetch(`/api/v1/decks/`, {
-        method: 'POST',
-        body: JSON.stringify({
-          name: newDeckName,
-          slug: newDeckSlug,
-          privacy: 'private',
-        }),
-      });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.detail || 'Failed to create deck');
-      }
-      const newDeck = await res.json();
-      setDecks([...decks, newDeck]);
-      setNewDeckName('');
-      setNewDeckSlug('');
-      setError('');
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
+    fetchDecks();
+  }, [user, authLoading]);
 
   const handleDeleteDeck = async (e: React.MouseEvent, deckId: string) => {
     e.preventDefault(); // Prevent navigating to the deck
@@ -83,29 +57,21 @@ export default function DecksPage() {
       });
       if (!res.ok) throw new Error('Failed to delete deck');
       setDecks(decks.filter((d) => d.id !== deckId));
-    } catch (err) {
-      console.error(err);
-      alert('Failed to delete deck');
+    } catch {
+      setError('Failed to delete deck');
     } finally {
       setIsDeleting(null);
     }
   };
 
-  if (loading)
-    return (
-      <div className="p-8 text-foreground flex-1 flex items-center justify-center">Loading...</div>
-    );
+  if (authLoading || decksLoading) return <Spinner className="flex-1" />;
+
   if (!user)
     return (
       <div className="p-8 text-foreground flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="mb-4">Please log in to view decks.</p>
-          <Link
-            href="/login"
-            className="bg-[#7e6b69] dark:bg-white text-background px-4 py-2 rounded-md font-bold"
-          >
-            Log In
-          </Link>
+          <Button href="/login">Log In</Button>
         </div>
       </div>
     );
@@ -115,26 +81,16 @@ export default function DecksPage() {
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-extrabold">My Decks</h1>
-          <Link
-            href="/decks/new"
-            className="bg-[#7e6b69] dark:bg-white text-background px-4 py-2.5 rounded-md font-bold hover:-translate-y-px hover:shadow-[2px_2px_0px_#5f4f4e] dark:hover:shadow-[2px_2px_0px_#d4d4d4] border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[1px_1px_0px_#5f4f4e] dark:shadow-[1px_1px_0px_#d4d4d4] transition-all"
-          >
-            + New Deck
-          </Link>
+          <Button href="/decks/new">+ New Deck</Button>
         </div>
 
-        {error && (
-          <div className="text-red-500 mb-4 bg-red-100 dark:bg-red-900/30 p-3 rounded-md flex items-start gap-2">
-            <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-            <div>{error}</div>
-          </div>
-        )}
+        {error && <Alert className="mb-4">{error}</Alert>}
 
         <h2 className="text-2xl font-bold mb-4">Your Decks ({decks.length})</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {decks.map((deck) => (
             <Link key={deck.id} href={`/decks/${deck.id}`}>
-              <div className="group h-full p-6 border border-[#5f4f4e] dark:border-[#d4d4d4] rounded-lg shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] hover:-translate-y-1 hover:shadow-[6px_6px_0px_#5f4f4e] dark:hover:shadow-[6px_6px_0px_#d4d4d4] transition-all cursor-pointer flex flex-col justify-between bg-background">
+              <Card hoverable className="h-full flex flex-col justify-between p-6">
                 <div>
                   <h3 className="text-xl font-bold group-hover:underline">{deck.name}</h3>
                   <p className="text-sm opacity-70 mt-2 font-mono">/{deck.slug}</p>
@@ -143,16 +99,16 @@ export default function DecksPage() {
                   <button
                     onClick={(e) => handleDeleteDeck(e, deck.id)}
                     disabled={isDeleting === deck.id}
-                    className="text-red-500 font-bold text-sm px-2 py-1 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                    className="text-error font-bold text-sm px-2 py-1 rounded hover:bg-error/10 transition-colors disabled:opacity-50"
                   >
                     {isDeleting === deck.id ? 'Deleting...' : 'Delete'}
                   </button>
                 </div>
-              </div>
+              </Card>
             </Link>
           ))}
           {decks.length === 0 && (
-            <div className="col-span-full p-12 border border-dashed border-foreground/30 rounded-lg text-center text-foreground/70 flex flex-col items-center">
+            <div className="col-span-full p-12 border border-dashed border-border-heavy rounded-lg text-center text-foreground/70 flex flex-col items-center">
               <p className="font-medium text-lg mb-2">No decks found.</p>
               <p className="text-sm">Create your first deck to get started!</p>
             </div>
