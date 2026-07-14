@@ -27,7 +27,7 @@ export function Button({
 
   const variantClasses = {
     primary:
-      'bg-nav-btn-bg dark:bg-white text-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none',
+      'bg-[var(--color-primary)] dark:bg-[var(--color-primary)] text-[#f7f2e8] border border-[#231d1c] dark:border-[#111111] shadow-[2px_2px_0px_#231d1c] dark:shadow-[2px_2px_0px_#111111] hover:-translate-y-px hover:shadow-[4px_4px_0px_#231d1c] dark:hover:shadow-[4px_4px_0px_#111111] active:translate-y-px active:shadow-none',
     secondary:
       'bg-background text-foreground border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-border-heavy)] active:translate-y-px active:shadow-none',
     danger:

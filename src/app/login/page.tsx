@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { apiFetch } from '@/lib/api';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 import AuthDivider from '@/components/AuthDivider';
-import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Alert } from '@/components/ui/Alert';
@@ -102,9 +101,9 @@ function LoginContent() {
   };
 
   return (
-    <Card className="w-full max-w-md">
-      <h1 className="text-3xl font-extrabold mb-2 text-foreground">Welcome Back</h1>
-      <p className="text-foreground/80 mb-6 font-medium">Sign in to continue to Cardie</p>
+    <div className="w-full max-w-md bg-foreground text-background border border-[#231d1c] dark:border-[#111111] rounded-lg p-8 shadow-[8px_8px_0px_#231d1c] dark:shadow-[8px_8px_0px_#111111]">
+      <h1 className="text-3xl font-extrabold mb-2">Welcome Back</h1>
+      <p className="opacity-80 mb-6 font-medium">Sign in to continue to Cardie</p>
 
       {error && <Alert className="mb-6">{error}</Alert>}
 
@@ -114,7 +113,7 @@ function LoginContent() {
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="email">
+          <label className="block text-sm font-bold mb-1.5" htmlFor="email">
             Email address
           </label>
           <Input
@@ -129,12 +128,12 @@ function LoginContent() {
 
         <div className="mb-4">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="password">
+            <label className="block text-sm font-bold mb-1.5" htmlFor="password">
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="text-foreground hover:underline font-bold"
+              className="hover:underline font-bold"
               style={{ fontSize: '0.875rem' }}
             >
               Forgot password?
@@ -155,13 +154,13 @@ function LoginContent() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm font-medium text-foreground/80 flex gap-2 justify-center">
+      <p className="mt-6 text-center text-sm font-medium opacity-80 flex gap-2 justify-center">
         Don&apos;t have an account?
-        <Link href="/signup" className="text-foreground hover:underline font-bold">
+        <Link href="/signup" className="hover:underline font-bold text-background">
           Sign up
         </Link>
       </p>
-    </Card>
+    </div>
   );
 }
 
@@ -169,7 +168,11 @@ export default function LoginPage() {
   return (
     <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
       <Suspense
-        fallback={<Card className="w-full max-w-md text-center font-bold">Loading...</Card>}
+        fallback={
+          <div className="w-full max-w-md bg-foreground text-background border border-[#231d1c] dark:border-[#111111] rounded-lg p-8 shadow-[8px_8px_0px_#231d1c] dark:shadow-[8px_8px_0px_#111111] text-center font-bold">
+            Loading...
+          </div>
+        }
       >
         <LoginContent />
       </Suspense>
