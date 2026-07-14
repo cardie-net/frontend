@@ -134,7 +134,7 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="min-h-[calc(100vh-42px)] flex items-center justify-center text-foreground p-8">
+      <div className="flex-1 flex items-center justify-center text-foreground p-8">
         <p className="font-bold animate-pulse text-lg">Loading profile...</p>
       </div>
     );
@@ -142,7 +142,7 @@ export default function ProfilePage() {
 
   if (error || !profileUser) {
     return (
-      <div className="min-h-[calc(100vh-42px)] flex items-center justify-center text-foreground p-8">
+      <div className="flex-1 flex items-center justify-center text-foreground p-8">
         <div className="text-center p-8 border-2 border-foreground rounded-xl shadow-[4px_4px_0px_currentColor]">
           <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
           <p className="font-bold text-xl">{error || 'Profile not found'}</p>
@@ -155,7 +155,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-42px)] bg-background text-foreground p-4 sm:p-8">
+    <div className="flex-1 bg-background text-foreground p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Card */}
         <div className="bg-background border-2 border-foreground rounded-2xl shadow-[4px_4px_0px_currentColor] p-6 sm:p-10 relative">

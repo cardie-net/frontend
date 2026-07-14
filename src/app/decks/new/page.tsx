@@ -66,7 +66,7 @@ export default function NewDeckPage() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-42px)] bg-background text-foreground p-8 flex items-center justify-center">
+    <div className="flex-1 bg-background text-foreground p-8 flex items-center justify-center">
       <div className="max-w-md w-full bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">
         <div className="mb-6">
           <Link

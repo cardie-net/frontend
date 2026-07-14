@@ -118,19 +118,19 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
 
   if (loading)
     return (
-      <div className="p-8 text-foreground min-h-[calc(100vh-42px)] flex items-center justify-center">
+      <div className="p-8 text-foreground flex-1 flex items-center justify-center">
         Loading deck...
       </div>
     );
   if (!deck)
     return (
-      <div className="p-8 text-foreground min-h-[calc(100vh-42px)] flex items-center justify-center">
+      <div className="p-8 text-foreground flex-1 flex items-center justify-center">
         Deck not found.
       </div>
     );
 
   return (
-    <div className="min-h-[calc(100vh-42px)] bg-background text-foreground p-8">
+    <div className="flex-1 bg-background text-foreground p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link

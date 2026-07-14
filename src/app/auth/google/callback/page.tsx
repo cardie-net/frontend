@@ -59,7 +59,7 @@ function GoogleCallbackContent() {
 
 export default function GoogleCallbackPage() {
   return (
-    <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
       <Suspense
         fallback={
           <div className="text-center">

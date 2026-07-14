@@ -200,7 +200,7 @@ function VerifyContent() {
 
 export default function VerifyPage() {
   return (
-    <div className="min-h-[calc(100vh-42px)] flex items-center justify-center bg-background text-foreground p-8">
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
       <Suspense
         fallback={
           <div className="w-full max-w-md bg-background border border-[#5f4f4e] dark:border-[#d4d4d4] shadow-[4px_4px_0px_#5f4f4e] dark:shadow-[4px_4px_0px_#d4d4d4] rounded-lg p-8">

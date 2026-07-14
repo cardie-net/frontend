@@ -93,13 +93,11 @@ export default function DecksPage() {
 
   if (loading)
     return (
-      <div className="p-8 text-foreground min-h-[calc(100vh-42px)] flex items-center justify-center">
-        Loading...
-      </div>
+      <div className="p-8 text-foreground flex-1 flex items-center justify-center">Loading...</div>
     );
   if (!user)
     return (
-      <div className="p-8 text-foreground min-h-[calc(100vh-42px)] flex items-center justify-center">
+      <div className="p-8 text-foreground flex-1 flex items-center justify-center">
         <div className="text-center">
           <p className="mb-4">Please log in to view decks.</p>
           <Link
@@ -113,7 +111,7 @@ export default function DecksPage() {
     );
 
   return (
-    <div className="min-h-[calc(100vh-42px)] bg-background text-foreground p-8">
+    <div className="flex-1 bg-background text-foreground p-8">
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-4xl font-extrabold">My Decks</h1>
