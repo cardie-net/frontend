@@ -23,7 +23,6 @@ function GoogleCallbackContent() {
     const error = searchParams.get('error');
 
     if (token) {
-      localStorage.setItem('jwt_token', token);
       window.location.href = '/';
       return;
     }

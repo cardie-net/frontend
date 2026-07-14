@@ -136,7 +136,6 @@ export function AccountDropdown() {
                   } catch (error) {
                     console.error('Failed to logout:', error);
                   }
-                  localStorage.removeItem('jwt_token');
                   window.location.href = '/';
                 }}
                 icon={LogOut}

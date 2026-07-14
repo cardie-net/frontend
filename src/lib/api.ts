@@ -1,6 +1,6 @@
-let guestAuthPromise: Promise<string | null> | null = null;
+let guestAuthPromise: Promise<boolean> | null = null;
 
-async function getGuestToken(): Promise<string | null> {
+async function setupGuestSession(): Promise<boolean> {
   if (guestAuthPromise) {
     return guestAuthPromise;
   }
@@ -14,17 +14,10 @@ async function getGuestToken(): Promise<string | null> {
         },
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.access_token) {
-          localStorage.setItem('jwt_token', data.access_token);
-          return data.access_token;
-        }
-      }
-      return null;
+      return response.ok;
     } catch (error) {
-      console.error('Error fetching guest token:', error);
-      return null;
+      console.error('Error setting up guest session:', error);
+      return false;
     } finally {
       guestAuthPromise = null;
     }
@@ -34,20 +27,10 @@ async function getGuestToken(): Promise<string | null> {
 }
 
 export async function apiFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
-  let token = typeof window !== 'undefined' ? localStorage.getItem('jwt_token') : null;
-
-  // Do not automatically request guest token for auth endpoints
+  // Do not automatically setup guest session for auth endpoints
   const isAuthEndpoint = endpoint.includes('/api/v1/auth/');
 
-  if (!token && !isAuthEndpoint && typeof window !== 'undefined') {
-    token = await getGuestToken();
-  }
-
   const headers = new Headers(options.headers || {});
-
-  if (token && !headers.has('Authorization')) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
 
   if (!headers.has('Content-Type') && options.method && options.method !== 'GET') {
     // Only set application/json if not FormData or URLSearchParams
@@ -60,20 +43,19 @@ export async function apiFetch(endpoint: string, options: RequestInit = {}): Pro
     }
   }
 
-  let response = await fetch(endpoint, {
+  // Ensure cookies are included
+  const fetchOptions: RequestInit = {
     ...options,
     headers,
-  });
+    credentials: 'include', // Important for sending/receiving httpOnly cookies
+  };
+
+  let response = await fetch(endpoint, fetchOptions);
 
   if (response.status === 401 && !isAuthEndpoint && typeof window !== 'undefined') {
-    localStorage.removeItem('jwt_token');
-    const guestToken = await getGuestToken();
-    if (guestToken) {
-      headers.set('Authorization', `Bearer ${guestToken}`);
-      response = await fetch(endpoint, {
-        ...options,
-        headers,
-      });
+    const guestSetupSuccess = await setupGuestSession();
+    if (guestSetupSuccess) {
+      response = await fetch(endpoint, fetchOptions);
     }
   }
 

@@ -64,11 +64,7 @@ function LoginContent() {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        if (data.access_token) {
-          localStorage.setItem('jwt_token', data.access_token);
-          window.location.href = '/';
-        }
+        window.location.href = '/';
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail === 'USER_NOT_VERIFIED') {
