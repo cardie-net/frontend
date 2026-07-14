@@ -52,9 +52,9 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
-      <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
-        <h1 className="text-3xl font-extrabold mb-2">Reset Password</h1>
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
+      <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">Reset Password</h1>
         <p className="opacity-80 mb-6 font-medium">Enter your email to receive a reset link</p>
 
         {error && (
@@ -108,7 +108,7 @@ export default function ForgotPasswordPage() {
 
         {!success && (
           <p
-            className="mt-6 text-center text-sm font-medium opacity-80 flex gap-2 justify-center"
+            className="mt-6 text-center text-xs sm:text-sm font-medium opacity-80 flex gap-1 sm:gap-2 justify-center"
             style={{ marginTop: '1.5rem' }}
           >
             Remember your password?{' '}

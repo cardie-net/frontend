@@ -103,8 +103,8 @@ function VerifyContent() {
   };
 
   return (
-    <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
-      <h1 className="text-3xl font-extrabold mb-2">Verify Email</h1>
+    <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">Verify Email</h1>
       <p className="opacity-80 mb-6 font-medium">Enter your verification token</p>
 
       {error && (
@@ -183,7 +183,7 @@ function VerifyContent() {
         </button>
       </div>
 
-      <p className="mt-4 text-center text-sm font-medium opacity-80 flex gap-2 justify-center">
+      <p className="mt-4 text-center text-xs sm:text-sm font-medium opacity-80 flex gap-1 sm:gap-2 justify-center">
         <Link href="/login" className="hover:underline font-bold text-background">
           Back to login
         </Link>
@@ -194,10 +194,10 @@ function VerifyContent() {
 
 export default function VerifyPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
+          <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
             Loading...
           </div>
         }

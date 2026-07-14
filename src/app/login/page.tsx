@@ -101,8 +101,8 @@ function LoginContent() {
   };
 
   return (
-    <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-8 shadow-[8px_8px_0px_var(--color-border-heavy)]">
-      <h1 className="text-3xl font-extrabold mb-2">Welcome Back</h1>
+    <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-6 sm:p-8 shadow-[8px_8px_0px_var(--color-border-heavy)]">
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">Welcome Back</h1>
       <p className="opacity-80 mb-6 font-medium">Sign in to continue to Cardie</p>
 
       {error && <Alert className="mb-6">{error}</Alert>}
@@ -154,7 +154,7 @@ function LoginContent() {
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm font-medium opacity-80 flex gap-2 justify-center">
+      <p className="mt-6 text-center text-xs sm:text-sm font-medium opacity-80 flex gap-1 sm:gap-2 justify-center">
         Don&apos;t have an account?
         <Link href="/signup" className="hover:underline font-bold text-background">
           Sign up
@@ -166,10 +166,10 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-8 shadow-[8px_8px_0px_var(--color-border-heavy)] text-center font-bold">
+          <div className="w-full max-w-md bg-foreground text-background border-2 border-border-heavy rounded-lg p-6 sm:p-8 shadow-[8px_8px_0px_var(--color-border-heavy)] text-center font-bold">
             Loading...
           </div>
         }

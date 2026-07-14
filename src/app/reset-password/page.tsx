@@ -68,7 +68,7 @@ function ResetPasswordContent() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
+      <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
         <div style={{ textAlign: 'center' }}>
           <div
             className="bg-[var(--success)] p-3 rounded-md mb-6 text-sm font-medium text-[var(--success-text)] flex items-start gap-2 text-left"
@@ -89,8 +89,8 @@ function ResetPasswordContent() {
   }
 
   return (
-    <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
-      <h1 className="text-3xl font-extrabold mb-2">Set New Password</h1>
+    <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
+      <h1 className="text-2xl sm:text-3xl font-extrabold mb-2">Set New Password</h1>
       <p className="opacity-80 mb-6 font-medium">Enter your token and new password</p>
 
       {error && (
@@ -162,10 +162,10 @@ function ResetPasswordContent() {
 
 export default function ResetPasswordPage() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-8">
+    <div className="flex-1 flex items-center justify-center bg-background text-foreground p-4 sm:p-8">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-8">
+          <div className="w-full max-w-md bg-foreground text-background border border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] rounded-lg p-6 sm:p-8">
             Loading...
           </div>
         }
