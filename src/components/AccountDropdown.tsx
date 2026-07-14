@@ -117,7 +117,7 @@ export function AccountDropdown() {
                 await logout();
               }}
               icon={LogOut}
-              className="col-span-2 !flex-row text-error hover:text-error/80 !border-error !shadow-[1px_1px_0px_currentColor] hover:!shadow-[2px_2px_0px_currentColor]"
+              className="col-span-2 !flex-row !bg-primary !text-background hover:!bg-primary/90 !border-primary-dark !shadow-[1px_1px_0px_var(--color-primary-dark)] hover:!shadow-[2px_2px_0px_var(--color-primary-dark)]"
             >
               Log out
             </AccountPopupButton>
