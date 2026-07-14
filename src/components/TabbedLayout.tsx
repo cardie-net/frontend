@@ -60,13 +60,13 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
 
         {/* Right side - Content */}
         <div
-          className={`flex-grow flex-col bg-background ${isMobileViewContent ? 'flex' : 'hidden md:flex'}`}
+          className={`flex-grow flex-col bg-foreground text-background ${isMobileViewContent ? 'flex' : 'hidden md:flex'}`}
         >
           {/* Mobile Back Button */}
-          <div className="md:hidden border-b-2 border-foreground p-4 flex items-center bg-foreground/5">
+          <div className="md:hidden border-b-2 border-background p-4 flex items-center">
             <button
               onClick={() => setIsMobileViewContent(false)}
-              className="flex items-center gap-2 font-bold text-foreground hover:bg-foreground/10 px-4 py-2 rounded-xl transition-all duration-200 border-2 border-transparent hover:border-foreground hover:shadow-[4px_4px_0px_currentColor] hover:-translate-y-[2px] hover:-translate-x-[2px]"
+              className="flex items-center gap-2 font-bold text-background hover:bg-background/10 px-4 py-2 rounded-xl transition-all duration-200 border-2 border-transparent hover:border-background hover:shadow-[4px_4px_0px_currentColor] hover:-translate-y-[2px] hover:-translate-x-[2px]"
             >
               <ChevronLeft size={20} />
               Back to Menu

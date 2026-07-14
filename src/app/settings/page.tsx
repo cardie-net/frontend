@@ -15,7 +15,7 @@ export default function SettingsPage() {
       label: 'General',
       icon: <Settings size={20} />,
       content: (
-        <div className="text-foreground/80">
+        <div className="opacity-80">
           <p>General settings will go here.</p>
         </div>
       ),
@@ -35,7 +35,7 @@ export default function SettingsPage() {
       label: 'Appearance',
       icon: <Palette size={20} />,
       content: (
-        <div className="text-foreground/80">
+        <div className="opacity-80">
           <p>Appearance settings will go here.</p>
         </div>
       ),
@@ -47,7 +47,7 @@ export default function SettingsPage() {
       label: 'Statistics',
       icon: <BarChart2 size={20} />,
       content: (
-        <div className="text-foreground/80">
+        <div className="opacity-80">
           <p>Statistics and data will go here.</p>
         </div>
       ),
@@ -59,7 +59,7 @@ export default function SettingsPage() {
       label: 'Info',
       icon: <Info size={20} />,
       content: (
-        <div className="text-foreground/80">
+        <div className="opacity-80">
           <p>Information and about page will go here.</p>
         </div>
       ),
@@ -71,7 +71,7 @@ export default function SettingsPage() {
       label: 'Donate',
       icon: <Heart size={20} />,
       content: (
-        <div className="text-foreground/80">
+        <div className="opacity-80">
           <p>Support the project by donating.</p>
         </div>
       ),

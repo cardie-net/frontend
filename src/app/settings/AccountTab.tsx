@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Input } from '@/components/ui/Input';
+import { Button } from '@/components/ui/Button';
 
 export default function AccountTab() {
   const [displayName, setDisplayName] = useState('');
@@ -68,7 +70,7 @@ export default function AccountTab() {
   };
 
   if (isLoading) {
-    return <div className="text-foreground/80 font-medium">Loading account details...</div>;
+    return <div className="opacity-80 font-medium">Loading account details...</div>;
   }
 
   return (
@@ -89,38 +91,32 @@ export default function AccountTab() {
 
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="displayName">
+          <label className="block text-sm font-bold mb-1.5" htmlFor="displayName">
             Display Name
           </label>
-          <input
+          <Input
             id="displayName"
             type="text"
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
         </div>
 
         <div className="mb-6">
-          <label className="block text-sm font-bold mb-1.5 text-foreground" htmlFor="username">
+          <label className="block text-sm font-bold mb-1.5" htmlFor="username">
             Username
           </label>
-          <input
+          <Input
             id="username"
             type="text"
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
 
-        <button
-          type="submit"
-          className="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-primary text-background transition-all rounded-md px-6 py-2.5 text-base font-bold border border-primary-dark shadow-primary hover:-translate-y-px hover:shadow-primary-hover active:translate-y-px active:shadow-none focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed"
-          disabled={isSaving}
-        >
+        <Button type="submit" className="w-full sm:w-auto" disabled={isSaving}>
           {isSaving ? 'Saving...' : 'Save Changes'}
-        </button>
+        </Button>
       </form>
     </div>
   );
