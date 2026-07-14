@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '@/lib/api';
-import { AlertCircle, CheckCircle2, Upload, User } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Upload, User, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
@@ -70,6 +70,32 @@ export default function AccountTab() {
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    setIsUploadingAvatar(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await apiFetch('/api/v1/users/me/avatar', {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setAvatarUrl('');
+        setSuccess('Profile picture removed successfully.');
+      } else {
+        const errData = await response.json().catch(() => ({}));
+        setError(
+          typeof errData.detail === 'string' ? errData.detail : 'Failed to remove profile picture.'
+        );
+      }
+    } catch {
+      setError('An error occurred while removing. Please try again.');
+    } finally {
+      setIsUploadingAvatar(false);
     }
   };
 
@@ -147,17 +173,32 @@ export default function AccountTab() {
             onChange={handleAvatarChange}
             disabled={isUploadingAvatar}
           />
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="flex items-center gap-2"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isUploadingAvatar}
-          >
-            <Upload className="w-4 h-4" />
-            {isUploadingAvatar ? 'Uploading...' : 'Upload Avatar'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploadingAvatar}
+            >
+              <Upload className="w-4 h-4" />
+              {isUploadingAvatar ? 'Uploading...' : 'Upload Avatar'}
+            </Button>
+            {avatarUrl && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                onClick={handleRemoveAvatar}
+                disabled={isUploadingAvatar}
+                aria-label="Remove Avatar"
+              >
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
           <p className="text-xs opacity-70 mt-2">Recommended: Square image, max 2MB.</p>
         </div>
       </div>
