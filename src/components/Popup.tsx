@@ -8,9 +8,10 @@ interface PopupProps {
   onClose: () => void;
   title: string;
   children: ReactNode;
+  backdropClassName?: string;
 }
 
-export function Popup({ isOpen, onClose, title, children }: PopupProps) {
+export function Popup({ isOpen, onClose, title, children, backdropClassName = '' }: PopupProps) {
   const popupRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -47,7 +48,9 @@ export function Popup({ isOpen, onClose, title, children }: PopupProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-foreground/50 backdrop-blur-sm p-4">
+    <div
+      className={`fixed inset-0 z-[100] flex items-center justify-center bg-foreground/50 backdrop-blur-sm p-4 ${backdropClassName}`}
+    >
       <div
         ref={popupRef}
         className="relative w-full max-w-md bg-background text-foreground rounded-xl border-2 border-foreground shadow-[8px_8px_0px_currentColor] p-6 animate-in fade-in zoom-in-95 duration-200"

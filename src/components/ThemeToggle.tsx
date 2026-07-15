@@ -28,7 +28,12 @@ export function ThemeToggle() {
         Theme
       </AccountPopupButton>
 
-      <Popup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} title="Select Theme">
+      <Popup
+        isOpen={isPopupOpen}
+        onClose={() => setIsPopupOpen(false)}
+        title="Select Theme"
+        backdropClassName="rounded-xl"
+      >
         <div className="flex flex-col space-y-3">
           {THEMES.map((t) => (
             <button
