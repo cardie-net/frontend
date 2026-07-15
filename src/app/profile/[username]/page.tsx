@@ -89,8 +89,22 @@ export default function ProfilePage() {
   const isOwnProfile = currentUser && profileUser && currentUser.id === profileUser.id;
 
   const handleSaveProfile = async () => {
-    setIsSaving(true);
     setSaveError(null);
+
+    if (editUsername.length < 8) {
+      setSaveError('Username must be at least 8 characters long.');
+      return;
+    }
+    if (editUsername.length > 32) {
+      setSaveError('Username must be no more than 32 characters long.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(editUsername)) {
+      setSaveError('Username can only contain letters, numbers, underscores, and dashes.');
+      return;
+    }
+
+    setIsSaving(true);
     try {
       const res = await apiFetch('/api/v1/users/me', {
         method: 'PATCH',

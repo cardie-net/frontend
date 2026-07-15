@@ -107,6 +107,20 @@ export default function AccountTab() {
     e.preventDefault();
     setError('');
     setSuccess('');
+
+    if (username.length < 8) {
+      setError('Username must be at least 8 characters long.');
+      return;
+    }
+    if (username.length > 32) {
+      setError('Username must be no more than 32 characters long.');
+      return;
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
+      setError('Username can only contain letters, numbers, underscores, and dashes.');
+      return;
+    }
+
     setIsSaving(true);
 
     try {
