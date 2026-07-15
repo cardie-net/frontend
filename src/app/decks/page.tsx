@@ -169,7 +169,7 @@ function DecksPageContent() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {decks.map((deck) => (
-            <Link key={deck.id} href={`/decks/${deck.id}/learn`} className="group block h-full">
+            <Link key={deck.id} href={`/decks/${deck.id}`} className="group block h-full">
               <Card
                 hoverable
                 className="h-full flex items-center justify-between !p-4"
@@ -183,7 +183,7 @@ function DecksPageContent() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      router.push(`/decks/${deck.id}`);
+                      router.push(`/decks/${deck.id}/edit`);
                     }}
                     className="p-2 rounded-full hover:bg-background/20 transition-colors"
                     title="Edit Deck"
