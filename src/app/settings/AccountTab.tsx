@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { apiFetch } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import { AlertCircle, CheckCircle2, Upload, User, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 
 export default function AccountTab() {
+  const { refreshUser } = useAuth();
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
@@ -57,6 +59,7 @@ export default function AccountTab() {
         const data = await response.json();
         setAvatarUrl(data.avatar_url || '');
         setSuccess('Profile picture updated successfully.');
+        await refreshUser();
       } else {
         const errData = await response.json().catch(() => ({}));
         setError(
@@ -86,6 +89,7 @@ export default function AccountTab() {
       if (response.ok) {
         setAvatarUrl('');
         setSuccess('Profile picture removed successfully.');
+        await refreshUser();
       } else {
         const errData = await response.json().catch(() => ({}));
         setError(
@@ -116,9 +120,7 @@ export default function AccountTab() {
 
       if (response.ok) {
         setSuccess('Profile updated successfully.');
-
-        // Update user state if there's any global state, but for now we just show success.
-        // The dropdown might need a reload if we don't have global state, but it fetches on mount.
+        await refreshUser();
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail === 'UPDATE_USER_EMAIL_ALREADY_EXISTS') {
