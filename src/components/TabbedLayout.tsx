@@ -32,10 +32,10 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
           {title}
         </h1>
       )}
-      <div className="flex-grow bg-background text-foreground rounded-2xl border-2 border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] flex flex-col md:flex-row overflow-hidden">
+      <div className="flex-grow bg-background text-foreground rounded-2xl border-2 border-border-heavy shadow-[8px_8px_0px_var(--color-border-heavy)] flex flex-col md:flex-row overflow-hidden md:p-2 md:gap-2">
         {/* Left sidebar - Tabs */}
         <div
-          className={`w-full md:w-72 md:border-r-2 border-border-heavy bg-foreground/5 p-4 md:p-6 flex-col gap-3 shrink-0 ${isMobileViewContent ? 'hidden md:flex' : 'flex'}`}
+          className={`w-full md:w-72 md:rounded-2xl bg-foreground/5 p-4 md:p-6 flex-col gap-3 shrink-0 ${isMobileViewContent ? 'hidden md:flex' : 'flex'}`}
         >
           {tabs.map((tab) => {
             const isActive = tab.id === activeTabId;
@@ -68,7 +68,7 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
 
         {/* Right side - Content */}
         <div
-          className={`flex-grow flex-col bg-foreground text-background ${isMobileViewContent ? 'flex' : 'hidden md:flex'}`}
+          className={`flex-grow flex-col bg-foreground text-background md:rounded-2xl ${isMobileViewContent ? 'flex' : 'hidden md:flex'}`}
         >
           {/* Mobile Back Button */}
           <div className="md:hidden border-b-2 border-background p-4 flex items-center">
