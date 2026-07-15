@@ -33,7 +33,7 @@ export function Button({
     accent:
       'bg-accent text-background border border-accent-dark shadow-accent hover:-translate-y-px hover:shadow-accent-hover active:translate-y-px active:shadow-none',
     danger:
-      'bg-error text-error-text border border-border-heavy shadow-[1px_1px_0px_var(--color-error)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--color-error)] active:translate-y-px active:shadow-none',
+      'bg-error text-error-text border border-border-heavy shadow-[2px_2px_0px_var(--color-error)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--color-error)] active:translate-y-px active:shadow-none',
     ghost: 'hover:bg-foreground/10 text-foreground',
   };
 

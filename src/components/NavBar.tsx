@@ -15,7 +15,7 @@ export function NavBar() {
           Decks
         </NavbarButton>
         <div className="hidden sm:block">
-          <NavbarButton href="/decks/new" icon={PlusSquare}>
+          <NavbarButton href="/decks?new=true" icon={PlusSquare}>
             New Deck
           </NavbarButton>
         </div>

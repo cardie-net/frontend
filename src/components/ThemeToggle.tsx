@@ -42,10 +42,10 @@ export function ThemeToggle() {
                 setTheme(t.id);
                 setIsPopupOpen(false);
               }}
-              className={`flex items-center justify-between w-full p-3 rounded-lg border-2 transition-all ${
+              className={`flex items-center justify-between w-full p-3 rounded-lg border transition-all ${
                 mounted && theme === t.id
                   ? 'border-foreground bg-foreground/10 shadow-[2px_2px_0px_currentColor]'
-                  : 'border-border-heavy hover:bg-foreground/5 hover:border-foreground shadow-[1px_1px_0px_currentColor] hover:shadow-[2px_2px_0px_currentColor]'
+                  : 'border-border-heavy hover:bg-foreground/5 hover:border-foreground shadow-[2px_2px_0px_currentColor] hover:shadow-[4px_4px_0px_currentColor]'
               }`}
             >
               <span className="font-bold">{t.name}</span>

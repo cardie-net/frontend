@@ -28,7 +28,7 @@ export function NavbarButton({
 
   const basePadding = children ? (hideTextOnMobile ? 'px-2 sm:px-4' : 'px-4') : 'px-2';
 
-  const className = `flex items-center gap-2.5 bg-action-btn-bg text-action-btn-text transition-all rounded-md ${basePadding} py-1 text-base font-bold border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none whitespace-nowrap shrink-0 ${customClassName || ''}`;
+  const className = `flex items-center gap-2.5 bg-action-btn-bg text-action-btn-text transition-all rounded-md ${basePadding} py-1 text-base font-bold border border-action-btn-border shadow-[2px_2px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none whitespace-nowrap shrink-0 ${customClassName || ''}`;
 
   if (href) {
     return (

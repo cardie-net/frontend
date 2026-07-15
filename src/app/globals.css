@@ -46,12 +46,12 @@
   /* Semantic shadows */
   --shadow-primary: 2px 2px 0px var(--color-primary-dark);
   --shadow-primary-hover: 4px 4px 0px var(--color-primary-dark);
-  --shadow-secondary: 1px 1px 0px var(--color-secondary-dark);
-  --shadow-secondary-hover: 2px 2px 0px var(--color-secondary-dark);
+  --shadow-secondary: 2px 2px 0px var(--color-secondary-dark);
+  --shadow-secondary-hover: 4px 4px 0px var(--color-secondary-dark);
   --shadow-accent: 2px 2px 0px var(--color-accent-dark);
   --shadow-accent-hover: 4px 4px 0px var(--color-accent-dark);
-  --shadow-action: 1px 1px 0px var(--color-action-btn-border);
-  --shadow-action-hover: 2px 2px 0px var(--color-action-btn-border);
+  --shadow-action: 2px 2px 0px var(--color-action-btn-border);
+  --shadow-action-hover: 4px 4px 0px var(--color-action-btn-border);
 }
 
 :root {

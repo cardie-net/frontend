@@ -42,17 +42,17 @@ export default function Home() {
             <Spinner />
           ) : user ? (
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">Email</span>
                 <span className="text-sm font-medium text-foreground/80">{user.email}</span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">Account Type</span>
-                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-action-btn-bg text-action-btn-text border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-action-btn-bg text-action-btn-text border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)]">
                   {user.is_guest ? 'Guest' : 'Member'}
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[1px_1px_0px_var(--color-border-heavy)]">
+              <div className="flex items-center justify-between p-4 rounded-md bg-background border border-border-heavy shadow-[2px_2px_0px_var(--color-border-heavy)]">
                 <span className="text-sm font-bold text-foreground">User ID</span>
                 <span className="text-xs font-mono text-foreground/70 truncate max-w-[200px]">
                   {user.id}

@@ -59,7 +59,7 @@ export function Popup({ isOpen, onClose, title, children, backdropClassName = ''
           <h2 className="text-xl font-bold">{title}</h2>
           <button
             onClick={onClose}
-            className="flex items-center justify-center w-8 h-8 rounded-md border-2 border-foreground hover:bg-foreground/10 transition-colors focus:outline-none shadow-[2px_2px_0px_currentColor] hover:translate-y-px hover:shadow-[1px_1px_0px_currentColor] active:translate-y-[2px] active:shadow-none"
+            className="flex items-center justify-center w-8 h-8 rounded-md border border-foreground hover:bg-foreground/10 transition-colors focus:outline-none shadow-[2px_2px_0px_currentColor] hover:-translate-y-px hover:shadow-[4px_4px_0px_currentColor] active:translate-y-px active:shadow-none"
             aria-label="Close popup"
           >
             <X size={18} />

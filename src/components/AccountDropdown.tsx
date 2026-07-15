@@ -34,7 +34,7 @@ export function AccountDropdown() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-center w-[36px] h-[36px] rounded-md bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
+        className="flex items-center justify-center w-[36px] h-[36px] rounded-md bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[2px_2px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
         aria-label="Account Menu"
       >
         <UserIcon size={18} />
@@ -68,7 +68,7 @@ export function AccountDropdown() {
           </span>
           {user?.is_guest && (
             <button
-              className="flex flex-shrink-0 items-center justify-center w-6 h-6 rounded-full border-2 border-foreground text-xs font-bold hover:bg-foreground/10 transition-colors"
+              className="flex flex-shrink-0 items-center justify-center w-6 h-6 rounded-full border border-foreground text-xs font-bold hover:bg-foreground/10 transition-colors"
               aria-label="Guest Mode Info"
               onClick={(e) => {
                 e.stopPropagation();
@@ -117,7 +117,7 @@ export function AccountDropdown() {
                 await logout();
               }}
               icon={LogOut}
-              className="col-span-2 !flex-row !bg-primary !text-background hover:!bg-primary/90 !border-primary-dark !shadow-[1px_1px_0px_var(--color-primary-dark)] hover:!shadow-[2px_2px_0px_var(--color-primary-dark)]"
+              className="col-span-2 !flex-row !bg-primary !text-background hover:!bg-primary/90 !border-primary-dark !shadow-[2px_2px_0px_var(--color-primary-dark)] hover:!shadow-[4px_4px_0px_var(--color-primary-dark)]"
             >
               Log out
             </AccountPopupButton>

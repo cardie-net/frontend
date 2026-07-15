@@ -165,14 +165,14 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
           </div>
         )}
 
-        <div className="mb-10 p-6 border border-border-heavy rounded-lg shadow-[4px_4px_0px_var(--color-border-heavy)]">
+        <div className="mb-10 p-6 border border-border-heavy rounded-lg shadow-[2px_2px_0px_var(--color-border-heavy)]">
           <h2 className="text-2xl font-bold mb-4">Add New Card</h2>
           <form onSubmit={handleAddCard} className="flex flex-col gap-5">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold mb-2">Front (Question)</label>
                 <textarea
-                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
+                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[2px_2px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
                   value={newFront}
                   onChange={(e) => setNewFront(e.target.value)}
                   required
@@ -182,7 +182,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
               <div>
                 <label className="block text-sm font-bold mb-2">Back (Answer)</label>
                 <textarea
-                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
+                  className="w-full bg-background border border-border-heavy rounded-md px-4 py-3 shadow-[2px_2px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow resize-y min-h-[100px]"
                   value={newBack}
                   onChange={(e) => setNewBack(e.target.value)}
                   required

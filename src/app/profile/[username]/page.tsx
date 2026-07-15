@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Settings, User, AlertCircle } from 'lucide-react';
 import { apiFetch } from '@/lib/api';
+import { getDeckStyle } from '@/lib/colors';
 
 interface UserProfile {
   id: string;
@@ -20,6 +21,9 @@ interface Deck {
   name: string;
   slug: string;
   description: string;
+  properties?: {
+    color?: string;
+  };
 }
 
 export default function ProfilePage() {
@@ -157,7 +161,7 @@ export default function ProfilePage() {
   if (error || !profileUser) {
     return (
       <div className="flex-1 flex items-center justify-center text-foreground p-8">
-        <div className="text-center p-8 bg-foreground text-background border-2 border-border-heavy rounded-xl shadow-[8px_8px_0px_var(--color-border-heavy)]">
+        <div className="text-center p-8 bg-foreground text-background border-2 border-border-heavy rounded-xl shadow-[2px_2px_0px_var(--color-border-heavy)]">
           <AlertCircle className="w-12 h-12 mx-auto mb-4 text-error" />
           <p className="font-bold text-xl">{error || 'Profile not found'}</p>
           <Link href="/" className="mt-4 inline-block font-bold underline hover:no-underline">
@@ -172,14 +176,14 @@ export default function ProfilePage() {
     <div className="flex-1 text-foreground p-4 sm:p-8">
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Profile Card */}
-        <div className="bg-foreground text-background border-2 border-border-heavy rounded-2xl shadow-[8px_8px_0px_var(--color-border-heavy)] p-6 sm:p-10 relative">
+        <div className="bg-foreground text-background border-2 border-border-heavy rounded-2xl shadow-[2px_2px_0px_var(--color-border-heavy)] p-6 sm:p-10 relative">
           {/* Header actions */}
           <div className="absolute top-6 right-6 flex gap-2">
             {isOwnProfile && !isEditing && (
               <Link
                 href="/settings"
                 aria-label="Settings"
-                className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[1px_1px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[2px_2px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
+                className="flex items-center justify-center w-[36px] h-[36px] rounded-lg bg-action-btn-bg text-action-btn-text transition-all border border-action-btn-border shadow-[2px_2px_0px_var(--action-btn-border)] hover:-translate-y-px hover:shadow-[4px_4px_0px_var(--action-btn-border)] active:translate-y-px active:shadow-none focus:outline-none"
               >
                 <Settings className="w-4 h-4" />
               </Link>
@@ -237,7 +241,7 @@ export default function ProfilePage() {
                         setSaveError(null);
                       }}
                       disabled={isSaving}
-                      className="px-4 py-1.5 border-2 border-background font-bold rounded-lg hover:bg-background/10 disabled:opacity-50 text-sm"
+                      className="px-4 py-1.5 border border-background font-bold rounded-lg hover:bg-background/10 disabled:opacity-50 text-sm"
                     >
                       Cancel
                     </button>
@@ -283,7 +287,10 @@ export default function ProfilePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => (
                 <Link key={deck.id} href={`/decks/${deck.id}`}>
-                  <div className="group h-full p-6 bg-foreground text-background border-2 border-border-heavy rounded-xl shadow-[8px_8px_0px_var(--color-border-heavy)] hover:-translate-y-1 hover:shadow-[12px_12px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex flex-col justify-between">
+                  <div
+                    className="group h-full p-6 border-2 border-border-heavy rounded-xl shadow-[2px_2px_0px_var(--color-border-heavy)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex flex-col justify-between"
+                    style={getDeckStyle(deck.properties?.color)}
+                  >
                     <div>
                       <h3 className="text-xl font-bold group-hover:underline">{deck.name}</h3>
                       <p className="text-sm opacity-70 mt-2 font-mono">/{deck.slug}</p>

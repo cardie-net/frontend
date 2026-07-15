@@ -108,7 +108,7 @@ function ResetPasswordContent() {
           <input
             id="token"
             type="text"
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[2px_2px_0px_var(--color-border-heavy)] font-medium"
             placeholder="Paste your token here"
             value={token}
             onChange={(e) => setToken(e.target.value)}
@@ -123,7 +123,7 @@ function ResetPasswordContent() {
           <input
             id="password"
             type="password"
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[2px_2px_0px_var(--color-border-heavy)] font-medium"
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -139,7 +139,7 @@ function ResetPasswordContent() {
           <input
             id="confirmPassword"
             type="password"
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[2px_2px_0px_var(--color-border-heavy)] font-medium"
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}

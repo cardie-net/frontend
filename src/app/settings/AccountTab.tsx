@@ -407,7 +407,7 @@ export default function AccountTab() {
             maxLength={BIO_MAX_LENGTH}
             rows={3}
             placeholder="Tell others a bit about yourself..."
-            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[1px_1px_0px_var(--color-border-heavy)] font-medium resize-y min-h-[80px]"
+            className="w-full bg-background border border-border-heavy rounded-md px-4 py-2.5 text-foreground focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow shadow-[2px_2px_0px_var(--color-border-heavy)] font-medium resize-y min-h-[80px]"
           />
           <div className="flex justify-end mt-1">
             <span
