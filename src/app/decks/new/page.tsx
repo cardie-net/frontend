@@ -9,7 +9,6 @@ import { AlertCircle } from 'lucide-react';
 export default function NewDeckPage() {
   const router = useRouter();
   const [newDeckName, setNewDeckName] = useState('');
-  const [newDeckSlug, setNewDeckSlug] = useState('');
   const [error, setError] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
@@ -27,21 +26,6 @@ export default function NewDeckPage() {
       return;
     }
 
-    if (!newDeckSlug.trim()) {
-      setError('Deck slug is required.');
-      return;
-    }
-
-    if (newDeckSlug.length > 80) {
-      setError('Deck slug must be at most 80 characters.');
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9_-]+$/.test(newDeckSlug)) {
-      setError('Slug can only contain letters, numbers, hyphens, and underscores.');
-      return;
-    }
-
     setIsCreating(true);
 
     try {
@@ -49,7 +33,6 @@ export default function NewDeckPage() {
         method: 'POST',
         body: JSON.stringify({
           name: newDeckName,
-          slug: newDeckSlug,
           privacy: 'private',
         }),
       });
@@ -104,35 +87,13 @@ export default function NewDeckPage() {
             <input
               className="w-full bg-background border border-border-heavy rounded-md px-4 py-2 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow"
               value={newDeckName}
-              onChange={(e) => {
-                setNewDeckName(e.target.value);
-                if (!newDeckSlug) {
-                  setNewDeckSlug(
-                    e.target.value
-                      .toLowerCase()
-                      .replace(/[^a-z0-9_-]/g, '-')
-                      .replace(/-+/g, '-')
-                  );
-                }
-              }}
+              onChange={(e) => setNewDeckName(e.target.value)}
               required
               maxLength={80}
               placeholder="e.g. Spanish Vocabulary"
             />
           </div>
-          <div>
-            <label className="block text-sm font-bold mb-2">Slug (URL path)</label>
-            <input
-              className="w-full bg-background border border-border-heavy rounded-md px-4 py-2 shadow-[1px_1px_0px_var(--color-border-heavy)] focus:outline-none focus:ring-1 focus:ring-foreground transition-shadow"
-              value={newDeckSlug}
-              onChange={(e) => setNewDeckSlug(e.target.value)}
-              required
-              maxLength={80}
-              pattern="^[a-zA-Z0-9_-]+$"
-              title="Only letters, numbers, hyphens, and underscores allowed"
-              placeholder="e.g. spanish-vocab"
-            />
-          </div>
+
           <button
             type="submit"
             disabled={isCreating}
