@@ -23,9 +23,13 @@ interface Deck {
   slug: string;
 }
 
-export default function EditDeckPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditDeckPage({
+  params,
+}: {
+  params: Promise<{ username: string; deck_slug: string }>;
+}) {
   const router = useRouter();
-  const { id: deckId } = use(params);
+  const { username, deck_slug } = use(params);
 
   const [deck, setDeck] = useState<Deck | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
@@ -40,14 +44,15 @@ export default function EditDeckPage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     const fetchDeckAndCards = async () => {
       try {
-        const deckRes = await apiFetch(`/api/v1/decks/${deckId}`);
+        const deckRes = await apiFetch(`/api/v1/users/profile/${username}/decks/${deck_slug}`);
         if (!deckRes.ok) {
           if (deckRes.status === 404) router.push('/decks');
           throw new Error('Failed to fetch deck');
         }
-        setDeck(await deckRes.json());
+        const fetchedDeck = await deckRes.json();
+        setDeck(fetchedDeck);
 
-        const cardsRes = await apiFetch(`/api/v1/decks/${deckId}/cards`);
+        const cardsRes = await apiFetch(`/api/v1/decks/${fetchedDeck.id}/cards`);
         if (cardsRes.ok) {
           setCards(await cardsRes.json());
         }
@@ -58,7 +63,7 @@ export default function EditDeckPage({ params }: { params: Promise<{ id: string 
       }
     };
     fetchDeckAndCards();
-  }, [deckId, router]);
+  }, [username, deck_slug, router]);
 
   const handleAddCard = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +81,7 @@ export default function EditDeckPage({ params }: { params: Promise<{ id: string 
 
     setIsAdding(true);
     try {
-      const res = await apiFetch(`/api/v1/decks/${deckId}/cards`, {
+      const res = await apiFetch(`/api/v1/decks/${deck?.id}/cards`, {
         method: 'POST',
         body: JSON.stringify({
           front: [{ type: 'text', content: newFront }],
@@ -103,7 +108,7 @@ export default function EditDeckPage({ params }: { params: Promise<{ id: string 
     if (!confirm('Are you sure you want to delete this card?')) return;
     setIsDeleting(cardId);
     try {
-      const res = await apiFetch(`/api/v1/decks/${deckId}/cards/${cardId}`, {
+      const res = await apiFetch(`/api/v1/decks/${deck?.id}/cards/${cardId}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error('Failed to delete card');
@@ -134,7 +139,7 @@ export default function EditDeckPage({ params }: { params: Promise<{ id: string 
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <Link
-            href={`/decks/${deckId}`}
+            href={`/${username}/${deck_slug}`}
             className="text-sm font-bold text-foreground/70 hover:text-foreground transition-colors flex items-center gap-2 w-fit"
           >
             <svg

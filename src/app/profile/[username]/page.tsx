@@ -276,7 +276,7 @@ export default function ProfilePage() {
               <p className="font-bold text-lg mb-2 opacity-70">No decks yet</p>
               {isOwnProfile && (
                 <Link
-                  href="/decks/new"
+                  href="/decks?new=true"
                   className="inline-block mt-2 font-bold underline hover:no-underline"
                 >
                   Create your first deck
@@ -286,7 +286,11 @@ export default function ProfilePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => (
-                <Link key={deck.id} href={`/decks/${deck.id}`} className="group block h-full">
+                <Link
+                  key={deck.id}
+                  href={`/${profileUser.username}/${deck.slug}`}
+                  className="group block h-full"
+                >
                   <div
                     className="h-full p-6 border-2 border-border-heavy rounded-xl shadow-[2px_2px_0px_var(--color-border-heavy)] group-hover:-translate-y-1 group-hover:shadow-[4px_4px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex items-center justify-between"
                     style={getDeckStyle(deck.properties?.color)}

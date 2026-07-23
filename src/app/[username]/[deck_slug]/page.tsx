@@ -34,9 +34,13 @@ interface Deck {
   privacy?: string;
 }
 
-export default function DeckPage({ params }: { params: Promise<{ id: string }> }) {
+export default function DeckPage({
+  params,
+}: {
+  params: Promise<{ username: string; deck_slug: string }>;
+}) {
   const router = useRouter();
-  const { id: deckId } = use(params);
+  const { username, deck_slug } = use(params);
 
   const [deck, setDeck] = useState<Deck | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
@@ -46,14 +50,15 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     const fetchDeckAndCards = async () => {
       try {
-        const deckRes = await apiFetch(`/api/v1/decks/${deckId}`);
+        const deckRes = await apiFetch(`/api/v1/users/profile/${username}/decks/${deck_slug}`);
         if (!deckRes.ok) {
           if (deckRes.status === 404) router.push('/decks');
           throw new Error('Failed to fetch deck');
         }
-        setDeck(await deckRes.json());
+        const fetchedDeck = await deckRes.json();
+        setDeck(fetchedDeck);
 
-        const cardsRes = await apiFetch(`/api/v1/decks/${deckId}/cards`);
+        const cardsRes = await apiFetch(`/api/v1/decks/${fetchedDeck.id}/cards`);
         if (cardsRes.ok) {
           setCards(await cardsRes.json());
         }
@@ -64,7 +69,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
       }
     };
     fetchDeckAndCards();
-  }, [deckId, router]);
+  }, [username, deck_slug, router]);
 
   if (loading)
     return (
@@ -242,7 +247,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
             </button>
 
             <Link
-              href={`/decks/${deckId}/edit`}
+              href={`/${username}/${deck_slug}/edit`}
               className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 p-2 md:px-4 md:py-2 rounded-lg transition-colors flex items-center gap-2"
             >
               <svg
@@ -273,6 +278,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
         deckId={deck.id}
         initialPrivacy={deck.privacy || 'private'}
         initialSlug={deck.slug || ''}
+        username={username}
         onSaved={(updated) => setDeck({ ...deck, ...updated })}
       />
     </div>

@@ -169,7 +169,7 @@ function DecksPageContent() {
       setNewDeckName('');
       setNewDeckColor('default');
       setIsCreating(false);
-      router.push(`/decks/${newDeck.id}`);
+      router.push(`/${user?.username}/${newDeck.slug}`);
     } catch (err) {
       setCreateError(err instanceof Error ? err.message : 'An error occurred');
       setIsCreating(false);
@@ -218,7 +218,7 @@ function DecksPageContent() {
           {decks.map((deck) => (
             <Link
               key={deck.id}
-              href={`/decks/${deck.id}`}
+              href={`/${user?.username}/${deck.slug}`}
               className={`group block h-full ${activeDropdown === deck.id ? 'relative z-50' : 'relative z-0'}`}
             >
               <Card
@@ -273,7 +273,7 @@ function DecksPageContent() {
                         e.preventDefault();
                         e.stopPropagation();
                         setActiveDropdown(null);
-                        router.push(`/decks/${deck.id}`);
+                        router.push(`/${user?.username}/${deck.slug}`);
                       }}
                     >
                       <FolderOpen className="w-4 h-4" /> Open
@@ -284,7 +284,7 @@ function DecksPageContent() {
                         e.preventDefault();
                         e.stopPropagation();
                         setActiveDropdown(null);
-                        router.push(`/decks/${deck.id}/edit`);
+                        router.push(`/${user?.username}/${deck.slug}/edit`);
                       }}
                     >
                       <Pencil className="w-4 h-4" /> Edit
@@ -385,6 +385,7 @@ function DecksPageContent() {
         deckId={shareDeckTarget?.id || null}
         initialPrivacy={shareDeckTarget?.privacy || 'private'}
         initialSlug={shareDeckTarget?.slug || ''}
+        username={user?.username}
         onSaved={(updated) => {
           setDecks(decks.map((d) => (d.id === shareDeckTarget?.id ? { ...d, ...updated } : d)));
         }}

@@ -12,6 +12,7 @@ export interface ShareDeckPopupProps {
   deckId: string | null;
   initialPrivacy?: string;
   initialSlug?: string;
+  username?: string;
   onSaved?: (updatedDeck: { privacy?: string; slug?: string }) => void;
 }
 
@@ -21,6 +22,7 @@ export function ShareDeckPopup({
   deckId,
   initialPrivacy = 'private',
   initialSlug = '',
+  username = '',
   onSaved,
 }: ShareDeckPopupProps) {
   const [sharePrivacy, setSharePrivacy] = useState(initialPrivacy);
@@ -39,7 +41,7 @@ export function ShareDeckPopup({
   }, [isOpen, initialPrivacy, initialSlug]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`${window.location.origin}/decks/${shareSlug || deckId}`);
+    navigator.clipboard.writeText(`${window.location.origin}/${username}/${shareSlug || deckId}`);
     setIsLinkCopied(true);
     setTimeout(() => setIsLinkCopied(false), 2000);
   };
@@ -139,7 +141,7 @@ export function ShareDeckPopup({
               readOnly
               value={
                 typeof window !== 'undefined'
-                  ? `${window.location.origin}/decks/${shareSlug || deckId}`
+                  ? `${window.location.origin}/${username}/${shareSlug || deckId}`
                   : ''
               }
               className="flex-1 bg-background border border-border-heavy rounded-md px-4 py-2 opacity-70 cursor-not-allowed font-mono text-sm pr-10 sm:pr-4"
