@@ -14,6 +14,7 @@ import {
   Info,
 } from 'lucide-react';
 import { TabbedLayout, TabItem } from '@/components/TabbedLayout';
+import { ShareDeckPopup } from '@/components/ShareDeckPopup';
 
 interface CardElement {
   type: 'text';
@@ -30,6 +31,7 @@ interface Deck {
   id: string;
   name: string;
   slug: string;
+  privacy?: string;
 }
 
 export default function DeckPage({ params }: { params: Promise<{ id: string }> }) {
@@ -39,6 +41,7 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
   const [deck, setDeck] = useState<Deck | null>(null);
   const [cards, setCards] = useState<Card[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
 
   useEffect(() => {
     const fetchDeckAndCards = async () => {
@@ -215,7 +218,10 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
           </h1>
 
           <div className="flex items-center gap-2 shrink-0">
-            <button className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 p-2 md:px-4 md:py-2 rounded-lg transition-colors flex items-center gap-2">
+            <button
+              className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 p-2 md:px-4 md:py-2 rounded-lg transition-colors flex items-center gap-2"
+              onClick={() => setIsSharePopupOpen(true)}
+            >
               <svg
                 width="16"
                 height="16"
@@ -260,6 +266,15 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
       </div>
 
       <TabbedLayout tabs={tabs} defaultTabId="overview" />
+
+      <ShareDeckPopup
+        isOpen={isSharePopupOpen}
+        onClose={() => setIsSharePopupOpen(false)}
+        deckId={deck.id}
+        initialPrivacy={deck.privacy || 'private'}
+        initialSlug={deck.slug || ''}
+        onSaved={(updated) => setDeck({ ...deck, ...updated })}
+      />
     </div>
   );
 }

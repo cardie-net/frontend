@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { Spinner } from '@/components/ui/Spinner';
 import { Popup } from '@/components/Popup';
+import { ShareDeckPopup } from '@/components/ShareDeckPopup';
 import {
   AlertCircle,
   Plus,
@@ -21,6 +22,8 @@ import {
   Globe,
   LockKeyhole,
   EyeOff,
+  Copy,
+  Check,
 } from 'lucide-react';
 import { DECK_COLORS, getDeckStyle } from '@/lib/colors';
 
@@ -69,6 +72,10 @@ function DecksPageContent() {
   const [newDeckColor, setNewDeckColor] = useState('default');
   const [createError, setCreateError] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+
+  // Share Popup State
+  const [isSharePopupOpen, setIsSharePopupOpen] = useState(false);
+  const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null);
 
   useEffect(() => {
     if (searchParams.get('new') === 'true') {
@@ -119,16 +126,11 @@ function DecksPageContent() {
     }
   };
 
-  const handleShareDeck = async (e: React.MouseEvent, deckId: string) => {
+  const handleOpenShare = (e: React.MouseEvent, deck: Deck) => {
     e.preventDefault();
     e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(`${window.location.origin}/decks/${deckId}`);
-      alert('Link copied to clipboard!');
-    } catch (err) {
-      console.error('Failed to copy link', err);
-      alert('Failed to copy link to clipboard');
-    }
+    setShareDeckTarget(deck);
+    setIsSharePopupOpen(true);
     setActiveDropdown(null);
   };
 
@@ -289,7 +291,7 @@ function DecksPageContent() {
                     </button>
                     <button
                       className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-foreground/10 rounded-md transition-colors flex items-center gap-2"
-                      onClick={(e) => handleShareDeck(e, deck.id)}
+                      onClick={(e) => handleOpenShare(e, deck)}
                     >
                       <Share2 className="w-4 h-4" /> Share
                     </button>
@@ -376,6 +378,17 @@ function DecksPageContent() {
           </div>
         </form>
       </Popup>
+
+      <ShareDeckPopup
+        isOpen={isSharePopupOpen}
+        onClose={() => setIsSharePopupOpen(false)}
+        deckId={shareDeckTarget?.id || null}
+        initialPrivacy={shareDeckTarget?.privacy || 'private'}
+        initialSlug={shareDeckTarget?.slug || ''}
+        onSaved={(updated) => {
+          setDecks(decks.map((d) => (d.id === shareDeckTarget?.id ? { ...d, ...updated } : d)));
+        }}
+      />
     </div>
   );
 }
