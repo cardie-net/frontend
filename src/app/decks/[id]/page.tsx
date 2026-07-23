@@ -188,12 +188,12 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
   ];
 
   return (
-    <div className="flex-1 flex flex-col p-4 md:p-8">
-      <div className="max-w-6xl mx-auto w-full mb-6">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex-1 flex flex-col p-4 md:p-8 h-[calc(100dvh-46px)] md:h-auto overflow-hidden md:overflow-visible">
+      <div className="max-w-6xl mx-auto w-full mb-6 shrink-0">
+        <div className="flex items-center justify-between mb-4 gap-4">
           <Link
             href="/decks"
-            className="text-sm font-bold text-foreground/70 hover:text-foreground transition-colors flex items-center gap-2 w-fit"
+            className="text-sm font-bold text-foreground/70 hover:text-foreground transition-colors flex items-center gap-2 shrink-0"
           >
             <svg
               width="16"
@@ -209,29 +209,54 @@ export default function DeckPage({ params }: { params: Promise<{ id: string }> }
             </svg>
             Back to Decks
           </Link>
-          <Link
-            href={`/decks/${deckId}/edit`}
-            className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
+
+          <h1 className="hidden md:block text-2xl font-extrabold truncate text-center flex-1">
+            {deck.name}
+          </h1>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <button className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 p-2 md:px-4 md:py-2 rounded-lg transition-colors flex items-center gap-2">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <circle cx="18" cy="5" r="3" />
+                <circle cx="6" cy="12" r="3" />
+                <circle cx="18" cy="19" r="3" />
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+              </svg>
+              <span className="hidden md:inline">Share</span>
+            </button>
+
+            <Link
+              href={`/decks/${deckId}/edit`}
+              className="text-sm font-bold bg-foreground/10 hover:bg-foreground/20 p-2 md:px-4 md:py-2 rounded-lg transition-colors flex items-center gap-2"
             >
-              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
-            </svg>
-            Edit Deck
-          </Link>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" />
+              </svg>
+              <span className="hidden md:inline">Edit Deck</span>
+            </Link>
+          </div>
         </div>
-        <div className="flex items-baseline gap-3">
-          <h1 className="text-4xl font-extrabold">{deck.name}</h1>
-          <span className="font-mono text-sm opacity-50">/{deck.slug}</span>
-        </div>
+
+        <h1 className="md:hidden text-2xl font-extrabold mb-2 break-words">{deck.name}</h1>
       </div>
 
       <TabbedLayout tabs={tabs} defaultTabId="overview" />

@@ -26,7 +26,7 @@ export function TabbedLayout({ tabs, defaultTabId, title }: TabbedLayoutProps) {
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0];
 
   return (
-    <div className="w-full max-w-6xl mx-auto flex flex-col h-full flex-grow min-h-[80vh]">
+    <div className="w-full max-w-6xl mx-auto flex flex-col h-full flex-grow min-h-0 md:min-h-[80vh]">
       {title && (
         <h1 className="text-4xl font-black mb-8 text-foreground uppercase tracking-tight">
           {title}
