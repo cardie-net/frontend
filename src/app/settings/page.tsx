@@ -81,7 +81,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-7xl flex-grow flex items-center justify-center">
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl flex-grow flex flex-col h-[calc(100dvh-46px)] md:h-auto md:items-center md:justify-center overflow-hidden md:overflow-visible">
       <TabbedLayout tabs={tabs} defaultTabId="general" />
     </div>
   );
