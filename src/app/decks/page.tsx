@@ -10,7 +10,18 @@ import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { Spinner } from '@/components/ui/Spinner';
 import { Popup } from '@/components/Popup';
-import { AlertCircle, Plus, Pencil, Trash2, MoreVertical, FolderOpen, Share2 } from 'lucide-react';
+import {
+  AlertCircle,
+  Plus,
+  Pencil,
+  Trash2,
+  MoreVertical,
+  FolderOpen,
+  Share2,
+  Globe,
+  LockKeyhole,
+  EyeOff,
+} from 'lucide-react';
 import { DECK_COLORS, getDeckStyle } from '@/lib/colors';
 
 interface Deck {
@@ -18,6 +29,7 @@ interface Deck {
   name: string;
   slug: string;
   type: 'deck';
+  privacy?: 'public' | 'unlisted' | 'private' | string;
   properties?: {
     color?: string;
   };
@@ -212,9 +224,22 @@ function DecksPageContent() {
                 className="h-full flex items-center justify-between !p-4"
                 style={getDeckStyle(deck.properties?.color)}
               >
-                <div className="min-w-0 pr-2">
-                  <h3 className="text-lg font-bold group-hover:underline truncate">{deck.name}</h3>
-                  <p className="text-sm opacity-70 mt-1 font-mono truncate">/{deck.slug}</p>
+                <div className="min-w-0 pr-2 flex-1">
+                  <h3
+                    className="text-lg font-bold group-hover:underline line-clamp-2 h-[3.5rem]"
+                    title={deck.name}
+                  >
+                    {deck.privacy === 'private' && (
+                      <LockKeyhole className="inline-block w-4 h-4 mr-1.5 -mt-1 opacity-70" />
+                    )}
+                    {deck.privacy === 'unlisted' && (
+                      <EyeOff className="inline-block w-4 h-4 mr-1.5 -mt-1 opacity-70" />
+                    )}
+                    {deck.privacy === 'public' && (
+                      <Globe className="inline-block w-4 h-4 mr-1.5 -mt-1 opacity-70" />
+                    )}
+                    {deck.name}
+                  </h3>
                 </div>
                 <div className="relative shrink-0 deck-dropdown-container">
                   <button
