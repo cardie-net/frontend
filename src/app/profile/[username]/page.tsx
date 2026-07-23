@@ -286,14 +286,18 @@ export default function ProfilePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {decks.map((deck) => (
-                <Link key={deck.id} href={`/decks/${deck.id}`}>
+                <Link key={deck.id} href={`/decks/${deck.id}`} className="group block h-full">
                   <div
-                    className="group h-full p-6 border-2 border-border-heavy rounded-xl shadow-[2px_2px_0px_var(--color-border-heavy)] hover:-translate-y-1 hover:shadow-[4px_4px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex flex-col justify-between"
+                    className="h-full p-6 border-2 border-border-heavy rounded-xl shadow-[2px_2px_0px_var(--color-border-heavy)] group-hover:-translate-y-1 group-hover:shadow-[4px_4px_0px_var(--color-border-heavy)] transition-all cursor-pointer flex items-center justify-between"
                     style={getDeckStyle(deck.properties?.color)}
                   >
-                    <div>
-                      <h3 className="text-xl font-bold group-hover:underline">{deck.name}</h3>
-                      <p className="text-sm opacity-70 mt-2 font-mono">/{deck.slug}</p>
+                    <div className="min-w-0 pr-2 flex-1">
+                      <h3
+                        className="text-xl font-bold group-hover:underline line-clamp-2 h-[3.5rem]"
+                        title={deck.name}
+                      >
+                        {deck.name}
+                      </h3>
                     </div>
                   </div>
                 </Link>
