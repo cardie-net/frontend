@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/Button';
 import { Alert } from '@/components/ui/Alert';
 import { Spinner } from '@/components/ui/Spinner';
 import { Popup } from '@/components/Popup';
-import { AlertCircle, Plus, Pencil, Trash2 } from 'lucide-react';
+import { AlertCircle, Plus, Pencil, Trash2, MoreVertical, FolderOpen, Share2 } from 'lucide-react';
 import { DECK_COLORS, getDeckStyle } from '@/lib/colors';
 
 interface Deck {
@@ -39,6 +39,17 @@ function DecksPageContent() {
   const [decksLoading, setDecksLoading] = useState(true);
   const [error, setError] = useState('');
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (!(e.target as Element).closest('.deck-dropdown-container')) {
+        setActiveDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // New Deck State
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -92,7 +103,21 @@ function DecksPageContent() {
       setError('Failed to delete deck');
     } finally {
       setIsDeleting(null);
+      setActiveDropdown(null);
     }
+  };
+
+  const handleShareDeck = async (e: React.MouseEvent, deckId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(`${window.location.origin}/decks/${deckId}`);
+      alert('Link copied to clipboard!');
+    } catch (err) {
+      console.error('Failed to copy link', err);
+      alert('Failed to copy link to clipboard');
+    }
+    setActiveDropdown(null);
   };
 
   const handleCreateDeck = async (e: React.FormEvent) => {
@@ -151,6 +176,14 @@ function DecksPageContent() {
 
   return (
     <div className="flex-1 text-foreground p-8">
+      {/* Blur Overlay */}
+      <div
+        className={`fixed inset-0 bg-foreground/50 backdrop-blur-sm z-40 sm:hidden transition-all duration-200 ${
+          activeDropdown ? 'opacity-100 visible' : 'opacity-0 invisible'
+        }`}
+        aria-hidden="true"
+      />
+
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-2xl font-bold flex items-center gap-2">
@@ -169,7 +202,11 @@ function DecksPageContent() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {decks.map((deck) => (
-            <Link key={deck.id} href={`/decks/${deck.id}`} className="group block h-full">
+            <Link
+              key={deck.id}
+              href={`/decks/${deck.id}`}
+              className={`group block h-full ${activeDropdown === deck.id ? 'relative z-50' : 'relative z-0'}`}
+            >
               <Card
                 hoverable
                 className="h-full flex items-center justify-between !p-4"
@@ -179,25 +216,70 @@ function DecksPageContent() {
                   <h3 className="text-lg font-bold group-hover:underline truncate">{deck.name}</h3>
                   <p className="text-sm opacity-70 mt-1 font-mono truncate">/{deck.slug}</p>
                 </div>
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="relative shrink-0 deck-dropdown-container">
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      router.push(`/decks/${deck.id}/edit`);
+                      e.stopPropagation();
+                      setActiveDropdown(activeDropdown === deck.id ? null : deck.id);
                     }}
-                    className="p-2 rounded-full hover:bg-background/20 transition-colors"
-                    title="Edit Deck"
+                    className="p-2 rounded-full hover:bg-background/20 transition-colors focus:outline-none"
+                    title="Deck Options"
                   >
-                    <Pencil className="w-5 h-5" />
+                    <MoreVertical className="w-5 h-5" />
                   </button>
-                  <button
-                    onClick={(e) => handleDeleteDeck(e, deck.id)}
-                    disabled={isDeleting === deck.id}
-                    className="p-2 rounded-full hover:bg-background/20 transition-colors disabled:opacity-50"
-                    title="Delete Deck"
+
+                  <div
+                    className={`absolute right-0 top-full mt-2 w-40 bg-background text-foreground rounded-lg border-2 border-foreground shadow-[4px_4px_0px_currentColor] p-1 z-50 flex flex-col gap-1 transition-all duration-200 ease-out origin-top-right ${
+                      activeDropdown === deck.id
+                        ? 'opacity-100 scale-100 visible'
+                        : 'opacity-0 scale-95 invisible'
+                    }`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
                   >
-                    <Trash2 className="w-5 h-5" />
-                  </button>
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-foreground/10 rounded-md transition-colors flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveDropdown(null);
+                        router.push(`/decks/${deck.id}`);
+                      }}
+                    >
+                      <FolderOpen className="w-4 h-4" /> Open
+                    </button>
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-foreground/10 rounded-md transition-colors flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setActiveDropdown(null);
+                        router.push(`/decks/${deck.id}/edit`);
+                      }}
+                    >
+                      <Pencil className="w-4 h-4" /> Edit
+                    </button>
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm font-bold hover:bg-foreground/10 rounded-md transition-colors flex items-center gap-2"
+                      onClick={(e) => handleShareDeck(e, deck.id)}
+                    >
+                      <Share2 className="w-4 h-4" /> Share
+                    </button>
+                    <button
+                      disabled={isDeleting === deck.id}
+                      className="w-full text-left px-3 py-2 text-sm font-bold text-error hover:bg-error/10 rounded-md transition-colors disabled:opacity-50 flex items-center gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleDeleteDeck(e, deck.id);
+                      }}
+                    >
+                      <Trash2 className="w-4 h-4" /> Delete
+                    </button>
+                  </div>
                 </div>
               </Card>
             </Link>
