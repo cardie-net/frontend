@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
+import { cn, getDeckColorClass } from '@/lib/utils';
 import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardAction } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
@@ -286,7 +287,7 @@ export default function DecksPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {decks.map((deck) => (
-            <Card key={deck.id} className="flex flex-col relative" style={{ borderTop: deck.properties?.color ? `4px solid var(--color-${deck.properties.color}-500, currentColor)` : undefined }}>
+            <Card key={deck.id} className={cn("flex flex-col relative", getDeckColorClass(deck.properties?.color))}>
               <CardHeader>
                 <CardTitle className="pr-8">{deck.name}</CardTitle>
                 <CardAction>
