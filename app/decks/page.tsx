@@ -318,7 +318,7 @@ export default function DecksPage() {
                     <BookOpen className="w-4 h-4 mr-2" /> Learn
                   </Button>
                 </Link>
-                <Link href={`/${user?.username}/${deck.slug}/edit`} className="flex-1">
+                <Link href={`/${user?.username}/${deck.slug}?edit=true`} className="flex-1">
                   <Button className="w-full" variant="outline">
                     <Pencil className="w-4 h-4 mr-2" /> Edit
                   </Button>
