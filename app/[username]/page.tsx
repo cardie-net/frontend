@@ -214,7 +214,7 @@ export default function ProfilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {decks.map((deck) => (
               <Link key={deck.id} href={`/${profileUser.username}/${deck.slug}`}>
-                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer flex flex-col group border-2">
+                <Card className="h-full hover:shadow-md transition-shadow cursor-pointer flex flex-col group border-2" style={{ borderTop: deck.properties?.color ? `4px solid var(--color-${deck.properties.color}-500, currentColor)` : undefined }}>
                   <CardHeader>
                     <CardTitle className="group-hover:text-primary transition-colors line-clamp-2">
                       {deck.name}
