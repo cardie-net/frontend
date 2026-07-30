@@ -16,6 +16,9 @@ export function Navbar() {
         {!loading && user && !user.is_guest ? (
           <>
             <span className="flex items-center text-sm font-medium">{user.email}</span>
+            <Link href="/settings">
+              <Button variant="ghost">Settings</Button>
+            </Link>
             <Button variant="outline" onClick={logout}>
               Log out
             </Button>
