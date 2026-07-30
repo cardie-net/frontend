@@ -15,7 +15,11 @@ export function Navbar() {
       <div className="flex gap-4">
         {!loading && user && !user.is_guest ? (
           <>
-            <span className="flex items-center text-sm font-medium">{user.email}</span>
+            <Link href={`/${user.username}`}>
+              <Button variant="ghost" className="font-bold">
+                @{user.username || user.display_name || 'Profile'}
+              </Button>
+            </Link>
             <Link href="/settings">
               <Button variant="ghost">Settings</Button>
             </Link>
