@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
+import AuthDivider from '@/components/AuthDivider';
 
 export default function SignupPage() {
   const router = useRouter();
@@ -85,6 +87,10 @@ export default function SignupPage() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        <GoogleSignInButton />
+
+        <AuthDivider />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">

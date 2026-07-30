@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/AuthContext';
+import GoogleSignInButton from '@/components/GoogleSignInButton';
+import AuthDivider from '@/components/AuthDivider';
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_invalid_state: 'Authentication failed. Please try again',
@@ -107,6 +109,10 @@ function LoginContent() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
+
+      <GoogleSignInButton />
+
+      <AuthDivider />
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
