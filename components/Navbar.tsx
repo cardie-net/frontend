@@ -20,6 +20,9 @@ export function Navbar() {
                 @{user.username || user.display_name || 'Profile'}
               </Button>
             </Link>
+            <Link href="/decks">
+              <Button variant="ghost">Decks</Button>
+            </Link>
             <Link href="/settings">
               <Button variant="ghost">Settings</Button>
             </Link>
