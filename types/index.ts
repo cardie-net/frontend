@@ -22,3 +22,8 @@ export interface Deck {
     color?: string;
   };
 }
+
+export interface CardProgress {
+  card_id: string;
+  box: number;
+}
