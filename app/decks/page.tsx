@@ -1,8 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Alert } from '@/components/ui/alert';
@@ -11,52 +10,26 @@ import { Deck } from '@/types';
 import { CreateDeckDialog } from '@/components/decks/CreateDeckDialog';
 import { ShareDeckDialog } from '@/components/decks/ShareDeckDialog';
 import { DeckCard } from '@/components/decks/DeckCard';
+import { useDecks, useDeleteDeck } from '@/hooks/useDecks';
 
 export default function DecksPage() {
   const { user, loading: authLoading } = useAuth();
-  const [decks, setDecks] = useState<Deck[]>([]);
-  const [decksLoading, setDecksLoading] = useState(true);
-  const [error, setError] = useState('');
+  
+  const { data: decks = [], isLoading: decksLoading, error: decksError } = useDecks();
+  const deleteDeck = useDeleteDeck();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null);
 
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user || user.is_guest) {
-      setDecksLoading(false);
-      return;
-    }
-
-    const fetchDecks = async () => {
-      try {
-        const res = await apiFetch(`/api/v1/users/${user.id}/items`);
-        if (!res.ok) throw new Error('Failed to fetch items');
-        const data = await res.json();
-        setDecks(data.filter((item: { type: string }) => item.type === 'deck'));
-      } catch (err) {
-        console.error(err);
-        setError('Failed to load decks');
-      } finally {
-        setDecksLoading(false);
-      }
-    };
-    fetchDecks();
-  }, [user, authLoading]);
-
-  const handleDeleteDeck = async (deckId: string) => {
+  const handleDeleteDeck = (deckId: string) => {
     if (!confirm('Are you sure you want to delete this deck? All cards will be lost.')) return;
-    try {
-      const res = await apiFetch(`/api/v1/decks/${deckId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete deck');
-      setDecks(decks.filter((d) => d.id !== deckId));
-    } catch {
-      setError('Failed to delete deck');
-    }
+    deleteDeck.mutate(deckId);
   };
 
   const handleUpdateDeck = (updatedDeck: Deck) => {
-    setDecks(decks.map((d) => (d.id === updatedDeck.id ? updatedDeck : d)));
+    // Optionally update local state here, but best to rely on React Query invalidation in ShareDeckDialog
+    // For now, since ShareDeckDialog isn't using React Query yet, we can leave this as a prop
+    // Actually, ShareDeckDialog should invalidate the query.
   };
 
   if (authLoading || decksLoading) {
@@ -83,7 +56,8 @@ export default function DecksPage() {
         </Button>
       </div>
 
-      {error && <Alert variant="destructive" className="mb-6">{error}</Alert>}
+      {decksError && <Alert variant="destructive" className="mb-6">{decksError.message}</Alert>}
+      {deleteDeck.error && <Alert variant="destructive" className="mb-6">{deleteDeck.error.message}</Alert>}
 
       {decks.length === 0 ? (
         <div className="text-center p-12 border rounded-lg bg-muted/20">

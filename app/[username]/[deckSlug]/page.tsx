@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
 import { useAuth } from '@/lib/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -18,16 +17,17 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
 
-import { FlashCard, Deck } from '@/types';
+import { FlashCard } from '@/types';
 import { SortableCardRow } from '@/components/cards/SortableCardRow';
 import { AddCardForm } from '@/components/cards/AddCardForm';
 import { DeckActionButtons } from '@/components/decks/DeckActionButtons';
+import { useDeck } from '@/hooks/useDecks';
+import { useCards, useCreateCard, useUpdateCard, useDeleteCard, useReorderCards } from '@/hooks/useCards';
 
 export default function DeckPage() {
   const params = useParams();
@@ -37,21 +37,24 @@ export default function DeckPage() {
 
   const { user } = useAuth();
 
-  const [deck, setDeck] = useState<Deck | null>(null);
-  const [cards, setCards] = useState<FlashCard[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: deck, isLoading: deckLoading, error: deckError } = useDeck(username, deckSlug);
+  const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id);
+  
+  const createCard = useCreateCard();
+  const updateCard = useUpdateCard();
+  const deleteCard = useDeleteCard();
+  const reorderCards = useReorderCards();
+
+  const loading = deckLoading || (!!deck && cardsLoading);
 
   // Editing state
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
-  const [isSavingCard, setIsSavingCard] = useState(false);
 
   // New card state
   const [newFront, setNewFront] = useState('');
   const [newBack, setNewBack] = useState('');
-  const [isAddingCard, setIsAddingCard] = useState(false);
   const [showAddForm, setShowAddForm] = useState(false);
 
   const cardsRef = useRef<HTMLDivElement>(null);
@@ -63,38 +66,6 @@ export default function DeckPage() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
-
-  // Fetch deck and cards
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // Fetch deck by username and slug
-        const deckRes = await apiFetch(`/api/v1/users/profile/${username}/decks/${deckSlug}`);
-        if (!deckRes.ok) {
-          if (deckRes.status === 404) setError('Deck not found');
-          else if (deckRes.status === 403) setError('You do not have permission to view this deck');
-          else setError('Failed to load deck');
-          return;
-        }
-        const deckData = await deckRes.json();
-        setDeck(deckData);
-
-        // Fetch cards
-        const cardsRes = await apiFetch(`/api/v1/decks/${deckData.id}/cards`);
-        if (cardsRes.ok) {
-          const cardsData = await cardsRes.json();
-          setCards(cardsData.sort((a: FlashCard, b: FlashCard) => a.order - b.order));
-        }
-      } catch {
-        setError('An unexpected error occurred');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (username && deckSlug) fetchData();
-  }, [username, deckSlug]);
 
   // Scroll to cards section if ?edit=true
   useEffect(() => {
@@ -119,96 +90,62 @@ export default function DeckPage() {
 
   const handleSaveEdit = useCallback(async () => {
     if (!editingCardId || !deck) return;
-    setIsSavingCard(true);
-    try {
-      const res = await apiFetch(`/api/v1/decks/${deck.id}/cards/${editingCardId}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          front: [{ type: 'text', content: editFront }],
-          back: [{ type: 'text', content: editBack }],
-        }),
-      });
-      if (res.ok) {
-        const updated = await res.json();
-        setCards((prev) => prev.map((c) => (c.id === editingCardId ? updated : c)));
+    updateCard.mutate({
+      deckId: deck.id,
+      cardId: editingCardId,
+      front: editFront,
+      back: editBack,
+    }, {
+      onSuccess: () => {
         setEditingCardId(null);
         setEditFront('');
         setEditBack('');
       }
-    } catch {
-      // silently fail
-    } finally {
-      setIsSavingCard(false);
-    }
-  }, [editingCardId, deck, editFront, editBack]);
+    });
+  }, [editingCardId, deck, editFront, editBack, updateCard]);
 
   // --- Add Card ---
 
   const handleAddCard = async () => {
     if (!deck || !newFront.trim()) return;
-    setIsAddingCard(true);
-    try {
-      const res = await apiFetch(`/api/v1/decks/${deck.id}/cards`, {
-        method: 'POST',
-        body: JSON.stringify({
-          front: [{ type: 'text', content: newFront }],
-          back: [{ type: 'text', content: newBack }],
-        }),
-      });
-      if (res.ok) {
-        const newCard = await res.json();
-        setCards((prev) => [...prev, newCard]);
+    createCard.mutate({
+      deckId: deck.id,
+      front: newFront,
+      back: newBack,
+    }, {
+      onSuccess: () => {
         setNewFront('');
         setNewBack('');
       }
-    } catch {
-      // silently fail
-    } finally {
-      setIsAddingCard(false);
-    }
+    });
   };
 
   // --- Delete Card ---
 
-  const handleDeleteCard = async (cardId: string) => {
+  const handleDeleteCard = (cardId: string) => {
     if (!deck) return;
-    try {
-      const res = await apiFetch(`/api/v1/decks/${deck.id}/cards/${cardId}`, {
-        method: 'DELETE',
-      });
-      if (res.ok || res.status === 204) {
-        setCards((prev) => prev.filter((c) => c.id !== cardId));
-        if (editingCardId === cardId) handleCancelEdit();
-      }
-    } catch {
-      // silently fail
-    }
+    deleteCard.mutate({ deckId: deck.id, cardId });
+    if (editingCardId === cardId) handleCancelEdit();
   };
 
   // --- Reorder ---
 
-  const handleDragEnd = async (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id || !deck) return;
 
     const oldIndex = cards.findIndex((c) => c.id === active.id);
     const newIndex = cards.findIndex((c) => c.id === over.id);
 
-    const reordered = arrayMove(cards, oldIndex, newIndex);
-    setCards(reordered);
+    // Create a new array with the dragged item moved
+    const newCards = [...cards];
+    const [movedItem] = newCards.splice(oldIndex, 1);
+    newCards.splice(newIndex, 0, movedItem);
 
-    // Persist reorder
-    try {
-      await apiFetch(`/api/v1/decks/${deck.id}/cards/reorder`, {
-        method: 'POST',
-        body: JSON.stringify({
-          card_ids: reordered.map((c) => c.id),
-        }),
-      });
-    } catch {
-      // Revert on failure
-      setCards(cards);
-    }
+    reorderCards.mutate({
+      deckId: deck.id,
+      orderedIds: newCards.map(c => c.id)
+    });
   };
 
   // --- Loading State ---
@@ -229,12 +166,12 @@ export default function DeckPage() {
 
   // --- Error State ---
 
-  if (error || !deck) {
+  if (deckError || !deck) {
     return (
       <div className="flex-1 flex items-center justify-center p-8 mt-20">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 mx-auto mb-4 text-destructive" />
-          <h2 className="font-bold text-2xl mb-4">{error || 'Deck not found'}</h2>
+          <h2 className="font-bold text-2xl mb-4">{deckError?.message || 'Deck not found'}</h2>
           <Link href={`/${username}`}>
             <Button variant="outline">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -287,7 +224,7 @@ export default function DeckPage() {
             setNewFront={setNewFront}
             newBack={newBack}
             setNewBack={setNewBack}
-            isAddingCard={isAddingCard}
+            isAddingCard={createCard.isPending}
             onAddCard={handleAddCard}
             onCancel={() => {
               setShowAddForm(false);
@@ -342,7 +279,7 @@ export default function DeckPage() {
                     editingCardId={editingCardId}
                     editFront={editFront}
                     editBack={editBack}
-                    isSavingCard={isSavingCard}
+                    isSavingCard={updateCard.isPending && updateCard.variables?.cardId === card.id}
                     onStartEdit={handleStartEdit}
                     onCancelEdit={handleCancelEdit}
                     onSaveEdit={handleSaveEdit}

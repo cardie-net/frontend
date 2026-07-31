@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/lib/AuthContext";
 import { Navbar } from "@/components/Navbar";
+import { Providers } from "@/components/Providers";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'})
 
@@ -26,10 +27,12 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <AuthProvider>
-            <Navbar />
-            <main>{children}</main>
-          </AuthProvider>
+          <Providers>
+            <AuthProvider>
+              <Navbar />
+              <main>{children}</main>
+            </AuthProvider>
+          </Providers>
         </ThemeProvider>
       </body>
     </html>
