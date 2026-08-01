@@ -11,12 +11,14 @@ import { CreateDeckDialog } from '@/components/decks/CreateDeckDialog';
 import { ShareDeckDialog } from '@/components/decks/ShareDeckDialog';
 import { DeckCard } from '@/components/decks/DeckCard';
 import { useDecks, useDeleteDeck } from '@/hooks/useDecks';
+import { useSRSCounts } from '@/hooks/useSRSCounts';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function DecksPage() {
   const { user, loading: authLoading } = useAuth();
   
   const { data: decks = [], isLoading: decksLoading, error: decksError } = useDecks();
+  const { data: srsCountsData } = useSRSCounts();
   const deleteDeck = useDeleteDeck();
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -76,6 +78,7 @@ export default function DecksPage() {
               key={deck.id}
               deck={deck}
               username={user.username}
+              srsCounts={srsCountsData?.[deck.id]}
               onShare={setShareDeckTarget}
               onDelete={handleDeleteDeck}
             />
