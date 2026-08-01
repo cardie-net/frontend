@@ -11,6 +11,7 @@ import { CreateDeckDialog } from '@/components/decks/CreateDeckDialog';
 import { ShareDeckDialog } from '@/components/decks/ShareDeckDialog';
 import { DeckCard } from '@/components/decks/DeckCard';
 import { useDecks, useDeleteDeck } from '@/hooks/useDecks';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function DecksPage() {
   const { user, loading: authLoading } = useAuth();
@@ -26,10 +27,12 @@ export default function DecksPage() {
     deleteDeck.mutate(deckId);
   };
 
+  const queryClient = useQueryClient();
+
   const handleUpdateDeck = (updatedDeck: Deck) => {
-    // Optionally update local state here, but best to rely on React Query invalidation in ShareDeckDialog
-    // For now, since ShareDeckDialog isn't using React Query yet, we can leave this as a prop
-    // Actually, ShareDeckDialog should invalidate the query.
+    queryClient.setQueryData(['decks', user?.id], (old: Deck[] | undefined) => 
+      old ? old.map(deck => deck.id === updatedDeck.id ? updatedDeck : deck) : []
+    );
   };
 
   if (authLoading || decksLoading) {
