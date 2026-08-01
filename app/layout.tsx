@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { AuthProvider } from "@/lib/AuthContext";
 import { Navbar } from "@/components/Navbar";
 import { Providers } from "@/components/Providers";
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'})
 
@@ -14,14 +16,17 @@ const fontMono = Geist_Mono({
   variable: "--font-mono",
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", inter.variable)}
     >
@@ -29,8 +34,10 @@ export default function RootLayout({
         <ThemeProvider>
           <Providers>
             <AuthProvider>
-              <Navbar />
-              <main>{children}</main>
+              <NextIntlClientProvider messages={messages}>
+                <Navbar />
+                <main>{children}</main>
+              </NextIntlClientProvider>
             </AuthProvider>
           </Providers>
         </ThemeProvider>
