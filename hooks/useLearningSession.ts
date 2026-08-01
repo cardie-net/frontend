@@ -174,19 +174,22 @@ export function useLearningSession(deckId: string) {
     return { box1, box2, box3, total: cards.length };
   };
 
-  const restartLearning = useCallback(async () => {
+  const resetProgress = useCallback(async (targetBox: number) => {
     if (!deckId || cards.length === 0) return;
     setLoading(true);
     try {
-      const updates = cards.map(c => ({ card_id: c.id, box: 2 }));
+      const updates = cards.map(c => ({ card_id: c.id, box: targetBox }));
       await syncProgress(updates);
       updateQueueRef.current = [];
       await fetchSessionData();
     } catch (err) {
-      console.error('Failed to restart learning:', err);
+      console.error('Failed to reset progress:', err);
       setLoading(false);
     }
   }, [deckId, cards, syncProgress, fetchSessionData]);
+
+  const restartLearning = useCallback(() => resetProgress(2), [resetProgress]);
+  const clearProgress = useCallback(() => resetProgress(1), [resetProgress]);
 
   return {
     loading,
@@ -197,6 +200,7 @@ export function useLearningSession(deckId: string) {
     setIsFlipped,
     handleAnswer,
     restartLearning,
+    clearProgress,
     stats: getProgressStats(),
   };
 }

@@ -47,6 +47,7 @@ export default function LearnPage() {
     setIsFlipped,
     handleAnswer,
     restartLearning,
+    clearProgress,
     stats,
   } = useLearningSession(deck?.id || "")
 
@@ -100,6 +101,16 @@ export default function LearnPage() {
         <div className="min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
           {stats.box3} / {stats.total} Mastered
         </div>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={clearProgress}
+          title="Clear Progress"
+          className="gap-2"
+        >
+          <RotateCcw className="h-4 w-4" />
+          <span className="hidden sm:inline">Clear</span>
+        </Button>
       </div>
 
       {isLoading ? (
