@@ -46,6 +46,7 @@ export function useLearningSession(deckId: string) {
       if (availableCards.length === 0) {
         setSessionCompleted(true);
       } else {
+        setSessionCompleted(false);
         // Shuffle available cards
         const shuffled = [...availableCards].sort(() => Math.random() - 0.5);
         setSessionCards(shuffled);
@@ -173,6 +174,20 @@ export function useLearningSession(deckId: string) {
     return { box1, box2, box3, total: cards.length };
   };
 
+  const restartLearning = useCallback(async () => {
+    if (!deckId || cards.length === 0) return;
+    setLoading(true);
+    try {
+      const updates = cards.map(c => ({ card_id: c.id, box: 2 }));
+      await syncProgress(updates);
+      updateQueueRef.current = [];
+      await fetchSessionData();
+    } catch (err) {
+      console.error('Failed to restart learning:', err);
+      setLoading(false);
+    }
+  }, [deckId, cards, syncProgress, fetchSessionData]);
+
   return {
     loading,
     error,
@@ -181,6 +196,7 @@ export function useLearningSession(deckId: string) {
     isFlipped,
     setIsFlipped,
     handleAnswer,
+    restartLearning,
     stats: getProgressStats(),
   };
 }

@@ -46,6 +46,7 @@ export default function LearnPage() {
     isFlipped,
     setIsFlipped,
     handleAnswer,
+    restartLearning,
     stats,
   } = useLearningSession(deck?.id || "")
 
@@ -119,11 +120,17 @@ export default function LearnPage() {
           <p className="mb-8 text-muted-foreground">
             You have mastered all the cards currently available in this deck.
           </p>
-          <Link href={`/${username}/${deckSlug}`}>
-            <Button size="lg" className="w-full">
-              Return to Deck
+          <div className="flex w-full flex-col gap-3 sm:flex-row">
+            <Link href={`/${username}/${deckSlug}`} className="flex-1">
+              <Button size="lg" className="w-full" variant="outline">
+                Return to Deck
+              </Button>
+            </Link>
+            <Button size="lg" className="flex-1" onClick={restartLearning}>
+              <RotateCcw className="mr-2 h-4 w-4" />
+              Restart Learning
             </Button>
-          </Link>
+          </div>
         </div>
       ) : currentCard ? (
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
