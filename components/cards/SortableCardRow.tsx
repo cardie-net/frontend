@@ -1,11 +1,12 @@
 'use client';
 
+import { useEffect, useRef, type FocusEvent } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GripVertical, Pencil, Trash2, Check, X, Loader2 } from 'lucide-react';
+import { GripVertical, Pencil, Trash2, X, Loader2 } from 'lucide-react';
 import { FlashCard } from '@/types';
 
 interface SortableCardRowProps {
@@ -53,13 +54,35 @@ export function SortableCardRow({
     transition,
   };
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const discardingRef = useRef(false);
+
   const isEditing = editingCardId === card.id;
   const frontText = card.front.map((el) => el.content).join(' ');
   const backText = card.back.map((el) => el.content).join(' ');
 
+  // Reset the "discard in progress" flag whenever this row enters edit mode.
+  useEffect(() => {
+    if (isEditing) discardingRef.current = false;
+  }, [isEditing]);
+
+  // Changes are saved by default when the user clicks away from editing (blur).
+  // Skipped when focus moves within this row (e.g. to the discard button).
+  const handleInputBlur = (e: FocusEvent<HTMLInputElement>) => {
+    const wasDiscarding = discardingRef.current;
+    discardingRef.current = false;
+    if (wasDiscarding) return;
+    const related = e.relatedTarget as Node | null;
+    if (related && containerRef.current?.contains(related)) return;
+    onSaveEdit();
+  };
+
   return (
     <div
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        containerRef.current = node;
+      }}
       style={style}
       className={cn(
         'group grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-all duration-200',
@@ -94,6 +117,11 @@ export function SortableCardRow({
             placeholder="Front of card"
             disabled={isSavingCard}
             autoFocus
+            onBlur={handleInputBlur}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') onSaveEdit();
+              if (e.key === 'Escape') onCancelEdit();
+            }}
           />
         ) : (
           <button
@@ -119,6 +147,7 @@ export function SortableCardRow({
             className="text-sm"
             placeholder="Back of card"
             disabled={isSavingCard}
+            onBlur={handleInputBlur}
             onKeyDown={(e) => {
               if (e.key === 'Enter') onSaveEdit();
               if (e.key === 'Escape') onCancelEdit();
@@ -142,30 +171,23 @@ export function SortableCardRow({
       {/* Actions */}
       <div className="flex items-center gap-1">
         {isEditing ? (
-          <>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={onSaveEdit}
-              disabled={isSavingCard}
-              className="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10"
-            >
-              {isSavingCard ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              ) : (
-                <Check className="w-3.5 h-3.5" />
-              )}
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={onCancelEdit}
-              disabled={isSavingCard}
-              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-            >
+          <Button
+            variant="ghost"
+            size="icon-xs"
+            onMouseDown={() => {
+              discardingRef.current = true;
+            }}
+            onClick={onCancelEdit}
+            disabled={isSavingCard}
+            aria-label="Discard changes"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          >
+            {isSavingCard ? (
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+            ) : (
               <X className="w-3.5 h-3.5" />
-            </Button>
-          </>
+            )}
+          </Button>
         ) : isOwner ? (
           <>
             <Button

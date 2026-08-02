@@ -52,6 +52,12 @@ export default function DeckPage() {
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
 
+  // Latest editingCardId, readable from async callbacks (e.g. auto-save on blur).
+  const editingCardIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    editingCardIdRef.current = editingCardId;
+  }, [editingCardId]);
+
   // New card state
   const [newFront, setNewFront] = useState('');
   const [newBack, setNewBack] = useState('');
@@ -88,15 +94,18 @@ export default function DeckPage() {
     setEditBack('');
   }, []);
 
-  const handleSaveEdit = useCallback(async () => {
+  const handleSaveEdit = useCallback(() => {
     if (!editingCardId || !deck) return;
+    const cardIdToSave = editingCardId;
     updateCard.mutate({
       deckId: deck.id,
-      cardId: editingCardId,
+      cardId: cardIdToSave,
       front: editFront,
       back: editBack,
     }, {
       onSuccess: () => {
+        // If the user already moved on to edit another card, don't touch that edit.
+        if (editingCardIdRef.current !== cardIdToSave) return;
         setEditingCardId(null);
         setEditFront('');
         setEditBack('');
@@ -188,11 +197,11 @@ export default function DeckPage() {
       {/* Header */}
       <div className="mb-8">
         <Link
-          href={`/${username}`}
+          href="/decks"
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          {username}
+          My Decks
         </Link>
         <h1 className="text-3xl font-bold">{deck.name}</h1>
         <p className="text-muted-foreground mt-1">
