@@ -5,7 +5,7 @@ async function setupGuestSession(): Promise<boolean> {
     return guestAuthPromise;
   }
 
-  guestAuthPromise = (async () => {
+  const attempt = (async () => {
     try {
       const response = await fetch('/api/v1/auth/guest', {
         method: 'POST',
@@ -18,10 +18,15 @@ async function setupGuestSession(): Promise<boolean> {
     } catch (error) {
       console.error('Error setting up guest session:', error);
       return false;
-    } finally {
-      guestAuthPromise = null;
     }
   })();
+
+  // Concurrent 401s share the in-flight attempt. Once it settles we drop the
+  // reference so a later 401 retries from scratch (and a failed attempt isn't
+  // memoized forever). A successful guest session persists via its cookie.
+  guestAuthPromise = attempt.finally(() => {
+    guestAuthPromise = null;
+  });
 
   return guestAuthPromise;
 }

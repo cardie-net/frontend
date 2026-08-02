@@ -5,17 +5,16 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { ArrowLeft, Check, X, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useDeck } from "@/hooks/useDecks"
 import { useLearningSession } from "@/hooks/useLearningSession"
+import { FlipCard } from "@/components/FlipCard"
 import { CardElement } from "@/types"
-import { CardElements } from "@/components/cards/CardElements"
 
 export default function LearnPage() {
-  const params = useParams()
-  const username = params.username as string
-  const deckSlug = params.deckSlug as string
+  const params = useParams<{ username: string; deckSlug: string }>()
+  const username = params.username
+  const deckSlug = params.deckSlug
 
   const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug)
 
@@ -82,9 +81,9 @@ export default function LearnPage() {
         <div className="min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
           {stats.box3} / {stats.total} Mastered
         </div>
-        <Button 
-          variant="outline" 
-          size="sm" 
+        <Button
+          variant="outline"
+          size="sm"
           onClick={clearProgress}
           title="Clear Progress"
           className="gap-2"
@@ -127,36 +126,16 @@ export default function LearnPage() {
       ) : currentCard ? (
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
           {/* Card Component */}
-          <div className="relative min-h-[400px] w-full [perspective:1000px]">
-            <div
-              className={`h-full min-h-[400px] w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""}`}
-              onClick={() => {
-                if (!isFlipped) {
-                  setBackContent(currentCard.back)
-                  setIsFlipped(true)
-                }
-              }}
-            >
-              {/* Front side */}
-              <Card className="absolute inset-0 flex flex-col [backface-visibility:hidden]">
-                <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <CardElements elements={currentCard.front} />
-                </CardContent>
-                {!isFlipped && (
-                  <div className="border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground">
-                    Click anywhere on the card to flip
-                  </div>
-                )}
-              </Card>
-
-              {/* Back side */}
-              <Card className="absolute inset-0 flex [transform:rotateY(180deg)] flex-col [backface-visibility:hidden]">
-                <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <CardElements elements={backContent || currentCard.back} />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <FlipCard
+            front={currentCard.front}
+            back={currentCard.back}
+            flipped={isFlipped}
+            backContent={backContent}
+            onFlip={() => {
+              setBackContent(currentCard.back)
+              setIsFlipped(true)
+            }}
+          />
 
           {/* Action Buttons */}
           <div
@@ -169,7 +148,7 @@ export default function LearnPage() {
               onClick={() => handleAnswerClick(false)}
             >
               <X className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-              Didn't Know
+              Didn&apos;t Know
             </Button>
 
             <Button

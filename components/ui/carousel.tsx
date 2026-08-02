@@ -95,12 +95,16 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
+    // Defer the initial sync so embla has finished initializing — and so the
+    // effect never calls setState synchronously (react-hooks/set-state-in-effect).
+    const id = window.setTimeout(() => onSelect(api), 0)
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
     return () => {
+      window.clearTimeout(id)
       api?.off("select", onSelect)
+      api?.off("reInit", onSelect)
     }
   }, [api, onSelect])
 

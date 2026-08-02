@@ -1,24 +1,23 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { ArrowLeft, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Badge } from '@/components/ui/badge';
-import { useDeck } from '@/hooks/useDecks';
-import { useSRSSession } from '@/hooks/useSRSSession';
-import { CardElement } from '@/types';
-import { CardElements } from '@/components/cards/CardElements';
+import { useState } from "react"
+import Link from "next/link"
+import { useParams } from "next/navigation"
+import { ArrowLeft, Check } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
+import { useDeck } from "@/hooks/useDecks"
+import { useSRSSession } from "@/hooks/useSRSSession"
+import { FlipCard } from "@/components/FlipCard"
+import { CardElement } from "@/types"
 
 export default function SpacedRepetitionPage() {
-  const params = useParams();
-  const username = params.username as string;
-  const deckSlug = params.deckSlug as string;
+  const params = useParams<{ username: string; deckSlug: string }>()
+  const username = params.username
+  const deckSlug = params.deckSlug
 
-  const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug);
+  const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug)
 
   const {
     loading: sessionLoading,
@@ -30,12 +29,12 @@ export default function SpacedRepetitionPage() {
     handleRating,
     previewIntervals,
     counts,
-    totalRemaining
-  } = useSRSSession(deck?.id || '');
+    totalRemaining,
+  } = useSRSSession(deck?.id || "")
 
-  const [backContent, setBackContent] = useState<CardElement[] | null>(null);
+  const [backContent, setBackContent] = useState<CardElement[] | null>(null)
 
-  const isLoading = deckLoading || (!!deck && sessionLoading);
+  const isLoading = deckLoading || (!!deck && sessionLoading)
 
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col p-6">
@@ -46,19 +45,19 @@ export default function SpacedRepetitionPage() {
             Back to Deck
           </Button>
         </Link>
-        <div className="flex-1 flex justify-center gap-2">
+        <div className="flex flex-1 justify-center gap-2">
           {counts.newRemaining > 0 && (
-            <Badge className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1">
+            <Badge className="bg-blue-500 px-3 py-1 text-white hover:bg-blue-600">
               {counts.newRemaining} New
             </Badge>
           )}
           {counts.learningRemaining > 0 && (
-            <Badge className="bg-orange-500 hover:bg-orange-600 text-white px-3 py-1">
+            <Badge className="bg-orange-500 px-3 py-1 text-white hover:bg-orange-600">
               {counts.learningRemaining} Learning
             </Badge>
           )}
           {counts.reviewRemaining > 0 && (
-            <Badge className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">
+            <Badge className="bg-green-500 px-3 py-1 text-white hover:bg-green-600">
               {counts.reviewRemaining} Review
             </Badge>
           )}
@@ -94,34 +93,16 @@ export default function SpacedRepetitionPage() {
         </div>
       ) : currentCard ? (
         <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center">
-          <div className="relative min-h-[400px] w-full [perspective:1000px]">
-            <div
-              className={`h-full min-h-[400px] w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${isFlipped ? "[transform:rotateY(180deg)]" : ""}`}
-              onClick={() => {
-                if (!isFlipped) {
-                  setBackContent(currentCard.back);
-                  setIsFlipped(true);
-                }
-              }}
-            >
-              <Card className="absolute inset-0 flex flex-col [backface-visibility:hidden]">
-                <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <CardElements elements={currentCard.front} />
-                </CardContent>
-                {!isFlipped && (
-                  <div className="border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground">
-                    Click anywhere on the card to flip
-                  </div>
-                )}
-              </Card>
-
-              <Card className="absolute inset-0 flex [transform:rotateY(180deg)] flex-col [backface-visibility:hidden]">
-                <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <CardElements elements={backContent || currentCard.back} />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
+          <FlipCard
+            front={currentCard.front}
+            back={currentCard.back}
+            flipped={isFlipped}
+            backContent={backContent}
+            onFlip={() => {
+              setBackContent(currentCard.back)
+              setIsFlipped(true)
+            }}
+          />
 
           <div
             className={`mt-8 flex w-full gap-3 transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
@@ -129,42 +110,50 @@ export default function SpacedRepetitionPage() {
             <Button
               size="lg"
               variant="destructive"
-              className="flex-1 flex-col h-auto py-3 gap-1"
+              className="h-auto flex-1 flex-col gap-1 py-3"
               onClick={() => handleRating(0)}
             >
-              <span className="font-semibold text-base">Again</span>
-              <span className="text-xs opacity-90">{previewIntervals.again}</span>
+              <span className="text-base font-semibold">Again</span>
+              <span className="text-xs opacity-90">
+                {previewIntervals.again}
+              </span>
             </Button>
 
             <Button
               size="lg"
-              className="flex-1 flex-col h-auto py-3 gap-1 bg-orange-500 hover:bg-orange-600 text-white"
+              className="h-auto flex-1 flex-col gap-1 bg-orange-500 py-3 text-white hover:bg-orange-600"
               onClick={() => handleRating(1)}
             >
-              <span className="font-semibold text-base">Hard</span>
-              <span className="text-xs opacity-90">{previewIntervals.hard}</span>
-            </Button>
-            
-            <Button
-              size="lg"
-              className="flex-1 flex-col h-auto py-3 gap-1 bg-blue-500 hover:bg-blue-600 text-white"
-              onClick={() => handleRating(2)}
-            >
-              <span className="font-semibold text-base">Good</span>
-              <span className="text-xs opacity-90">{previewIntervals.good}</span>
+              <span className="text-base font-semibold">Hard</span>
+              <span className="text-xs opacity-90">
+                {previewIntervals.hard}
+              </span>
             </Button>
 
             <Button
               size="lg"
-              className="flex-1 flex-col h-auto py-3 gap-1 bg-green-500 hover:bg-green-600 text-white"
+              className="h-auto flex-1 flex-col gap-1 bg-blue-500 py-3 text-white hover:bg-blue-600"
+              onClick={() => handleRating(2)}
+            >
+              <span className="text-base font-semibold">Good</span>
+              <span className="text-xs opacity-90">
+                {previewIntervals.good}
+              </span>
+            </Button>
+
+            <Button
+              size="lg"
+              className="h-auto flex-1 flex-col gap-1 bg-green-500 py-3 text-white hover:bg-green-600"
               onClick={() => handleRating(3)}
             >
-              <span className="font-semibold text-base">Easy</span>
-              <span className="text-xs opacity-90">{previewIntervals.easy}</span>
+              <span className="text-base font-semibold">Easy</span>
+              <span className="text-xs opacity-90">
+                {previewIntervals.easy}
+              </span>
             </Button>
           </div>
         </div>
       ) : null}
     </div>
-  );
+  )
 }

@@ -1,81 +1,82 @@
-'use client';
+"use client"
 
-import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { apiFetch } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/lib/AuthContext';
-import GoogleSignInButton from '@/components/GoogleSignInButton';
-import AuthDivider from '@/components/AuthDivider';
+import { useState, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { apiFetch } from "@/lib/api"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Label } from "@/components/ui/label"
+import { useAuth } from "@/lib/AuthContext"
+import GoogleSignInButton from "@/components/GoogleSignInButton"
+import AuthDivider from "@/components/AuthDivider"
 
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
-  oauth_invalid_state: 'Authentication failed. Please try again',
-  oauth_state_expired: 'Authentication session expired. Please try again',
-  oauth_csrf_mismatch: 'Security check failed. Please try again',
-  oauth_no_email: 'Could not retrieve your email from Google',
-  oauth_profile_error: 'Could not retrieve your Google profile',
-  oauth_user_exists: 'An account with this email already exists with a different sign-in method',
-  oauth_user_inactive: 'Your account has been deactivated',
-};
+  oauth_invalid_state: "Authentication failed. Please try again",
+  oauth_state_expired: "Authentication session expired. Please try again",
+  oauth_csrf_mismatch: "Security check failed. Please try again",
+  oauth_no_email: "Could not retrieve your email from Google",
+  oauth_profile_error: "Could not retrieve your Google profile",
+  oauth_user_exists:
+    "An account with this email already exists with a different sign-in method",
+  oauth_user_inactive: "Your account has been deactivated",
+}
 
 function LoginContent() {
-  const searchParams = useSearchParams();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<React.ReactNode>('');
-  const [isLoading, setIsLoading] = useState(false);
-  const { refreshUser } = useAuth();
-
-  useEffect(() => {
-    const oauthError = searchParams.get('error');
-    if (oauthError && OAUTH_ERROR_MESSAGES[oauthError]) {
-      setError(OAUTH_ERROR_MESSAGES[oauthError]);
-    }
-  }, [searchParams]);
+  const searchParams = useSearchParams()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  // Pre-fill from the OAuth redirect (`/login?error=...`); the page remounts on
+  // navigation, so a one-time initializer is sufficient.
+  const [error, setError] = useState<React.ReactNode>(() => {
+    const oauthError = searchParams.get("error")
+    return oauthError && OAUTH_ERROR_MESSAGES[oauthError]
+      ? OAUTH_ERROR_MESSAGES[oauthError]
+      : ""
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const { refreshUser } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
-      setIsLoading(false);
-      return;
+      setError("Please enter a valid email address.")
+      setIsLoading(false)
+      return
     }
 
     if (!password) {
-      setError('Please enter your password.');
-      setIsLoading(false);
-      return;
+      setError("Please enter your password.")
+      setIsLoading(false)
+      return
     }
 
     try {
-      const formData = new URLSearchParams();
-      formData.append('username', email); // fastapi_users expects 'username' for email
-      formData.append('password', password);
+      const formData = new URLSearchParams()
+      formData.append("username", email) // fastapi_users expects 'username' for email
+      formData.append("password", password)
 
       const response = await apiFetch(`/api/v1/auth/jwt/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: formData,
-      });
+      })
 
       if (response.ok) {
-        await refreshUser();
-        window.location.href = '/';
+        await refreshUser()
+        window.location.href = "/"
       } else {
-        const errData = await response.json().catch(() => ({}));
-        if (errData.detail === 'USER_NOT_VERIFIED') {
+        const errData = await response.json().catch(() => ({}))
+        if (errData.detail === "USER_NOT_VERIFIED") {
           setError(
             <span>
-              Your email is not verified.{' '}
+              Your email is not verified.{" "}
               <Link
                 href={`/verify?email=${encodeURIComponent(email)}`}
                 className="underline"
@@ -83,26 +84,28 @@ function LoginContent() {
                 Verify now
               </Link>
             </span>
-          );
-        } else if (errData.detail === 'LOGIN_BAD_CREDENTIALS') {
-          setError('Invalid email or password');
+          )
+        } else if (errData.detail === "LOGIN_BAD_CREDENTIALS") {
+          setError("Invalid email or password")
         } else {
           setError(
-            typeof errData.detail === 'string' ? errData.detail : 'Invalid email or password'
-          );
+            typeof errData.detail === "string"
+              ? errData.detail
+              : "Invalid email or password"
+          )
         }
       }
     } catch {
-      setError('An error occurred while logging in. Please try again.');
+      setError("An error occurred while logging in. Please try again.")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="w-full max-w-md bg-background text-foreground border rounded-lg p-6 sm:p-8 shadow-sm">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Welcome Back</h1>
-      <p className="text-muted-foreground mb-6">Sign in to continue</p>
+    <div className="w-full max-w-md rounded-lg border bg-background p-6 text-foreground shadow-sm sm:p-8">
+      <h1 className="mb-2 text-2xl font-bold sm:text-3xl">Welcome Back</h1>
+      <p className="mb-6 text-muted-foreground">Sign in to continue</p>
 
       {error && (
         <Alert variant="destructive" className="mb-6">
@@ -128,11 +131,11 @@ function LoginContent() {
         </div>
 
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          <div className="flex items-center justify-between">
             <Label htmlFor="password">Password</Label>
             <Link
               href="/forgot-password"
-              className="text-sm font-medium hover:underline text-muted-foreground"
+              className="text-sm font-medium text-muted-foreground hover:underline"
             >
               Forgot password?
             </Link>
@@ -148,26 +151,29 @@ function LoginContent() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Signing in...' : 'Sign In'}
+          {isLoading ? "Signing in..." : "Sign In"}
         </Button>
       </form>
 
-      <p className="mt-6 text-center text-sm text-muted-foreground flex gap-1 justify-center">
+      <p className="mt-6 flex justify-center gap-1 text-center text-sm text-muted-foreground">
         Don&apos;t have an account?
-        <Link href="/signup" className="font-medium hover:underline text-foreground">
+        <Link
+          href="/signup"
+          className="font-medium text-foreground hover:underline"
+        >
           Sign up
         </Link>
       </p>
     </div>
-  );
+  )
 }
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="flex min-h-screen items-center justify-center p-4">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-background border rounded-lg p-6 sm:p-8 text-center">
+          <div className="w-full max-w-md rounded-lg border bg-background p-6 text-center sm:p-8">
             Loading...
           </div>
         }
@@ -175,5 +181,5 @@ export default function LoginPage() {
         <LoginContent />
       </Suspense>
     </div>
-  );
+  )
 }
