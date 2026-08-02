@@ -1,5 +1,5 @@
-import { CardElement, ImageElement, TextElement } from '@/types';
-import { apiFetch } from '@/lib/api';
+import type { CardElement, ImageElement, TextElement } from '@/types';
+import { apiFetch } from './api';
 
 /** Joins the text elements of a card side into a plain-text preview string. */
 export function getCardText(elements: CardElement[]): string {

@@ -5,9 +5,10 @@ import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
-import { Plus } from "lucide-react"
+import { Plus, Upload } from "lucide-react"
 import { Deck } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
+import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
 import { DeckCard } from "@/components/decks/DeckCard"
 import { useDecks, useDeleteDeck } from "@/hooks/useDecks"
@@ -25,6 +26,7 @@ export default function DecksPage() {
   const deleteDeck = useDeleteDeck()
 
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
 
   const handleDeleteDeck = (deckId: string) => {
@@ -56,9 +58,17 @@ export default function DecksPage() {
     <div className="container mx-auto max-w-5xl p-6">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">My Decks</h1>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> New Deck
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setIsImportDialogOpen(true)}
+          >
+            <Upload className="mr-2 h-4 w-4" /> Import
+          </Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> New Deck
+          </Button>
+        </div>
       </div>
 
       {decksError && (
@@ -100,6 +110,14 @@ export default function DecksPage() {
         open={isCreateDialogOpen}
         onOpenChange={setIsCreateDialogOpen}
       />
+
+      {isImportDialogOpen && (
+        <DeckImportDialog
+          mode="create"
+          username={user.username}
+          onClose={() => setIsImportDialogOpen(false)}
+        />
+      )}
 
       <ShareDeckDialog
         key={shareDeckTarget?.id ?? "closed"}

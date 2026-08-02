@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { AlertCircle, ArrowLeft, Plus, Layers } from "lucide-react"
+import { AlertCircle, ArrowLeft, Plus, Layers, Upload, Download } from "lucide-react"
 import {
   DndContext,
   closestCenter,
@@ -30,6 +30,8 @@ import {
   NewCardDialog,
 } from "@/components/cards/CardEditDialog"
 import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
+import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
+import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
 import { useDeck } from "@/hooks/useDecks"
 import {
   useCards,
@@ -91,6 +93,10 @@ function DeckPageContent() {
   const [newFront, setNewFront] = useState("")
   const [newBack, setNewBack] = useState("")
   const [showAddForm, setShowAddForm] = useState(false)
+
+  // Import/export dialog state
+  const [showImportDialog, setShowImportDialog] = useState(false)
+  const [showExportDialog, setShowExportDialog] = useState(false)
 
   const cardsRef = useRef<HTMLDivElement>(null)
 
@@ -262,18 +268,38 @@ function DeckPageContent() {
 
       {/* Cards Section */}
       <div ref={cardsRef} id="cards" className="scroll-mt-6">
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex items-center justify-between gap-2">
           <h2 className="text-xl font-semibold">Cards</h2>
-          {isOwner && (
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setShowAddForm(!showAddForm)}
+              onClick={() => setShowExportDialog(true)}
             >
-              <Plus className="mr-1.5 h-4 w-4" />
-              Add Card
+              <Download className="mr-1.5 h-4 w-4" />
+              Export
             </Button>
-          )}
+            {isOwner && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowImportDialog(true)}
+                >
+                  <Upload className="mr-1.5 h-4 w-4" />
+                  Import
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowAddForm(!showAddForm)}
+                >
+                  <Plus className="mr-1.5 h-4 w-4" />
+                  Add Card
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {isOwner && showAddForm && (
@@ -390,6 +416,22 @@ function DeckPageContent() {
             )
           }}
           isSaving={createCard.isPending}
+        />
+      )}
+
+      {showImportDialog && isOwner && (
+        <DeckImportDialog
+          mode="append"
+          deckId={deck.id}
+          onClose={() => setShowImportDialog(false)}
+        />
+      )}
+
+      {showExportDialog && (
+        <DeckExportDialog
+          cards={cards}
+          deckSlug={deck.slug || deck.id}
+          onClose={() => setShowExportDialog(false)}
         />
       )}
     </div>

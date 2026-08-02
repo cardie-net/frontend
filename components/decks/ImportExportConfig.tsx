@@ -1,0 +1,104 @@
+"use client";
+
+import {
+  DelimiterConfig,
+  RecordSeparatorConfig,
+} from "@/lib/importExport";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+interface ImportExportConfigProps {
+  delimiter: DelimiterConfig;
+  onDelimiterChange: (delimiter: DelimiterConfig) => void;
+  recordSeparator: RecordSeparatorConfig;
+  onRecordSeparatorChange: (recordSeparator: RecordSeparatorConfig) => void;
+}
+
+/**
+ * Shared delimiter / record-separator controls used by both the import and
+ * export dialogs so the two always expose the same options.
+ */
+export function ImportExportConfig({
+  delimiter,
+  onDelimiterChange,
+  recordSeparator,
+  onRecordSeparatorChange,
+}: ImportExportConfigProps) {
+  return (
+    <div className="grid gap-4">
+      <div className="grid gap-2">
+        <Label>Field delimiter</Label>
+        <Select
+          value={delimiter.kind}
+          onValueChange={(kind) =>
+            onDelimiterChange({
+              kind: kind as DelimiterConfig["kind"],
+              custom: delimiter.custom,
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="tab">Tab</SelectItem>
+            <SelectItem value="comma">Comma</SelectItem>
+            <SelectItem value="custom">Custom…</SelectItem>
+          </SelectContent>
+        </Select>
+        {delimiter.kind === "custom" && (
+          <Input
+            value={delimiter.custom ?? ""}
+            onChange={(e) =>
+              onDelimiterChange({ kind: "custom", custom: e.target.value })
+            }
+            placeholder="e.g. |"
+            maxLength={20}
+          />
+        )}
+      </div>
+
+      <div className="grid gap-2">
+        <Label>Separate cards with</Label>
+        <Select
+          value={recordSeparator.kind}
+          onValueChange={(kind) =>
+            onRecordSeparatorChange({
+              kind: kind as RecordSeparatorConfig["kind"],
+              custom: recordSeparator.custom,
+            })
+          }
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newline">New line</SelectItem>
+            <SelectItem value="semicolon">Semicolon</SelectItem>
+            <SelectItem value="custom">Custom…</SelectItem>
+          </SelectContent>
+        </Select>
+        {recordSeparator.kind === "custom" && (
+          <Input
+            value={recordSeparator.custom ?? ""}
+            onChange={(e) =>
+              onRecordSeparatorChange({
+                kind: "custom",
+                custom: e.target.value,
+              })
+            }
+            placeholder="e.g. ||"
+            maxLength={20}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
