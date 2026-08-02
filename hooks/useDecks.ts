@@ -15,6 +15,9 @@ export function useDecks() {
       return data.filter((item: { type: string }) => item.type === 'deck');
     },
     enabled: !!user && !user.is_guest,
+    // The /decks page must always show up-to-date data: refetch every time it mounts.
+    staleTime: 0,
+    refetchOnMount: 'always',
   });
 }
 
