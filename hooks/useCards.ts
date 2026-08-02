@@ -19,13 +19,10 @@ export function useCreateCard() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ deckId, front, back }: { deckId: string; front: string; back: string }) => {
+    mutationFn: async ({ deckId, front, back }: { deckId: string; front: CardElement[]; back: CardElement[] }) => {
       const res = await apiFetch(`/api/v1/decks/${deckId}/cards`, {
         method: 'POST',
-        body: JSON.stringify({
-          front: [{ type: 'text', content: front }],
-          back: [{ type: 'text', content: back }],
-        }),
+        body: JSON.stringify({ front, back }),
       });
       if (!res.ok) throw new Error('Failed to create card');
       return res.json() as Promise<FlashCard>;
@@ -42,13 +39,10 @@ export function useUpdateCard() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ deckId, cardId, front, back }: { deckId: string; cardId: string; front: string; back: string }) => {
+    mutationFn: async ({ deckId, cardId, front, back }: { deckId: string; cardId: string; front: CardElement[]; back: CardElement[] }) => {
       const res = await apiFetch(`/api/v1/decks/${deckId}/cards/${cardId}`, {
         method: 'PATCH',
-        body: JSON.stringify({
-          front: [{ type: 'text', content: front }],
-          back: [{ type: 'text', content: back }],
-        }),
+        body: JSON.stringify({ front, back }),
       });
       if (!res.ok) throw new Error('Failed to update card');
       return res.json() as Promise<FlashCard>;

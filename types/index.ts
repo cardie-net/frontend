@@ -1,7 +1,14 @@
-export interface CardElement {
+export interface TextElement {
   type: 'text';
   content: string;
 }
+
+export interface ImageElement {
+  type: 'image';
+  url: string;
+}
+
+export type CardElement = TextElement | ImageElement;
 
 export interface FlashCard {
   id: string;

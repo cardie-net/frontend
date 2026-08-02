@@ -7,7 +7,8 @@ import { ArrowLeft, BarChart3, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { apiFetch } from '@/lib/api';
-import { Flashcard, type FlashCardData } from '@/components/Flashcard';
+import { Flashcard } from '@/components/Flashcard';
+import { FlashCard } from '@/types';
 import {
   Carousel,
   type CarouselApi,
@@ -31,7 +32,7 @@ export default function OverviewPage() {
   const deckSlug = params.deckSlug as string;
 
   const [deck, setDeck] = useState<Deck | null>(null);
-  const [cards, setCards] = useState<FlashCardData[]>([]);
+  const [cards, setCards] = useState<FlashCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -71,7 +72,7 @@ export default function OverviewPage() {
         const cardsRes = await apiFetch(`/api/v1/decks/${deckData.id}/cards`);
         if (cardsRes.ok) {
           const cardsData = await cardsRes.json();
-          setCards(cardsData.sort((a: FlashCardData, b: FlashCardData) => a.order - b.order));
+          setCards(cardsData.sort((a: FlashCard, b: FlashCard) => a.order - b.order));
         }
       } catch {
         setError('An unexpected error occurred');

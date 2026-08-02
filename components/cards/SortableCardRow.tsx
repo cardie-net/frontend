@@ -6,8 +6,34 @@ import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { GripVertical, Pencil, Trash2, X, Loader2 } from 'lucide-react';
-import { FlashCard } from '@/types';
+import { GripVertical, Maximize, Pencil, Trash2, X, Loader2 } from 'lucide-react';
+import { CardElement, FlashCard, TextElement } from '@/types';
+import { getCardImage } from '@/lib/cards';
+import { CardElements } from '@/components/cards/CardElements';
+
+/** Mini preview for the card list: small thumbnail to the left of compact markdown text. */
+function RowCell({ elements }: { elements: CardElement[] }) {
+  const image = getCardImage(elements);
+  const texts = elements.filter((el): el is TextElement => el.type === 'text');
+  return (
+    <div className="flex min-w-0 items-center gap-2">
+      {image && (
+        <img
+          src={image.url}
+          alt=""
+          className="h-8 w-8 shrink-0 rounded-md border object-cover"
+        />
+      )}
+      {texts.length > 0 ? (
+        <div className="min-w-0 flex-1 overflow-hidden">
+          <CardElements elements={texts} compact className="space-y-0" />
+        </div>
+      ) : (
+        !image && <span className="text-muted-foreground italic">Empty</span>
+      )}
+    </div>
+  );
+}
 
 interface SortableCardRowProps {
   card: FlashCard;
@@ -20,6 +46,7 @@ interface SortableCardRowProps {
   onStartEdit: (card: FlashCard) => void;
   onCancelEdit: () => void;
   onSaveEdit: () => void;
+  onOpenFullEdit: (card: FlashCard) => void;
   onDelete: (cardId: string) => void;
   onEditFrontChange: (value: string) => void;
   onEditBackChange: (value: string) => void;
@@ -36,6 +63,7 @@ export function SortableCardRow({
   onStartEdit,
   onCancelEdit,
   onSaveEdit,
+  onOpenFullEdit,
   onDelete,
   onEditFrontChange,
   onEditBackChange,
@@ -58,8 +86,6 @@ export function SortableCardRow({
   const discardingRef = useRef(false);
 
   const isEditing = editingCardId === card.id;
-  const frontText = card.front.map((el) => el.content).join(' ');
-  const backText = card.back.map((el) => el.content).join(' ');
 
   // Reset the "discard in progress" flag whenever this row enters edit mode.
   useEffect(() => {
@@ -67,7 +93,7 @@ export function SortableCardRow({
   }, [isEditing]);
 
   // Changes are saved by default when the user clicks away from editing (blur).
-  // Skipped when focus moves within this row (e.g. to the discard button).
+  // Skipped when focus moves within this row (e.g. to the discard / full-edit buttons).
   const handleInputBlur = (e: FocusEvent<HTMLInputElement>) => {
     const wasDiscarding = discardingRef.current;
     discardingRef.current = false;
@@ -128,12 +154,12 @@ export function SortableCardRow({
             type="button"
             onClick={() => isOwner && onStartEdit(card)}
             className={cn(
-              'w-full text-left text-sm py-1.5 px-2 rounded-md truncate transition-colors',
+              'w-full text-left text-sm py-1.5 px-2 rounded-md transition-colors',
               isOwner && 'hover:bg-accent/50 cursor-text'
             )}
             disabled={!isOwner}
           >
-            {frontText || <span className="text-muted-foreground italic">Empty</span>}
+            <RowCell elements={card.front} />
           </button>
         )}
       </div>
@@ -158,12 +184,12 @@ export function SortableCardRow({
             type="button"
             onClick={() => isOwner && onStartEdit(card)}
             className={cn(
-              'w-full text-left text-sm py-1.5 px-2 rounded-md truncate transition-colors',
+              'w-full text-left text-sm py-1.5 px-2 rounded-md transition-colors',
               isOwner && 'hover:bg-accent/50 cursor-text'
             )}
             disabled={!isOwner}
           >
-            {backText || <span className="text-muted-foreground italic">Empty</span>}
+            <RowCell elements={card.back} />
           </button>
         )}
       </div>
@@ -171,30 +197,49 @@ export function SortableCardRow({
       {/* Actions */}
       <div className="flex items-center gap-1">
         {isEditing ? (
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            onMouseDown={() => {
-              discardingRef.current = true;
-            }}
-            onClick={onCancelEdit}
-            disabled={isSavingCard}
-            aria-label="Discard changes"
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-          >
-            {isSavingCard ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <X className="w-3.5 h-3.5" />
-            )}
-          </Button>
+          <>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onMouseDown={() => {
+                discardingRef.current = true;
+              }}
+              onClick={() => onOpenFullEdit(card)}
+              disabled={isSavingCard}
+              aria-label="Open full editor"
+              title="Open full editor"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Maximize className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onMouseDown={() => {
+                discardingRef.current = true;
+              }}
+              onClick={onCancelEdit}
+              disabled={isSavingCard}
+              aria-label="Discard changes"
+              title="Discard changes"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            >
+              {isSavingCard ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <X className="w-3.5 h-3.5" />
+              )}
+            </Button>
+          </>
         ) : isOwner ? (
           <>
             <Button
               variant="ghost"
               size="icon-xs"
-              onClick={() => onStartEdit(card)}
+              onClick={() => onOpenFullEdit(card)}
               className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+              aria-label="Edit card"
+              title="Edit card"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -203,6 +248,8 @@ export function SortableCardRow({
               size="icon-xs"
               onClick={() => onDelete(card.id)}
               className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              aria-label="Delete card"
+              title="Delete card"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>

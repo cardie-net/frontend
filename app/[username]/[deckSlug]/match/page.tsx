@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDeck } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
+import { getCardText } from '@/lib/cards';
 
 type GridItem = {
   id: string;
@@ -47,14 +48,14 @@ export default function MatchPage() {
         id: `${card.id}-front`,
         cardId: card.id,
         type: 'front',
-        content: card.front.map(el => el.content).join(' '),
+        content: getCardText(card.front),
         matched: false,
       });
       items.push({
         id: `${card.id}-back`,
         cardId: card.id,
         type: 'back',
-        content: card.back.map(el => el.content).join(' '),
+        content: getCardText(card.back),
         matched: false,
       });
     });

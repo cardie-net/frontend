@@ -3,7 +3,7 @@
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2, Maximize } from 'lucide-react';
 
 interface AddCardFormProps {
   newFront: string;
@@ -13,6 +13,8 @@ interface AddCardFormProps {
   isAddingCard: boolean;
   onAddCard: () => void;
   onCancel: () => void;
+  /** Opens the full popup editor for creating a new card. */
+  onOpenFullEditor: () => void;
 }
 
 export function AddCardForm({
@@ -23,6 +25,7 @@ export function AddCardForm({
   isAddingCard,
   onAddCard,
   onCancel,
+  onOpenFullEditor,
 }: AddCardFormProps) {
   return (
     <Card className="mb-6 border-dashed">
@@ -54,32 +57,43 @@ export function AddCardForm({
             />
           </div>
         </div>
-        <div className="flex justify-end gap-2">
+        <div className="flex items-center justify-between gap-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={onCancel}
+            onClick={onOpenFullEditor}
             disabled={isAddingCard}
           >
-            Cancel
+            <Maximize className="w-4 h-4 mr-1.5" />
+            Full editor
           </Button>
-          <Button
-            size="sm"
-            onClick={onAddCard}
-            disabled={isAddingCard || !newFront.trim()}
-          >
-            {isAddingCard ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                Adding...
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4 mr-1.5" />
-                Add
-              </>
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onCancel}
+              disabled={isAddingCard}
+            >
+              Cancel
+            </Button>
+            <Button
+              size="sm"
+              onClick={onAddCard}
+              disabled={isAddingCard || !newFront.trim()}
+            >
+              {isAddingCard ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                  Adding...
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4 mr-1.5" />
+                  Add
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

@@ -11,25 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { useDeck } from '@/hooks/useDecks';
 import { useSRSSession } from '@/hooks/useSRSSession';
 import { CardElement } from '@/types';
-
-function RenderContent({ elements }: { elements: CardElement[] }) {
-  if (!elements || elements.length === 0)
-    return <div className="text-muted-foreground">Empty</div>;
-  return (
-    <div className="space-y-4">
-      {elements.map((el, i) => {
-        if (el.type === 'text') {
-          return (
-            <p key={i} className="whitespace-pre-wrap">
-              {el.content}
-            </p>
-          );
-        }
-        return null;
-      })}
-    </div>
-  );
-}
+import { CardElements } from '@/components/cards/CardElements';
 
 export default function SpacedRepetitionPage() {
   const params = useParams();
@@ -124,7 +106,7 @@ export default function SpacedRepetitionPage() {
             >
               <Card className="absolute inset-0 flex flex-col [backface-visibility:hidden]">
                 <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <RenderContent elements={currentCard.front} />
+                  <CardElements elements={currentCard.front} />
                 </CardContent>
                 {!isFlipped && (
                   <div className="border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground">
@@ -135,7 +117,7 @@ export default function SpacedRepetitionPage() {
 
               <Card className="absolute inset-0 flex [transform:rotateY(180deg)] flex-col [backface-visibility:hidden]">
                 <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
-                  <RenderContent elements={backContent || currentCard.back} />
+                  <CardElements elements={backContent || currentCard.back} />
                 </CardContent>
               </Card>
             </div>

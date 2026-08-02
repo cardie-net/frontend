@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/AuthContext';
@@ -25,9 +25,11 @@ import {
 import { FlashCard } from '@/types';
 import { SortableCardRow } from '@/components/cards/SortableCardRow';
 import { AddCardForm } from '@/components/cards/AddCardForm';
+import { CardEditDialog, NewCardDialog } from '@/components/cards/CardEditDialog';
 import { DeckActionButtons } from '@/components/decks/DeckActionButtons';
 import { useDeck } from '@/hooks/useDecks';
 import { useCards, useCreateCard, useUpdateCard, useDeleteCard, useReorderCards } from '@/hooks/useCards';
+import { buildElements, getCardImage, getCardText } from '@/lib/cards';
 
 export default function DeckPage() {
   const params = useParams();
@@ -47,7 +49,13 @@ export default function DeckPage() {
 
   const loading = deckLoading || (!!deck && cardsLoading);
 
-  // Editing state
+  // Popup (full) edit state
+  const [editingCard, setEditingCard] = useState<FlashCard | null>(null);
+  const [showNewCardDialog, setShowNewCardDialog] = useState(false);
+  // Incremented after "Save & add another" to remount the dialog with fresh empty fields.
+  const [newCardDialogKey, setNewCardDialogKey] = useState(0);
+
+  // Inline edit state
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [editFront, setEditFront] = useState('');
   const [editBack, setEditBack] = useState('');
@@ -82,36 +90,50 @@ export default function DeckPage() {
 
   // --- Card Editing ---
 
-  const handleStartEdit = useCallback((card: FlashCard) => {
+  // Simple click on the card starts inline editing (fast path).
+  const handleStartEdit = (card: FlashCard) => {
     setEditingCardId(card.id);
-    setEditFront(card.front.map((el) => el.content).join(' '));
-    setEditBack(card.back.map((el) => el.content).join(' '));
-  }, []);
+    setEditFront(getCardText(card.front));
+    setEditBack(getCardText(card.back));
+  };
 
-  const handleCancelEdit = useCallback(() => {
+  const handleCancelEdit = () => {
     setEditingCardId(null);
     setEditFront('');
     setEditBack('');
-  }, []);
+  };
 
-  const handleSaveEdit = useCallback(() => {
+  const handleSaveEdit = () => {
     if (!editingCardId || !deck) return;
     const cardIdToSave = editingCardId;
-    updateCard.mutate({
-      deckId: deck.id,
-      cardId: cardIdToSave,
-      front: editFront,
-      back: editBack,
-    }, {
-      onSuccess: () => {
-        // If the user already moved on to edit another card, don't touch that edit.
-        if (editingCardIdRef.current !== cardIdToSave) return;
-        setEditingCardId(null);
-        setEditFront('');
-        setEditBack('');
+    // Preserve any image elements the card already has on each side.
+    const card = cards.find((c) => c.id === cardIdToSave);
+    const frontImage = card ? (getCardImage(card.front)?.url ?? null) : null;
+    const backImage = card ? (getCardImage(card.back)?.url ?? null) : null;
+    updateCard.mutate(
+      {
+        deckId: deck.id,
+        cardId: cardIdToSave,
+        front: buildElements(editFront, frontImage),
+        back: buildElements(editBack, backImage),
+      },
+      {
+        onSuccess: () => {
+          // If the user already moved on to edit another card, don't touch that edit.
+          if (editingCardIdRef.current !== cardIdToSave) return;
+          setEditingCardId(null);
+          setEditFront('');
+          setEditBack('');
+        },
       }
-    });
-  }, [editingCardId, deck, editFront, editBack, updateCard]);
+    );
+  };
+
+  // Escalate from inline editing to the full popup editor.
+  const handleOpenFullEdit = (card: FlashCard) => {
+    handleCancelEdit();
+    setEditingCard(card);
+  };
 
   // --- Add Card ---
 
@@ -119,8 +141,8 @@ export default function DeckPage() {
     if (!deck || !newFront.trim()) return;
     createCard.mutate({
       deckId: deck.id,
-      front: newFront,
-      back: newBack,
+      front: [{ type: 'text', content: newFront }],
+      back: [{ type: 'text', content: newBack }],
     }, {
       onSuccess: () => {
         setNewFront('');
@@ -135,6 +157,7 @@ export default function DeckPage() {
     if (!deck) return;
     deleteCard.mutate({ deckId: deck.id, cardId });
     if (editingCardId === cardId) handleCancelEdit();
+    if (editingCard?.id === cardId) setEditingCard(null);
   };
 
   // --- Reorder ---
@@ -240,6 +263,7 @@ export default function DeckPage() {
               setNewFront('');
               setNewBack('');
             }}
+            onOpenFullEditor={() => setShowNewCardDialog(true)}
           />
         )}
 
@@ -292,6 +316,7 @@ export default function DeckPage() {
                     onStartEdit={handleStartEdit}
                     onCancelEdit={handleCancelEdit}
                     onSaveEdit={handleSaveEdit}
+                    onOpenFullEdit={handleOpenFullEdit}
                     onDelete={handleDeleteCard}
                     onEditFrontChange={setEditFront}
                     onEditBackChange={setEditBack}
@@ -302,6 +327,42 @@ export default function DeckPage() {
           </DndContext>
         )}
       </div>
+
+      {editingCard && (
+        <CardEditDialog
+          card={editingCard}
+          deckId={deck.id}
+          onClose={() => setEditingCard(null)}
+          onSave={(front, back) => {
+            updateCard.mutate(
+              { deckId: deck.id, cardId: editingCard.id, front, back },
+              { onSuccess: () => setEditingCard(null) }
+            );
+          }}
+          isSaving={updateCard.isPending}
+        />
+      )}
+
+      {showNewCardDialog && (
+        <NewCardDialog
+          key={newCardDialogKey}
+          deckId={deck.id}
+          onClose={() => setShowNewCardDialog(false)}
+          onSave={(front, back) => {
+            createCard.mutate(
+              { deckId: deck.id, front, back },
+              { onSuccess: () => setShowNewCardDialog(false) }
+            );
+          }}
+          onSaveAnother={(front, back) => {
+            createCard.mutate(
+              { deckId: deck.id, front, back },
+              { onSuccess: () => setNewCardDialogKey((k) => k + 1) }
+            );
+          }}
+          isSaving={createCard.isPending}
+        />
+      )}
     </div>
   );
 }
