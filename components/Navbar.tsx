@@ -110,10 +110,12 @@ export function Navbar() {
 
   // Load saved corner preference from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('cardie_navbar_corner') as CornerPosition | null;
-    if (saved && ['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(saved)) {
-      setCorner(saved);
-    }
+    void Promise.resolve().then(() => {
+      const saved = localStorage.getItem('cardie_navbar_corner') as CornerPosition | null;
+      if (saved && ['top-left', 'top-right', 'bottom-left', 'bottom-right'].includes(saved)) {
+        setCorner(saved);
+      }
+    });
   }, []);
 
   // Close menu on click outside
