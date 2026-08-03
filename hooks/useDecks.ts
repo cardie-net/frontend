@@ -47,15 +47,18 @@ export function useCreateDeck() {
     mutationFn: async ({
       name,
       color,
+      folderId,
     }: {
       name: string
       color: string
+      folderId?: string | null
     }): Promise<Deck> => {
       const res = await apiFetch("/api/v1/decks", {
         method: "POST",
         body: JSON.stringify({
           name,
           privacy: "private",
+          folder_id: folderId || null,
           properties: { color: color === "default" ? null : color },
         }),
       })
@@ -70,6 +73,12 @@ export function useCreateDeck() {
         queryKeys.decks(user?.id),
         (old: Deck[] | undefined) => (old ? [...old, newDeck] : [newDeck])
       )
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      if (newDeck.folder_id) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.folderItems(newDeck.folder_id),
+        })
+      }
     },
   })
 }
@@ -83,14 +92,21 @@ export function useUpdateDeck() {
       deckId,
       privacy,
       slug,
+      folderId,
     }: {
       deckId: string
-      privacy: string
-      slug: string
+      privacy?: string
+      slug?: string
+      folderId?: string | null
     }): Promise<Deck> => {
+      const body: Record<string, unknown> = {}
+      if (privacy !== undefined) body.privacy = privacy
+      if (slug !== undefined) body.slug = slug
+      if (folderId !== undefined) body.folder_id = folderId
+
       const res = await apiFetch(`/api/v1/decks/${deckId}`, {
         method: "PATCH",
-        body: JSON.stringify({ privacy, slug }),
+        body: JSON.stringify(body),
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
@@ -108,8 +124,8 @@ export function useUpdateDeck() {
               )
             : []
       )
-      // The slug may have changed: refresh any open deck-page query too
-      // (prefix match — the mutation args don't know the owner username).
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      queryClient.invalidateQueries({ queryKey: ["folder-items"] })
       queryClient.invalidateQueries({ queryKey: ["deck"] })
     },
   })
@@ -133,6 +149,8 @@ export function useDeleteDeck() {
         (old: Deck[] | undefined) =>
           old ? old.filter((deck) => deck.id !== deletedId) : []
       )
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      queryClient.invalidateQueries({ queryKey: ["folder-items"] })
     },
   })
 }

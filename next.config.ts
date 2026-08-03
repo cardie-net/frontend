@@ -7,6 +7,7 @@ const withNextIntl = createNextIntlPlugin("./i18n/request.ts")
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:8000"
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["react-markdown"],
   async rewrites() {
     if (process.env.NODE_ENV === "development") {
       return [

@@ -21,11 +21,13 @@ import { useCreateDeck } from "@/hooks/useDecks"
 interface CreateDeckDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  folderId?: string | null
 }
 
 export function CreateDeckDialog({
   open,
   onOpenChange,
+  folderId,
 }: CreateDeckDialogProps) {
   const router = useRouter()
   const { user } = useAuth()
@@ -44,7 +46,7 @@ export function CreateDeckDialog({
     }
 
     createDeck.mutate(
-      { name: newDeckName, color: newDeckColor },
+      { name: newDeckName, color: newDeckColor, folderId },
       {
         onSuccess: (newDeck) => {
           onOpenChange(false)

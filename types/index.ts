@@ -24,12 +24,28 @@ export interface Deck {
   slug: string
   type?: "deck"
   user_id?: string
+  folder_id?: string | null
   description?: string
   privacy?: "public" | "unlisted" | "private"
   properties?: {
     color?: string
   }
 }
+
+export interface Folder {
+  id: string
+  name: string
+  slug: string
+  type: "folder"
+  user_id: string
+  parent_id?: string | null
+  privacy?: "public" | "unlisted" | "private"
+  properties?: {
+    color?: string
+  }
+}
+
+export type UserItem = (Folder & { type: "folder" }) | (Deck & { type?: "deck" })
 
 export interface SocialLinks {
   instagram?: string

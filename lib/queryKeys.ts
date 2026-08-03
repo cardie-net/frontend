@@ -10,4 +10,7 @@ export const queryKeys = {
   srsCounts: (userId?: string) => ["srs-counts", userId] as const,
   profile: (username: string) => ["profile", username] as const,
   userDecks: (userId?: string) => ["user-decks", userId] as const,
+  userItems: (userId?: string) => ["user-items", userId] as const,
+  folderItems: (folderId?: string) => ["folder-items", folderId] as const,
+  folder: (folderId?: string) => ["folder", folderId] as const,
 }

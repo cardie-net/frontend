@@ -23,6 +23,8 @@ import { Deck, SRSDeckCounts } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { Check } from "lucide-react"
 
+import { useDraggable } from "@dnd-kit/core"
+
 interface DeckCardProps {
   deck: Deck
   username?: string
@@ -38,6 +40,20 @@ export function DeckCard({
   onShare,
   onDelete,
 }: DeckCardProps) {
+  const draggableId = `deck-drag-${deck.id}`
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: draggableId,
+      data: { type: "deck", item: deck },
+    })
+
+  const style = transform
+    ? {
+        transform: `translate3d(${transform.x}px, ${transform.y}px, 0)`,
+        zIndex: 50,
+      }
+    : undefined
+
   const hasCounts =
     srsCounts &&
     (srsCounts.new_count > 0 ||
@@ -46,12 +62,14 @@ export function DeckCard({
   const isDone = srsCounts && !hasCounts
 
   return (
-    <Card
-      className={cn(
-        "relative flex flex-col",
-        getDeckColorClass(deck.properties?.color)
-      )}
-    >
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      <Card
+        className={cn(
+          "relative flex flex-col transition-all",
+          getDeckColorClass(deck.properties?.color),
+          isDragging && "opacity-50"
+        )}
+      >
       <CardHeader>
         <CardTitle className="pr-8">{deck.name}</CardTitle>
         <CardAction>
@@ -126,5 +144,6 @@ export function DeckCard({
         </Link>
       </CardFooter>
     </Card>
+    </div>
   )
 }
