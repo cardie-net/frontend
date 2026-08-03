@@ -25,6 +25,7 @@ import { useDraggable, useDroppable } from "@dnd-kit/core"
 interface FolderCardProps {
   folder: Folder
   itemCount?: number
+  username?: string
   isOwner?: boolean
   onEdit?: (folder: Folder) => void
   onDelete?: (folderId: string) => void
@@ -33,10 +34,15 @@ interface FolderCardProps {
 export function FolderCard({
   folder,
   itemCount,
+  username,
   isOwner = true,
   onEdit,
   onDelete,
 }: FolderCardProps) {
+  const folderHref =
+    username && folder.slug
+      ? `/${username}/${folder.slug}`
+      : `/folders/${folder.id}`
   const droppableId = `folder-drop-${folder.id}`
   const draggableId = `folder-drag-${folder.id}`
 
@@ -129,7 +135,7 @@ export function FolderCard({
           )}
         </CardContent>
         <CardFooter className="flex gap-2 pt-4">
-          <Link href={`/folders/${folder.id}`} className="flex-1">
+          <Link href={folderHref} className="flex-1">
             <Button className="w-full" variant="outline">
               <FolderOpen className="mr-2 h-4 w-4" /> Open Folder
             </Button>

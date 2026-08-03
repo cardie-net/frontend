@@ -197,6 +197,7 @@ export default function DecksPage() {
                   key={folder.id}
                   folder={folder}
                   itemCount={count}
+                  username={user?.username}
                   onEdit={setEditingFolder}
                   onDelete={handleDeleteFolder}
                 />

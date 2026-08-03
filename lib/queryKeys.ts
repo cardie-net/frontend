@@ -13,4 +13,6 @@ export const queryKeys = {
   userItems: (userId?: string) => ["user-items", userId] as const,
   folderItems: (folderId?: string) => ["folder-items", folderId] as const,
   folder: (folderId?: string) => ["folder", folderId] as const,
+  folderBySlug: (username?: string, slug?: string) =>
+    ["folder-by-slug", username, slug] as const,
 }

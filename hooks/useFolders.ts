@@ -36,6 +36,25 @@ export function useFolder(folderId?: string) {
   })
 }
 
+export function useFolderBySlug(username?: string, slug?: string) {
+  return useQuery<Folder>({
+    queryKey: queryKeys.folderBySlug(username, slug),
+    queryFn: async () => {
+      const res = await apiFetch(
+        `/api/v1/users/profile/${username}/folders/${slug}`
+      )
+      if (!res.ok) {
+        if (res.status === 404) throw new Error("Folder not found")
+        if (res.status === 403)
+          throw new Error("You do not have permission to view this folder")
+        throw new Error("Failed to load folder")
+      }
+      return res.json()
+    },
+    enabled: !!username && !!slug,
+  })
+}
+
 export function useFolderItems(folderId?: string) {
   return useQuery<UserItem[]>({
     queryKey: queryKeys.folderItems(folderId),

@@ -33,6 +33,8 @@ import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
 import { useDeck } from "@/hooks/useDecks"
+import { useFolderBySlug } from "@/hooks/useFolders"
+import { FolderView } from "@/components/folders/FolderView"
 import {
   useCards,
   useCreateCard,
@@ -44,7 +46,7 @@ import { buildElements, getCardImage, getCardText } from "@/lib/cards"
 
 export default function DeckPage() {
   return (
-    <Suspense fallback={<div className="p-8">Loading deck...</div>}>
+    <Suspense fallback={<div className="p-8">Loading...</div>}>
       <DeckPageContent />
     </Suspense>
   )
@@ -63,6 +65,11 @@ function DeckPageContent() {
     isLoading: deckLoading,
     error: deckError,
   } = useDeck(username, deckSlug)
+  const {
+    data: folder,
+    isLoading: folderLoading,
+    error: folderError,
+  } = useFolderBySlug(username, deckSlug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
 
   const createCard = useCreateCard()
@@ -70,7 +77,7 @@ function DeckPageContent() {
   const deleteCard = useDeleteCard()
   const reorderCards = useReorderCards()
 
-  const loading = deckLoading || (!!deck && cardsLoading)
+  const loading = (deckLoading && folderLoading) || (!!deck && cardsLoading)
 
   // Popup (full) edit state
   const [editingCard, setEditingCard] = useState<FlashCard | null>(null)
@@ -226,6 +233,10 @@ function DeckPageContent() {
     )
   }
 
+  if (folder) {
+    return <FolderView username={username} folder={folder} />
+  }
+
   // --- Error State ---
 
   if (deckError || !deck) {
@@ -234,7 +245,7 @@ function DeckPageContent() {
         <div className="text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
           <h2 className="mb-4 text-2xl font-bold">
-            {deckError?.message || "Deck not found"}
+            {deckError?.message || folderError?.message || "Deck or folder not found"}
           </h2>
           <Link href={`/${username}`}>
             <Button variant="outline">
