@@ -23,7 +23,9 @@ export function computePreviewIntervals(
   ef: number
 ) {
   const calcInterval = (rating: number) => {
-    if (rating === 0) return 1.0
+    // "Again" keeps the card in today's learning queue (~10 min step),
+    // mirroring LEARNING_STEP_DAYS in the backend scheduler.
+    if (rating === 0) return 10 / (24 * 60)
     if (rating === 1) return Math.max(1.0, interval * 1.2)
     if (rating === 2) {
       if (reps === 0) return 1.0
