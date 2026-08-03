@@ -313,7 +313,7 @@ function AccountForm({ user }: { user: UserProfile }) {
   ).length
 
   return (
-    <div className="max-w-xl">
+    <div className="w-full max-w-2xl mx-auto">
       {error && (
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
