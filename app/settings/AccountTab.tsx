@@ -21,17 +21,23 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { SocialLinks, UserProfile } from "@/types"
 import { AvatarEditorDialog } from "@/components/settings/AvatarEditorDialog"
 
-const SOCIAL_PLATFORMS: {
+interface PlatformConfig {
   key: keyof SocialLinks
   label: string
   icon: React.ReactNode
+  prefixDisplay: string
   placeholder: string
-}[] = [
+  isFullUrlRequired: boolean
+}
+
+const PLATFORM_CONFIGS: PlatformConfig[] = [
   {
     key: "website",
     label: "Website",
     icon: <Globe className="h-4 w-4" />,
+    prefixDisplay: "",
     placeholder: "https://yourwebsite.com",
+    isFullUrlRequired: true,
   },
   {
     key: "github",
@@ -41,7 +47,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
       </svg>
     ),
-    placeholder: "https://github.com/username",
+    prefixDisplay: "github.com/",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
   {
     key: "twitter",
@@ -51,7 +59,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
       </svg>
     ),
-    placeholder: "https://x.com/username",
+    prefixDisplay: "x.com/",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
   {
     key: "instagram",
@@ -61,7 +71,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
       </svg>
     ),
-    placeholder: "https://instagram.com/username",
+    prefixDisplay: "instagram.com/",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
   {
     key: "youtube",
@@ -71,7 +83,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
       </svg>
     ),
-    placeholder: "https://youtube.com/@channel",
+    prefixDisplay: "youtube.com/@",
+    placeholder: "channel",
+    isFullUrlRequired: false,
   },
   {
     key: "linkedin",
@@ -81,7 +95,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
       </svg>
     ),
-    placeholder: "https://linkedin.com/in/username",
+    prefixDisplay: "linkedin.com/in/",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
   {
     key: "tiktok",
@@ -91,7 +107,9 @@ const SOCIAL_PLATFORMS: {
         <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.51a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.98a8.21 8.21 0 0 0 4.76 1.52V7.05a4.84 4.84 0 0 1-1-.36z" />
       </svg>
     ),
-    placeholder: "https://tiktok.com/@username",
+    prefixDisplay: "tiktok.com/@",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
   {
     key: "facebook",
@@ -101,18 +119,67 @@ const SOCIAL_PLATFORMS: {
         <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
       </svg>
     ),
-    placeholder: "https://facebook.com/username",
+    prefixDisplay: "facebook.com/",
+    placeholder: "username",
+    isFullUrlRequired: false,
   },
 ]
 
+function extractUsernameFromUrl(key: keyof SocialLinks, url: string): string {
+  if (!url) return ""
+  if (key === "website") return url
+  const clean = url.trim()
+  switch (key) {
+    case "github":
+      return clean.replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\/$/, "")
+    case "twitter":
+      return clean.replace(/^https?:\/\/(www\.)?(twitter\.com|x\.com)\//i, "").replace(/\/$/, "")
+    case "instagram":
+      return clean.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "")
+    case "youtube":
+      return clean.replace(/^https?:\/\/(www\.)?youtube\.com\/@?/i, "").replace(/^@/, "").replace(/\/$/, "")
+    case "linkedin":
+      return clean.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "").replace(/\/$/, "")
+    case "tiktok":
+      return clean.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, "").replace(/^@/, "").replace(/\/$/, "")
+    case "facebook":
+      return clean.replace(/^https?:\/\/(www\.)?facebook\.com\//i, "").replace(/\/$/, "")
+    default:
+      return clean
+  }
+}
+
+function buildSocialUrl(key: keyof SocialLinks, input: string): string {
+  const trimmed = input.trim()
+  if (!trimmed) return ""
+  if (key === "website") {
+    return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`
+  }
+  const username = extractUsernameFromUrl(key, trimmed)
+  if (!username) return ""
+
+  switch (key) {
+    case "github":
+      return `https://github.com/${username}`
+    case "twitter":
+      return `https://x.com/${username}`
+    case "instagram":
+      return `https://instagram.com/${username}`
+    case "youtube":
+      return `https://youtube.com/@${username}`
+    case "linkedin":
+      return `https://linkedin.com/in/${username}`
+    case "tiktok":
+      return `https://tiktok.com/@${username}`
+    case "facebook":
+      return `https://facebook.com/${username}`
+    default:
+      return ""
+  }
+}
+
 const BIO_MAX_LENGTH = 500
 
-/**
- * The settings tab mounts this inner form once the auth user is available, and
- * remounts it (key={user.id}) when the user changes — so the form state can be
- * seeded from `user` without a props→state sync effect or a duplicate
- * `/api/v1/users/me` fetch (the AuthContext already holds that data).
- */
 export function AccountTab() {
   const { user, loading } = useAuth()
 
@@ -173,12 +240,20 @@ function AccountForm({ user }: { user: UserProfile }) {
   const [usernameError, setUsernameError] = useState<string>("")
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url || "")
   const [bio, setBio] = useState(user.bio || "")
-  const [socialLinks, setSocialLinks] = useState<SocialLinks>(
-    user.social_links || {}
-  )
-  const [socialLinksExpanded, setSocialLinksExpanded] = useState(
-    !!user.social_links && Object.keys(user.social_links).length > 0
-  )
+
+  const initialSocialInputs: Record<keyof SocialLinks, string> = {
+    website: extractUsernameFromUrl("website", user.social_links?.website || ""),
+    github: extractUsernameFromUrl("github", user.social_links?.github || ""),
+    twitter: extractUsernameFromUrl("twitter", user.social_links?.twitter || ""),
+    instagram: extractUsernameFromUrl("instagram", user.social_links?.instagram || ""),
+    youtube: extractUsernameFromUrl("youtube", user.social_links?.youtube || ""),
+    linkedin: extractUsernameFromUrl("linkedin", user.social_links?.linkedin || ""),
+    tiktok: extractUsernameFromUrl("tiktok", user.social_links?.tiktok || ""),
+    facebook: extractUsernameFromUrl("facebook", user.social_links?.facebook || ""),
+  }
+
+  const [socialInputs, setSocialInputs] = useState<Record<keyof SocialLinks, string>>(initialSocialInputs)
+  const [bioAndSocialExpanded, setBioAndSocialExpanded] = useState(true)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [selectedImageSrc, setSelectedImageSrc] = useState<string>("")
@@ -287,10 +362,11 @@ function AccountForm({ user }: { user: UserProfile }) {
     setUsernameError(validateUsername(val))
   }
 
-  const handleSocialLinkChange = (key: keyof SocialLinks, value: string) => {
-    setSocialLinks((prev) => ({
+  const handleSocialInputChange = (key: keyof SocialLinks, rawValue: string) => {
+    const extracted = extractUsernameFromUrl(key, rawValue)
+    setSocialInputs((prev) => ({
       ...prev,
-      [key]: value || undefined,
+      [key]: extracted,
     }))
   }
 
@@ -314,28 +390,37 @@ function AccountForm({ user }: { user: UserProfile }) {
       return
     }
 
-    const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/i
-    for (const platform of SOCIAL_PLATFORMS) {
-      const value = socialLinks[platform.key]
-      if (value && !urlPattern.test(value)) {
-        setError(
-          `Invalid URL for ${platform.label}. URLs must start with http:// or https://`
-        )
-        return
+    const cleanSocialLinks: SocialLinks = {}
+    let hasSocialLinks = false
+
+    for (const config of PLATFORM_CONFIGS) {
+      const val = socialInputs[config.key]?.trim()
+      if (!val) continue
+
+      if (config.key === "website") {
+        const fullUrl = /^https?:\/\//i.test(val) ? val : `https://${val}`
+        const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/i
+        if (!urlPattern.test(fullUrl)) {
+          setError("Website URL must start with http:// or https:// and be a valid web address.")
+          return
+        }
+        cleanSocialLinks.website = fullUrl
+        hasSocialLinks = true
+      } else {
+        const usernameVal = extractUsernameFromUrl(config.key, val)
+        if (!/^[a-zA-Z0-9_.-]+$/.test(usernameVal)) {
+          setError(`Invalid username for ${config.label}. Use only letters, numbers, dots, hyphens, and underscores.`)
+          return
+        }
+        const builtUrl = buildSocialUrl(config.key, usernameVal)
+        if (builtUrl) {
+          cleanSocialLinks[config.key] = builtUrl
+          hasSocialLinks = true
+        }
       }
     }
 
     setIsSaving(true)
-
-    const cleanSocialLinks: SocialLinks = {}
-    let hasSocialLinks = false
-    for (const platform of SOCIAL_PLATFORMS) {
-      const value = socialLinks[platform.key]
-      if (value && value.trim()) {
-        cleanSocialLinks[platform.key] = value.trim()
-        hasSocialLinks = true
-      }
-    }
 
     try {
       const response = await apiFetch("/api/v1/users/me", {
@@ -370,7 +455,7 @@ function AccountForm({ user }: { user: UserProfile }) {
     }
   }
 
-  const filledLinksCount = Object.values(socialLinks).filter(
+  const filledLinksCount = Object.values(socialInputs).filter(
     (v) => v && v.trim()
   ).length
 
@@ -485,78 +570,97 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        <div className="space-y-2">
-          <div className="flex justify-between">
-            <Label htmlFor="bio">Bio</Label>
-            <span
-              className={`text-xs ${
-                bio.length > BIO_MAX_LENGTH * 0.9
-                  ? bio.length >= BIO_MAX_LENGTH
-                    ? "text-destructive"
-                    : "text-amber-500"
-                  : "text-muted-foreground"
-              }`}
-            >
-              {bio.length}/{BIO_MAX_LENGTH}
-            </span>
-          </div>
-          <Textarea
-            id="bio"
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            maxLength={BIO_MAX_LENGTH}
-            rows={4}
-            placeholder="Tell others a bit about yourself..."
-            className="min-h-[100px] resize-y"
-          />
-        </div>
-
-        <div className="space-y-4">
+        {/* Collapsible Bio & Social Links Section */}
+        <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
           <button
             type="button"
-            onClick={() => setSocialLinksExpanded(!socialLinksExpanded)}
-            className="group flex w-full cursor-pointer items-center gap-2 text-left text-sm font-medium transition-colors hover:text-primary"
+            onClick={() => setBioAndSocialExpanded(!bioAndSocialExpanded)}
+            className="group flex w-full cursor-pointer items-center justify-between p-4 text-left font-medium transition-colors hover:bg-accent/40"
           >
-            <span>Social Links</span>
-            {filledLinksCount > 0 && (
-              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground">
-                {filledLinksCount}
-              </span>
-            )}
-            <span className="ml-auto text-muted-foreground transition-colors group-hover:text-primary">
-              {socialLinksExpanded ? (
-                <ChevronUp className="h-4 w-4" />
+            <div className="flex items-center gap-2">
+              <span className="text-base font-semibold">Bio & Social Links</span>
+              {filledLinksCount > 0 && (
+                <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+                  {filledLinksCount} {filledLinksCount === 1 ? "link" : "links"}
+                </span>
+              )}
+            </div>
+            <span className="text-muted-foreground transition-colors group-hover:text-primary">
+              {bioAndSocialExpanded ? (
+                <ChevronUp className="h-5 w-5" />
               ) : (
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-5 w-5" />
               )}
             </span>
           </button>
 
-          {socialLinksExpanded && (
-            <div className="space-y-3 pt-2">
-              {SOCIAL_PLATFORMS.map((platform) => (
-                <div key={platform.key} className="flex items-center gap-3">
-                  <div
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
-                    title={platform.label}
+          {bioAndSocialExpanded && (
+            <div className="border-t p-4 sm:p-6 space-y-6">
+              {/* Bio Field */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="bio">Bio</Label>
+                  <span
+                    className={`text-xs ${
+                      bio.length > BIO_MAX_LENGTH * 0.9
+                        ? bio.length >= BIO_MAX_LENGTH
+                          ? "text-destructive"
+                          : "text-amber-500"
+                        : "text-muted-foreground"
+                    }`}
                   >
-                    {platform.icon}
-                  </div>
-                  <Input
-                    id={`social-${platform.key}`}
-                    type="url"
-                    value={socialLinks[platform.key] || ""}
-                    onChange={(e) =>
-                      handleSocialLinkChange(platform.key, e.target.value)
-                    }
-                    placeholder={platform.placeholder}
-                    className="flex-1"
-                  />
+                    {bio.length}/{BIO_MAX_LENGTH}
+                  </span>
                 </div>
-              ))}
-              <p className="mt-2 text-sm text-muted-foreground">
-                All links must start with http:// or https://
-              </p>
+                <Textarea
+                  id="bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  maxLength={BIO_MAX_LENGTH}
+                  rows={3}
+                  placeholder="Tell others a bit about yourself..."
+                  className="min-h-[90px] resize-y"
+                />
+              </div>
+
+              {/* Social Links Section */}
+              <div className="space-y-3">
+                <Label className="text-sm font-medium text-muted-foreground">
+                  Social Links
+                </Label>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {PLATFORM_CONFIGS.map((platform) => (
+                    <div key={platform.key} className="flex flex-col gap-1.5">
+                      <Label htmlFor={`social-${platform.key}`} className="text-xs font-medium">
+                        {platform.label}
+                      </Label>
+                      <div className="flex items-center rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
+                        <div
+                          className="flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground bg-background"
+                          title={platform.label}
+                        >
+                          {platform.icon}
+                        </div>
+                        {platform.prefixDisplay && (
+                          <span className="pr-1 text-xs text-muted-foreground select-none whitespace-nowrap font-mono">
+                            {platform.prefixDisplay}
+                          </span>
+                        )}
+                        <Input
+                          id={`social-${platform.key}`}
+                          type={platform.isFullUrlRequired ? "url" : "text"}
+                          value={socialInputs[platform.key] || ""}
+                          onChange={(e) =>
+                            handleSocialInputChange(platform.key, e.target.value)
+                          }
+                          placeholder={platform.placeholder}
+                          className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-sm bg-background pl-1"
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
