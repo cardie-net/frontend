@@ -21,6 +21,7 @@ import {
   Languages,
   BarChart3,
 } from 'lucide-react';
+import { AppearancePopup } from '@/components/theme/appearance-popup';
 
 type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -213,6 +214,44 @@ function LanguageNavItem({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+interface AppearanceNavItemProps {
+  isRightSide: boolean;
+}
+
+function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative flex items-center">
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="focus:outline-none"
+        aria-label="Appearance"
+      >
+        <div
+          className={cn(
+            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200',
+            isOpen
+              ? 'bg-primary text-primary-foreground shadow-md scale-105'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95'
+          )}
+        >
+          <Palette className="w-4 h-4" />
+          {!isOpen && (
+            <CustomTooltip text="Appearance" isRightSide={isRightSide} />
+          )}
+        </div>
+      </button>
+
+      <AppearancePopup
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
     </div>
   );
 }
@@ -439,6 +478,11 @@ export function Navbar() {
           onSelectLocale={handleSelectLocale}
         />
 
+        {/* Appearance Selection Popup NavItem */}
+        <AppearanceNavItem
+          isRightSide={isRightSide}
+        />
+
         {isAuthenticated ? (
           <>
             {/* Statistics Button (Logged-in users with actual accounts only) */}
@@ -447,13 +491,6 @@ export function Navbar() {
               icon={<BarChart3 className="w-4 h-4" />}
               tooltip="Statistics"
               isActive={pathname === '/stats' || pathname === '/statistics'}
-              isRightSide={isRightSide}
-            />
-
-            {/* Appearance Button */}
-            <NavItem
-              icon={<Palette className="w-4 h-4 text-muted-foreground" />}
-              tooltip="Appearance"
               isRightSide={isRightSide}
             />
 
