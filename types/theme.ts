@@ -36,8 +36,8 @@ export interface FontOption {
 
 export interface ThemePreset {
   id: string;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
   isLight?: boolean;
   radius: number; // in rem
   fontFamily: string; // FontOption id or googleFontName

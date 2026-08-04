@@ -75,7 +75,7 @@ function NavItem({
   const content = (
     <div
       className={cn(
-        'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200',
+        'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-[var(--radius)] transition-all duration-200',
         isActive
           ? 'bg-primary text-primary-foreground shadow-md scale-105'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95',
@@ -161,7 +161,7 @@ function LanguageNavItem({
       >
         <div
           className={cn(
-            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200',
+            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-[var(--radius)] transition-all duration-200',
             isOpen
               ? 'bg-primary text-primary-foreground shadow-md scale-105'
               : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95'
@@ -235,7 +235,7 @@ function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
       >
         <div
           className={cn(
-            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200',
+            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-[var(--radius)] transition-all duration-200',
             isOpen
               ? 'bg-primary text-primary-foreground shadow-md scale-105'
               : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95'
@@ -410,7 +410,7 @@ export function Navbar() {
         onPointerDown={handlePointerDown}
         aria-label="Toggle menu"
         className={cn(
-          'group relative w-12 h-12 rounded-full flex items-center justify-center overflow-hidden',
+          'group relative w-12 h-12 rounded-[calc(var(--radius)+0.25rem)] flex items-center justify-center overflow-hidden',
           'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-lg shadow-black/10 dark:shadow-black/40',
           'hover:scale-105 active:scale-95 transition-all duration-200 cursor-grab active:cursor-grabbing',
           isOpen && 'ring-2 ring-primary/40 bg-accent/60'
@@ -424,7 +424,7 @@ export function Navbar() {
               draggable={false}
               onDragStart={(e) => e.preventDefault()}
               className={cn(
-                'w-full h-full rounded-full object-cover transition-all duration-300 transform pointer-events-none select-none',
+                'w-full h-full rounded-[var(--radius)] object-cover transition-all duration-300 transform pointer-events-none select-none',
                 isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
               )}
             />
@@ -453,7 +453,7 @@ export function Navbar() {
       {/* Extended Menu Bar */}
       <div
         className={cn(
-          'flex flex-col items-center gap-1.5 p-1.5 rounded-full',
+          'flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
           'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-xl shadow-black/10 dark:shadow-black/40',
           'transition-all duration-300 ease-out origin-center overflow-visible',
           isOpen

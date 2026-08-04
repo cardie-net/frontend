@@ -61,7 +61,7 @@ export function AppearancePopup({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `cardie-theme-${config.presetId || 'custom'}.json`;
+    a.download = 'cardie-theme.json';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -92,7 +92,7 @@ export function AppearancePopup({
           <div>
             <DialogTitle className="text-base font-semibold">Appearance</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-              Customize theme colors, rounding & typography
+              Select theme palette, rounding & typography
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -109,7 +109,7 @@ export function AppearancePopup({
             )}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Presets
+            Themes
           </button>
           <button
             onClick={() => setActiveTab('tweak')}
@@ -125,10 +125,10 @@ export function AppearancePopup({
           </button>
         </div>
 
-        {/* Tab Content: Presets */}
+        {/* Tab Content: Presets (Nameless Color Palette Cards Grid) */}
         {activeTab === 'presets' && (
           <div className="space-y-3 mt-1">
-            <div className="grid grid-cols-2 gap-2.5 max-h-72 overflow-y-auto pr-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto overflow-x-hidden p-1.5">
               {presets.map((preset) => {
                 const isSelected = config.presetId === preset.id && !config.isCustom;
                 return (
@@ -136,46 +136,33 @@ export function AppearancePopup({
                     key={preset.id}
                     onClick={() => applyPreset(preset.id)}
                     className={cn(
-                      'group relative flex flex-col justify-between p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer overflow-hidden',
+                      'group relative flex items-center justify-center p-3 rounded-2xl border transition-all duration-200 cursor-pointer select-none',
                       isSelected
-                        ? 'border-primary ring-2 ring-primary/30 bg-accent/40 shadow-md'
+                        ? 'border-primary ring-2 ring-primary/40 bg-accent/40 shadow-md'
                         : 'border-border/70 hover:border-muted-foreground/40 hover:bg-accent/20'
                     )}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold truncate pr-1">
-                        {preset.name}
-                      </span>
-                      {isSelected && (
-                        <div className="p-0.5 rounded-full bg-primary text-primary-foreground">
-                          <Check className="w-3 h-3" />
-                        </div>
-                      )}
+                    {/* Visual Theme Color Palette Circles */}
+                    <div className="flex items-center justify-center gap-1.5">
+                      <div
+                        className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-inner"
+                        style={{ backgroundColor: preset.colors.background }}
+                      />
+                      <div
+                        className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-inner"
+                        style={{ backgroundColor: preset.colors.primary }}
+                      />
+                      <div
+                        className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-inner"
+                        style={{ backgroundColor: preset.colors.accent }}
+                      />
                     </div>
 
-                    {/* Visual Theme Color Palette Circles */}
-                    <div className="flex items-center gap-1.5 mt-1">
-                      <div
-                        className="w-4 h-4 rounded-full border border-black/10 shadow-inner"
-                        style={{ backgroundColor: preset.colors.background }}
-                        title="Background"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-black/10 shadow-inner"
-                        style={{ backgroundColor: preset.colors.primary }}
-                        title="Primary Color"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-black/10 shadow-inner"
-                        style={{ backgroundColor: preset.colors.accent }}
-                        title="Accent Color"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-black/10 shadow-inner"
-                        style={{ backgroundColor: preset.colors.card }}
-                        title="Card Color"
-                      />
-                    </div>
+                    {isSelected && (
+                      <div className="absolute -top-1 -right-1 p-0.5 rounded-full bg-primary text-primary-foreground shadow-sm">
+                        <Check className="w-2.5 h-2.5" />
+                      </div>
+                    )}
                   </button>
                 );
               })}
@@ -185,7 +172,7 @@ export function AppearancePopup({
 
         {/* Tab Content: Tweak */}
         {activeTab === 'tweak' && (
-          <div className="space-y-4 max-h-72 overflow-y-auto pr-1 mt-1">
+          <div className="space-y-4 max-h-72 overflow-y-auto overflow-x-hidden p-1.5 mt-1">
             {/* Border Radius Section */}
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
