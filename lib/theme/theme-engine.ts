@@ -1,4 +1,4 @@
-import { ThemeConfig, ThemeColors } from '@/types/theme';
+import { ThemeConfig } from '@/types/theme';
 
 export const THEME_STORAGE_KEY = 'cardie_custom_theme_config';
 export const STYLE_TAG_ID = 'cardie-custom-theme-vars';

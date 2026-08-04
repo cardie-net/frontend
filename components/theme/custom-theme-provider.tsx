@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   ThemeConfig,
-  ThemePreset,
   ThemeColors,
   CustomThemeContextType,
 } from '@/types/theme';
@@ -19,6 +18,10 @@ const CustomThemeContext = createContext<CustomThemeContextType | undefined>(und
 
 export function CustomThemeProvider({ children }: { children: React.ReactNode }) {
   const [config, setConfig] = useState<ThemeConfig>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = getSavedThemeConfigFromStorage();
+      if (saved) return saved;
+    }
     return {
       presetId: DEFAULT_PRESET.id,
       isCustom: false,
@@ -28,28 +31,16 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     };
   });
 
-  const [mounted, setMounted] = useState(false);
-
-  // Initial load from localStorage
+  // Keep DOM styling & Google Fonts synchronized whenever config updates
   useEffect(() => {
-    const saved = getSavedThemeConfigFromStorage();
-    if (saved) {
-      setConfig(saved);
-      loadGoogleFont(saved.fontFamily);
-      applyThemeToDom(saved);
-    } else {
-      loadGoogleFont(DEFAULT_PRESET.fontFamily);
-      applyThemeToDom(config);
-    }
-    setMounted(true);
-  }, []);
+    loadGoogleFont(config.fontFamily);
+    applyThemeToDom(config);
+  }, [config]);
 
   const activePreset = PRESET_THEMES.find((p) => p.id === config.presetId) || null;
 
   const updateConfig = (newConfig: ThemeConfig) => {
     setConfig(newConfig);
-    loadGoogleFont(newConfig.fontFamily);
-    applyThemeToDom(newConfig);
     saveThemeConfigToStorage(newConfig);
   };
 
