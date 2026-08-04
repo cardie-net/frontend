@@ -36,7 +36,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     label: "Website",
     icon: <Globe className="h-4 w-4" />,
     prefixDisplay: "",
-    placeholder: "https://yourwebsite.com",
+    placeholder: "yourwebsite.com",
     isFullUrlRequired: true,
   },
   {
@@ -262,12 +262,17 @@ function AccountForm({ user }: { user: UserProfile }) {
   const [success, setSuccess] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     if (!file.type.startsWith("image/")) {
       setError("Please select a valid image file.")
+      scrollToTop()
       return
     }
 
@@ -303,6 +308,7 @@ function AccountForm({ user }: { user: UserProfile }) {
         const data = await response.json()
         setAvatarUrl(data.avatar_url || "")
         setSuccess("Profile picture updated successfully.")
+        scrollToTop()
         setIsEditorOpen(false)
         setSelectedImageSrc("")
         await refreshUser()
@@ -313,9 +319,11 @@ function AccountForm({ user }: { user: UserProfile }) {
             ? errData.detail
             : "Failed to upload profile picture."
         )
+        scrollToTop()
       }
     } catch {
       setError("An error occurred while uploading. Please try again.")
+      scrollToTop()
     } finally {
       setIsUploadingAvatar(false)
     }
@@ -334,6 +342,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       if (response.ok) {
         setAvatarUrl("")
         setSuccess("Profile picture removed successfully.")
+        scrollToTop()
         await refreshUser()
       } else {
         const errData = await response.json().catch(() => ({}))
@@ -342,9 +351,11 @@ function AccountForm({ user }: { user: UserProfile }) {
             ? errData.detail
             : "Failed to remove profile picture."
         )
+        scrollToTop()
       }
     } catch {
       setError("An error occurred while removing. Please try again.")
+      scrollToTop()
     } finally {
       setIsUploadingAvatar(false)
     }
@@ -382,11 +393,13 @@ function AccountForm({ user }: { user: UserProfile }) {
 
     if (dErr || uErr) {
       setError(dErr || uErr)
+      scrollToTop()
       return
     }
 
     if (bio.length > BIO_MAX_LENGTH) {
       setError(`Bio must be ${BIO_MAX_LENGTH} characters or fewer.`)
+      scrollToTop()
       return
     }
 
@@ -398,18 +411,23 @@ function AccountForm({ user }: { user: UserProfile }) {
       if (!val) continue
 
       if (config.key === "website") {
-        const fullUrl = /^https?:\/\//i.test(val) ? val : `https://${val}`
+        let websiteUrl = val
+        if (!/^https?:\/\//i.test(websiteUrl)) {
+          websiteUrl = `https://${websiteUrl}`
+        }
         const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/i
-        if (!urlPattern.test(fullUrl)) {
-          setError("Website URL must start with http:// or https:// and be a valid web address.")
+        if (!urlPattern.test(websiteUrl)) {
+          setError("Website URL must be a valid web address.")
+          scrollToTop()
           return
         }
-        cleanSocialLinks.website = fullUrl
+        cleanSocialLinks.website = websiteUrl
         hasSocialLinks = true
       } else {
         const usernameVal = extractUsernameFromUrl(config.key, val)
         if (!/^[a-zA-Z0-9_.-]+$/.test(usernameVal)) {
           setError(`Invalid username for ${config.label}. Use only letters, numbers, dots, hyphens, and underscores.`)
+          scrollToTop()
           return
         }
         const builtUrl = buildSocialUrl(config.key, usernameVal)
@@ -435,6 +453,7 @@ function AccountForm({ user }: { user: UserProfile }) {
 
       if (response.ok) {
         setSuccess("Profile updated successfully.")
+        scrollToTop()
         await refreshUser()
       } else {
         const errData = await response.json().catch(() => ({}))
@@ -447,9 +466,11 @@ function AccountForm({ user }: { user: UserProfile }) {
               : "Failed to update profile."
           )
         }
+        scrollToTop()
       }
     } catch {
       setError("An error occurred. Please try again.")
+      scrollToTop()
     } finally {
       setIsSaving(false)
     }
@@ -570,48 +591,32 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        {/* Collapsible Bio & Social Links Section */}
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
+        {/* Simpler Collapsible Bio & Social Links Section (No card/border, same indentation) */}
+        <div className="space-y-4">
           <button
             type="button"
             onClick={() => setBioAndSocialExpanded(!bioAndSocialExpanded)}
-            className="group flex w-full cursor-pointer items-center justify-between p-4 text-left font-medium transition-colors hover:bg-accent/40"
+            className="group flex items-center gap-2 cursor-pointer text-left font-medium transition-colors hover:text-primary py-1"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-base font-semibold">Bio & Social Links</span>
-              {filledLinksCount > 0 && (
-                <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-                  {filledLinksCount} {filledLinksCount === 1 ? "link" : "links"}
-                </span>
-              )}
-            </div>
             <span className="text-muted-foreground transition-colors group-hover:text-primary">
               {bioAndSocialExpanded ? (
-                <ChevronUp className="h-5 w-5" />
+                <ChevronUp className="h-4 w-4" />
               ) : (
-                <ChevronDown className="h-5 w-5" />
+                <ChevronDown className="h-4 w-4" />
               )}
             </span>
+            <span className="text-sm font-semibold">Bio & Social Links</span>
+            {filledLinksCount > 0 && (
+              <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
+                {filledLinksCount} {filledLinksCount === 1 ? "link" : "links"}
+              </span>
+            )}
           </button>
 
           {bioAndSocialExpanded && (
-            <div className="border-t p-4 sm:p-6 space-y-6">
+            <div className="space-y-6 pt-1">
               {/* Bio Field */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <Label htmlFor="bio">Bio</Label>
-                  <span
-                    className={`text-xs ${
-                      bio.length > BIO_MAX_LENGTH * 0.9
-                        ? bio.length >= BIO_MAX_LENGTH
-                          ? "text-destructive"
-                          : "text-amber-500"
-                        : "text-muted-foreground"
-                    }`}
-                  >
-                    {bio.length}/{BIO_MAX_LENGTH}
-                  </span>
-                </div>
+              <div className="relative">
                 <Textarea
                   id="bio"
                   value={bio}
@@ -619,8 +624,19 @@ function AccountForm({ user }: { user: UserProfile }) {
                   maxLength={BIO_MAX_LENGTH}
                   rows={3}
                   placeholder="Tell others a bit about yourself..."
-                  className="min-h-[90px] resize-y"
+                  className="min-h-[90px] pb-6 resize-y"
                 />
+                <span
+                  className={`absolute bottom-2.5 right-3 text-xs select-none pointer-events-none ${
+                    bio.length > BIO_MAX_LENGTH * 0.9
+                      ? bio.length >= BIO_MAX_LENGTH
+                        ? "text-destructive font-semibold"
+                        : "text-amber-500 font-semibold"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {bio.length}/{BIO_MAX_LENGTH}
+                </span>
               </div>
 
               {/* Social Links Section */}
@@ -634,15 +650,15 @@ function AccountForm({ user }: { user: UserProfile }) {
                       <Label htmlFor={`social-${platform.key}`} className="text-xs font-medium">
                         {platform.label}
                       </Label>
-                      <div className="flex items-center rounded-md border border-input bg-background focus-within:ring-2 focus-within:ring-ring overflow-hidden">
+                      <div className="flex items-center rounded-2xl border border-transparent bg-input/50 transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 overflow-hidden h-9 px-1">
                         <div
-                          className="flex h-9 w-9 shrink-0 items-center justify-center text-muted-foreground bg-background"
+                          className="flex h-full w-8 shrink-0 items-center justify-center text-muted-foreground"
                           title={platform.label}
                         >
                           {platform.icon}
                         </div>
                         {platform.prefixDisplay && (
-                          <span className="pr-1 text-xs text-muted-foreground select-none whitespace-nowrap font-mono">
+                          <span className="text-xs text-muted-foreground select-none whitespace-nowrap font-mono pr-1">
                             {platform.prefixDisplay}
                           </span>
                         )}
@@ -654,7 +670,7 @@ function AccountForm({ user }: { user: UserProfile }) {
                             handleSocialInputChange(platform.key, e.target.value)
                           }
                           placeholder={platform.placeholder}
-                          className="border-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-9 text-sm bg-background pl-1"
+                          className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-full text-sm px-1.5 shadow-none"
                         />
                       </div>
                     </div>
