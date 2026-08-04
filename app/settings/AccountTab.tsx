@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { SocialLinks, UserProfile } from "@/types"
+import { AvatarEditorDialog } from "@/components/settings/AvatarEditorDialog"
 
 const SOCIAL_PLATFORMS: {
   key: keyof SocialLinks
@@ -134,10 +135,42 @@ export function AccountTab() {
   return <AccountForm key={user.id} user={user} />
 }
 
+const validateDisplayName = (name: string): string => {
+  const trimmed = name.trim()
+  if (!trimmed) {
+    return "Display name cannot be empty."
+  }
+  if (trimmed.length < 2) {
+    return "Display name must be at least 2 characters long."
+  }
+  if (trimmed.length > 50) {
+    return "Display name must be 50 characters or fewer."
+  }
+  return ""
+}
+
+const validateUsername = (name: string): string => {
+  if (!name) {
+    return "Username cannot be empty."
+  }
+  if (name.length < 8) {
+    return "Username must be at least 8 characters long."
+  }
+  if (name.length > 32) {
+    return "Username must be 32 characters or fewer."
+  }
+  if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+    return "Username can only contain letters, numbers, underscores, and dashes."
+  }
+  return ""
+}
+
 function AccountForm({ user }: { user: UserProfile }) {
   const { refreshUser } = useAuth()
   const [displayName, setDisplayName] = useState(user.display_name || "")
   const [username, setUsername] = useState(user.username || "")
+  const [displayNameError, setDisplayNameError] = useState<string>("")
+  const [usernameError, setUsernameError] = useState<string>("")
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url || "")
   const [bio, setBio] = useState(user.bio || "")
   const [socialLinks, setSocialLinks] = useState<SocialLinks>(
@@ -148,20 +181,42 @@ function AccountForm({ user }: { user: UserProfile }) {
   )
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
+  const [selectedImageSrc, setSelectedImageSrc] = useState<string>("")
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
+    if (!file.type.startsWith("image/")) {
+      setError("Please select a valid image file.")
+      return
+    }
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      if (typeof event.target?.result === "string") {
+        setSelectedImageSrc(event.target.result)
+        setIsEditorOpen(true)
+      }
+    }
+    reader.readAsDataURL(file)
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""
+    }
+  }
+
+  const handleSaveCroppedAvatar = async (blob: Blob) => {
     setIsUploadingAvatar(true)
     setError("")
     setSuccess("")
 
     const formData = new FormData()
-    formData.append("file", file)
+    formData.append("file", blob, "avatar.jpg")
 
     try {
       const response = await apiFetch("/api/v1/users/me/avatar", {
@@ -173,6 +228,8 @@ function AccountForm({ user }: { user: UserProfile }) {
         const data = await response.json()
         setAvatarUrl(data.avatar_url || "")
         setSuccess("Profile picture updated successfully.")
+        setIsEditorOpen(false)
+        setSelectedImageSrc("")
         await refreshUser()
       } else {
         const errData = await response.json().catch(() => ({}))
@@ -186,9 +243,6 @@ function AccountForm({ user }: { user: UserProfile }) {
       setError("An error occurred while uploading. Please try again.")
     } finally {
       setIsUploadingAvatar(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
     }
   }
 
@@ -221,6 +275,18 @@ function AccountForm({ user }: { user: UserProfile }) {
     }
   }
 
+  const handleDisplayNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setDisplayName(val)
+    setDisplayNameError(validateDisplayName(val))
+  }
+
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    setUsername(val)
+    setUsernameError(validateUsername(val))
+  }
+
   const handleSocialLinkChange = (key: keyof SocialLinks, value: string) => {
     setSocialLinks((prev) => ({
       ...prev,
@@ -233,20 +299,16 @@ function AccountForm({ user }: { user: UserProfile }) {
     setError("")
     setSuccess("")
 
-    if (username.length < 8) {
-      setError("Username must be at least 8 characters long.")
+    const dErr = validateDisplayName(displayName)
+    const uErr = validateUsername(username)
+    setDisplayNameError(dErr)
+    setUsernameError(uErr)
+
+    if (dErr || uErr) {
+      setError(dErr || uErr)
       return
     }
-    if (username.length > 32) {
-      setError("Username must be no more than 32 characters long.")
-      return
-    }
-    if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-      setError(
-        "Username can only contain letters, numbers, underscores, and dashes."
-      )
-      return
-    }
+
     if (bio.length > BIO_MAX_LENGTH) {
       setError(`Bio must be ${BIO_MAX_LENGTH} characters or fewer.`)
       return
@@ -313,7 +375,7 @@ function AccountForm({ user }: { user: UserProfile }) {
   ).length
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="mx-auto w-full max-w-2xl">
       {error && (
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
@@ -330,7 +392,7 @@ function AccountForm({ user }: { user: UserProfile }) {
         </Alert>
       )}
 
-      <div className="mb-8 flex items-center gap-6">
+      <div className="mb-8 flex items-center gap-4 sm:gap-6">
         <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-muted">
           {avatarUrl ? (
             <img
@@ -351,7 +413,7 @@ function AccountForm({ user }: { user: UserProfile }) {
             onChange={handleAvatarChange}
             disabled={isUploadingAvatar}
           />
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Button
               type="button"
               variant="secondary"
@@ -360,23 +422,30 @@ function AccountForm({ user }: { user: UserProfile }) {
               disabled={isUploadingAvatar}
             >
               <Upload className="h-4 w-4" />
-              {isUploadingAvatar ? "Uploading..." : "Upload Avatar"}
+              <span className="sm:hidden">
+                {isUploadingAvatar ? "Uploading..." : "Upload"}
+              </span>
+              <span className="hidden sm:inline">
+                {isUploadingAvatar ? "Uploading..." : "Upload Avatar"}
+              </span>
             </Button>
             {avatarUrl && (
               <Button
                 type="button"
                 variant="destructive"
-                className="flex items-center gap-2"
+                className="flex h-8 w-8 items-center justify-center gap-2 p-0 sm:h-8 sm:w-auto sm:px-3"
                 onClick={handleRemoveAvatar}
                 disabled={isUploadingAvatar}
+                aria-label="Remove avatar"
+                title="Remove avatar"
               >
                 <Trash2 className="h-4 w-4" />
-                Remove
+                <span className="hidden sm:inline">Remove</span>
               </Button>
             )}
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Recommended: Square image, max 2MB.
+            Recommended: Square image, max 10MB.
           </p>
         </div>
       </div>
@@ -388,8 +457,15 @@ function AccountForm({ user }: { user: UserProfile }) {
             id="displayName"
             type="text"
             value={displayName}
-            onChange={(e) => setDisplayName(e.target.value)}
+            onChange={handleDisplayNameChange}
+            aria-invalid={!!displayNameError}
           />
+          {displayNameError && (
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              {displayNameError}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -398,8 +474,15 @@ function AccountForm({ user }: { user: UserProfile }) {
             id="username"
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleUsernameChange}
+            aria-invalid={!!usernameError}
           />
+          {usernameError && (
+            <p className="mt-1 flex items-center gap-1.5 text-xs text-destructive">
+              <AlertCircle className="h-3.5 w-3.5 shrink-0" />
+              {usernameError}
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -478,10 +561,27 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        <Button type="submit" disabled={isSaving} className="w-full sm:w-auto">
+        <Button
+          type="submit"
+          disabled={isSaving || !!displayNameError || !!usernameError}
+          className="w-full sm:w-auto"
+        >
           {isSaving ? "Saving..." : "Save Changes"}
         </Button>
       </form>
+
+      {isEditorOpen && (
+        <AvatarEditorDialog
+          isOpen={isEditorOpen}
+          imageSrc={selectedImageSrc}
+          onClose={() => {
+            setIsEditorOpen(false)
+            setSelectedImageSrc("")
+          }}
+          onSave={handleSaveCroppedAvatar}
+          isUploading={isUploadingAvatar}
+        />
+      )}
     </div>
   )
 }
