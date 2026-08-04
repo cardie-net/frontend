@@ -11,11 +11,10 @@ import {
   BookOpen,
   Settings,
   User,
-  UserCircle,
   LogIn,
   UserPlus,
   LogOut,
-  Home,
+  Palette,
 } from 'lucide-react';
 
 type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -101,7 +100,6 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
-  const [isAccountHovered, setIsAccountHovered] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const startPointerRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -127,7 +125,6 @@ export function Navbar() {
         !containerRef.current.contains(e.target as Node)
       ) {
         setIsOpen(false);
-        setIsAccountHovered(false);
       }
     }
 
@@ -214,6 +211,7 @@ export function Navbar() {
   };
 
   const isAuthenticated = !loading && user && !user.is_guest;
+  const hasPfp = Boolean(user && !user.is_guest && user.avatar_url);
 
   return (
     <div
@@ -234,25 +232,38 @@ export function Navbar() {
         isRightSide ? 'flex-row-reverse' : 'flex-row'
       )}
     >
-      {/* Circle Hamburger Handle */}
+      {/* Circle Menu Handle */}
       <button
         type="button"
         onPointerDown={handlePointerDown}
         aria-label="Toggle menu"
         className={cn(
-          'group relative w-12 h-12 rounded-full flex items-center justify-center',
+          'group relative w-12 h-12 rounded-full flex items-center justify-center overflow-hidden',
           'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-lg shadow-black/10 dark:shadow-black/40',
           'hover:scale-105 active:scale-95 transition-all duration-200 cursor-grab active:cursor-grabbing',
           isOpen && 'ring-2 ring-primary/40 bg-accent/60'
         )}
       >
-        <div className="relative w-5 h-5 flex items-center justify-center">
-          <Menu
-            className={cn(
-              'w-5 h-5 text-foreground transition-all duration-300 transform',
-              isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
-            )}
-          />
+        <div className="relative w-full h-full flex items-center justify-center">
+          {hasPfp ? (
+            <img
+              src={user!.avatar_url}
+              alt={user!.display_name || user!.username || 'Avatar'}
+              draggable={false}
+              onDragStart={(e) => e.preventDefault()}
+              className={cn(
+                'w-full h-full rounded-full object-cover transition-all duration-300 transform pointer-events-none select-none',
+                isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
+              )}
+            />
+          ) : (
+            <Menu
+              className={cn(
+                'w-5 h-5 text-foreground transition-all duration-300 transform',
+                isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
+              )}
+            />
+          )}
           <X
             className={cn(
               'w-5 h-5 text-foreground transition-all duration-300 transform',
@@ -279,15 +290,6 @@ export function Navbar() {
           isRightSide ? 'flex-row-reverse' : 'flex-row'
         )}
       >
-        {/* Home Link */}
-        <NavItem
-          href="/"
-          icon={<Home className="w-4 h-4" />}
-          tooltip="Home"
-          isActive={pathname === '/'}
-          isBottomSide={isBottomSide}
-        />
-
         {/* Deck List Link */}
         <NavItem
           href="/decks"
@@ -299,6 +301,13 @@ export function Navbar() {
 
         {isAuthenticated ? (
           <>
+            {/* Appearance Button */}
+            <NavItem
+              icon={<Palette className="w-4 h-4" />}
+              tooltip="Appearance"
+              isBottomSide={isBottomSide}
+            />
+
             {/* Settings Link */}
             <NavItem
               href="/settings"
@@ -326,48 +335,25 @@ export function Navbar() {
             />
           </>
         ) : (
-          /* Guest / Not Logged In Account Button & Hover Sub-menu */
-          <div
-            className="relative"
-            onMouseEnter={() => setIsAccountHovered(true)}
-            onMouseLeave={() => setIsAccountHovered(false)}
-          >
-            <div className={cn('flex items-center gap-1.5', isRightSide ? 'flex-row-reverse' : 'flex-row')}>
-              {/* Main Account Button Icon */}
-              <NavItem
-                icon={<UserCircle className="w-4 h-4" />}
-                tooltip="Account"
-                isActive={pathname === '/login' || pathname === '/signup'}
-                isBottomSide={isBottomSide}
-              />
+          <>
+            {/* Log In Link */}
+            <NavItem
+              href="/login"
+              icon={<LogIn className="w-4 h-4" />}
+              tooltip="Log in"
+              isActive={pathname === '/login'}
+              isBottomSide={isBottomSide}
+            />
 
-              {/* Extended Sign Up & Log In Sub-buttons on Hover */}
-              <div
-                className={cn(
-                  'flex items-center gap-1.5 transition-all duration-300 ease-out overflow-hidden',
-                  isRightSide ? 'flex-row-reverse' : 'flex-row',
-                  isAccountHovered
-                    ? 'max-w-[200px] opacity-100 scale-100 px-1'
-                    : 'max-w-0 opacity-0 scale-90 px-0 pointer-events-none'
-                )}
-              >
-                <NavItem
-                  href="/login"
-                  icon={<LogIn className="w-4 h-4" />}
-                  tooltip="Log in"
-                  isActive={pathname === '/login'}
-                  isBottomSide={isBottomSide}
-                />
-                <NavItem
-                  href="/signup"
-                  icon={<UserPlus className="w-4 h-4 text-primary" />}
-                  tooltip="Sign up"
-                  isActive={pathname === '/signup'}
-                  isBottomSide={isBottomSide}
-                />
-              </div>
-            </div>
-          </div>
+            {/* Sign Up Link */}
+            <NavItem
+              href="/signup"
+              icon={<UserPlus className="w-4 h-4 text-primary" />}
+              tooltip="Sign up"
+              isActive={pathname === '/signup'}
+              isBottomSide={isBottomSide}
+            />
+          </>
         )}
       </div>
     </div>
