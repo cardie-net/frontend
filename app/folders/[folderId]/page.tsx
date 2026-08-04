@@ -174,6 +174,16 @@ export default function FolderPage() {
           {currentFolder?.parent_id ? "Back to Parent Folder" : "Back to Decks"}
         </Link>
 
+        {currentFolder?.properties?.cover_image_url && (
+          <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] max-h-64 w-full">
+            <img 
+              src={currentFolder.properties.cover_image_url} 
+              alt={`${currentFolder.name} cover`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
@@ -196,6 +206,11 @@ export default function FolderPage() {
               <p className="text-sm text-muted-foreground">
                 {totalItems} {totalItems === 1 ? "item" : "items"}
               </p>
+              {currentFolder?.properties?.description && (
+                <p className="mt-2 text-sm text-foreground/90 whitespace-pre-wrap">
+                  {currentFolder.properties.description}
+                </p>
+              )}
             </div>
           </div>
 

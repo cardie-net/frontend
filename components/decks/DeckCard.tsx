@@ -65,11 +65,18 @@ export function DeckCard({
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Card
         className={cn(
-          "relative flex flex-col transition-all",
+          "relative flex flex-col transition-all overflow-hidden",
           getDeckColorClass(deck.properties?.color),
           isDragging && "opacity-50"
         )}
       >
+        {deck.properties?.cover_image_url && (
+          <img
+            src={deck.properties.cover_image_url}
+            alt={`${deck.name} cover`}
+            className="aspect-video w-full object-cover border-b"
+          />
+        )}
       <CardHeader>
         <CardTitle className="pr-8">{deck.name}</CardTitle>
         <CardAction>
@@ -102,6 +109,12 @@ export function DeckCard({
         <p className="mb-2 text-sm text-muted-foreground capitalize">
           {deck.privacy} Deck
         </p>
+
+        {deck.properties?.description && (
+          <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+            {deck.properties.description}
+          </p>
+        )}
 
         {srsCounts && (
           <div className="flex flex-wrap gap-2">

@@ -25,10 +25,11 @@ export interface Deck {
   type?: "deck"
   user_id?: string
   folder_id?: string | null
-  description?: string
   privacy?: "public" | "unlisted" | "private"
   properties?: {
     color?: string
+    description?: string
+    cover_image_url?: string
   }
 }
 
@@ -42,6 +43,8 @@ export interface Folder {
   privacy?: "public" | "unlisted" | "private"
   properties?: {
     color?: string
+    description?: string
+    cover_image_url?: string
   }
 }
 

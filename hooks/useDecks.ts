@@ -48,18 +48,31 @@ export function useCreateDeck() {
       name,
       color,
       folderId,
+      description,
+      coverImageUrl,
     }: {
       name: string
       color: string
       folderId?: string | null
+      description?: string
+      coverImageUrl?: string | null
     }): Promise<Deck> => {
+      const properties: Record<string, unknown> = {
+        color: color === "default" ? null : color,
+      }
+      if (description) {
+        properties.description = description
+      }
+      if (coverImageUrl) {
+        properties.cover_image_url = coverImageUrl
+      }
       const res = await apiFetch("/api/v1/decks", {
         method: "POST",
         body: JSON.stringify({
           name,
           privacy: "private",
           folder_id: folderId || null,
-          properties: { color: color === "default" ? null : color },
+          properties,
         }),
       })
       if (!res.ok) {
@@ -93,16 +106,31 @@ export function useUpdateDeck() {
       privacy,
       slug,
       folderId,
+      name,
+      description,
+      color,
+      coverImageUrl,
     }: {
       deckId: string
       privacy?: string
       slug?: string
       folderId?: string | null
+      name?: string
+      description?: string
+      color?: string | null
+      coverImageUrl?: string | null
     }): Promise<Deck> => {
       const body: Record<string, unknown> = {}
       if (privacy !== undefined) body.privacy = privacy
       if (slug !== undefined) body.slug = slug
       if (folderId !== undefined) body.folder_id = folderId
+      if (name !== undefined) body.name = name
+
+      const properties: Record<string, unknown> = {}
+      if (description !== undefined) properties.description = description
+      if (color !== undefined) properties.color = color === "default" ? null : color
+      if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
+      if (Object.keys(properties).length > 0) body.properties = properties
 
       const res = await apiFetch(`/api/v1/decks/${deckId}`, {
         method: "PATCH",
@@ -151,6 +179,49 @@ export function useDeleteDeck() {
       )
       queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
       queryClient.invalidateQueries({ queryKey: ["folder-items"] })
+    },
+  })
+}
+
+export function useUploadDeckCover() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({
+      deckId,
+      file,
+    }: {
+      deckId: string
+      file: File
+    }): Promise<Deck> => {
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const res = await apiFetch(`/api/v1/decks/${deckId}/cover`, {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.detail || "Failed to upload cover image")
+      }
+      return res.json()
+    },
+    onSuccess: (updatedDeck) => {
+      queryClient.setQueryData(
+        queryKeys.decks(user?.id),
+        (old: Deck[] | undefined) =>
+          old
+            ? old.map((deck) =>
+                deck.id === updatedDeck.id ? updatedDeck : deck
+              )
+            : []
+      )
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      queryClient.invalidateQueries({ queryKey: ["folder-items"] })
+      queryClient.invalidateQueries({ queryKey: ["deck"] })
     },
   })
 }

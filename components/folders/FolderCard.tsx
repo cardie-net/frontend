@@ -81,12 +81,19 @@ export function FolderCard({
     <div ref={setRef} style={style} {...attributes} {...listeners}>
       <Card
         className={cn(
-          "relative flex flex-col transition-all",
+          "relative flex flex-col transition-all overflow-hidden",
           getDeckColorClass(folder.properties?.color),
           isOver && "ring-2 ring-primary ring-offset-2 bg-accent/20",
           isDragging && "opacity-50"
         )}
       >
+        {folder.properties?.cover_image_url && (
+          <img
+            src={folder.properties.cover_image_url}
+            alt={`${folder.name} cover`}
+            className="aspect-video w-full object-cover border-b"
+          />
+        )}
         <CardHeader>
           <div className="flex items-center gap-2 pr-8">
             <FolderIcon className="h-5 w-5 text-primary shrink-0" />
@@ -128,6 +135,11 @@ export function FolderCard({
           <p className="mb-2 text-sm text-muted-foreground capitalize">
             {folder.privacy || "private"} Folder
           </p>
+          {folder.properties?.description && (
+            <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
+              {folder.properties.description}
+            </p>
+          )}
           {itemCount !== undefined && (
             <p className="text-xs text-muted-foreground">
               {itemCount} {itemCount === 1 ? "item" : "items"}

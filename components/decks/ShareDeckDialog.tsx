@@ -16,7 +16,8 @@ import {
 import { LockKeyhole, EyeOff, Globe, Copy, Check } from "lucide-react"
 import { Deck } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
-import { useUpdateDeck } from "@/hooks/useDecks"
+import { useUpdateDeck, useUploadDeckCover } from "@/hooks/useDecks"
+import { Textarea } from "@/components/ui/textarea"
 
 interface ShareDeckDialogProps {
   deck: Deck | null
@@ -31,15 +32,25 @@ interface ShareDeckDialogProps {
 export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
   const { user } = useAuth()
   const updateDeck = useUpdateDeck()
+  const uploadDeckCover = useUploadDeckCover()
 
+  const [shareName, setShareName] = useState(deck?.name || "")
+  const [shareDescription, setShareDescription] = useState(deck?.properties?.description || "")
+  const [coverUrl, setCoverUrl] = useState(deck?.properties?.cover_image_url || "")
+  const [coverFile, setCoverFile] = useState<File | null>(null)
   const [sharePrivacy, setSharePrivacy] = useState(deck?.privacy || "private")
   const [shareSlug, setShareSlug] = useState(deck?.slug || "")
   const [shareError, setShareError] = useState("")
   const [isLinkCopied, setIsLinkCopied] = useState(false)
 
-  const handleSaveShare = (e: React.FormEvent) => {
+  const handleSaveShare = async (e: React.FormEvent) => {
     e.preventDefault()
     setShareError("")
+
+    if (!shareName.trim()) {
+      setShareError("Deck name is required.")
+      return
+    }
 
     if (!/^[a-z0-9-]+$/.test(shareSlug)) {
       setShareError(
@@ -50,16 +61,33 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
 
     if (!deck) return
 
-    updateDeck.mutate(
-      { deckId: deck.id, privacy: sharePrivacy, slug: shareSlug },
-      {
-        onSuccess: () => onClose(),
-        onError: (err) =>
-          setShareError(
-            err instanceof Error ? err.message : "An error occurred"
-          ),
+    try {
+      if (coverFile) {
+        await uploadDeckCover.mutateAsync({ deckId: deck.id, file: coverFile })
       }
-    )
+
+      const finalCoverUrl = coverFile ? undefined : (coverUrl || null)
+
+      updateDeck.mutate(
+        { 
+          deckId: deck.id, 
+          name: shareName,
+          description: shareDescription || undefined,
+          privacy: sharePrivacy, 
+          slug: shareSlug,
+          coverImageUrl: finalCoverUrl
+        },
+        {
+          onSuccess: () => onClose(),
+          onError: (err) =>
+            setShareError(
+              err instanceof Error ? err.message : "An error occurred"
+            ),
+        }
+      )
+    } catch (err) {
+      setShareError(err instanceof Error ? err.message : "An error occurred uploading cover image")
+    }
   }
 
   const handleCopyLink = () => {
@@ -78,13 +106,59 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
       <DialogContent>
         <form onSubmit={handleSaveShare}>
           <DialogHeader>
-            <DialogTitle>Share Settings</DialogTitle>
+            <DialogTitle>Deck Settings</DialogTitle>
             <DialogDescription>
-              Update the privacy and URL slug for your deck.
+              Update the settings, privacy, and URL slug for your deck.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             {shareError && <Alert variant="destructive">{shareError}</Alert>}
+
+            <div className="grid gap-2">
+              <Label>Name</Label>
+              <Input
+                value={shareName}
+                onChange={(e) => setShareName(e.target.value)}
+                maxLength={80}
+                disabled={updateDeck.isPending || uploadDeckCover.isPending}
+                required
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Description</Label>
+              <Textarea
+                value={shareDescription}
+                onChange={(e) => setShareDescription(e.target.value)}
+                maxLength={500}
+                disabled={updateDeck.isPending || uploadDeckCover.isPending}
+                placeholder="Optional description..."
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Cover Image</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  setCoverFile(e.target.files?.[0] || null)
+                  if (e.target.files?.[0]) setCoverUrl("")
+                }}
+                disabled={updateDeck.isPending || uploadDeckCover.isPending}
+              />
+              <div className="text-xs text-muted-foreground text-center">OR</div>
+              <Input
+                type="url"
+                placeholder="https://example.com/image.png"
+                value={coverUrl}
+                onChange={(e) => {
+                  setCoverUrl(e.target.value)
+                  if (e.target.value) setCoverFile(null)
+                }}
+                disabled={updateDeck.isPending || uploadDeckCover.isPending || !!coverFile}
+              />
+            </div>
 
             <div className="grid gap-2">
               <Label>Privacy</Label>
@@ -166,12 +240,12 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
               type="button"
               variant="outline"
               onClick={onClose}
-              disabled={updateDeck.isPending}
+              disabled={updateDeck.isPending || uploadDeckCover.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={updateDeck.isPending}>
-              {updateDeck.isPending ? "Saving..." : "Save Settings"}
+            <Button type="submit" disabled={updateDeck.isPending || uploadDeckCover.isPending}>
+              {updateDeck.isPending || uploadDeckCover.isPending ? "Saving..." : "Save Settings"}
             </Button>
           </DialogFooter>
         </form>

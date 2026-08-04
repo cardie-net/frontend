@@ -15,8 +15,9 @@ import {
 } from "@/components/ui/dialog"
 import { DECK_COLORS } from "@/lib/decks"
 import { Folder } from "@/types"
-import { useUpdateFolder } from "@/hooks/useFolders"
+import { useUpdateFolder, useUploadFolderCover } from "@/hooks/useFolders"
 import { LockKeyhole, EyeOff, Globe } from "lucide-react"
+import { Textarea } from "@/components/ui/textarea"
 
 interface EditFolderDialogProps {
   folder: Folder | null
@@ -25,8 +26,12 @@ interface EditFolderDialogProps {
 
 export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
   const updateFolder = useUpdateFolder()
+  const uploadFolderCover = useUploadFolderCover()
 
   const [name, setName] = useState(folder?.name || "")
+  const [description, setDescription] = useState(folder?.properties?.description || "")
+  const [coverUrl, setCoverUrl] = useState(folder?.properties?.cover_image_url || "")
+  const [coverFile, setCoverFile] = useState<File | null>(null)
   const [color, setColor] = useState(folder?.properties?.color || "default")
   const [privacy, setPrivacy] = useState<"private" | "unlisted" | "public">(
     folder?.privacy || "private"
@@ -34,7 +39,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
   const [slug, setSlug] = useState(folder?.slug || "")
   const [error, setError] = useState("")
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
@@ -50,20 +55,32 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
       return
     }
 
-    updateFolder.mutate(
-      {
-        folderId: folder.id,
-        name: name.trim(),
-        color,
-        privacy,
-        slug: slug.trim() || undefined,
-      },
-      {
-        onSuccess: () => onClose(),
-        onError: (err) =>
-          setError(err instanceof Error ? err.message : "An error occurred"),
+    try {
+      if (coverFile) {
+        await uploadFolderCover.mutateAsync({ folderId: folder.id, file: coverFile })
       }
-    )
+
+      const finalCoverUrl = coverFile ? undefined : (coverUrl || null)
+
+      updateFolder.mutate(
+        {
+          folderId: folder.id,
+          name: name.trim(),
+          color,
+          privacy,
+          slug: slug.trim() || undefined,
+          description: description || undefined,
+          coverImageUrl: finalCoverUrl
+        },
+        {
+          onSuccess: () => onClose(),
+          onError: (err) =>
+            setError(err instanceof Error ? err.message : "An error occurred"),
+        }
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred uploading cover image")
+    }
   }
 
   return (
@@ -76,10 +93,10 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
           <DialogHeader>
             <DialogTitle>Edit Folder</DialogTitle>
             <DialogDescription>
-              Update the name, color accent, slug, and privacy settings.
+              Update the name, description, cover image, and privacy settings.
             </DialogDescription>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
+          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             {error && <Alert variant="destructive">{error}</Alert>}
 
             <div className="grid gap-2">
@@ -89,8 +106,43 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={80}
-                disabled={updateFolder.isPending}
+                disabled={updateFolder.isPending || uploadFolderCover.isPending}
                 required
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Description</Label>
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                maxLength={500}
+                disabled={updateFolder.isPending || uploadFolderCover.isPending}
+                placeholder="Optional description..."
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Cover Image</Label>
+              <Input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  setCoverFile(e.target.files?.[0] || null)
+                  if (e.target.files?.[0]) setCoverUrl("")
+                }}
+                disabled={updateFolder.isPending || uploadFolderCover.isPending}
+              />
+              <div className="text-xs text-muted-foreground text-center">OR</div>
+              <Input
+                type="url"
+                placeholder="https://example.com/image.png"
+                value={coverUrl}
+                onChange={(e) => {
+                  setCoverUrl(e.target.value)
+                  if (e.target.value) setCoverFile(null)
+                }}
+                disabled={updateFolder.isPending || uploadFolderCover.isPending || !!coverFile}
               />
             </div>
 
@@ -165,12 +217,12 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
               type="button"
               variant="outline"
               onClick={onClose}
-              disabled={updateFolder.isPending}
+              disabled={updateFolder.isPending || uploadFolderCover.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={updateFolder.isPending}>
-              {updateFolder.isPending ? "Saving..." : "Save Settings"}
+            <Button type="submit" disabled={updateFolder.isPending || uploadFolderCover.isPending}>
+              {updateFolder.isPending || uploadFolderCover.isPending ? "Saving..." : "Save Settings"}
             </Button>
           </DialogFooter>
         </form>

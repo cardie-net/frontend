@@ -82,12 +82,16 @@ export function useCreateFolder() {
       privacy = "private",
       slug,
       parentId,
+      description,
+      coverImageUrl,
     }: {
       name: string
       color?: string
       privacy?: "public" | "unlisted" | "private"
       slug?: string
       parentId?: string | null
+      description?: string
+      coverImageUrl?: string | null
     }): Promise<Folder> => {
       const body: Record<string, unknown> = {
         name,
@@ -97,9 +101,12 @@ export function useCreateFolder() {
       if (slug && slug.trim()) {
         body.slug = slug.trim()
       }
-      if (color !== undefined) {
-        body.properties = { color: color === "default" ? null : color }
-      }
+      
+      const properties: Record<string, unknown> = {}
+      if (color !== undefined) properties.color = color === "default" ? null : color
+      if (description) properties.description = description
+      if (coverImageUrl) properties.cover_image_url = coverImageUrl
+      if (Object.keys(properties).length > 0) body.properties = properties
 
       const res = await apiFetch("/api/v1/folders", {
         method: "POST",
@@ -135,6 +142,8 @@ export function useUpdateFolder() {
       privacy,
       parentId,
       color,
+      description,
+      coverImageUrl,
     }: {
       folderId: string
       name?: string
@@ -142,15 +151,20 @@ export function useUpdateFolder() {
       privacy?: "public" | "unlisted" | "private"
       parentId?: string | null
       color?: string | null
+      description?: string
+      coverImageUrl?: string | null
     }): Promise<Folder> => {
       const body: Record<string, unknown> = {}
       if (name !== undefined) body.name = name
       if (slug !== undefined) body.slug = slug
       if (privacy !== undefined) body.privacy = privacy
       if (parentId !== undefined) body.parent_id = parentId
-      if (color !== undefined) {
-        body.properties = { color: color === "default" ? null : color }
-      }
+      
+      const properties: Record<string, unknown> = {}
+      if (color !== undefined) properties.color = color === "default" ? null : color
+      if (description !== undefined) properties.description = description
+      if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
+      if (Object.keys(properties).length > 0) body.properties = properties
 
       const res = await apiFetch(`/api/v1/folders/${folderId}`, {
         method: "PATCH",
@@ -185,6 +199,40 @@ export function useDeleteFolder() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
       queryClient.invalidateQueries({ queryKey: ["folder-items"] })
+    },
+  })
+}
+
+export function useUploadFolderCover() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({
+      folderId,
+      file,
+    }: {
+      folderId: string
+      file: File
+    }): Promise<Folder> => {
+      const formData = new FormData()
+      formData.append("file", file)
+
+      const res = await apiFetch(`/api/v1/folders/${folderId}/cover`, {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.detail || "Failed to upload cover image")
+      }
+      return res.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      queryClient.invalidateQueries({ queryKey: ["folder-items"] })
+      queryClient.invalidateQueries({ queryKey: ["folder"] })
     },
   })
 }

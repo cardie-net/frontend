@@ -226,9 +226,9 @@ export default function StatisticsPage() {
                           {totalDeckSrs} SRS cards
                         </Badge>
                       </div>
-                      {deck.description && (
+                      {deck.properties?.description && (
                         <p className="line-clamp-1 text-xs text-muted-foreground">
-                          {deck.description}
+                          {deck.properties.description}
                         </p>
                       )}
                     </div>

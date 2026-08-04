@@ -174,6 +174,16 @@ export function FolderView({ username, folder }: FolderViewProps) {
           {parentFolder ? `Back to ${parentFolder.name}` : "Back to Decks"}
         </Link>
 
+        {folder.properties?.cover_image_url && (
+          <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] max-h-64 w-full">
+            <img 
+              src={folder.properties.cover_image_url} 
+              alt={`${folder.name} cover`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div
@@ -194,6 +204,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
               <p className="text-sm text-muted-foreground">
                 {totalItems} {totalItems === 1 ? "item" : "items"}
               </p>
+              {folder.properties?.description && (
+                <p className="mt-2 text-sm text-foreground/90 whitespace-pre-wrap">
+                  {folder.properties.description}
+                </p>
+              )}
             </div>
           </div>
 

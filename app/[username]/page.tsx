@@ -294,20 +294,29 @@ export default function ProfilePage() {
               >
                 <Card
                   className={cn(
-                    "h-full rounded-2xl border border-border/70 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40 flex flex-col justify-between",
+                    "h-full rounded-2xl border border-border/70 p-0 overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40 flex flex-col justify-between",
                     getDeckColorClass(deck.properties?.color)
                   )}
                 >
-                  <CardHeader className="p-0 space-y-2">
+                  {deck.properties?.cover_image_url && (
+                    <img
+                      src={deck.properties.cover_image_url}
+                      alt={`${deck.name} cover`}
+                      className="aspect-video w-full object-cover border-b border-border/50"
+                    />
+                  )}
+                  <div className="p-5 flex flex-col justify-between flex-1">
+                    <CardHeader className="p-0 space-y-2">
                     <CardTitle className="text-lg font-bold tracking-tight line-clamp-2 group-hover:text-primary transition-colors">
                       {deck.name}
                     </CardTitle>
-                    {deck.description && (
+                    {deck.properties?.description && (
                       <CardDescription className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                        {deck.description}
+                        {deck.properties.description}
                       </CardDescription>
                     )}
                   </CardHeader>
+                  </div>
                 </Card>
               </Link>
             ))}

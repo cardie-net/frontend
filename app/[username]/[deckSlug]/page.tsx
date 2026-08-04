@@ -269,7 +269,23 @@ function DeckPageContent() {
           <ArrowLeft className="h-3.5 w-3.5" />
           My Decks
         </Link>
+        
+        {deck.properties?.cover_image_url && (
+          <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] max-h-64 w-full">
+            <img 
+              src={deck.properties.cover_image_url} 
+              alt={`${deck.name} cover`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        )}
+
         <h1 className="text-3xl font-bold">{deck.name}</h1>
+        {deck.properties?.description && (
+          <p className="mt-3 text-base text-foreground/90 whitespace-pre-wrap">
+            {deck.properties.description}
+          </p>
+        )}
         <p className="mt-1 text-muted-foreground">
           {cards.length} {cards.length === 1 ? "card" : "cards"}
         </p>
