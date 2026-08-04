@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import { cn } from '@/lib/utils';
+import { useLocale } from 'next-intl';
+import { setLocale } from '@/app/actions';
+import { SUPPORTED_LOCALES, LOCALE_LABELS, Locale } from '@/i18n/config';
 import {
   Menu,
   X,
@@ -15,32 +18,34 @@ import {
   UserPlus,
   LogOut,
   Palette,
+  Languages,
+  BarChart3,
 } from 'lucide-react';
 
 type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 interface CustomTooltipProps {
   text: string;
-  isBottomSide: boolean;
+  isRightSide: boolean;
 }
 
-function CustomTooltip({ text, isBottomSide }: CustomTooltipProps) {
+function CustomTooltip({ text, isRightSide }: CustomTooltipProps) {
   return (
     <div
       className={cn(
-        'absolute left-1/2 -translate-x-1/2 px-2.5 py-1 text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none transition-all duration-200 z-50',
+        'absolute top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none transition-all duration-200 z-50',
         'bg-zinc-900/90 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 border border-zinc-700/50 dark:border-zinc-300/50 backdrop-blur-md',
         'opacity-0 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 scale-95 origin-center',
-        isBottomSide ? 'bottom-full mb-3' : 'top-full mt-3'
+        isRightSide ? 'right-full mr-3' : 'left-full ml-3'
       )}
     >
       {text}
       <div
         className={cn(
-          'absolute left-1/2 -translate-x-1/2 border-4 border-transparent',
-          isBottomSide
-            ? 'top-full border-t-zinc-900/90 dark:border-t-zinc-100'
-            : 'bottom-full border-b-zinc-900/90 dark:border-b-zinc-100'
+          'absolute top-1/2 -translate-y-1/2 border-4 border-transparent',
+          isRightSide
+            ? 'left-full border-l-zinc-900/90 dark:border-l-zinc-100'
+            : 'right-full border-r-zinc-900/90 dark:border-r-zinc-100'
         )}
       />
     </div>
@@ -53,7 +58,7 @@ interface NavItemProps {
   icon: React.ReactNode;
   tooltip: string;
   isActive?: boolean;
-  isBottomSide: boolean;
+  isRightSide: boolean;
   className?: string;
 }
 
@@ -63,7 +68,7 @@ function NavItem({
   icon,
   tooltip,
   isActive = false,
-  isBottomSide,
+  isRightSide,
   className,
 }: NavItemProps) {
   const content = (
@@ -77,7 +82,7 @@ function NavItem({
       )}
     >
       {icon}
-      <CustomTooltip text={tooltip} isBottomSide={isBottomSide} />
+      <CustomTooltip text={tooltip} isRightSide={isRightSide} />
     </div>
   );
 
@@ -92,9 +97,131 @@ function NavItem({
   );
 }
 
+interface LanguageNavItemProps {
+  currentLocale: string;
+  isRightSide: boolean;
+  onSelectLocale: (locale: Locale) => void;
+}
+
+function LanguageNavItem({
+  currentLocale,
+  isRightSide,
+  onSelectLocale,
+}: LanguageNavItemProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseEnter = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setIsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(false);
+    }, 200);
+  };
+
+  const handleToggle = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsOpen((prev) => !prev);
+  };
+
+  // Close when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent | TouchEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setIsOpen(false);
+      }
+    }
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={containerRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      className="relative flex items-center"
+    >
+      {/* Language Trigger Button */}
+      <button
+        type="button"
+        onClick={handleToggle}
+        className="focus:outline-none"
+        aria-label="Select language"
+      >
+        <div
+          className={cn(
+            'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200',
+            isOpen
+              ? 'bg-primary text-primary-foreground shadow-md scale-105'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95'
+          )}
+        >
+          <Languages className="w-4 h-4" />
+          {!isOpen && (
+            <CustomTooltip
+              text={`Language (${currentLocale.toUpperCase()})`}
+              isRightSide={isRightSide}
+            />
+          )}
+        </div>
+      </button>
+
+      {/* Flyout Language Selection Bar extending to the side, with languages stacked vertically above each other */}
+      <div
+        className={cn(
+          'absolute top-1/2 -translate-y-1/2 flex flex-col gap-1 p-1.5 rounded-2xl min-w-[140px]',
+          'bg-background/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-border/80 shadow-2xl shadow-black/20 z-50',
+          'transition-all duration-300 ease-out origin-center',
+          isRightSide ? 'right-full mr-2.5' : 'left-full ml-2.5',
+          isOpen
+            ? 'opacity-100 scale-100 pointer-events-auto'
+            : 'opacity-0 scale-95 pointer-events-none p-0 border-transparent shadow-none overflow-hidden h-0 w-0'
+        )}
+      >
+        {SUPPORTED_LOCALES.map((loc) => {
+          const info = LOCALE_LABELS[loc];
+          const isSelected = currentLocale === loc;
+
+          return (
+            <button
+              key={loc}
+              type="button"
+              onClick={() => {
+                onSelectLocale(loc);
+                setIsOpen(false);
+              }}
+              className={cn(
+                'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 whitespace-nowrap select-none cursor-pointer w-full text-left',
+                isSelected
+                  ? 'bg-primary text-primary-foreground shadow-sm font-semibold'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 active:scale-95'
+              )}
+            >
+              <span className="text-sm leading-none">{info.flag}</span>
+              <span>{info.nativeName}</span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export function Navbar() {
   const { user, loading, logout } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const currentLocale = useLocale();
 
   const [corner, setCorner] = useState<CornerPosition>('top-right');
   const [isOpen, setIsOpen] = useState(false);
@@ -105,6 +232,12 @@ export function Navbar() {
   const startPointerRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const offsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const movedFarRef = useRef(false);
+
+  // Switch to selected locale
+  const handleSelectLocale = async (newLocale: Locale) => {
+    await setLocale(newLocale);
+    router.refresh();
+  };
 
   // Load saved corner preference from localStorage
   useEffect(() => {
@@ -229,7 +362,7 @@ export function Navbar() {
         'fixed z-50 flex items-center gap-2.5 touch-none select-none',
         !dragPos && cornerClasses[corner],
         !isDragging && 'transition-all duration-300 ease-out',
-        isRightSide ? 'flex-row-reverse' : 'flex-row'
+        isBottomSide ? 'flex-col-reverse' : 'flex-col'
       )}
     >
       {/* Circle Menu Handle */}
@@ -274,20 +407,20 @@ export function Navbar() {
 
         {/* Floating helper tooltip when navbar is closed */}
         {!isOpen && !isDragging && (
-          <CustomTooltip text="Menu" isBottomSide={isBottomSide} />
+          <CustomTooltip text="Menu" isRightSide={isRightSide} />
         )}
       </button>
 
       {/* Extended Menu Bar */}
       <div
         className={cn(
-          'flex items-center gap-1.5 p-1.5 rounded-full',
+          'flex flex-col items-center gap-1.5 p-1.5 rounded-full',
           'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-xl shadow-black/10 dark:shadow-black/40',
           'transition-all duration-300 ease-out origin-center overflow-visible',
           isOpen
-            ? 'max-w-[420px] opacity-100 scale-100 pointer-events-auto'
-            : 'max-w-0 opacity-0 scale-90 pointer-events-none p-0 border-transparent shadow-none overflow-hidden',
-          isRightSide ? 'flex-row-reverse' : 'flex-row'
+            ? 'max-h-[500px] opacity-100 scale-100 pointer-events-auto'
+            : 'max-h-0 opacity-0 scale-90 pointer-events-none p-0 border-transparent shadow-none overflow-hidden',
+          isBottomSide ? 'flex-col-reverse' : 'flex-col'
         )}
       >
         {/* Deck List Link */}
@@ -296,16 +429,32 @@ export function Navbar() {
           icon={<BookOpen className="w-4 h-4" />}
           tooltip="Decks"
           isActive={pathname === '/decks'}
-          isBottomSide={isBottomSide}
+          isRightSide={isRightSide}
+        />
+
+        {/* Language Selection Flyout NavItem */}
+        <LanguageNavItem
+          currentLocale={currentLocale}
+          isRightSide={isRightSide}
+          onSelectLocale={handleSelectLocale}
         />
 
         {isAuthenticated ? (
           <>
+            {/* Statistics Button (Logged-in users with actual accounts only) */}
+            <NavItem
+              href="/stats"
+              icon={<BarChart3 className="w-4 h-4" />}
+              tooltip="Statistics"
+              isActive={pathname === '/stats' || pathname === '/statistics'}
+              isRightSide={isRightSide}
+            />
+
             {/* Appearance Button */}
             <NavItem
-              icon={<Palette className="w-4 h-4" />}
+              icon={<Palette className="w-4 h-4 text-muted-foreground" />}
               tooltip="Appearance"
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
 
             {/* Settings Link */}
@@ -314,7 +463,7 @@ export function Navbar() {
               icon={<Settings className="w-4 h-4" />}
               tooltip="Settings"
               isActive={pathname === '/settings'}
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
 
             {/* Profile Link */}
@@ -323,7 +472,7 @@ export function Navbar() {
               icon={<User className="w-4 h-4" />}
               tooltip={user.username ? `@${user.username}` : 'Profile'}
               isActive={pathname === `/${user.username}`}
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
 
             {/* Log Out Button */}
@@ -331,7 +480,7 @@ export function Navbar() {
               onClick={logout}
               icon={<LogOut className="w-4 h-4 text-destructive" />}
               tooltip="Log out"
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
           </>
         ) : (
@@ -342,7 +491,7 @@ export function Navbar() {
               icon={<LogIn className="w-4 h-4" />}
               tooltip="Log in"
               isActive={pathname === '/login'}
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
 
             {/* Sign Up Link */}
@@ -351,7 +500,7 @@ export function Navbar() {
               icon={<UserPlus className="w-4 h-4 text-primary" />}
               tooltip="Sign up"
               isActive={pathname === '/signup'}
-              isBottomSide={isBottomSide}
+              isRightSide={isRightSide}
             />
           </>
         )}

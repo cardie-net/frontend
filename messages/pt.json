@@ -1,0 +1,9 @@
+{
+  "HomePage": {
+    "title": "Projeto pronto!",
+    "description1": "Você já pode adicionar componentes e começar a construir.",
+    "description2": "Nós já adicionamos o componente de botão para você.",
+    "switchLocale": "Mudar Idioma",
+    "darkMode": "(Pressione d para alternar o modo escuro)"
+  }
+}
