@@ -15,7 +15,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { AlertCircle, Globe, Link as LinkIcon } from "lucide-react"
+import {
+  AlertCircle,
+  Globe,
+  Link as LinkIcon,
+  User,
+  Settings,
+  Layers,
+  Plus,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useProfile, useUserDecks } from "@/hooks/useProfile"
 
@@ -24,7 +32,6 @@ export default function ProfilePage() {
   const username = params.username
 
   const { user: currentUser } = useAuth()
-
 
   const {
     data: profileUser,
@@ -39,31 +46,46 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto max-w-4xl space-y-8 px-4 py-10">
-        <div className="flex items-center space-x-4">
-          <Skeleton className="h-24 w-24 rounded-full" />
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-[250px]" />
-            <Skeleton className="h-4 w-[200px]" />
-          </div>
+      <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+        <div className="flex items-center gap-3 mb-8">
+          <Skeleton className="h-11 w-11 rounded-2xl" />
+          <Skeleton className="h-9 w-48 rounded-xl" />
         </div>
-        <Skeleton className="h-[200px] w-full rounded-xl" />
+        <Card className="rounded-3xl border-border/80 p-6 sm:p-8 space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+            <div className="flex items-center space-x-4">
+              <Skeleton className="h-24 w-24 rounded-[calc(var(--radius)*2.2)]" />
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-[200px] rounded-lg" />
+                <Skeleton className="h-4 w-[140px] rounded-lg" />
+              </div>
+            </div>
+          </div>
+          <Skeleton className="h-16 w-full rounded-2xl" />
+        </Card>
       </div>
     )
   }
 
   if (error || !profileUser) {
     return (
-      <div className="mt-20 flex flex-1 items-center justify-center p-8">
-        <div className="text-center">
-          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
-          <h2 className="mb-4 text-2xl font-bold">
+      <div className="container mx-auto max-w-xl px-4 py-16 text-center">
+        <Card className="rounded-3xl border-border/80 p-8 sm:p-12 shadow-sm">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
+            <AlertCircle className="h-7 w-7" />
+          </div>
+          <h2 className="mb-2 text-2xl font-bold tracking-tight">
             {error?.message || "Profile not found"}
           </h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            The user profile you are looking for might have been moved or doesn't exist.
+          </p>
           <Link href="/">
-            <Button variant="outline">Go back home</Button>
+            <Button variant="outline" className="rounded-xl font-medium">
+              Go back home
+            </Button>
           </Link>
-        </div>
+        </Card>
       </div>
     )
   }
@@ -121,132 +143,167 @@ export default function ProfilePage() {
     }
   }
 
-  return (
-    <div className="container mx-auto max-w-4xl px-4 py-10">
-      <Card className="mb-10 overflow-hidden border-none shadow-md">
-        <div className="h-32 w-full bg-muted"></div>
-        <CardContent className="relative px-6 pt-0 pb-10 sm:px-10">
-          <div className="-mt-16 mb-6 flex flex-col gap-6 sm:-mt-12 sm:flex-row sm:items-end">
-            <Avatar className="h-32 w-32 border-4 border-background bg-muted">
-              {profileUser.avatar_url ? (
-                <AvatarImage
-                  src={profileUser.avatar_url}
-                  alt={profileUser.display_name}
-                />
-              ) : (
-                <AvatarFallback className="text-4xl">
-                  {profileUser.display_name.substring(0, 2).toUpperCase()}
-                </AvatarFallback>
-              )}
-            </Avatar>
+  const socialEntries = profileUser.social_links
+    ? Object.entries(profileUser.social_links).filter(([_, url]) => url && url.trim())
+    : []
 
-            <div className="flex-1 pb-2">
-              <h1 className="flex items-center gap-3 text-3xl font-bold">
-                {profileUser.display_name}
-                {profileUser.is_guest && (
-                  <Badge variant="secondary">Guest</Badge>
+  return (
+    <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+      {/* Top Header */}
+      <div className="flex items-center justify-between gap-3 min-w-0">
+        <div className="flex items-center gap-3 min-w-0 flex-1">
+          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
+            <User className="w-6 h-6" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate min-w-0">{profileUser.username}</h1>
+        </div>
+
+        {isOwnProfile && (
+          <Link href="/settings" className="hidden sm:block shrink-0">
+            <Button
+              variant="outline"
+              className="rounded-xl gap-2 font-medium border-border/80 hover:bg-accent hover:text-accent-foreground transition-all shadow-sm"
+            >
+              <Settings className="w-4 h-4 text-primary" />
+              Edit Profile
+            </Button>
+          </Link>
+        )}
+      </div>
+
+      {/* Main Profile Info Card (Banner-less) */}
+      <Card className="rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+        <CardContent className="p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 min-w-0">
+            <div className="flex flex-row items-center gap-4 sm:gap-5 min-w-0 flex-1">
+              <Avatar className="h-20 w-20 sm:h-28 sm:w-28 rounded-[calc(var(--radius)*2.2)] border-2 border-primary/20 bg-muted shadow-sm shrink-0">
+                {profileUser.avatar_url ? (
+                  <AvatarImage
+                    src={profileUser.avatar_url}
+                    alt={profileUser.display_name}
+                    className="object-cover"
+                  />
+                ) : (
+                  <AvatarFallback className="text-2xl sm:text-4xl font-bold bg-primary/10 text-primary rounded-[calc(var(--radius)*2.2)]">
+                    {profileUser.display_name.substring(0, 2).toUpperCase()}
+                  </AvatarFallback>
                 )}
-              </h1>
-              <p className="font-mono text-muted-foreground">
-                @{profileUser.username}
-              </p>
+              </Avatar>
+
+              <div className="space-y-1 min-w-0 flex-1">
+                <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
+                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight truncate max-w-full">
+                    {profileUser.display_name}
+                  </h2>
+                  {profileUser.is_guest && (
+                    <Badge variant="secondary" className="rounded-xl px-2.5 py-0.5 text-xs font-semibold shrink-0">
+                      Guest
+                    </Badge>
+                  )}
+                </div>
+                <p className="font-mono text-xs sm:text-sm text-muted-foreground truncate max-w-full">
+                  @{profileUser.username}
+                </p>
+              </div>
             </div>
 
-            {isOwnProfile && (
-              <div className="pb-2">
-                <Link href="/settings">
-                  <Button variant="outline">Edit Profile</Button>
-                </Link>
+            {/* Social Media Buttons */}
+            {socialEntries.length > 0 && (
+              <div
+                className={cn(
+                  "w-full sm:w-auto shrink-0 flex flex-wrap items-center gap-2",
+                  socialEntries.length > 4
+                    ? "sm:grid sm:grid-rows-2 sm:grid-flow-col"
+                    : "sm:flex sm:flex-nowrap sm:flex-row"
+                )}
+              >
+                {socialEntries.map(([key, url]) => (
+                  <a
+                    key={key}
+                    href={url.startsWith("http") ? url : `https://${url}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    title={key === "twitter" ? "X (Twitter)" : key}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl gap-2 h-9 px-3 border-border/70 hover:bg-accent hover:text-primary hover:border-primary/40 transition-all font-medium text-xs flex items-center justify-center"
+                    >
+                      <span className="text-primary shrink-0">{renderSocialIcon(key)}</span>
+                      <span className="capitalize">
+                        {key === "twitter" ? "X" : key}
+                      </span>
+                    </Button>
+                  </a>
+                ))}
               </div>
             )}
           </div>
 
+          {/* Bio Section below horizontal line */}
           {profileUser.bio && (
-            <div className="mt-6 text-lg leading-relaxed">{profileUser.bio}</div>
+            <div className="mt-6 pt-6 border-t border-border/60 min-w-0">
+              <p className="text-base text-foreground/90 leading-relaxed font-normal whitespace-pre-wrap break-words [overflow-wrap:anywhere] min-w-0">
+                {profileUser.bio}
+              </p>
+            </div>
           )}
-
-          {profileUser.social_links &&
-            Object.values(profileUser.social_links).some((u) => u && u.trim()) && (
-              <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-2">
-                {Object.entries(profileUser.social_links).map(([key, url]) => {
-                  if (!url || !url.trim()) return null
-                  let displayLabel = key
-                  try {
-                    if (key === "website") {
-                      displayLabel = new URL(url.startsWith("http") ? url : `https://${url}`).hostname
-                    } else {
-                      const usernamePart = url.split("/").filter(Boolean).pop() || key
-                      displayLabel = `@${usernamePart.replace(/^@/, "")}`
-                    }
-                  } catch {
-                    displayLabel = url
-                  }
-
-                  return (
-                    <a
-                      key={key}
-                      href={url.startsWith("http") ? url : `https://${url}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex items-center gap-3 rounded-lg border bg-card p-3 text-sm font-medium transition-all hover:bg-accent/50 hover:shadow-sm"
-                    >
-                      <div className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-secondary-foreground shrink-0">
-                        {renderSocialIcon(key)}
-                      </div>
-                      <div className="flex flex-col truncate">
-                        <span className="capitalize text-xs text-muted-foreground">
-                          {key === "twitter" ? "X (Twitter)" : key}
-                        </span>
-                        <span className="truncate text-foreground font-semibold">
-                          {displayLabel}
-                        </span>
-                      </div>
-                    </a>
-                  )
-                })}
-              </div>
-            )}
-
         </CardContent>
       </Card>
 
-      <div>
-        <div className="mb-6 flex items-center gap-3">
-          <h2 className="text-2xl font-bold">Decks</h2>
-          <Badge variant="secondary" className="rounded-full">
+      {/* Decks Section */}
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+            <Layers className="w-5 h-5" />
+          </div>
+          <h2 className="text-2xl font-bold tracking-tight">Decks</h2>
+          <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
             {decks.length}
           </Badge>
         </div>
 
         {decks.length === 0 ? (
-          <div className="rounded-xl border-2 border-dashed p-12 text-center text-muted-foreground">
-            <p className="mb-2 text-lg font-medium">No decks yet</p>
+          <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
+            <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+              <Layers className="w-6 h-6" />
+            </div>
+            <p className="text-lg font-semibold text-foreground mb-1">No decks yet</p>
+            <p className="text-sm text-muted-foreground mb-6">
+              {isOwnProfile
+                ? "Create your first deck to start studying with flashcards!"
+                : "This user hasn't created any public decks yet."}
+            </p>
             {isOwnProfile && (
               <Link href="/decks?new=true">
-                <Button variant="link">Create your first deck</Button>
+                <Button className="rounded-xl gap-2 font-medium">
+                  <Plus className="w-4 h-4" />
+                  Create First Deck
+                </Button>
               </Link>
             )}
-          </div>
+          </Card>
         ) : (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {decks.map((deck) => (
               <Link
                 href={`/${profileUser.username}/${deck.slug}`}
                 key={deck.id}
-                className="block h-full"
+                className="block h-full group"
               >
                 <Card
                   className={cn(
-                    "group flex h-full cursor-pointer flex-col border-2 transition-shadow hover:shadow-md",
+                    "h-full rounded-2xl border border-border/70 p-5 transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40 flex flex-col justify-between",
                     getDeckColorClass(deck.properties?.color)
                   )}
                 >
-                  <CardHeader>
-                    <CardTitle className="line-clamp-2 transition-colors group-hover:text-primary">
+                  <CardHeader className="p-0 space-y-2">
+                    <CardTitle className="text-lg font-bold tracking-tight line-clamp-2 group-hover:text-primary transition-colors">
                       {deck.name}
                     </CardTitle>
                     {deck.description && (
-                      <CardDescription className="line-clamp-2">
+                      <CardDescription className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {deck.description}
                       </CardDescription>
                     )}

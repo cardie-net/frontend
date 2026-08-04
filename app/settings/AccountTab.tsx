@@ -457,14 +457,24 @@ function AccountForm({ user }: { user: UserProfile }) {
         await refreshUser()
       } else {
         const errData = await response.json().catch(() => ({}))
-        if (errData.detail === "UPDATE_USER_EMAIL_ALREADY_EXISTS") {
+        const detail = errData.detail
+        if (
+          detail === "UPDATE_USER_EMAIL_ALREADY_EXISTS" ||
+          detail === "EMAIL_ALREADY_EXISTS"
+        ) {
           setError("A user with that email already exists.")
+        } else if (
+          detail === "UPDATE_USER_USERNAME_ALREADY_EXISTS" ||
+          detail === "USERNAME_ALREADY_EXISTS" ||
+          (typeof detail === "string" && detail.includes("USERNAME_ALREADY_EXISTS"))
+        ) {
+          const userErr = "A user with that username already exists."
+          setError(userErr)
+          setUsernameError(userErr)
+        } else if (typeof detail === "string") {
+          setError(detail)
         } else {
-          setError(
-            typeof errData.detail === "string"
-              ? errData.detail
-              : "Failed to update profile."
-          )
+          setError("Failed to update profile.")
         }
         scrollToTop()
       }
@@ -481,7 +491,7 @@ function AccountForm({ user }: { user: UserProfile }) {
   ).length
 
   return (
-    <div className="mx-auto w-full max-w-2xl">
+    <div className="w-full">
       {error && (
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
@@ -499,7 +509,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       )}
 
       <div className="mb-8 flex items-center gap-4 sm:gap-6">
-        <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-muted">
+        <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[calc(var(--radius)*2.2)] border-2 border-border bg-muted">
           {avatarUrl ? (
             <img
               src={avatarUrl}

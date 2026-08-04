@@ -317,9 +317,9 @@ export function AvatarEditorDialog({
               style={{ width: `${CANVAS_SIZE}px`, height: `${CANVAS_SIZE}px` }}
             />
 
-            {/* Circular Crop Overlay Mask */}
+            {/* Crop Overlay Mask */}
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div className="h-full w-full rounded-full border-2 border-primary/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.55)]" />
+              <div className="h-full w-full rounded-[calc(var(--radius)*2.2)] border-2 border-primary/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.55)]" />
             </div>
           </div>
 

@@ -35,7 +35,7 @@ function CustomTooltip({ text, isRightSide }: CustomTooltipProps) {
     <div
       className={cn(
         'absolute top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none transition-all duration-200 z-50',
-        'bg-zinc-900/90 text-zinc-100 dark:bg-zinc-100 dark:text-zinc-900 border border-zinc-700/50 dark:border-zinc-300/50 backdrop-blur-md',
+        'bg-popover/90 text-popover-foreground border border-border/50 shadow-md backdrop-blur-md',
         'opacity-0 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 scale-95 origin-center',
         isRightSide ? 'right-full mr-3' : 'left-full ml-3'
       )}
@@ -45,8 +45,8 @@ function CustomTooltip({ text, isRightSide }: CustomTooltipProps) {
         className={cn(
           'absolute top-1/2 -translate-y-1/2 border-4 border-transparent',
           isRightSide
-            ? 'left-full border-l-zinc-900/90 dark:border-l-zinc-100'
-            : 'right-full border-r-zinc-900/90 dark:border-r-zinc-100'
+            ? 'left-full border-l-popover/90'
+            : 'right-full border-r-popover/90'
         )}
       />
     </div>
@@ -181,7 +181,7 @@ function LanguageNavItem({
       <div
         className={cn(
           'absolute top-1/2 -translate-y-1/2 flex flex-col gap-1 p-1.5 rounded-2xl min-w-[140px]',
-          'bg-background/95 dark:bg-zinc-900/95 backdrop-blur-xl border border-border/80 shadow-2xl shadow-black/20 z-50',
+          'bg-background/95 backdrop-blur-xl border border-border/80 shadow-2xl shadow-black/20 z-50',
           'transition-all duration-300 ease-out origin-center',
           isRightSide ? 'right-full mr-2.5' : 'left-full ml-2.5',
           isOpen
@@ -411,7 +411,7 @@ export function Navbar() {
         aria-label="Toggle menu"
         className={cn(
           'group relative w-12 h-12 rounded-[calc(var(--radius)+0.25rem)] flex items-center justify-center overflow-hidden',
-          'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-lg shadow-black/10 dark:shadow-black/40',
+          'bg-background/85 backdrop-blur-xl border border-border/70 shadow-lg shadow-black/10',
           'hover:scale-105 active:scale-95 transition-all duration-200 cursor-grab active:cursor-grabbing',
           isOpen && 'ring-2 ring-primary/40 bg-accent/60'
         )}
@@ -454,7 +454,7 @@ export function Navbar() {
       <div
         className={cn(
           'flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
-          'bg-background/85 dark:bg-zinc-900/85 backdrop-blur-xl border border-border/70 shadow-xl shadow-black/10 dark:shadow-black/40',
+          'bg-background/85 backdrop-blur-xl border border-border/70 shadow-xl shadow-black/10',
           'transition-all duration-300 ease-out origin-center overflow-visible',
           isOpen
             ? 'max-h-[500px] opacity-100 scale-100 pointer-events-auto'

@@ -83,7 +83,7 @@ export function AppearancePopup({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md p-6 rounded-3xl backdrop-blur-2xl bg-background/95 dark:bg-zinc-900/95 border-border/80 text-foreground shadow-2xl">
+      <DialogContent className="max-w-md p-6 rounded-3xl backdrop-blur-2xl bg-background/95 border-border/80 text-foreground shadow-2xl">
         {/* Header */}
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
           <div className="p-2 rounded-2xl bg-primary/10 text-primary">
