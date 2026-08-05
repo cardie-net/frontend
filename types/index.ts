@@ -31,6 +31,7 @@ export interface Deck {
     description?: string
     cover_image_url?: string
   }
+  cards_count?: number
 }
 
 export interface Folder {

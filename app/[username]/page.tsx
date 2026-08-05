@@ -23,6 +23,8 @@ import {
   Settings,
   Layers,
   Plus,
+  Lock,
+  EyeOff,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useProfile, useUserDecks } from "@/hooks/useProfile"
@@ -290,33 +292,72 @@ export default function ProfilePage() {
               <Link
                 href={`/${profileUser.username}/${deck.slug}`}
                 key={deck.id}
-                className="block h-full group"
+                className="block group"
               >
                 <Card
                   className={cn(
-                    "h-full rounded-2xl border border-border/70 p-0 overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:shadow-md hover:border-primary/40 flex flex-col justify-between",
+                    "relative w-full h-[130px] rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-start",
                     getDeckColorClass(deck.properties?.color)
                   )}
                 >
                   {deck.properties?.cover_image_url && (
-                    <img
-                      src={deck.properties.cover_image_url}
-                      alt={`${deck.name} cover`}
-                      className="aspect-video w-full object-cover border-b border-border/50"
-                    />
+                    <>
+                      <div 
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
+                        style={{ backgroundImage: `url(${deck.properties.cover_image_url})` }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80" /> 
+                    </>
                   )}
-                  <div className="p-5 flex flex-col justify-between flex-1">
-                    <CardHeader className="p-0 space-y-2">
-                    <CardTitle className="text-lg font-bold tracking-tight line-clamp-2 group-hover:text-primary transition-colors">
-                      {deck.name}
-                    </CardTitle>
-                    {deck.properties?.description && (
-                      <CardDescription className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
-                        {deck.properties.description}
-                      </CardDescription>
-                    )}
-                  </CardHeader>
+                  <div className={cn(
+                    "relative z-10 flex flex-col h-full",
+                    deck.properties?.cover_image_url ? "text-white" : ""
+                  )}>
+                    <CardHeader className="p-0 flex-1 flex flex-col min-h-0">
+                      <CardTitle className={cn(
+                        "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
+                        deck.properties?.cover_image_url ? "text-white group-hover:text-white/90" : "group-hover:text-primary"
+                      )}>
+                        {deck.cards_count !== undefined && (
+                          <Badge 
+                            variant={deck.properties?.cover_image_url ? "outline" : "secondary"}
+                            className={cn(
+                              "mr-2 mt-0.5 pointer-events-none shrink-0",
+                              deck.properties?.cover_image_url ? "border-white/40 text-white/90 bg-black/20" : ""
+                            )}
+                          >
+                            {deck.cards_count}
+                          </Badge>
+                        )}
+                        <span className="leading-tight">{deck.name}</span>
+                      </CardTitle>
+                      {deck.properties?.description && (
+                        <div className="relative flex-1 min-h-0 overflow-hidden">
+                          <CardDescription className={cn(
+                            "text-xs leading-relaxed whitespace-pre-wrap break-words h-full",
+                            deck.properties?.cover_image_url ? "text-white/80" : "text-muted-foreground"
+                          )}>
+                            {deck.properties.description}
+                          </CardDescription>
+                          {/* Fade out gradient at the bottom of the text to make trimming look premium */}
+                          <div className={cn(
+                            "absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t to-transparent",
+                            deck.properties?.cover_image_url ? "from-black/80" : "from-card"
+                          )} />
+                        </div>
+                      )}
+                    </CardHeader>
                   </div>
+                  {isOwnProfile && (
+                    <div className={cn(
+                      "absolute bottom-4 right-4 z-20 transition-colors",
+                      deck.properties?.cover_image_url ? "text-white/60 group-hover:text-white/90" : "text-muted-foreground/60 group-hover:text-muted-foreground"
+                    )}>
+                      {deck.privacy === "private" && <Lock className="w-4 h-4" />}
+                      {deck.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
+                      {deck.privacy === "public" && <Globe className="w-4 h-4" />}
+                    </div>
+                  )}
                 </Card>
               </Link>
             ))}

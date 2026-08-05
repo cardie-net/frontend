@@ -78,7 +78,14 @@ export function DeckCard({
           />
         )}
       <CardHeader>
-        <CardTitle className="pr-8">{deck.name}</CardTitle>
+        <CardTitle className="flex items-start pr-8">
+          {deck.cards_count !== undefined && (
+            <Badge variant="secondary" className="mr-2 mt-0.5 pointer-events-none">
+              {deck.cards_count}
+            </Badge>
+          )}
+          <span className="leading-tight">{deck.name}</span>
+        </CardTitle>
         <CardAction>
           <DropdownMenu>
             <DropdownMenuTrigger
