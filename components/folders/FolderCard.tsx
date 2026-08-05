@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trash2, Pencil, Folder as FolderIcon, MoreVertical, Globe, Lock, EyeOff } from "lucide-react"
+import { Trash2, Pencil, Folder as FolderIcon, MoreVertical, Globe, Lock, EyeOff, Move } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,16 +25,20 @@ interface FolderCardProps {
   folder: Folder
   username?: string
   isOwner?: boolean
+  itemCount?: number
   onEdit?: (folder: Folder) => void
   onDelete?: (folderId: string) => void
+  onMove?: (folder: Folder) => void
 }
 
 export function FolderCard({
   folder,
   username,
   isOwner = true,
+  itemCount,
   onEdit,
   onDelete,
+  onMove,
 }: FolderCardProps) {
   const folderHref =
     username && folder.slug
@@ -91,7 +95,7 @@ export function FolderCard({
               isDragging && "opacity-50"
             )}
           >
-            <Link href={folderHref} className="absolute inset-0 z-10 rounded-2xl" />
+            <Link href={folderHref} className={cn("absolute inset-0 z-10 rounded-2xl", isDragging && "pointer-events-none")} />
             {folder.properties?.cover_image_url && (
               <div 
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105 pointer-events-none" 
@@ -151,7 +155,13 @@ export function FolderCard({
                     {onEdit && (
                       <DropdownMenuItem onClick={() => onEdit(folder)}>
                         <Pencil className="mr-2 h-4 w-4" />
-                        Edit Folder
+                        Edit
+                      </DropdownMenuItem>
+                    )}
+                    {onMove && (
+                      <DropdownMenuItem onClick={() => onMove(folder)}>
+                        <Move className="mr-2 h-4 w-4" />
+                        Move
                       </DropdownMenuItem>
                     )}
                     {onDelete && (
@@ -160,7 +170,7 @@ export function FolderCard({
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete Folder
+                        Delete
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>

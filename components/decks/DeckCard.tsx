@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trash2, MoreVertical, Share2, Globe, Lock, EyeOff } from "lucide-react"
+import { Trash2, MoreVertical, Share2, Globe, Lock, EyeOff, Move } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,15 +24,19 @@ import { useDraggable } from "@dnd-kit/core"
 interface DeckCardProps {
   deck: Deck
   username?: string
+  srsCounts?: any
   onShare: (deck: Deck) => void
   onDelete: (deckId: string) => void
+  onMove?: (deck: Deck) => void
 }
 
 export function DeckCard({
   deck,
   username,
+  srsCounts,
   onShare,
   onDelete,
+  onMove,
 }: DeckCardProps) {
   const draggableId = `deck-drag-${deck.id}`
   const { attributes, listeners, setNodeRef, transform, isDragging } =
@@ -60,7 +64,7 @@ export function DeckCard({
             isDragging && "opacity-50"
           )}
         >
-          <Link href={deckHref} className="absolute inset-0 z-10 rounded-2xl" />
+          <Link href={deckHref} className={cn("absolute inset-0 z-10 rounded-2xl", isDragging && "pointer-events-none")} />
           {deck.properties?.cover_image_url && (
             <div 
               className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 pointer-events-none" 
@@ -122,6 +126,12 @@ export function DeckCard({
                   <Share2 className="mr-2 h-4 w-4" />
                   Share
                 </DropdownMenuItem>
+                {onMove && (
+                  <DropdownMenuItem onClick={() => onMove(deck)}>
+                    <Move className="mr-2 h-4 w-4" />
+                    Move
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem
                   onClick={() => onDelete(deck.id)}
                   className="text-destructive focus:text-destructive"

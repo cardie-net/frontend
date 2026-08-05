@@ -22,6 +22,7 @@ import { DeckCard } from "@/components/decks/DeckCard"
 import { FolderCard } from "@/components/folders/FolderCard"
 import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
+import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useDeleteDeck, useUpdateDeck } from "@/hooks/useDecks"
 import {
   useFolder,
@@ -66,6 +67,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
+  const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -103,6 +105,14 @@ export function FolderView({ username, folder }: FolderViewProps) {
     )
       return
     deleteFolder.mutate(subFolderId)
+  }
+
+  const handleMoveDeck = (deck: Deck) => {
+    setMoveTarget({ id: deck.id, type: "deck", name: deck.name, currentParentId: deck.folder_id || null })
+  }
+
+  const handleMoveFolder = (folder: Folder) => {
+    setMoveTarget({ id: folder.id, type: "folder", name: folder.name, currentParentId: folder.parent_id || null })
   }
 
   const handleDeleteCurrentFolder = () => {
@@ -289,6 +299,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                   isOwner={isOwner}
                   onEdit={setEditingFolder}
                   onDelete={handleDeleteSubFolder}
+                  onMove={handleMoveFolder}
                 />
               )
             })}
@@ -301,6 +312,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 srsCounts={srsCountsData?.[deck.id]}
                 onShare={setShareDeckTarget}
                 onDelete={handleDeleteDeck}
+                onMove={handleMoveDeck}
               />
             ))}
           </div>
@@ -328,6 +340,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
         key={shareDeckTarget?.id ?? "closed"}
         deck={shareDeckTarget}
         onClose={() => setShareDeckTarget(null)}
+      />
+
+      <MoveItemDialog
+        item={moveTarget}
+        onClose={() => setMoveTarget(null)}
       />
     </div>
   )
