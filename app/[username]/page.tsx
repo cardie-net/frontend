@@ -283,45 +283,42 @@ export default function ProfilePage() {
           </div>
           
           <div className="flex items-center gap-2">
-            {!isSearchOpen && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-            )}
+            <Button
+              variant={isSearchOpen ? "secondary" : "ghost"}
+              size="icon"
+              onClick={() => {
+                if (isSearchOpen) setSearchQuery("")
+                setIsSearchOpen(!isSearchOpen)
+              }}
+              className={cn(
+                "h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors",
+                isSearchOpen ? "text-primary sm:hidden" : "text-muted-foreground"
+              )}
+            >
+              <Search className="h-5 w-5" />
+            </Button>
             
             {isSearchOpen && (
-              <>
+              <div className="absolute right-0 top-12 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
+                <Input
+                  autoFocus
+                  placeholder="Search decks & folders..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-[240px] sm:w-48 md:w-64 pr-8 rounded-xl h-10 border-border bg-card/95 backdrop-blur-md shadow-lg sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none"
+                />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-10 w-10 sm:hidden opacity-0 pointer-events-none"
-                />
-                <div className="absolute right-0 top-12 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
-                  <Input
-                    autoFocus
-                    placeholder="Search decks & folders..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-[240px] sm:w-48 md:w-64 pr-8 rounded-xl h-10 border-border bg-card/95 backdrop-blur-md shadow-lg sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none"
-                  />
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
-                    onClick={() => {
-                      setSearchQuery("")
-                      setIsSearchOpen(false)
-                    }}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </>
+                  className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
+                  onClick={() => {
+                    setSearchQuery("")
+                    setIsSearchOpen(false)
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             )}
           </div>
         </div>

@@ -11,7 +11,7 @@ import { SUPPORTED_LOCALES, LOCALE_LABELS, Locale } from '@/i18n/config';
 import {
   Menu,
   X,
-  BookOpen,
+  Layers,
   Settings,
   User,
   LogIn,
@@ -306,6 +306,11 @@ export function Navbar() {
     };
   }, [isOpen]);
 
+  // Close menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   // Handle Drag Pointer Events
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
     // Only left-click / primary touch
@@ -465,7 +470,7 @@ export function Navbar() {
         {/* Deck List Link */}
         <NavItem
           href="/decks"
-          icon={<BookOpen className="w-4 h-4" />}
+          icon={<Layers className="w-4 h-4" />}
           tooltip="Decks"
           isActive={pathname === '/decks'}
           isRightSide={isRightSide}
