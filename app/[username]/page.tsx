@@ -278,7 +278,7 @@ export default function ProfilePage() {
             </div>
             <h2 className="text-2xl font-bold tracking-tight">Decks</h2>
             <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
-              {filteredItems.length}
+              {decks.length}
             </Badge>
           </div>
           
