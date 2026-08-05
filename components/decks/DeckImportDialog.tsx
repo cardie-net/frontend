@@ -2,7 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertCircle, CheckCircle2, FileUp, Loader2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, FileUp, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
@@ -219,16 +219,19 @@ export function DeckImportDialog({
       }}
     >
       <DialogContent className="sm:max-w-[min(90vw,42rem)]">
-        <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Import to New Deck" : "Import Cards"}
-          </DialogTitle>
-          <DialogDescription>
-            Import flashcards from text. {mode === "create"
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Upload className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">{mode === "create" ? "Import to New Deck" : "Import Cards"}</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Import flashcards from text. {mode === "create"
               ? "A new deck will be created with the cards."
               : "Cards will be appended to this deck."}
-          </DialogDescription>
-        </DialogHeader>
+              </DialogDescription>
+            </div>
+          </DialogHeader>
 
         {mode === "append" && (
           <Alert>

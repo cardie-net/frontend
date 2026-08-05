@@ -6,13 +6,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useUserItems, useUpdateFolder } from "@/hooks/useFolders"
 import { useUpdateDeck } from "@/hooks/useDecks"
 import { Folder } from "@/types"
-import { Folder as FolderIcon, LayoutDashboard, Check, ChevronRight, ChevronDown } from "lucide-react"
+import { Folder as FolderIcon, LayoutDashboard, Check, ChevronRight, ChevronDown, MoveRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export interface MoveTarget {
@@ -154,9 +155,17 @@ export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
   return (
     <Dialog open={!!item} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
-        <DialogHeader>
-          <DialogTitle>Move {item?.type === "deck" ? "Deck" : "Folder"}</DialogTitle>
-        </DialogHeader>
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <MoveRight className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Move {item?.type === "deck" ? "Deck" : "Folder"}</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Select a new location for this item.
+              </DialogDescription>
+            </div>
+          </DialogHeader>
 
         <div className="py-4">
           <p className="text-sm text-muted-foreground mb-4">

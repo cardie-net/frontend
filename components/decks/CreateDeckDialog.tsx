@@ -17,6 +17,7 @@ import {
 import { useAuth } from "@/lib/AuthContext"
 import { DECK_COLORS } from "@/lib/decks"
 import { useCreateDeck } from "@/hooks/useDecks"
+import { Plus } from "lucide-react"
 
 interface CreateDeckDialogProps {
   open: boolean
@@ -66,11 +67,16 @@ export function CreateDeckDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <form onSubmit={handleCreateDeck}>
-          <DialogHeader>
-            <DialogTitle>Create New Deck</DialogTitle>
-            <DialogDescription>
-              Enter a name and choose a color for your new deck.
-            </DialogDescription>
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Plus className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Create New Deck</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Enter a name and choose a color for your new deck.
+              </DialogDescription>
+            </div>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {createError && <Alert variant="destructive">{createError}</Alert>}

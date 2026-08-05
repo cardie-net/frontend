@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { DECK_COLORS } from "@/lib/decks"
 import { useCreateFolder } from "@/hooks/useFolders"
-import { LockKeyhole, EyeOff, Globe } from "lucide-react"
+import { LockKeyhole, EyeOff, Globe, FolderPlus } from "lucide-react"
 
 interface CreateFolderDialogProps {
   open: boolean
@@ -77,11 +77,16 @@ export function CreateFolderDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <form onSubmit={handleCreateFolder}>
-          <DialogHeader>
-            <DialogTitle>Create New Folder</DialogTitle>
-            <DialogDescription>
-              Enter details for your new folder.
-            </DialogDescription>
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <FolderPlus className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Create New Folder</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Enter details for your new folder.
+              </DialogDescription>
+            </div>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {createError && <Alert variant="destructive">{createError}</Alert>}

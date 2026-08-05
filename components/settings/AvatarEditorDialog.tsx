@@ -10,8 +10,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import {
-  RotateCw,
+import { RotateCw,
   RotateCcw,
   FlipHorizontal,
   FlipVertical,
@@ -19,8 +18,7 @@ import {
   ZoomOut,
   RefreshCw,
   Check,
-  Upload,
-} from "lucide-react"
+  Upload, Image as ImageIcon } from "lucide-react"
 
 interface AvatarEditorDialogProps {
   isOpen: boolean
@@ -283,11 +281,16 @@ export function AvatarEditorDialog({
       onOpenChange={(open) => !open && !isUploading && onClose()}
     >
       <DialogContent className="w-[calc(100vw-1.5rem)] gap-4 p-4 sm:w-full sm:max-w-md sm:gap-6 sm:p-6">
-        <DialogHeader className="p-1 pt-2">
-          <DialogTitle>Edit Profile Picture</DialogTitle>
-          <DialogDescription>
-            Drag to position, use controls below to zoom, rotate, or flip.
-          </DialogDescription>
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+          <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+            <ImageIcon className="w-5 h-5" />
+          </div>
+          <div>
+            <DialogTitle className="text-base font-semibold">Edit Avatar</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              Upload and crop your profile picture.
+            </DialogDescription>
+          </div>
         </DialogHeader>
 
         <div className="flex flex-col items-center space-y-4">

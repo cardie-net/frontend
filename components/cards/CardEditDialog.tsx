@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -71,10 +71,17 @@ function EditorDialogShell({
   return (
     <Dialog open onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-[min(90vw,58rem)]" showCloseButton={false}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Pencil className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">{title}</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                {description}
+              </DialogDescription>
+            </div>
+          </DialogHeader>
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
           <MarkdownEditor

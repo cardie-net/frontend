@@ -16,7 +16,7 @@ import {
 import { DECK_COLORS } from "@/lib/decks"
 import { Folder } from "@/types"
 import { useUpdateFolder, useUploadFolderCover } from "@/hooks/useFolders"
-import { LockKeyhole, EyeOff, Globe } from "lucide-react"
+import { LockKeyhole, EyeOff, Globe, Pencil } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 
 interface EditFolderDialogProps {
@@ -105,11 +105,16 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
     >
       <DialogContent>
         <form onSubmit={handleSave}>
-          <DialogHeader>
-            <DialogTitle>Edit Folder</DialogTitle>
-            <DialogDescription>
-              Update the name, description, cover image, and privacy settings.
-            </DialogDescription>
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Pencil className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Edit Folder</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Update the name, description, cover image, and privacy settings.
+              </DialogDescription>
+            </div>
           </DialogHeader>
           <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             {error && <Alert variant="destructive">{error}</Alert>}

@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { LockKeyhole, EyeOff, Globe, Copy, Check } from "lucide-react"
+import { LockKeyhole, EyeOff, Globe, Copy, Check, Share2 } from "lucide-react"
 import { Deck } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
 import { useUpdateDeck, useUploadDeckCover } from "@/hooks/useDecks"
@@ -105,11 +105,16 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
     >
       <DialogContent>
         <form onSubmit={handleSaveShare}>
-          <DialogHeader>
-            <DialogTitle>Deck Settings</DialogTitle>
-            <DialogDescription>
-              Update the settings, privacy, and URL slug for your deck.
-            </DialogDescription>
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Share2 className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Deck Settings</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Update the settings, privacy, and URL slug for your deck.
+              </DialogDescription>
+            </div>
           </DialogHeader>
           <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
             {shareError && <Alert variant="destructive">{shareError}</Alert>}

@@ -91,13 +91,18 @@ export function DeckExportDialog({
       }}
     >
       <DialogContent className="sm:max-w-[min(90vw,42rem)]">
-        <DialogHeader>
-          <DialogTitle>Export Cards</DialogTitle>
-          <DialogDescription>
-            Export this deck to text. Anyone who can view the deck can export
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Download className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Export Cards</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Export this deck to text. Anyone who can view the deck can export
             it.
-          </DialogDescription>
-        </DialogHeader>
+              </DialogDescription>
+            </div>
+          </DialogHeader>
 
         <Alert>
           <ImageOff className="h-4 w-4" />
