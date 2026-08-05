@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent } from "@/components/ui/card";
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -72,7 +73,8 @@ function ResetPasswordContent() {
 
   if (success) {
     return (
-      <div className="w-full max-w-md bg-background border rounded-lg p-6 sm:p-8 shadow-sm">
+      <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+        <CardContent className="p-6 sm:p-8">
         <div className="text-center">
           <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
             <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
@@ -82,12 +84,14 @@ function ResetPasswordContent() {
             <Button className="w-full">Go to Login now</Button>
           </Link>
         </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="w-full max-w-md bg-background text-foreground border rounded-lg p-6 sm:p-8 shadow-sm">
+    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+      <CardContent className="p-6 sm:p-8">
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">Set New Password</h1>
       <p className="text-muted-foreground mb-6">Enter your token and new password</p>
 
@@ -141,7 +145,8 @@ function ResetPasswordContent() {
           {isLoading ? 'Resetting...' : 'Reset Password'}
         </Button>
       </form>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -150,9 +155,11 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Suspense
         fallback={
-          <div className="w-full max-w-md bg-background border rounded-lg p-6 sm:p-8 text-center shadow-sm">
-            Loading...
-          </div>
+          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+            <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
+              Loading...
+            </CardContent>
+          </Card>
         }
       >
         <ResetPasswordContent />

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -57,7 +58,8 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-background text-foreground border rounded-lg p-6 sm:p-8 shadow-sm">
+      <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+        <CardContent className="p-6 sm:p-8">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Reset Password</h1>
         <p className="text-muted-foreground mb-6">Enter your email to receive a reset link</p>
 
@@ -106,7 +108,8 @@ export default function ForgotPasswordPage() {
             </Link>
           </p>
         )}
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

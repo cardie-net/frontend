@@ -11,7 +11,7 @@ import { Label } from '@/components/ui/label';
 import { AlertCircle } from 'lucide-react';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 import AuthDivider from '@/components/AuthDivider';
-
+import { Card, CardContent } from "@/components/ui/card";
 export default function SignupPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -77,7 +77,8 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-background text-foreground border rounded-lg p-6 sm:p-8 shadow-sm">
+      <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+        <CardContent className="p-6 sm:p-8">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">Create Account</h1>
         <p className="text-muted-foreground mb-6">Join to start learning</p>
 
@@ -129,7 +130,8 @@ export default function SignupPage() {
             Log in
           </Link>
         </p>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

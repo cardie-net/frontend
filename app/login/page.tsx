@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { useAuth } from "@/lib/AuthContext"
 import GoogleSignInButton from "@/components/GoogleSignInButton"
 import AuthDivider from "@/components/AuthDivider"
-
+import { Card, CardContent } from "@/components/ui/card"
 const OAUTH_ERROR_MESSAGES: Record<string, string> = {
   oauth_invalid_state: "Authentication failed. Please try again",
   oauth_state_expired: "Authentication session expired. Please try again",
@@ -103,7 +103,8 @@ function LoginContent() {
   }
 
   return (
-    <div className="w-full max-w-md rounded-lg border bg-background p-6 text-foreground shadow-sm sm:p-8">
+    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+      <CardContent className="p-6 sm:p-8">
       <h1 className="mb-2 text-2xl font-bold sm:text-3xl">Welcome Back</h1>
       <p className="mb-6 text-muted-foreground">Sign in to continue</p>
 
@@ -164,7 +165,8 @@ function LoginContent() {
           Sign up
         </Link>
       </p>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
@@ -173,9 +175,11 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Suspense
         fallback={
-          <div className="w-full max-w-md rounded-lg border bg-background p-6 text-center sm:p-8">
-            Loading...
-          </div>
+          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+            <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
+              Loading...
+            </CardContent>
+          </Card>
         }
       >
         <LoginContent />
