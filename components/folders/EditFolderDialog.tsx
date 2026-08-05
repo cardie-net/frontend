@@ -41,6 +41,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
 
   useEffect(() => {
     if (folder) {
+      /* eslint-disable react-hooks/set-state-in-effect */
       setName(folder.name || "")
       setDescription(folder.properties?.description || "")
       setCoverUrl(folder.properties?.cover_image_url || "")
@@ -49,6 +50,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
       setPrivacy(folder.privacy || "private")
       setSlug(folder.slug || "")
       setError("")
+      /* eslint-enable react-hooks/set-state-in-effect */
     }
   }, [folder])
 

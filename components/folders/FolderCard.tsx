@@ -23,7 +23,6 @@ import { Badge } from "@/components/ui/badge"
 
 interface FolderCardProps {
   folder: Folder
-  itemCount?: number
   username?: string
   isOwner?: boolean
   onEdit?: (folder: Folder) => void
@@ -32,7 +31,6 @@ interface FolderCardProps {
 
 export function FolderCard({
   folder,
-  itemCount,
   username,
   isOwner = true,
   onEdit,

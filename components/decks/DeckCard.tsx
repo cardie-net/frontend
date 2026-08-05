@@ -17,14 +17,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Deck, SRSDeckCounts } from "@/types"
+import { Deck } from "@/types"
 import { Badge } from "@/components/ui/badge"
 import { useDraggable } from "@dnd-kit/core"
 
 interface DeckCardProps {
   deck: Deck
   username?: string
-  srsCounts?: SRSDeckCounts
   onShare: (deck: Deck) => void
   onDelete: (deckId: string) => void
 }
@@ -32,7 +31,6 @@ interface DeckCardProps {
 export function DeckCard({
   deck,
   username,
-  srsCounts,
   onShare,
   onDelete,
 }: DeckCardProps) {

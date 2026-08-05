@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
-import { Deck, UserProfile, UserItem } from "@/types"
+import { UserProfile, UserItem } from "@/types"
 
 /** Public profile for a username (`GET /api/v1/users/profile/{username}`). */
 export function useProfile(username: string) {

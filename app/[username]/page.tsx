@@ -56,8 +56,8 @@ export default function ProfilePage() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const folders = filteredItems.filter((item) => item.type === "folder") as any[]
-  const decks = filteredItems.filter((item) => item.type !== "folder") as any[]
+  const folders = filteredItems.filter((item) => item.type === "folder")
+  const decks = filteredItems.filter((item) => item.type !== "folder")
 
   const loading = profileLoading || (!!profileUser && itemsLoading)
 
@@ -95,7 +95,7 @@ export default function ProfilePage() {
             {error?.message || "Profile not found"}
           </h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            The user profile you are looking for might have been moved or doesn't exist.
+            The user profile you are looking for might have been moved or doesn&apos;t exist.
           </p>
           <Link href="/">
             <Button variant="outline" className="rounded-xl font-medium">
@@ -161,7 +161,7 @@ export default function ProfilePage() {
   }
 
   const socialEntries = profileUser.social_links
-    ? Object.entries(profileUser.social_links).filter(([_, url]) => url && url.trim())
+    ? Object.entries(profileUser.social_links).filter(([, url]) => url && url.trim())
     : []
 
   return (
