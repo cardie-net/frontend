@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -38,6 +38,19 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
   )
   const [slug, setSlug] = useState(folder?.slug || "")
   const [error, setError] = useState("")
+
+  useEffect(() => {
+    if (folder) {
+      setName(folder.name || "")
+      setDescription(folder.properties?.description || "")
+      setCoverUrl(folder.properties?.cover_image_url || "")
+      setCoverFile(null)
+      setColor(folder.properties?.color || "default")
+      setPrivacy(folder.privacy || "private")
+      setSlug(folder.slug || "")
+      setError("")
+    }
+  }, [folder])
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
