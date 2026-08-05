@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
@@ -15,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Input } from "@/components/ui/input"
 import {
   AlertCircle,
   Globe,
@@ -25,9 +27,12 @@ import {
   Plus,
   Lock,
   EyeOff,
+  Folder as FolderIcon,
+  Search,
+  X,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useProfile, useUserDecks } from "@/hooks/useProfile"
+import { useProfile, useProfileItems } from "@/hooks/useProfile"
 
 export default function ProfilePage() {
   const params = useParams<{ username: string }>()
@@ -40,11 +45,21 @@ export default function ProfilePage() {
     isLoading: profileLoading,
     error,
   } = useProfile(username)
-  const { data: decks = [], isLoading: decksLoading } = useUserDecks(
+  const { data: items = [], isLoading: itemsLoading } = useProfileItems(
     profileUser?.id
   )
 
-  const loading = profileLoading || (!!profileUser && decksLoading)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const folders = filteredItems.filter((item) => item.type === "folder") as any[]
+  const decks = filteredItems.filter((item) => item.type !== "folder") as any[]
+
+  const loading = profileLoading || (!!profileUser && itemsLoading)
 
   if (loading) {
     return (
@@ -254,30 +269,79 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      {/* Decks Section */}
+      {/* Decks & Folders Section */}
       <div className="space-y-5">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-            <Layers className="w-5 h-5" />
+        <div className="relative flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h2 className="text-2xl font-bold tracking-tight">Decks</h2>
+            <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
+              {filteredItems.length}
+            </Badge>
           </div>
-          <h2 className="text-2xl font-bold tracking-tight">Decks</h2>
-          <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
-            {decks.length}
-          </Badge>
+          
+          <div className="flex items-center gap-2">
+            {!isSearchOpen && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSearchOpen(true)}
+                className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors text-muted-foreground"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
+            )}
+            
+            {isSearchOpen && (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-10 w-10 sm:hidden opacity-0 pointer-events-none"
+                />
+                <div className="absolute right-0 top-12 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
+                  <Input
+                    autoFocus
+                    placeholder="Search decks & folders..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-[240px] sm:w-48 md:w-64 pr-8 rounded-xl h-10 border-border bg-card/95 backdrop-blur-md shadow-lg sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setIsSearchOpen(false)
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
 
-        {decks.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
             <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
               <Layers className="w-6 h-6" />
             </div>
-            <p className="text-lg font-semibold text-foreground mb-1">No decks yet</p>
+            <p className="text-lg font-semibold text-foreground mb-1">
+              {searchQuery ? "No matches found" : "No decks yet"}
+            </p>
             <p className="text-sm text-muted-foreground mb-6">
-              {isOwnProfile
+              {searchQuery
+                ? `No decks or folders matched "${searchQuery}".`
+                : isOwnProfile
                 ? "Create your first deck to start studying with flashcards!"
                 : "This user hasn't created any public decks yet."}
             </p>
-            {isOwnProfile && (
+            {isOwnProfile && !searchQuery && (
               <Link href="/decks?new=true">
                 <Button className="rounded-xl gap-2 font-medium">
                   <Plus className="w-4 h-4" />
@@ -287,81 +351,154 @@ export default function ProfilePage() {
             )}
           </Card>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {decks.map((deck) => (
-              <Link
-                href={`/${profileUser.username}/${deck.slug}`}
-                key={deck.id}
-                className="block group"
-              >
-                <Card
-                  className={cn(
-                    "relative w-full h-[130px] rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-start",
-                    getDeckColorClass(deck.properties?.color)
-                  )}
-                >
-                  {deck.properties?.cover_image_url && (
-                    <>
-                      <div 
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
-                        style={{ backgroundImage: `url(${deck.properties.cover_image_url})` }}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/40 to-black/80" /> 
-                    </>
-                  )}
-                  <div className={cn(
-                    "relative z-10 flex flex-col h-full",
-                    deck.properties?.cover_image_url ? "text-white" : ""
-                  )}>
-                    <CardHeader className="p-0 flex-1 flex flex-col min-h-0">
-                      <CardTitle className={cn(
-                        "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
-                        deck.properties?.cover_image_url ? "text-white group-hover:text-white/90" : "group-hover:text-primary"
-                      )}>
-                        {deck.cards_count !== undefined && (
-                          <Badge 
-                            variant={deck.properties?.cover_image_url ? "outline" : "secondary"}
-                            className={cn(
-                              "mr-2 mt-0.5 pointer-events-none shrink-0",
-                              deck.properties?.cover_image_url ? "border-white/40 text-white/90 bg-black/20" : ""
-                            )}
-                          >
-                            {deck.cards_count}
-                          </Badge>
+          <>
+            {folders.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
+                {folders.map((folder) => (
+                  <Link
+                    href={`/${profileUser.username}/${folder.slug}`}
+                    key={folder.id}
+                    className="block group/folder"
+                  >
+                    <div className="relative w-full h-[130px]">
+                      {/* Stacked card 2 (back) */}
+                      <div className="absolute inset-0 rounded-2xl border border-border/40 bg-card/40 translate-x-2 translate-y-2 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3 z-0" />
+                      {/* Stacked card 1 (middle) */}
+                      <div className="absolute inset-0 rounded-2xl border border-border/50 bg-card/60 translate-x-1 translate-y-1 transition-transform duration-300 group-hover/folder:translate-x-1.5 group-hover/folder:translate-y-1.5 z-0" />
+                      
+                      {/* Actual folder card */}
+                      <Card
+                        className={cn(
+                          "absolute inset-0 rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-start z-10 bg-card",
+                          getDeckColorClass(folder.properties?.color)
                         )}
-                        <span className="leading-tight">{deck.name}</span>
-                      </CardTitle>
-                      {deck.properties?.description && (
-                        <div className="relative flex-1 min-h-0 overflow-hidden">
-                          <CardDescription className={cn(
-                            "text-xs leading-relaxed whitespace-pre-wrap break-words h-full",
-                            deck.properties?.cover_image_url ? "text-white/80" : "text-muted-foreground"
-                          )}>
-                            {deck.properties.description}
-                          </CardDescription>
-                          {/* Fade out gradient at the bottom of the text to make trimming look premium */}
+                      >
+                        {folder.properties?.cover_image_url && (
+                          <div 
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105" 
+                            style={{ backgroundImage: `url(${folder.properties.cover_image_url})` }}
+                          />
+                        )}
+                        <div className={cn(
+                          "relative z-10 flex flex-col h-full",
+                          folder.properties?.cover_image_url ? "text-white" : ""
+                        )}>
+                          <CardHeader className="p-0 flex-1 flex flex-col min-h-0">
+                            <CardTitle className={cn(
+                              "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
+                              folder.properties?.cover_image_url ? "text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start" : "group-hover/folder:text-primary"
+                            )}>
+                              <Badge 
+                                variant={folder.properties?.cover_image_url ? "outline" : "secondary"}
+                                className={cn(
+                                  "mr-2 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0.5",
+                                  folder.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
+                                )}
+                              >
+                                <FolderIcon className="w-3 h-3" />
+                              </Badge>
+                              <span className="leading-tight">{folder.name}</span>
+                            </CardTitle>
+                            {folder.properties?.description && !folder.properties?.cover_image_url && (
+                              <div className="relative flex-1 min-h-0 overflow-hidden">
+                                <CardDescription className="text-xs leading-relaxed whitespace-pre-wrap break-words h-full text-muted-foreground">
+                                  {folder.properties.description}
+                                </CardDescription>
+                                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent" />
+                              </div>
+                            )}
+                          </CardHeader>
+                        </div>
+                        {isOwnProfile && (
                           <div className={cn(
-                            "absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t to-transparent",
-                            deck.properties?.cover_image_url ? "from-black/80" : "from-card"
-                          )} />
+                            "absolute bottom-4 right-4 z-20 transition-colors",
+                            folder.properties?.cover_image_url ? "text-white/60 group-hover/folder:text-white/90" : "text-muted-foreground/60 group-hover/folder:text-muted-foreground"
+                          )}>
+                            {folder.privacy === "private" && <Lock className="w-4 h-4" />}
+                            {folder.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
+                            {folder.privacy === "public" && <Globe className="w-4 h-4" />}
+                          </div>
+                        )}
+                      </Card>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Separator if both folders and decks exist */}
+            {folders.length > 0 && decks.length > 0 && (
+              <hr className="border-border/60 my-6" />
+            )}
+            {decks.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {decks.map((deck) => (
+                  <Link
+                    href={`/${profileUser.username}/${deck.slug}`}
+                    key={deck.id}
+                    className="block group"
+                  >
+                    <Card
+                      className={cn(
+                        "relative w-full h-[130px] rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-start",
+                        getDeckColorClass(deck.properties?.color)
+                      )}
+                    >
+                      {deck.properties?.cover_image_url && (
+                        <div 
+                          className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
+                          style={{ backgroundImage: `url(${deck.properties.cover_image_url})` }}
+                        />
+                      )}
+                      <div className={cn(
+                        "relative z-10 flex flex-col h-full",
+                        deck.properties?.cover_image_url ? "text-white" : ""
+                      )}>
+                        <CardHeader className="p-0 flex-1 flex flex-col min-h-0">
+                          <CardTitle className={cn(
+                            "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
+                            deck.properties?.cover_image_url ? "text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start" : "group-hover:text-primary"
+                          )}>
+                            {deck.cards_count !== undefined && (
+                              <Badge 
+                                variant={deck.properties?.cover_image_url ? "outline" : "secondary"}
+                                className={cn(
+                                  "mr-2 mt-0.5 pointer-events-none shrink-0",
+                                  deck.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
+                                )}
+                              >
+                                {deck.cards_count}
+                              </Badge>
+                            )}
+                            <span className="leading-tight">{deck.name}</span>
+                          </CardTitle>
+                          {deck.properties?.description && !deck.properties?.cover_image_url && (
+                            <div className="relative flex-1 min-h-0 overflow-hidden">
+                              <CardDescription className="text-xs leading-relaxed whitespace-pre-wrap break-words h-full text-muted-foreground">
+                                {deck.properties.description}
+                              </CardDescription>
+                              {/* Fade out gradient at the bottom of the text to make trimming look premium */}
+                              <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent" />
+                            </div>
+                          )}
+                        </CardHeader>
+                      </div>
+                      {isOwnProfile && (
+                        <div className={cn(
+                          "absolute bottom-4 right-4 z-20 transition-colors",
+                          deck.properties?.cover_image_url ? "text-white/60 group-hover:text-white/90" : "text-muted-foreground/60 group-hover:text-muted-foreground"
+                        )}>
+                          {deck.privacy === "private" && <Lock className="w-4 h-4" />}
+                          {deck.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
+                          {deck.privacy === "public" && <Globe className="w-4 h-4" />}
                         </div>
                       )}
-                    </CardHeader>
-                  </div>
-                  {isOwnProfile && (
-                    <div className={cn(
-                      "absolute bottom-4 right-4 z-20 transition-colors",
-                      deck.properties?.cover_image_url ? "text-white/60 group-hover:text-white/90" : "text-muted-foreground/60 group-hover:text-muted-foreground"
-                    )}>
-                      {deck.privacy === "private" && <Lock className="w-4 h-4" />}
-                      {deck.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
-                      {deck.privacy === "public" && <Globe className="w-4 h-4" />}
-                    </div>
-                  )}
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    </Card>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
