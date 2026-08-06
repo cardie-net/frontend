@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Badge } from "@/components/ui/badge"
 import { AlertCircle, ArrowLeft, Plus, Layers, Upload, Download } from "lucide-react"
 import {
   DndContext,
@@ -40,6 +41,7 @@ import {
   useReorderCards,
 } from "@/hooks/useCards"
 import { buildElements, getCardImage, getCardText } from "@/lib/cards"
+import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 
 interface DeckViewProps {
@@ -227,27 +229,77 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         "container mx-auto max-w-4xl px-4 pb-8 sm:px-10 sm:pb-16 space-y-8",
         deck.properties?.cover_image_url ? "pt-6 sm:pt-8" : "pt-8 sm:pt-16"
       )}>
-      {/* Header */}
+      {/* Header & Navigation */}
       <div className="flex flex-col">
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "p-2.5 rounded-2xl flex items-center justify-center shadow-sm shrink-0",
+                  deck.properties?.color
+                    ? getDeckColorClass(deck.properties.color)
+                    : "bg-primary/10 text-primary"
+                )}
+              >
+                <Layers className="h-6 w-6" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
+                {deck.name}
+              </h1>
+              <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
+                {cards.length}
+              </Badge>
+            </div>
 
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{deck.name}</h1>
-        {deck.properties?.description && (
-          <p className="mt-2 text-sm sm:text-base text-foreground/90 whitespace-pre-wrap">
-            {deck.properties.description}
-          </p>
-        )}
-        <p className="mt-1 text-sm text-muted-foreground">
-          {cards.length} {cards.length === 1 ? "card" : "cards"}
-        </p>
+            <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
+              <Button
+                variant="outline"
+                className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+                size="sm"
+                onClick={() => setShowExportDialog(true)}
+              >
+                <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
+              </Button>
+              {isOwner && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+                    size="sm"
+                    onClick={() => setShowImportDialog(true)}
+                  >
+                    <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
+                  </Button>
+                  <Button
+                    className="rounded-xl gap-2 font-medium"
+                    size="sm"
+                    onClick={() => setShowAddForm(!showAddForm)}
+                  >
+                    <Plus className="h-4 w-4" /> <span>Add Card</span>
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+
+          {deck.properties?.description && (
+            <div className="mt-4">
+              <p className="text-sm text-foreground/90 whitespace-pre-wrap">
+                {deck.properties.description}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <Link
+          href="/decks"
+          className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to Decks
+        </Link>
       </div>
-
-      <Link
-        href="/decks"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
-      >
-        <ArrowLeft className="h-3.5 w-3.5" />
-        Back to Decks
-      </Link>
 
       <DeckActionButtons username={username} deckSlug={slug} />
 
@@ -255,36 +307,6 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
       <div ref={cardsRef} id="cards" className="scroll-mt-6">
         <div className="mb-6 flex items-center justify-between gap-2">
           <h2 className="text-xl font-semibold">Cards</h2>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowExportDialog(true)}
-            >
-              <Download className="mr-1.5 h-4 w-4" />
-              Export
-            </Button>
-            {isOwner && (
-              <>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowImportDialog(true)}
-                >
-                  <Upload className="mr-1.5 h-4 w-4" />
-                  Import
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowAddForm(!showAddForm)}
-                >
-                  <Plus className="mr-1.5 h-4 w-4" />
-                  Add Card
-                </Button>
-              </>
-            )}
-          </div>
         </div>
 
         {isOwner && showAddForm && (
