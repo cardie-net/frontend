@@ -15,21 +15,21 @@ import {
 } from "@/components/ui/dialog"
 import { LockKeyhole, EyeOff, Globe, Copy, Check, Share2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Deck } from "@/types"
+import { Folder } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
-import { useUpdateDeck } from "@/hooks/useDecks"
+import { useUpdateFolder } from "@/hooks/useFolders"
 
-interface ShareDeckDialogProps {
-  deck: Deck | null
+interface ShareFolderDialogProps {
+  folder: Folder | null
   onClose: () => void
 }
 
-export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
+export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
   const { user } = useAuth()
-  const updateDeck = useUpdateDeck()
+  const updateFolder = useUpdateFolder()
 
-  const [sharePrivacy, setSharePrivacy] = useState(deck?.privacy || "private")
-  const [shareSlug, setShareSlug] = useState(deck?.slug || "")
+  const [sharePrivacy, setSharePrivacy] = useState(folder?.privacy || "private")
+  const [shareSlug, setShareSlug] = useState(folder?.slug || "")
   const [shareError, setShareError] = useState("")
   const [isLinkCopied, setIsLinkCopied] = useState(false)
 
@@ -44,11 +44,11 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
       return
     }
 
-    if (!deck) return
+    if (!folder) return
 
-    updateDeck.mutate(
+    updateFolder.mutate(
       { 
-        deckId: deck.id, 
+        folderId: folder.id, 
         privacy: sharePrivacy, 
         slug: shareSlug,
       },
@@ -64,7 +64,7 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(
-      `${window.location.origin}/${user?.username}/${shareSlug || deck?.id}`
+      `${window.location.origin}/${user?.username}/${shareSlug || folder?.id}`
     )
     setIsLinkCopied(true)
     setTimeout(() => setIsLinkCopied(false), 2000)
@@ -72,8 +72,8 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
 
   return (
     <Dialog
-      open={!!deck}
-      onOpenChange={(open) => !updateDeck.isPending && !open && onClose()}
+      open={!!folder}
+      onOpenChange={(open) => !updateFolder.isPending && !open && onClose()}
     >
       <DialogContent>
         <form onSubmit={handleSaveShare}>
@@ -84,7 +84,7 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
             <div>
               <DialogTitle className="text-base font-semibold">Share Settings</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Update the privacy and URL slug for your deck.
+                Update the privacy and URL slug for your folder.
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -117,13 +117,13 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
                     key={opt.id}
                     type="button"
                     onClick={() => setSharePrivacy(opt.id)}
-                    disabled={updateDeck.isPending}
+                    disabled={updateFolder.isPending}
                     className={cn(
                       "flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all",
                       sharePrivacy === opt.id
                         ? "bg-background text-foreground shadow-sm font-semibold"
                         : "text-muted-foreground hover:text-foreground",
-                      updateDeck.isPending && "opacity-50 cursor-not-allowed"
+                      updateFolder.isPending && "opacity-50 cursor-not-allowed"
                     )}
                   >
                     {opt.icon}
@@ -139,7 +139,7 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
                 value={shareSlug}
                 onChange={(e) => setShareSlug(e.target.value)}
                 maxLength={50}
-                disabled={updateDeck.isPending}
+                disabled={updateFolder.isPending}
                 required
                 className="font-mono"
               />
@@ -152,7 +152,7 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
                   readOnly
                   value={
                     typeof window !== "undefined"
-                      ? `${window.location.origin}/${user?.username}/${shareSlug || deck?.id}`
+                      ? `${window.location.origin}/${user?.username}/${shareSlug || folder?.id}`
                       : ""
                   }
                   className="font-mono text-xs opacity-70"
@@ -176,12 +176,12 @@ export function ShareDeckDialog({ deck, onClose }: ShareDeckDialogProps) {
               type="button"
               variant="outline"
               onClick={onClose}
-              disabled={updateDeck.isPending}
+              disabled={updateFolder.isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={updateDeck.isPending}>
-              {updateDeck.isPending ? "Saving..." : "Save Settings"}
+            <Button type="submit" disabled={updateFolder.isPending}>
+              {updateFolder.isPending ? "Saving..." : "Save Settings"}
             </Button>
           </DialogFooter>
         </form>

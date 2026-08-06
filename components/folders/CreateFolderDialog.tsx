@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
   DialogContent,
@@ -13,10 +14,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { DECK_COLORS } from "@/lib/decks"
 import { ColorPicker } from "@/components/ui/color-picker"
 import { useCreateFolder } from "@/hooks/useFolders"
-import { LockKeyhole, EyeOff, Globe, FolderPlus } from "lucide-react"
+import { FolderPlus } from "lucide-react"
 
 interface CreateFolderDialogProps {
   open: boolean
@@ -33,8 +33,7 @@ export function CreateFolderDialog({
 
   const [name, setName] = useState("")
   const [color, setColor] = useState("default")
-  const [privacy, setPrivacy] = useState<"private" | "unlisted" | "public">("private")
-  const [slug, setSlug] = useState("")
+  const [description, setDescription] = useState("")
   const [createError, setCreateError] = useState("")
 
   const handleCreateFolder = (e: React.FormEvent) => {
@@ -45,17 +44,11 @@ export function CreateFolderDialog({
       return
     }
 
-    if (slug.trim() && !/^[a-z0-9-]+$/.test(slug.trim())) {
-      setCreateError("Slug can only contain lowercase letters, numbers, and hyphens.")
-      return
-    }
-
     createFolder.mutate(
       {
         name: name.trim(),
         color,
-        privacy,
-        slug: slug.trim() || undefined,
+        description: description || undefined,
         parentId,
       },
       {
@@ -63,8 +56,7 @@ export function CreateFolderDialog({
           onOpenChange(false)
           setName("")
           setColor("default")
-          setPrivacy("private")
-          setSlug("")
+          setDescription("")
         },
         onError: (err) =>
           setCreateError(
@@ -106,61 +98,24 @@ export function CreateFolderDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label>Privacy</Label>
-              <div className="flex gap-2">
-                {(
-                  [
-                    {
-                      id: "private",
-                      label: "Private",
-                      icon: <LockKeyhole className="h-4 w-4" />,
-                    },
-                    {
-                      id: "unlisted",
-                      label: "Unlisted",
-                      icon: <EyeOff className="h-4 w-4" />,
-                    },
-                    {
-                      id: "public",
-                      label: "Public",
-                      icon: <Globe className="h-4 w-4" />,
-                    },
-                  ] as const
-                ).map((opt) => (
-                  <Button
-                    key={opt.id}
-                    type="button"
-                    variant={privacy === opt.id ? "default" : "outline"}
-                    onClick={() => setPrivacy(opt.id)}
-                    disabled={createFolder.isPending}
-                    className="flex-1"
-                  >
-                    {opt.icon}
-                    <span className="ml-2">{opt.label}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="folder-slug">URL Slug (Optional)</Label>
-              <Input
-                id="folder-slug"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                placeholder="science-decks"
-                maxLength={80}
-                disabled={createFolder.isPending}
-                className="font-mono text-sm"
-              />
-            </div>
-
-            <div className="grid gap-2">
               <Label>Color Accent</Label>
               <ColorPicker
                 color={color}
                 onChange={setColor}
                 className={createFolder.isPending ? "opacity-50 pointer-events-none" : ""}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="folder-description">Description (Optional)</Label>
+              <Textarea
+                id="folder-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="What is this folder about?"
+                maxLength={500}
+                disabled={createFolder.isPending}
+                className="resize-none h-20"
               />
             </div>
           </div>

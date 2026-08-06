@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trash2, MoreVertical, Share2, Globe, Lock, EyeOff, Move } from "lucide-react"
+import { Trash2, MoreVertical, Share2, Globe, Lock, EyeOff, Move, Pencil } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,7 @@ interface DeckCardProps {
   username?: string
   srsCounts?: any
   onShare: (deck: Deck) => void
+  onEdit?: (deck: Deck) => void
   onDelete: (deckId: string) => void
   onMove?: (deck: Deck) => void
 }
@@ -35,6 +36,7 @@ export function DeckCard({
   username,
   srsCounts,
   onShare,
+  onEdit,
   onDelete,
   onMove,
 }: DeckCardProps) {
@@ -127,6 +129,12 @@ export function DeckCard({
                   <Share2 className="mr-2 h-4 w-4" />
                   Share
                 </DropdownMenuItem>
+                {onEdit && (
+                  <DropdownMenuItem onClick={() => onEdit(deck)}>
+                    <Pencil className="mr-2 h-4 w-4" />
+                    Edit
+                  </DropdownMenuItem>
+                )}
                 {onMove && (
                   <DropdownMenuItem onClick={() => onMove(deck)}>
                     <Move className="mr-2 h-4 w-4" />

@@ -11,10 +11,14 @@ import { ArrowLeft, Plus, FolderPlus, Folder as FolderIcon, Pencil, Trash2 } fro
 import { Deck, Folder } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
+import { EditDeckDialog } from "@/components/decks/EditDeckDialog"
+import { DeleteDeckDialog } from "@/components/decks/DeleteDeckDialog"
 import { DeckCard } from "@/components/decks/DeckCard"
 import { FolderCard } from "@/components/folders/FolderCard"
 import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
+import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
+import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useDeleteDeck, useUpdateDeck } from "@/hooks/useDecks"
 import {
@@ -65,7 +69,11 @@ export default function FolderPage() {
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
+  const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
+  const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
+  const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
+  const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -79,23 +87,11 @@ export default function FolderPage() {
   )
 
   const handleDeleteDeck = (deckId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this deck? All cards will be lost."
-      )
-    )
-      return
-    deleteDeck.mutate(deckId)
+    setDeleteDeckTarget(deckId)
   }
 
-  const handleDeleteSubFolder = (subFolderId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this folder and all its contents?"
-      )
-    )
-      return
-    deleteFolder.mutate(subFolderId)
+  const handleDeleteSubFolder = (folderId: string) => {
+    setDeleteFolderTarget(folderId)
   }
 
   const handleMoveDeck = (deck: Deck) => {
@@ -107,21 +103,7 @@ export default function FolderPage() {
   }
 
   const handleDeleteCurrentFolder = () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this folder and all its contents?"
-      )
-    )
-      return
-    deleteFolder.mutate(folderId, {
-      onSuccess: () => {
-        router.push(
-          currentFolder?.parent_id
-            ? `/folders/${currentFolder.parent_id}`
-            : "/decks"
-        )
-      },
-    })
+    setDeleteFolderTarget(folderId)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -300,8 +282,9 @@ export default function FolderPage() {
                 <FolderCard
                   key={folder.id}
                   folder={folder}
+                  username={user?.username}
                   itemCount={count}
-                  isOwner={isOwner}
+                  onShare={setShareFolderTarget}
                   onEdit={setEditingFolder}
                   onDelete={handleDeleteSubFolder}
                   onMove={handleMoveFolder}
@@ -316,6 +299,7 @@ export default function FolderPage() {
                 username={user?.username}
                 srsCounts={srsCountsData?.[deck.id]}
                 onShare={setShareDeckTarget}
+                onEdit={setEditingDeckTarget}
                 onDelete={handleDeleteDeck}
                 onMove={handleMoveDeck}
               />
@@ -342,14 +326,45 @@ export default function FolderPage() {
       />
 
       <ShareDeckDialog
-        key={shareDeckTarget?.id ?? "closed"}
+        key={shareDeckTarget?.id ?? "closed-share-deck"}
         deck={shareDeckTarget}
         onClose={() => setShareDeckTarget(null)}
+      />
+
+      <ShareFolderDialog
+        key={shareFolderTarget?.id ?? "closed-share-folder"}
+        folder={shareFolderTarget}
+        onClose={() => setShareFolderTarget(null)}
+      />
+
+      <EditDeckDialog
+        key={editingDeckTarget?.id ?? "closed-edit"}
+        deck={editingDeckTarget}
+        onClose={() => setEditingDeckTarget(null)}
       />
 
       <MoveItemDialog
         item={moveTarget}
         onClose={() => setMoveTarget(null)}
+      />
+
+      <DeleteDeckDialog
+        deckId={deleteDeckTarget}
+        onClose={() => setDeleteDeckTarget(null)}
+      />
+
+      <DeleteFolderDialog
+        folderId={deleteFolderTarget}
+        onClose={() => setDeleteFolderTarget(null)}
+        onDeleted={() => {
+          if (deleteFolderTarget === folderId) {
+            router.push(
+              currentFolder?.parent_id
+                ? `/folders/${currentFolder.parent_id}`
+                : "/decks"
+            )
+          }
+        }}
       />
     </div>
   )

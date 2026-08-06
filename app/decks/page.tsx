@@ -10,10 +10,14 @@ import { Deck, Folder } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
+import { EditDeckDialog } from "@/components/decks/EditDeckDialog"
+import { DeleteDeckDialog } from "@/components/decks/DeleteDeckDialog"
 import { DeckCard } from "@/components/decks/DeckCard"
 import { FolderCard } from "@/components/folders/FolderCard"
 import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
+import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
+import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck, useDeleteDeck } from "@/hooks/useDecks"
 import { useUserItems, useUpdateFolder, useDeleteFolder } from "@/hooks/useFolders"
@@ -50,8 +54,12 @@ export default function DecksPage() {
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
+  const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
+  const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
+  const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
+  const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(null)
 
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -72,23 +80,11 @@ export default function DecksPage() {
   )
 
   const handleDeleteDeck = (deckId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this deck? All cards will be lost."
-      )
-    )
-      return
-    deleteDeck.mutate(deckId)
+    setDeleteDeckTarget(deckId)
   }
 
   const handleDeleteFolder = (folderId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this folder and all its contents?"
-      )
-    )
-      return
-    deleteFolder.mutate(folderId)
+    setDeleteFolderTarget(folderId)
   }
 
   const handleMoveDeck = (deck: Deck) => {
@@ -299,8 +295,9 @@ export default function DecksPage() {
                     <FolderCard
                       key={folder.id}
                       folder={folder}
-                      itemCount={count}
                       username={user?.username}
+                      itemCount={count}
+                      onShare={setShareFolderTarget}
                       onEdit={setEditingFolder}
                       onDelete={handleDeleteFolder}
                       onMove={handleMoveFolder}
@@ -323,6 +320,7 @@ export default function DecksPage() {
                     username={user.username}
                     srsCounts={srsCountsData?.[deck.id]}
                     onShare={setShareDeckTarget}
+                    onEdit={setEditingDeckTarget}
                     onDelete={handleDeleteDeck}
                     onMove={handleMoveDeck}
                   />
@@ -357,14 +355,36 @@ export default function DecksPage() {
       )}
 
       <ShareDeckDialog
-        key={shareDeckTarget?.id ?? "closed"}
+        key={shareDeckTarget?.id ?? "closed-share-deck"}
         deck={shareDeckTarget}
         onClose={() => setShareDeckTarget(null)}
+      />
+
+      <ShareFolderDialog
+        key={shareFolderTarget?.id ?? "closed-share-folder"}
+        folder={shareFolderTarget}
+        onClose={() => setShareFolderTarget(null)}
+      />
+
+      <EditDeckDialog
+        key={editingDeckTarget?.id ?? "closed-edit"}
+        deck={editingDeckTarget}
+        onClose={() => setEditingDeckTarget(null)}
       />
 
       <MoveItemDialog
         item={moveTarget}
         onClose={() => setMoveTarget(null)}
+      />
+
+      <DeleteDeckDialog
+        deckId={deleteDeckTarget}
+        onClose={() => setDeleteDeckTarget(null)}
+      />
+
+      <DeleteFolderDialog
+        folderId={deleteFolderTarget}
+        onClose={() => setDeleteFolderTarget(null)}
       />
     </div>
   )

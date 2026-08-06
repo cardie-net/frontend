@@ -14,14 +14,19 @@ import {
   Folder as FolderIcon,
   Pencil,
   Trash2,
+  Share2,
 } from "lucide-react"
 import { Deck, Folder } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
+import { EditDeckDialog } from "@/components/decks/EditDeckDialog"
+import { DeleteDeckDialog } from "@/components/decks/DeleteDeckDialog"
 import { DeckCard } from "@/components/decks/DeckCard"
 import { FolderCard } from "@/components/folders/FolderCard"
 import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
+import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
+import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useDeleteDeck, useUpdateDeck } from "@/hooks/useDecks"
 import {
@@ -67,7 +72,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
+  const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
+  const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
+  const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
+  const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -88,23 +97,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
   )
 
   const handleDeleteDeck = (deckId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this deck? All cards will be lost."
-      )
-    )
-      return
-    deleteDeck.mutate(deckId)
+    setDeleteDeckTarget(deckId)
   }
 
   const handleDeleteSubFolder = (subFolderId: string) => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this folder and all its contents?"
-      )
-    )
-      return
-    deleteFolder.mutate(subFolderId)
+    setDeleteFolderTarget(subFolderId)
   }
 
   const handleMoveDeck = (deck: Deck) => {
@@ -116,19 +113,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
   }
 
   const handleDeleteCurrentFolder = () => {
-    if (
-      !confirm(
-        "Are you sure you want to delete this folder and all its contents?"
-      )
-    )
-      return
-    deleteFolder.mutate(folder.id, {
-      onSuccess: () => {
-        router.push(
-          parentFolder?.slug ? `/${username}/${parentFolder.slug}` : "/decks"
-        )
-      },
-    })
+    setDeleteFolderTarget(folder.id)
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -228,9 +213,16 @@ export function FolderView({ username, folder }: FolderViewProps) {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => setShareFolderTarget(folder)}
+              >
+                <Share2 className="mr-1.5 h-4 w-4" /> Share
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => setEditingFolder(folder)}
               >
-                <Pencil className="mr-1.5 h-4 w-4" /> Edit Folder
+                <Pencil className="mr-1.5 h-4 w-4" /> Edit
               </Button>
               <Button
                 variant="outline"
@@ -238,7 +230,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 onClick={handleDeleteCurrentFolder}
                 className="text-destructive hover:text-destructive"
               >
-                <Trash2 className="mr-1.5 h-4 w-4" /> Delete Folder
+                <Trash2 className="mr-1.5 h-4 w-4" /> Delete
               </Button>
               <Button
                 variant="outline"
@@ -298,6 +290,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                   username={username}
                   itemCount={count}
                   isOwner={isOwner}
+                  onShare={setShareFolderTarget}
                   onEdit={setEditingFolder}
                   onDelete={handleDeleteSubFolder}
                   onMove={handleMoveFolder}
@@ -312,6 +305,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 username={username}
                 srsCounts={srsCountsData?.[deck.id]}
                 onShare={setShareDeckTarget}
+                onEdit={setEditingDeckTarget}
                 onDelete={handleDeleteDeck}
                 onMove={handleMoveDeck}
               />
@@ -338,14 +332,43 @@ export function FolderView({ username, folder }: FolderViewProps) {
       />
 
       <ShareDeckDialog
-        key={shareDeckTarget?.id ?? "closed"}
+        key={shareDeckTarget?.id ?? "closed-share-deck"}
         deck={shareDeckTarget}
         onClose={() => setShareDeckTarget(null)}
+      />
+
+      <ShareFolderDialog
+        key={shareFolderTarget?.id ?? "closed-share-folder"}
+        folder={shareFolderTarget}
+        onClose={() => setShareFolderTarget(null)}
+      />
+
+      <EditDeckDialog
+        key={editingDeckTarget?.id ?? "closed-edit"}
+        deck={editingDeckTarget}
+        onClose={() => setEditingDeckTarget(null)}
       />
 
       <MoveItemDialog
         item={moveTarget}
         onClose={() => setMoveTarget(null)}
+      />
+
+      <DeleteDeckDialog
+        deckId={deleteDeckTarget}
+        onClose={() => setDeleteDeckTarget(null)}
+      />
+
+      <DeleteFolderDialog
+        folderId={deleteFolderTarget}
+        onClose={() => setDeleteFolderTarget(null)}
+        onDeleted={() => {
+          if (deleteFolderTarget === folder.id) {
+            router.push(
+              parentFolder?.slug ? `/${username}/${parentFolder.slug}` : "/decks"
+            )
+          }
+        }}
       />
     </div>
   )

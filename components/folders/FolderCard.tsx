@@ -10,7 +10,7 @@ import {
   CardDescription,
 } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Trash2, Pencil, Folder as FolderIcon, MoreVertical, Globe, Lock, EyeOff, Move } from "lucide-react"
+import { Trash2, Pencil, Folder as FolderIcon, MoreVertical, Globe, Lock, EyeOff, Move, Share2 } from "lucide-react"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -26,6 +26,7 @@ interface FolderCardProps {
   username?: string
   isOwner?: boolean
   itemCount?: number
+  onShare?: (folder: Folder) => void
   onEdit?: (folder: Folder) => void
   onDelete?: (folderId: string) => void
   onMove?: (folder: Folder) => void
@@ -36,6 +37,7 @@ export function FolderCard({
   username,
   isOwner = true,
   itemCount,
+  onShare,
   onEdit,
   onDelete,
   onMove,
@@ -153,6 +155,12 @@ export function FolderCard({
                     <span className="sr-only">Open menu</span>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    {onShare && (
+                      <DropdownMenuItem onClick={() => onShare(folder)}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        Share
+                      </DropdownMenuItem>
+                    )}
                     {onEdit && (
                       <DropdownMenuItem onClick={() => onEdit(folder)}>
                         <Pencil className="mr-2 h-4 w-4" />

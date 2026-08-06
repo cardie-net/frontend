@@ -13,11 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { DECK_COLORS } from "@/lib/decks"
 import { ColorPicker } from "@/components/ui/color-picker"
 import { Folder } from "@/types"
 import { useUpdateFolder, useUploadFolderCover } from "@/hooks/useFolders"
-import { LockKeyhole, EyeOff, Globe, Pencil } from "lucide-react"
+import { Pencil } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 
 interface EditFolderDialogProps {
@@ -31,13 +30,9 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
 
   const [name, setName] = useState(folder?.name || "")
   const [description, setDescription] = useState(folder?.properties?.description || "")
+  const [color, setColor] = useState(folder?.properties?.color || "default")
   const [coverUrl, setCoverUrl] = useState(folder?.properties?.cover_image_url || "")
   const [coverFile, setCoverFile] = useState<File | null>(null)
-  const [color, setColor] = useState(folder?.properties?.color || "default")
-  const [privacy, setPrivacy] = useState<"private" | "unlisted" | "public">(
-    folder?.privacy || "private"
-  )
-  const [slug, setSlug] = useState(folder?.slug || "")
   const [error, setError] = useState("")
 
   useEffect(() => {
@@ -45,11 +40,9 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
       /* eslint-disable react-hooks/set-state-in-effect */
       setName(folder.name || "")
       setDescription(folder.properties?.description || "")
+      setColor(folder.properties?.color || "default")
       setCoverUrl(folder.properties?.cover_image_url || "")
       setCoverFile(null)
-      setColor(folder.properties?.color || "default")
-      setPrivacy(folder.privacy || "private")
-      setSlug(folder.slug || "")
       setError("")
       /* eslint-enable react-hooks/set-state-in-effect */
     }
@@ -66,11 +59,6 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
       return
     }
 
-    if (slug.trim() && !/^[a-z0-9-]+$/.test(slug.trim())) {
-      setError("Slug can only contain lowercase letters, numbers, and hyphens.")
-      return
-    }
-
     try {
       if (coverFile) {
         await uploadFolderCover.mutateAsync({ folderId: folder.id, file: coverFile })
@@ -82,10 +70,8 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
         {
           folderId: folder.id,
           name: name.trim(),
-          color,
-          privacy,
-          slug: slug.trim() || undefined,
           description: description || undefined,
+          color,
           coverImageUrl: finalCoverUrl
         },
         {
@@ -113,7 +99,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             <div>
               <DialogTitle className="text-base font-semibold">Edit Folder</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Update the name, description, cover image, and privacy settings.
+                Update the name, description, color, and cover image for your folder.
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -121,9 +107,8 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             {error && <Alert variant="destructive">{error}</Alert>}
 
             <div className="grid gap-2">
-              <Label htmlFor="edit-folder-name">Folder Name</Label>
+              <Label>Name</Label>
               <Input
-                id="edit-folder-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={80}
@@ -140,6 +125,15 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
                 maxLength={500}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
                 placeholder="Optional description..."
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Color Accent</Label>
+              <ColorPicker
+                color={color}
+                onChange={setColor}
+                className={updateFolder.isPending || uploadFolderCover.isPending ? "opacity-50 pointer-events-none" : ""}
               />
             </div>
 
@@ -166,65 +160,6 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
                 disabled={updateFolder.isPending || uploadFolderCover.isPending || !!coverFile}
               />
             </div>
-
-            <div className="grid gap-2">
-              <Label>Privacy</Label>
-              <div className="flex gap-2">
-                {(
-                  [
-                    {
-                      id: "private",
-                      label: "Private",
-                      icon: <LockKeyhole className="h-4 w-4" />,
-                    },
-                    {
-                      id: "unlisted",
-                      label: "Unlisted",
-                      icon: <EyeOff className="h-4 w-4" />,
-                    },
-                    {
-                      id: "public",
-                      label: "Public",
-                      icon: <Globe className="h-4 w-4" />,
-                    },
-                  ] as const
-                ).map((opt) => (
-                  <Button
-                    key={opt.id}
-                    type="button"
-                    variant={privacy === opt.id ? "default" : "outline"}
-                    onClick={() => setPrivacy(opt.id)}
-                    disabled={updateFolder.isPending}
-                    className="flex-1"
-                  >
-                    {opt.icon}
-                    <span className="ml-2">{opt.label}</span>
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="edit-folder-slug">URL Slug</Label>
-              <Input
-                id="edit-folder-slug"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-                maxLength={80}
-                disabled={updateFolder.isPending}
-                className="font-mono text-sm"
-                required
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Color Accent</Label>
-              <ColorPicker
-                color={color}
-                onChange={setColor}
-                className={updateFolder.isPending ? "opacity-50 pointer-events-none" : ""}
-              />
-            </div>
           </div>
           <DialogFooter>
             <Button
@@ -236,7 +171,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
               Cancel
             </Button>
             <Button type="submit" disabled={updateFolder.isPending || uploadFolderCover.isPending}>
-              {updateFolder.isPending || uploadFolderCover.isPending ? "Saving..." : "Save Settings"}
+              {updateFolder.isPending || uploadFolderCover.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </form>
