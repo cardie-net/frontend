@@ -282,13 +282,13 @@ export function FolderView({ username, folder }: FolderViewProps) {
           </div>
           </div>
 
-          <div className="flex flex-col mt-1 pl-[3.5rem]">
-            {folder.properties?.description && (
-              <p className="mt-1 text-sm text-foreground/90 whitespace-pre-wrap">
+          {folder.properties?.description && (
+            <div className="mt-4">
+              <p className="text-sm text-foreground/90 whitespace-pre-wrap">
                 {folder.properties.description}
               </p>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         <Link
