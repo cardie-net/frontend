@@ -31,7 +31,7 @@ import {
   useDeleteFolder,
 } from "@/hooks/useFolders"
 import { useSRSCounts } from "@/hooks/useSRSCounts"
-import { getDeckColorClass } from "@/lib/decks"
+import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 import {
   DndContext,
@@ -201,6 +201,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 "flex h-10 w-10 items-center justify-center rounded-lg border bg-muted/30",
                 getDeckColorClass(folder.properties?.color)
               )}
+              style={getDeckColorStyle(folder.properties?.color)}
             >
               <FolderIcon className="h-6 w-6 text-primary" />
             </div>

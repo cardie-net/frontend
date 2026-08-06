@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
 import {
   Dialog,
@@ -18,6 +19,7 @@ import { useAuth } from "@/lib/AuthContext"
 import { DECK_COLORS } from "@/lib/decks"
 import { useCreateDeck } from "@/hooks/useDecks"
 import { Plus } from "lucide-react"
+import { ColorPicker } from "@/components/ui/color-picker"
 
 interface CreateDeckDialogProps {
   open: boolean
@@ -36,6 +38,7 @@ export function CreateDeckDialog({
 
   const [newDeckName, setNewDeckName] = useState("")
   const [newDeckColor, setNewDeckColor] = useState("default")
+  const [newDeckDescription, setNewDeckDescription] = useState("")
   const [createError, setCreateError] = useState("")
 
   const handleCreateDeck = (e: React.FormEvent) => {
@@ -47,12 +50,13 @@ export function CreateDeckDialog({
     }
 
     createDeck.mutate(
-      { name: newDeckName, color: newDeckColor, folderId },
+      { name: newDeckName, color: newDeckColor, description: newDeckDescription, folderId },
       {
         onSuccess: (newDeck) => {
           onOpenChange(false)
           setNewDeckName("")
           setNewDeckColor("default")
+          setNewDeckDescription("")
           router.push(`/${user?.username || ""}/${newDeck.slug || newDeck.id}`)
         },
         onError: (err) =>
@@ -93,18 +97,23 @@ export function CreateDeckDialog({
             </div>
             <div className="grid gap-2">
               <Label>Color</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                value={newDeckColor}
-                onChange={(e) => setNewDeckColor(e.target.value)}
+              <ColorPicker
+                color={newDeckColor}
+                onChange={setNewDeckColor}
+                className={createDeck.isPending ? "opacity-50 pointer-events-none" : ""}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="description">Description (Optional)</Label>
+              <Textarea
+                id="description"
+                value={newDeckDescription}
+                onChange={(e) => setNewDeckDescription(e.target.value)}
+                placeholder="What is this deck about?"
+                maxLength={500}
                 disabled={createDeck.isPending}
-              >
-                {DECK_COLORS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+                className="resize-none h-20"
+              />
             </div>
           </div>
           <DialogFooter>

@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { DECK_COLORS } from "@/lib/decks"
+import { ColorPicker } from "@/components/ui/color-picker"
 import { Folder } from "@/types"
 import { useUpdateFolder, useUploadFolderCover } from "@/hooks/useFolders"
 import { LockKeyhole, EyeOff, Globe, Pencil } from "lucide-react"
@@ -218,18 +219,11 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
 
             <div className="grid gap-2">
               <Label>Color Accent</Label>
-              <select
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                disabled={updateFolder.isPending}
-              >
-                {DECK_COLORS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
+              <ColorPicker
+                color={color}
+                onChange={setColor}
+                className={updateFolder.isPending ? "opacity-50 pointer-events-none" : ""}
+              />
             </div>
           </div>
           <DialogFooter>

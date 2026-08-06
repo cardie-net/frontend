@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { getDeckColorClass } from "@/lib/decks"
+import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import {
   Card,
   CardHeader,
@@ -63,6 +63,7 @@ export function DeckCard({
             getDeckColorClass(deck.properties?.color),
             isDragging && "opacity-50"
           )}
+          style={getDeckColorStyle(deck.properties?.color)}
         >
           <Link href={deckHref} className={cn("absolute inset-0 z-10 rounded-2xl", isDragging && "pointer-events-none")} />
           {deck.properties?.cover_image_url && (

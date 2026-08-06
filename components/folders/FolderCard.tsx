@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { getDeckColorClass } from "@/lib/decks"
+import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import {
   Card,
   CardHeader,
@@ -94,6 +94,7 @@ export function FolderCard({
               isOver && "ring-2 ring-primary ring-offset-2 bg-accent/20",
               isDragging && "opacity-50"
             )}
+            style={getDeckColorStyle(folder.properties?.color)}
           >
             <Link href={folderHref} className={cn("absolute inset-0 z-10 rounded-2xl", isDragging && "pointer-events-none")} />
             {folder.properties?.cover_image_url && (
