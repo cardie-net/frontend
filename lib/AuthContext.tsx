@@ -9,6 +9,8 @@ import React, {
 } from "react"
 import { apiFetch } from "./api"
 import { UserProfile } from "@/types"
+import { useCustomTheme } from "@/components/theme/custom-theme-provider"
+import { setLocale } from "@/app/actions"
 
 export type { UserProfile }
 
@@ -25,11 +27,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const { importThemeJson } = useCustomTheme()
+
+  const syncPreferences = (userData: UserProfile) => {
+    if (userData.preferences) {
+      if (userData.preferences.themeConfig) {
+        // Prevent infinite loop if updateConfig triggers a patch
+        // But our debounce logic in updateConfig will fire a PATCH, which is harmless (just resaves the same config).
+        // Actually, to be safe, we could check if it's different, but for now we just apply it.
+        importThemeJson(JSON.stringify(userData.preferences.themeConfig))
+      }
+      if (userData.preferences.language) {
+        void setLocale(userData.preferences.language).then(() => {
+          // A refresh might be needed, but we don't want to loop. setLocale sets a cookie.
+        })
+      }
+    }
+  }
+
   const fetchUser = useCallback(async () => {
     const response = await apiFetch(`/api/v1/users/me`)
     if (response.ok) {
       const data = await response.json()
       setUser(data)
+      syncPreferences(data)
     } else {
       setUser(null)
     }
@@ -42,7 +63,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     void apiFetch(`/api/v1/users/me`)
       .then(async (response) => {
         if (cancelled) return
-        setUser(response.ok ? await response.json() : null)
+        if (response.ok) {
+          const data = await response.json()
+          setUser(data)
+          syncPreferences(data)
+        } else {
+          setUser(null)
+        }
       })
       .catch((error) => {
         if (cancelled) return

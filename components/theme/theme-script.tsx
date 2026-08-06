@@ -16,8 +16,6 @@ export function ThemeScript() {
     if (!config || !config.colors) {
       var defaultPreset = ${JSON.stringify(DEFAULT_PRESET)};
       config = {
-        presetId: defaultPreset.id,
-        isCustom: false,
         radius: defaultPreset.radius,
         fontFamily: defaultPreset.fontFamily,
         colors: defaultPreset.colors
@@ -80,6 +78,5 @@ export function ThemeScript() {
   }
 })();
   `;
-
-  return <script dangerouslySetInnerHTML={{ __html: code }} />;
+  return <script dangerouslySetInnerHTML={{ __html: code }} suppressHydrationWarning />;
 }

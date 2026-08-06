@@ -41,6 +41,7 @@ export function AppearancePopup({
     resetToDefault,
     exportThemeJson,
     importThemeJson,
+    activePreset,
   } = useCustomTheme();
 
   const [activeTab, setActiveTab] = useState<'presets' | 'tweak'>('presets');
@@ -130,7 +131,7 @@ export function AppearancePopup({
           <div className="space-y-3 mt-1">
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto overflow-x-hidden p-1.5">
               {presets.map((preset) => {
-                const isSelected = config.presetId === preset.id && !config.isCustom;
+                const isSelected = activePreset?.id === preset.id;
                 return (
                   <button
                     key={preset.id}

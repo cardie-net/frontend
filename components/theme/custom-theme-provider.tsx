@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import {
   ThemeConfig,
   ThemeColors,
@@ -13,6 +13,7 @@ import {
   getSavedThemeConfigFromStorage,
   saveThemeConfigToStorage,
 } from '@/lib/theme/theme-engine';
+import { apiFetch } from '@/lib/api';
 
 const CustomThemeContext = createContext<CustomThemeContextType | undefined>(undefined);
 
@@ -23,8 +24,6 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       if (saved) return saved;
     }
     return {
-      presetId: DEFAULT_PRESET.id,
-      isCustom: false,
       radius: DEFAULT_PRESET.radius,
       fontFamily: DEFAULT_PRESET.fontFamily,
       colors: { ...DEFAULT_PRESET.colors },
@@ -37,11 +36,23 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     applyThemeToDom(config);
   }, [config]);
 
-  const activePreset = PRESET_THEMES.find((p) => p.id === config.presetId) || null;
+  const activePreset = PRESET_THEMES.find(
+    (p) => JSON.stringify(p.colors) === JSON.stringify(config.colors)
+  ) || null;
 
   const updateConfig = (newConfig: ThemeConfig) => {
     setConfig(newConfig);
     saveThemeConfigToStorage(newConfig);
+    
+    // Send request immediately so if user reloads, it's saved
+    apiFetch('/api/v1/users/me', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ preferences: { themeConfig: newConfig } }),
+      keepalive: true,
+    }).catch(() => {
+      // Ignore errors (e.g. if user is not logged in)
+    });
   };
 
   const applyPreset = (presetId: string) => {
@@ -49,8 +60,6 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     if (!target) return;
 
     const newConfig: ThemeConfig = {
-      presetId: target.id,
-      isCustom: false,
       radius: target.radius,
       fontFamily: target.fontFamily,
       colors: { ...target.colors },
@@ -63,7 +72,6 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       radius,
-      isCustom: true,
     };
     updateConfig(newConfig);
   };
@@ -72,7 +80,6 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       fontFamily,
-      isCustom: true,
     };
     updateConfig(newConfig);
   };
@@ -86,7 +93,6 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       colors: newColors,
-      isCustom: true,
     };
     updateConfig(newConfig);
   };

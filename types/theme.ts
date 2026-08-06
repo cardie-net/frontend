@@ -45,8 +45,6 @@ export interface ThemePreset {
 }
 
 export interface ThemeConfig {
-  presetId: string;
-  isCustom: boolean;
   radius: number;
   fontFamily: string;
   colors: ThemeColors;

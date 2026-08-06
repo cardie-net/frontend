@@ -62,6 +62,11 @@ export interface SocialLinks {
   website?: string
 }
 
+export interface UserPreferences {
+  language?: string
+  themeConfig?: Record<string, any>
+}
+
 /** The authenticated user (`GET /api/v1/users/me`) or a public profile. */
 export interface UserProfile {
   id: string
@@ -73,6 +78,7 @@ export interface UserProfile {
   avatar_url?: string
   bio?: string
   social_links?: SocialLinks
+  preferences?: UserPreferences
 }
 
 export interface CardProgress {

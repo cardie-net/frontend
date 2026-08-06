@@ -7,6 +7,7 @@ import { useAuth } from '@/lib/AuthContext';
 import { cn } from '@/lib/utils';
 import { useLocale } from 'next-intl';
 import { setLocale } from '@/app/actions';
+import { apiFetch } from '@/lib/api';
 import { SUPPORTED_LOCALES, LOCALE_LABELS, Locale } from '@/i18n/config';
 import {
   Menu,
@@ -274,6 +275,18 @@ export function Navbar() {
 
   // Switch to selected locale
   const handleSelectLocale = async (newLocale: Locale) => {
+    // Fire background save immediately
+    if (user && !user.is_guest) {
+      apiFetch('/api/v1/users/me', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          preferences: { language: newLocale },
+        }),
+        keepalive: true,
+      }).catch(() => {});
+    }
+
     await setLocale(newLocale);
     router.refresh();
   };
