@@ -40,6 +40,7 @@ import {
   useReorderCards,
 } from "@/hooks/useCards"
 import { buildElements, getCardImage, getCardText } from "@/lib/cards"
+import { cn } from "@/lib/utils"
 
 interface DeckViewProps {
   username: string

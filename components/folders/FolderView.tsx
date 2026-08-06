@@ -33,6 +33,7 @@ import { useDeleteDeck, useUpdateDeck } from "@/hooks/useDecks"
 import {
   useFolder,
   useFolderItems,
+  useUserItems,
   useUpdateFolder,
   useDeleteFolder,
 } from "@/hooks/useFolders"
@@ -64,6 +65,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
     isLoading: folderItemsLoading,
     error: folderItemsError,
   } = useFolderItems(folder.id)
+  const { data: allUserItems = [] } = useUserItems(folder.user_id)
   const { data: srsCountsData } = useSRSCounts()
 
   const updateDeck = useUpdateDeck()
@@ -96,15 +98,17 @@ export function FolderView({ username, folder }: FolderViewProps) {
     !user.is_guest
   )
 
-  const filteredItems = folderItems.filter((item) =>
+  const itemsToSearch = searchQuery.length > 0 ? allUserItems : folderItems
+
+  const filteredItems = itemsToSearch.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   const childFolders = filteredItems.filter(
-    (item): item is Folder => item.type === "folder" && item.parent_id === folder.id
+    (item): item is Folder => item.type === "folder" && (item.parent_id === folder.id || searchQuery.length > 0)
   )
   const childDecks = filteredItems.filter(
-    (item): item is Deck => item.type === "deck" && item.folder_id === folder.id
+    (item): item is Deck => item.type === "deck" && (item.folder_id === folder.id || searchQuery.length > 0)
   )
 
   const handleDeleteDeck = (deckId: string) => {

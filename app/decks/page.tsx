@@ -73,10 +73,10 @@ export default function DecksPage() {
   )
 
   const rootFolders = filteredItems.filter(
-    (item): item is Folder => item.type === "folder" && !item.parent_id
+    (item): item is Folder => item.type === "folder" && (!item.parent_id || searchQuery.length > 0)
   )
   const rootDecks = filteredItems.filter(
-    (item): item is Deck => item.type === "deck" && !item.folder_id
+    (item): item is Deck => item.type === "deck" && (!item.folder_id || searchQuery.length > 0)
   )
 
   const handleDeleteDeck = (deckId: string) => {
