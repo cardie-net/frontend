@@ -13,11 +13,11 @@ import { FlipCard } from "@/components/FlipCard"
 import { CardElement } from "@/types"
 
 export default function SpacedRepetitionPage() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+  const params = useParams<{ username: string; slug: string }>()
   const username = params.username
-  const deckSlug = params.deckSlug
+  const slug = params.slug
 
-  const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug)
+  const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
 
   const {
     loading: sessionLoading,
@@ -39,7 +39,7 @@ export default function SpacedRepetitionPage() {
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col p-6">
       <div className="mb-8 flex items-center gap-4">
-        <Link href={`/${username}/${deckSlug}`}>
+        <Link href={`/${username}/${slug}`}>
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Deck
@@ -85,7 +85,7 @@ export default function SpacedRepetitionPage() {
           <p className="mb-8 text-muted-foreground">
             You have reviewed all cards due for today. Great job!
           </p>
-          <Link href={`/${username}/${deckSlug}`} className="w-full">
+          <Link href={`/${username}/${slug}`} className="w-full">
             <Button size="lg" className="w-full" variant="outline">
               Return to Deck
             </Button>

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useRef, useEffect, Suspense } from "react"
-import { useParams, useSearchParams } from "next/navigation"
+import { useState, useRef, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
@@ -22,7 +22,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
 
-import { FlashCard } from "@/types"
+import { FlashCard, Deck } from "@/types"
 import { SortableCardRow } from "@/components/cards/SortableCardRow"
 import { AddCardForm } from "@/components/cards/AddCardForm"
 import {
@@ -32,9 +32,6 @@ import {
 import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
-import { useDeck } from "@/hooks/useDecks"
-import { useFolderBySlug } from "@/hooks/useFolders"
-import { FolderView } from "@/components/folders/FolderView"
 import {
   useCards,
   useCreateCard,
@@ -44,40 +41,22 @@ import {
 } from "@/hooks/useCards"
 import { buildElements, getCardImage, getCardText } from "@/lib/cards"
 
-export default function DeckPage() {
-  return (
-    <Suspense fallback={<div className="p-8">Loading...</div>}>
-      <DeckPageContent />
-    </Suspense>
-  )
+interface DeckViewProps {
+  username: string
+  slug: string
+  deck: Deck
 }
 
-function DeckPageContent() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+export function DeckView({ username, slug, deck }: DeckViewProps) {
   const searchParams = useSearchParams()
-  const username = params.username
-  const deckSlug = params.deckSlug
-
   const { user } = useAuth()
 
-  const {
-    data: deck,
-    isLoading: deckLoading,
-    error: deckError,
-  } = useDeck(username, deckSlug)
-  const {
-    data: folder,
-    isLoading: folderLoading,
-    error: folderError,
-  } = useFolderBySlug(username, deckSlug)
-  const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
+  const { data: cards = [], isLoading: cardsLoading } = useCards(deck.id)
 
   const createCard = useCreateCard()
   const updateCard = useUpdateCard()
   const deleteCard = useDeleteCard()
   const reorderCards = useReorderCards()
-
-  const loading = (deckLoading && folderLoading) || (!!deck && cardsLoading)
 
   // Popup (full) edit state
   const [editingCard, setEditingCard] = useState<FlashCard | null>(null)
@@ -117,10 +96,10 @@ function DeckPageContent() {
 
   // Scroll to cards section if ?edit=true
   useEffect(() => {
-    if (!loading && searchParams.get("edit") === "true" && cardsRef.current) {
+    if (!cardsLoading && searchParams.get("edit") === "true" && cardsRef.current) {
       cardsRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
     }
-  }, [loading, searchParams])
+  }, [cardsLoading, searchParams])
 
   // --- Card Editing ---
 
@@ -217,9 +196,7 @@ function DeckPageContent() {
     })
   }
 
-  // --- Loading State ---
-
-  if (loading) {
+  if (cardsLoading) {
     return (
       <div className="container mx-auto max-w-5xl space-y-8 p-6">
         <Skeleton className="h-8 w-64" />
@@ -233,65 +210,45 @@ function DeckPageContent() {
     )
   }
 
-  if (folder) {
-    return <FolderView username={username} folder={folder} />
-  }
-
-  // --- Error State ---
-
-  if (deckError || !deck) {
-    return (
-      <div className="mt-20 flex flex-1 items-center justify-center p-8">
-        <div className="text-center">
-          <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
-          <h2 className="mb-4 text-2xl font-bold">
-            {deckError?.message || folderError?.message || "Deck or folder not found"}
-          </h2>
-          <Link href={`/${username}`}>
-            <Button variant="outline">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to profile
-            </Button>
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="container mx-auto max-w-5xl p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <Link
-          href="/decks"
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          My Decks
-        </Link>
-        
-        {deck.properties?.cover_image_url && (
-          <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] max-h-64 w-full">
-            <img 
-              src={deck.properties.cover_image_url} 
-              alt={`${deck.name} cover`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+    <div className="flex flex-col w-full">
+      {deck.properties?.cover_image_url && (
+        <div className="w-full aspect-[4/1] max-h-56 sm:max-h-72 bg-muted">
+          <img 
+            src={deck.properties.cover_image_url} 
+            alt={`${deck.name} cover`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
 
-        <h1 className="text-3xl font-bold">{deck.name}</h1>
+      <div className={cn(
+        "container mx-auto max-w-4xl px-4 pb-8 sm:px-10 sm:pb-16 space-y-8",
+        deck.properties?.cover_image_url ? "pt-6 sm:pt-8" : "pt-8 sm:pt-16"
+      )}>
+      {/* Header */}
+      <div className="flex flex-col">
+
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{deck.name}</h1>
         {deck.properties?.description && (
-          <p className="mt-3 text-base text-foreground/90 whitespace-pre-wrap">
+          <p className="mt-2 text-sm sm:text-base text-foreground/90 whitespace-pre-wrap">
             {deck.properties.description}
           </p>
         )}
-        <p className="mt-1 text-muted-foreground">
+        <p className="mt-1 text-sm text-muted-foreground">
           {cards.length} {cards.length === 1 ? "card" : "cards"}
         </p>
       </div>
 
-      <DeckActionButtons username={username} deckSlug={deckSlug} />
+      <Link
+        href="/decks"
+        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
+      >
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Back to Decks
+      </Link>
+
+      <DeckActionButtons username={username} deckSlug={slug} />
 
       {/* Cards Section */}
       <div ref={cardsRef} id="cards" className="scroll-mt-6">
@@ -461,6 +418,7 @@ function DeckPageContent() {
           onClose={() => setShowExportDialog(false)}
         />
       )}
+    </div>
     </div>
   )
 }

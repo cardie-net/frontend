@@ -7,14 +7,14 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default function ExamPage() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+  const params = useParams<{ username: string; slug: string }>()
   const username = params.username
-  const deckSlug = params.deckSlug
+  const slug = params.slug
 
   return (
     <div className="container mx-auto max-w-5xl p-6">
       <div className="mb-6">
-        <Link href={`/${username}/${deckSlug}`}>
+        <Link href={`/${username}/${slug}`}>
           <Button variant="ghost" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Deck

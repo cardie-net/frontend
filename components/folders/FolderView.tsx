@@ -12,12 +12,13 @@ import {
   Plus,
   FolderPlus,
   Folder as FolderIcon,
-  Pencil,
-  Trash2,
-  Share2,
+  Search,
+  Upload,
+  X,
 } from "lucide-react"
 import { Deck, Folder } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
+import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
 import { EditDeckDialog } from "@/components/decks/EditDeckDialog"
 import { DeleteDeckDialog } from "@/components/decks/DeleteDeckDialog"
@@ -38,6 +39,8 @@ import {
 import { useSRSCounts } from "@/hooks/useSRSCounts"
 import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
 import {
   DndContext,
   PointerSensor,
@@ -70,6 +73,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
 
   const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false)
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
+  const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
   const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
@@ -77,6 +81,9 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
   const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
   const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(null)
+
+  const [searchQuery, setSearchQuery] = useState("")
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
@@ -89,10 +96,14 @@ export function FolderView({ username, folder }: FolderViewProps) {
     !user.is_guest
   )
 
-  const childFolders = folderItems.filter(
+  const filteredItems = folderItems.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  )
+
+  const childFolders = filteredItems.filter(
     (item): item is Folder => item.type === "folder" && item.parent_id === folder.id
   )
-  const childDecks = folderItems.filter(
+  const childDecks = filteredItems.filter(
     (item): item is Deck => item.type === "deck" && item.folder_id === folder.id
   )
 
@@ -158,97 +169,135 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const totalItems = childFolders.length + childDecks.length
 
   return (
-    <div className="container mx-auto max-w-5xl p-6">
+    <div className="flex flex-col w-full">
+      {folder.properties?.cover_image_url ? (
+        <div className="w-full aspect-[4/1] max-h-56 sm:max-h-72 bg-muted">
+          <img 
+            src={folder.properties.cover_image_url} 
+            alt={`${folder.name} cover`}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ) : null}
+
+      <div className={cn(
+        "container mx-auto max-w-4xl px-4 pb-8 sm:px-10 sm:pb-16 space-y-8",
+        folder.properties?.cover_image_url ? "pt-6 sm:pt-8" : "pt-8 sm:pt-16"
+      )}>
       {/* Header & Navigation */}
-      <div className="mb-6">
+      <div className="flex flex-col">
+
+        <div className="flex flex-col w-full">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  "p-2.5 rounded-2xl flex items-center justify-center shadow-sm shrink-0",
+                  folder.properties?.color
+                    ? getDeckColorClass(folder.properties.color)
+                    : "bg-primary/10 text-primary"
+                )}
+              >
+                <FolderIcon className="h-6 w-6" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
+                {folder.name}
+              </h1>
+              <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
+                {totalItems}
+              </Badge>
+            </div>
+
+            <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
+            {isOwner && (
+              <>
+                <Button
+                  variant="outline"
+                  className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+                  size="sm"
+                  onClick={() => setIsImportDialogOpen(true)}
+                >
+                  <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+                  size="sm"
+                  onClick={() => setIsCreateFolderOpen(true)}
+                >
+                  <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">Folder</span>
+                </Button>
+                <Button 
+                  className="rounded-xl gap-2 font-medium"
+                  size="sm"
+                  onClick={() => setIsCreateDeckOpen(true)}>
+                  <Plus className="h-4 w-4" /> <span>Deck</span>
+                </Button>
+              </>
+            )}
+
+            <div className="relative sm:ml-2">
+              <Button
+                variant={isSearchOpen ? "secondary" : "ghost"}
+                size="icon"
+                onClick={() => {
+                  if (isSearchOpen) setSearchQuery("")
+                  setIsSearchOpen(!isSearchOpen)
+                }}
+                className={cn(
+                  "h-9 w-9 sm:h-10 sm:w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors",
+                  isSearchOpen ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                <Search className="h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+              
+              {isSearchOpen && (
+                <div className="absolute right-0 top-12 z-20 flex items-center">
+                  <Input
+                    autoFocus
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-[200px] sm:w-48 md:w-64 pr-8 rounded-xl h-9 sm:h-10 border-border bg-card/95 backdrop-blur-md shadow-lg text-sm"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 h-9 w-9 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
+                    onClick={() => {
+                      setSearchQuery("")
+                      setIsSearchOpen(false)
+                    }}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+          </div>
+
+          <div className="flex flex-col mt-1 pl-[3.5rem]">
+            {folder.properties?.description && (
+              <p className="mt-1 text-sm text-foreground/90 whitespace-pre-wrap">
+                {folder.properties.description}
+              </p>
+            )}
+          </div>
+        </div>
+
         <Link
           href={backHref}
-          className="mb-4 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           {parentFolder ? `Back to ${parentFolder.name}` : "Back to Decks"}
         </Link>
-
-        {folder.properties?.cover_image_url && (
-          <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] max-h-64 w-full">
-            <img 
-              src={folder.properties.cover_image_url} 
-              alt={`${folder.name} cover`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
-
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                "flex h-10 w-10 items-center justify-center rounded-lg border bg-muted/30",
-                getDeckColorClass(folder.properties?.color)
-              )}
-              style={getDeckColorStyle(folder.properties?.color)}
-            >
-              <FolderIcon className="h-6 w-6 text-primary" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-3xl font-bold">{folder.name}</h1>
-                <Badge variant="outline" className="capitalize">
-                  {folder.privacy || "private"}
-                </Badge>
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {totalItems} {totalItems === 1 ? "item" : "items"}
-              </p>
-              {folder.properties?.description && (
-                <p className="mt-2 text-sm text-foreground/90 whitespace-pre-wrap">
-                  {folder.properties.description}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {isOwner && (
-            <div className="flex flex-wrap items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShareFolderTarget(folder)}
-              >
-                <Share2 className="mr-1.5 h-4 w-4" /> Share
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setEditingFolder(folder)}
-              >
-                <Pencil className="mr-1.5 h-4 w-4" /> Edit
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDeleteCurrentFolder}
-                className="text-destructive hover:text-destructive"
-              >
-                <Trash2 className="mr-1.5 h-4 w-4" /> Delete
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setIsCreateFolderOpen(true)}
-              >
-                <FolderPlus className="mr-1.5 h-4 w-4" /> New Folder
-              </Button>
-              <Button size="sm" onClick={() => setIsCreateDeckOpen(true)}>
-                <Plus className="mr-1.5 h-4 w-4" /> New Deck
-              </Button>
-            </div>
-          )}
-        </div>
       </div>
 
       {folderItemsError && (
-        <Alert variant="destructive" className="mb-6">
+        <Alert variant="destructive" className="mb-6 rounded-xl">
           {folderItemsError.message}
         </Alert>
       )}
@@ -257,59 +306,79 @@ export function FolderView({ username, folder }: FolderViewProps) {
       {folderItemsLoading ? (
         <div className="p-8">Loading folder items...</div>
       ) : totalItems === 0 ? (
-        <div className="rounded-lg border bg-muted/20 p-12 text-center">
-          <p className="mb-4 text-muted-foreground">This folder is empty.</p>
-          {isOwner && (
-            <div className="flex justify-center gap-4">
-              <Button
-                onClick={() => setIsCreateFolderOpen(true)}
-                variant="outline"
-              >
+        <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
+            <FolderIcon className="w-6 h-6" />
+          </div>
+          <p className="text-lg font-semibold text-foreground mb-1">
+            {searchQuery ? "No matches found" : "This folder is empty"}
+          </p>
+          <p className="text-sm text-muted-foreground mb-6">
+            {searchQuery
+              ? `No decks or folders matched "${searchQuery}".`
+              : "Create your first deck or subfolder here!"}
+          </p>
+          {!searchQuery && isOwner && (
+            <div className="flex justify-center gap-3 flex-wrap">
+              <Button onClick={() => setIsCreateFolderOpen(true)} variant="outline" className="rounded-xl">
                 Create a subfolder
               </Button>
-              <Button onClick={() => setIsCreateDeckOpen(true)}>
+              <Button onClick={() => setIsCreateDeckOpen(true)} className="rounded-xl gap-2 font-medium">
+                <Plus className="w-4 h-4" />
                 Create a deck
               </Button>
             </div>
           )}
-        </div>
+        </Card>
       ) : (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {childFolders.map((subFolder) => {
-              const count = folderItems.filter(
-                (i) =>
-                  (i.type === "folder" && i.parent_id === subFolder.id) ||
-                  (i.type === "deck" && i.folder_id === subFolder.id)
-              ).length
+          <div className="space-y-5">
+            {childFolders.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
+                {childFolders.map((subFolder) => {
+                  const count = folderItems.filter(
+                    (i) =>
+                      (i.type === "folder" && i.parent_id === subFolder.id) ||
+                      (i.type === "deck" && i.folder_id === subFolder.id)
+                  ).length
 
-              return (
-                <FolderCard
-                  key={subFolder.id}
-                  folder={subFolder}
-                  username={username}
-                  itemCount={count}
-                  isOwner={isOwner}
-                  onShare={setShareFolderTarget}
-                  onEdit={setEditingFolder}
-                  onDelete={handleDeleteSubFolder}
-                  onMove={handleMoveFolder}
-                />
-              )
-            })}
+                  return (
+                    <FolderCard
+                      key={subFolder.id}
+                      folder={subFolder}
+                      username={username}
+                      itemCount={count}
+                      isOwner={isOwner}
+                      onShare={setShareFolderTarget}
+                      onEdit={setEditingFolder}
+                      onDelete={handleDeleteSubFolder}
+                      onMove={handleMoveFolder}
+                    />
+                  )
+                })}
+              </div>
+            )}
 
-            {childDecks.map((deck) => (
-              <DeckCard
-                key={deck.id}
-                deck={deck}
-                username={username}
-                srsCounts={srsCountsData?.[deck.id]}
-                onShare={setShareDeckTarget}
-                onEdit={setEditingDeckTarget}
-                onDelete={handleDeleteDeck}
-                onMove={handleMoveDeck}
-              />
-            ))}
+            {childFolders.length > 0 && childDecks.length > 0 && (
+              <hr className="border-border/60 my-6" />
+            )}
+
+            {childDecks.length > 0 && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {childDecks.map((deck) => (
+                  <DeckCard
+                    key={deck.id}
+                    deck={deck}
+                    username={username}
+                    srsCounts={srsCountsData?.[deck.id]}
+                    onShare={setShareDeckTarget}
+                    onEdit={setEditingDeckTarget}
+                    onDelete={handleDeleteDeck}
+                    onMove={handleMoveDeck}
+                  />
+                ))}
+              </div>
+            )}
           </div>
         </DndContext>
       )}
@@ -325,6 +394,15 @@ export function FolderView({ username, folder }: FolderViewProps) {
         onOpenChange={setIsCreateFolderOpen}
         parentId={folder.id}
       />
+
+      {isImportDialogOpen && (
+        <DeckImportDialog
+          mode="create"
+          username={user?.username}
+          folderId={folder.id}
+          onClose={() => setIsImportDialogOpen(false)}
+        />
+      )}
 
       <EditFolderDialog
         folder={editingFolder}
@@ -370,6 +448,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
           }
         }}
       />
+      </div>
     </div>
   )
 }

@@ -12,11 +12,11 @@ import { FlipCard } from "@/components/FlipCard"
 import { CardElement } from "@/types"
 
 export default function LearnPage() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+  const params = useParams<{ username: string; slug: string }>()
   const username = params.username
-  const deckSlug = params.deckSlug
+  const slug = params.slug
 
-  const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug)
+  const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
 
   const {
     loading: sessionLoading,
@@ -49,7 +49,7 @@ export default function LearnPage() {
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col p-6">
       <div className="mb-8 flex items-center gap-4">
-        <Link href={`/${username}/${deckSlug}`}>
+        <Link href={`/${username}/${slug}`}>
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Deck
@@ -112,7 +112,7 @@ export default function LearnPage() {
             You have mastered all the cards currently available in this deck.
           </p>
           <div className="flex w-full flex-col gap-3 sm:flex-row">
-            <Link href={`/${username}/${deckSlug}`} className="flex-1">
+            <Link href={`/${username}/${slug}`} className="flex-1">
               <Button size="lg" className="w-full" variant="outline">
                 Return to Deck
               </Button>

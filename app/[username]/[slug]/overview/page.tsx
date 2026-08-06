@@ -19,15 +19,15 @@ import { useDeck } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 
 export default function OverviewPage() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+  const params = useParams<{ username: string; slug: string }>()
   const username = params.username
-  const deckSlug = params.deckSlug
+  const slug = params.slug
 
   const {
     data: deck,
     isLoading: deckLoading,
     error,
-  } = useDeck(username, deckSlug)
+  } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
 
   const loading = deckLoading || (!!deck && cardsLoading)
@@ -74,7 +74,7 @@ export default function OverviewPage() {
           <h2 className="mb-4 text-2xl font-bold">
             {error?.message || "Deck not found"}
           </h2>
-          <Link href={`/${username}/${deckSlug}`}>
+          <Link href={`/${username}/${slug}`}>
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to deck
@@ -88,7 +88,7 @@ export default function OverviewPage() {
   return (
     <div className="container mx-auto max-w-5xl p-6">
       <div className="mb-6 flex items-center justify-between">
-        <Link href={`/${username}/${deckSlug}`}>
+        <Link href={`/${username}/${slug}`}>
           <Button variant="ghost" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Deck
@@ -130,7 +130,7 @@ export default function OverviewPage() {
         ) : (
           <div className="w-full max-w-xl rounded-lg border p-8 text-center text-muted-foreground">
             <p>No cards in this deck yet.</p>
-            <Link href={`/${username}/${deckSlug}`}>
+            <Link href={`/${username}/${slug}`}>
               <Button variant="link" className="mt-2">
                 Go back to add cards
               </Button>

@@ -45,7 +45,7 @@ export function FolderCard({
   const folderHref =
     username && folder.slug
       ? `/${username}/${folder.slug}`
-      : `/folders/${folder.id}`
+      : `/${username || "user"}/${folder.slug || folder.id}`
       
   const droppableId = `folder-drop-${folder.id}`
   const draggableId = `folder-drag-${folder.id}`

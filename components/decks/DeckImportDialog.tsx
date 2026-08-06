@@ -51,6 +51,8 @@ interface DeckImportDialogProps {
   deckId?: string;
   /** Required in create mode: owner username, used to navigate to the new deck. */
   username?: string;
+  /** Optional in create mode: create the deck in a specific folder. */
+  folderId?: string;
 }
 
 const FORMATS: ReadonlyArray<{
@@ -70,6 +72,7 @@ export function DeckImportDialog({
   mode,
   deckId,
   username,
+  folderId,
 }: DeckImportDialogProps) {
   const router = useRouter();
   const createCard = useCreateCard();
@@ -169,6 +172,7 @@ export function DeckImportDialog({
         const deck = await createDeck.mutateAsync({
           name: deckName.trim(),
           color: deckColor,
+          folderId,
         });
         setCreatedDeck(deck);
         targetDeckId = deck.id;

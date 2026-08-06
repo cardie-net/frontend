@@ -21,11 +21,11 @@ type GridItem = {
 }
 
 export default function MatchPage() {
-  const params = useParams<{ username: string; deckSlug: string }>()
+  const params = useParams<{ username: string; slug: string }>()
   const username = params.username
-  const deckSlug = params.deckSlug
+  const slug = params.slug
 
-  const { data: deck, isLoading: deckLoading } = useDeck(username, deckSlug)
+  const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
 
   const [gameState, setGameState] = useState<"idle" | "playing" | "done">(
@@ -177,7 +177,7 @@ export default function MatchPage() {
     return (
       <div className="container mx-auto max-w-5xl p-6">
         <div className="mb-6">
-          <Link href={`/${username}/${deckSlug}`}>
+          <Link href={`/${username}/${slug}`}>
             <Button variant="ghost" className="gap-2">
               <ArrowLeft className="h-4 w-4" />
               Back to Deck
@@ -192,7 +192,7 @@ export default function MatchPage() {
               <p className="mb-6 text-muted-foreground">
                 Add some cards to this deck to play Match Mode.
               </p>
-              <Link href={`/${username}/${deckSlug}`}>
+              <Link href={`/${username}/${slug}`}>
                 <Button>Go Back</Button>
               </Link>
             </CardContent>
@@ -205,7 +205,7 @@ export default function MatchPage() {
   return (
     <div className="container mx-auto max-w-6xl p-6">
       <div className="mb-6 flex h-10 items-center justify-between">
-        <Link href={`/${username}/${deckSlug}`}>
+        <Link href={`/${username}/${slug}`}>
           <Button variant="ghost" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Deck
@@ -260,7 +260,7 @@ export default function MatchPage() {
                   <RotateCcw className="mr-2 h-4 w-4" />
                   Play Again
                 </Button>
-                <Link href={`/${username}/${deckSlug}`} className="w-full">
+                <Link href={`/${username}/${slug}`} className="w-full">
                   <Button variant="outline" size="lg" className="w-full">
                     Back to Deck
                   </Button>
