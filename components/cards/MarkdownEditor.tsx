@@ -1,4 +1,4 @@
-'use client';
+"use client"
 
 import {
   useCallback,
@@ -9,8 +9,8 @@ import {
   type ClipboardEvent,
   type KeyboardEvent,
   type ReactNode,
-} from 'react';
-import { createPortal } from 'react-dom';
+} from "react"
+import { createPortal } from "react-dom"
 import {
   Bold,
   Eye,
@@ -25,33 +25,39 @@ import {
   PenLine,
   Trash2,
   Upload,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { CardElements } from '@/components/cards/CardElements';
-import { buildElements, uploadCardImage } from '@/lib/cards';
-import { cn } from '@/lib/utils';
+} from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { CardElements } from "@/components/cards/CardElements"
+import { buildElements, uploadCardImage } from "@/lib/cards"
+import { cn } from "@/lib/utils"
 
 interface MarkdownEditorProps {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
+  label: string
+  value: string
+  onChange: (value: string) => void
   /** Deck the image uploads belong to. */
-  deckId: string;
+  deckId: string
   /** Current image URL for this side, if one is set (max one per side). */
-  imageUrl: string | null;
-  onImageUrlChange: (url: string | null) => void;
-  placeholder?: string;
-  className?: string;
+  imageUrl: string | null
+  onImageUrlChange: (url: string | null) => void
+  placeholder?: string
+  className?: string
 }
 
 function ToolButton({
@@ -60,10 +66,10 @@ function ToolButton({
   title,
   children,
 }: {
-  onClick: () => void;
-  disabled?: boolean;
-  title: string;
-  children: ReactNode;
+  onClick: () => void
+  disabled?: boolean
+  title: string
+  children: ReactNode
 }) {
   return (
     <Button
@@ -78,7 +84,7 @@ function ToolButton({
     >
       {children}
     </Button>
-  );
+  )
 }
 
 /**
@@ -96,208 +102,236 @@ export function MarkdownEditor({
   placeholder,
   className,
 }: MarkdownEditorProps) {
-  const [mode, setMode] = useState<'write' | 'preview'>('write');
-  const [uploading, setUploading] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
-  const taRef = useRef<HTMLTextAreaElement | null>(null);
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [mode, setMode] = useState<"write" | "preview">("write")
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const taRef = useRef<HTMLTextAreaElement | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   // Restores the caret/selection right after a toolbar insert re-renders.
-  const pendingSelection = useRef<[number, number] | null>(null);
+  const pendingSelection = useRef<[number, number] | null>(null)
 
   const [promptState, setPromptState] = useState<{
-    open: boolean;
-    title: string;
-    onSubmit: (val: string) => void;
-  }>({ open: false, title: '', onSubmit: () => {} });
-  const [promptValue, setPromptValue] = useState('');
+    open: boolean
+    title: string
+    onSubmit: (val: string) => void
+  }>({ open: false, title: "", onSubmit: () => {} })
+  const [promptValue, setPromptValue] = useState("")
 
   const handlePromptSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    promptState.onSubmit(promptValue);
-    setPromptState((prev) => ({ ...prev, open: false }));
-  };
+    e.preventDefault()
+    promptState.onSubmit(promptValue)
+    setPromptState((prev) => ({ ...prev, open: false }))
+  }
 
   useLayoutEffect(() => {
     if (pendingSelection.current && taRef.current) {
-      const [start, end] = pendingSelection.current;
-      taRef.current.setSelectionRange(start, end);
-      pendingSelection.current = null;
+      const [start, end] = pendingSelection.current
+      taRef.current.setSelectionRange(start, end)
+      pendingSelection.current = null
     }
-  }, [value]);
+  }, [value])
 
   const applyWrap = useCallback(
     (before: string, after: string) => {
-      const ta = taRef.current;
-      if (!ta) return;
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
-      const selected = value.slice(start, end);
-      onChange(value.slice(0, start) + before + selected + after + value.slice(end));
+      const ta = taRef.current
+      if (!ta) return
+      const start = ta.selectionStart
+      const end = ta.selectionEnd
+      const selected = value.slice(start, end)
+      onChange(
+        value.slice(0, start) + before + selected + after + value.slice(end)
+      )
       pendingSelection.current = selected
         ? [start + before.length, start + before.length + selected.length]
-        : [start + before.length, start + before.length];
+        : [start + before.length, start + before.length]
     },
     [value, onChange]
-  );
+  )
 
   const insertLink = useCallback(() => {
-    const ta = taRef.current;
-    if (!ta) return;
-    const start = ta.selectionStart;
-    const end = ta.selectionEnd;
-    const selected = value.slice(start, end);
+    const ta = taRef.current
+    if (!ta) return
+    const start = ta.selectionStart
+    const end = ta.selectionEnd
+    const selected = value.slice(start, end)
 
-    setPromptValue('');
+    setPromptValue("")
     setPromptState({
       open: true,
-      title: 'Link URL',
+      title: "Link URL",
       onSubmit: (url) => {
-        if (!url) return;
+        if (!url) return
         if (selected) {
-          onChange(value.slice(0, start) + `[${selected}](${url})` + value.slice(end));
-          pendingSelection.current = [start + 1, start + 1 + selected.length];
+          onChange(
+            value.slice(0, start) + `[${selected}](${url})` + value.slice(end)
+          )
+          pendingSelection.current = [start + 1, start + 1 + selected.length]
         } else {
-          const label = 'text';
-          onChange(value.slice(0, start) + `[${label}](${url})` + value.slice(end));
-          pendingSelection.current = [start + 1, start + 1 + label.length];
+          const label = "text"
+          onChange(
+            value.slice(0, start) + `[${label}](${url})` + value.slice(end)
+          )
+          pendingSelection.current = [start + 1, start + 1 + label.length]
         }
       },
-    });
-  }, [value, onChange]);
+    })
+  }, [value, onChange])
 
   const toggleLinePrefix = useCallback(
     (marker: string) => {
-      const ta = taRef.current;
-      if (!ta) return;
-      const start = ta.selectionStart;
-      const end = ta.selectionEnd;
-      const selected = value.slice(start, end);
-      const multiline = selected.includes('\n');
+      const ta = taRef.current
+      if (!ta) return
+      const start = ta.selectionStart
+      const end = ta.selectionEnd
+      const selected = value.slice(start, end)
+      const multiline = selected.includes("\n")
 
       if (!multiline) {
-        const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-        const lineEndIdx = value.indexOf('\n', start);
-        const lineEnd = lineEndIdx === -1 ? value.length : lineEndIdx;
-        const line = value.slice(lineStart, lineEnd);
-        const has = line.startsWith(marker);
-        const newLine = has ? line.slice(marker.length) : marker + line;
-        onChange(value.slice(0, lineStart) + newLine + value.slice(lineEnd));
-        const delta = has ? -marker.length : marker.length;
-        pendingSelection.current = [start + delta, end + delta];
+        const lineStart = value.lastIndexOf("\n", start - 1) + 1
+        const lineEndIdx = value.indexOf("\n", start)
+        const lineEnd = lineEndIdx === -1 ? value.length : lineEndIdx
+        const line = value.slice(lineStart, lineEnd)
+        const has = line.startsWith(marker)
+        const newLine = has ? line.slice(marker.length) : marker + line
+        onChange(value.slice(0, lineStart) + newLine + value.slice(lineEnd))
+        const delta = has ? -marker.length : marker.length
+        pendingSelection.current = [start + delta, end + delta]
       } else {
         const newLines = selected
-          .split('\n')
-          .map((l) => (l.startsWith(marker) ? l.slice(marker.length) : marker + l));
-        onChange(value.slice(0, start) + newLines.join('\n') + value.slice(end));
+          .split("\n")
+          .map((l) =>
+            l.startsWith(marker) ? l.slice(marker.length) : marker + l
+          )
+        onChange(value.slice(0, start) + newLines.join("\n") + value.slice(end))
       }
     },
     [value, onChange]
-  );
+  )
 
   const toggleHeading = useCallback(
     (level: 1 | 2) => {
-      const marker = level === 1 ? '# ' : '## ';
-      const ta = taRef.current;
-      if (!ta) return;
-      const start = ta.selectionStart;
-      const lineStart = value.lastIndexOf('\n', start - 1) + 1;
-      const lineEndIdx = value.indexOf('\n', start);
-      const lineEnd = lineEndIdx === -1 ? value.length : lineEndIdx;
-      const line = value.slice(lineStart, lineEnd);
-      const has = line.startsWith(marker);
+      const marker = level === 1 ? "# " : "## "
+      const ta = taRef.current
+      if (!ta) return
+      const start = ta.selectionStart
+      const lineStart = value.lastIndexOf("\n", start - 1) + 1
+      const lineEndIdx = value.indexOf("\n", start)
+      const lineEnd = lineEndIdx === -1 ? value.length : lineEndIdx
+      const line = value.slice(lineStart, lineEnd)
+      const has = line.startsWith(marker)
       if (has) {
-        onChange(value.slice(0, lineStart) + line.slice(marker.length) + value.slice(lineEnd));
-        pendingSelection.current = [start - marker.length, start - marker.length];
+        onChange(
+          value.slice(0, lineStart) +
+            line.slice(marker.length) +
+            value.slice(lineEnd)
+        )
+        pendingSelection.current = [
+          start - marker.length,
+          start - marker.length,
+        ]
       } else {
-        const oldMarker = line.match(/^#{1,6} /)?.[0] ?? '';
-        onChange(value.slice(0, lineStart) + marker + line.slice(oldMarker.length) + value.slice(lineEnd));
-        const delta = marker.length - oldMarker.length;
-        pendingSelection.current = [start + delta, start + delta];
+        const oldMarker = line.match(/^#{1,6} /)?.[0] ?? ""
+        onChange(
+          value.slice(0, lineStart) +
+            marker +
+            line.slice(oldMarker.length) +
+            value.slice(lineEnd)
+        )
+        const delta = marker.length - oldMarker.length
+        pendingSelection.current = [start + delta, start + delta]
       }
     },
     [value, onChange]
-  );
+  )
 
   const handleImageUrl = useCallback(() => {
-    setPromptValue('');
+    setPromptValue("")
     setPromptState({
       open: true,
-      title: 'Image URL',
+      title: "Image URL",
       onSubmit: (url) => {
-        if (url) onImageUrlChange(url.trim());
+        if (url) onImageUrlChange(url.trim())
       },
-    });
-  }, [onImageUrlChange]);
+    })
+  }, [onImageUrlChange])
 
   const uploadFile = useCallback(
     async (file: File) => {
       if (imageUrl) {
-        setUploadError('One image per side — remove the current image first');
-        return;
+        setUploadError("One image per side — remove the current image first")
+        return
       }
-      setUploading(true);
-      setUploadError(null);
+      setUploading(true)
+      setUploadError(null)
       try {
-        const url = await uploadCardImage(deckId, file);
-        onImageUrlChange(url);
+        const url = await uploadCardImage(deckId, file)
+        onImageUrlChange(url)
       } catch (e) {
-        setUploadError(e instanceof Error ? e.message : 'Failed to upload image');
+        setUploadError(
+          e instanceof Error ? e.message : "Failed to upload image"
+        )
       } finally {
-        setUploading(false);
+        setUploading(false)
       }
     },
     [deckId, imageUrl, onImageUrlChange]
-  );
+  )
 
   const handleFileChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (file) uploadFile(file);
+      const file = e.target.files?.[0]
+      if (file) uploadFile(file)
       // Allow re-selecting the same file later (e.g. after removing the image).
-      e.target.value = '';
+      e.target.value = ""
     },
     [uploadFile]
-  );
+  )
 
   const handlePaste = useCallback(
     (e: ClipboardEvent<HTMLTextAreaElement>) => {
-      const items = e.clipboardData?.items;
-      if (!items) return;
+      const items = e.clipboardData?.items
+      if (!items) return
       for (const item of items) {
-        if (item.kind === 'file' && item.type.startsWith('image/')) {
-          e.preventDefault();
-          const file = item.getAsFile();
-          if (file) uploadFile(file);
-          return;
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          e.preventDefault()
+          const file = item.getAsFile()
+          if (file) uploadFile(file)
+          return
         }
       }
     },
     [uploadFile]
-  );
+  )
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLTextAreaElement>) => {
-      if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return;
-      const key = e.key.toLowerCase();
-      if (key === 'b') {
-        e.preventDefault();
-        applyWrap('**', '**');
-      } else if (key === 'i') {
-        e.preventDefault();
-        applyWrap('*', '*');
-      } else if (key === 'k') {
-        e.preventDefault();
-        insertLink();
+      if (!(e.metaKey || e.ctrlKey) || e.shiftKey || e.altKey) return
+      const key = e.key.toLowerCase()
+      if (key === "b") {
+        e.preventDefault()
+        applyWrap("**", "**")
+      } else if (key === "i") {
+        e.preventDefault()
+        applyWrap("*", "*")
+      } else if (key === "k") {
+        e.preventDefault()
+        insertLink()
       }
     },
     [applyWrap, insertLink]
-  );
+  )
 
   return (
-    <div className={cn('flex flex-col gap-2 min-w-0 w-full', className)}>
-      <Tabs value={mode} onValueChange={(v) => setMode(v as 'write' | 'preview')} className="gap-1.5 min-w-0 w-full">
+    <div className={cn("flex w-full min-w-0 flex-col gap-2", className)}>
+      <Tabs
+        value={mode}
+        onValueChange={(v) => setMode(v as "write" | "preview")}
+        className="w-full min-w-0 gap-1.5"
+      >
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-muted-foreground">{label}</span>
+          <span className="text-sm font-medium text-muted-foreground">
+            {label}
+          </span>
           <TabsList className="h-7">
             <TabsTrigger value="write">
               <PenLine />
@@ -310,12 +344,18 @@ export function MarkdownEditor({
           </TabsList>
         </div>
 
-        {mode === 'write' && (
-          <div className="flex flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1 min-w-0 w-full">
-            <ToolButton onClick={() => applyWrap('**', '**')} title="Bold (Ctrl/Cmd+B)">
+        {mode === "write" && (
+          <div className="flex w-full min-w-0 flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1">
+            <ToolButton
+              onClick={() => applyWrap("**", "**")}
+              title="Bold (Ctrl/Cmd+B)"
+            >
               <Bold />
             </ToolButton>
-            <ToolButton onClick={() => applyWrap('*', '*')} title="Italic (Ctrl/Cmd+I)">
+            <ToolButton
+              onClick={() => applyWrap("*", "*")}
+              title="Italic (Ctrl/Cmd+I)"
+            >
               <Italic />
             </ToolButton>
             <span className="mx-0.5 h-5 w-px bg-border" />
@@ -329,10 +369,16 @@ export function MarkdownEditor({
             <ToolButton onClick={insertLink} title="Link (Ctrl/Cmd+K)">
               <LinkIcon />
             </ToolButton>
-            <ToolButton onClick={() => toggleLinePrefix('- ')} title="Bullet list">
+            <ToolButton
+              onClick={() => toggleLinePrefix("- ")}
+              title="Bullet list"
+            >
               <List />
             </ToolButton>
-            <ToolButton onClick={() => toggleLinePrefix('1. ')} title="Numbered list">
+            <ToolButton
+              onClick={() => toggleLinePrefix("1. ")}
+              title="Numbered list"
+            >
               <ListOrdered />
             </ToolButton>
             <span className="mx-0.5 h-5 w-px bg-border" />
@@ -341,12 +387,18 @@ export function MarkdownEditor({
                 disabled={imageUrl !== null || uploading}
                 title={
                   imageUrl
-                    ? 'One image per side — remove the current image first'
-                    : 'Add image'
+                    ? "One image per side — remove the current image first"
+                    : "Add image"
                 }
-                render={<Button variant="ghost" size="icon-sm" className="h-7 w-7" />}
+                render={
+                  <Button variant="ghost" size="icon-sm" className="h-7 w-7" />
+                }
               >
-                {uploading ? <Loader2 className="animate-spin" /> : <ImageIcon />}
+                {uploading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <ImageIcon />
+                )}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
@@ -362,7 +414,7 @@ export function MarkdownEditor({
           </div>
         )}
 
-        <TabsContent value="write" className="min-w-0 w-full">
+        <TabsContent value="write" className="w-full min-w-0">
           <Textarea
             ref={taRef}
             value={value}
@@ -370,13 +422,13 @@ export function MarkdownEditor({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             placeholder={placeholder}
-            className="h-[240px] w-full resize-none overflow-y-auto md:text-base"
+            className="h-[160px] w-full resize-none overflow-y-auto sm:h-[240px] md:text-base"
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            style={{ fieldSizing: 'fixed' } as any}
+            style={{ fieldSizing: "fixed" } as any}
           />
         </TabsContent>
-        <TabsContent value="preview" className="min-w-0 w-full">
-          <div className="flex flex-col min-h-[240px] w-full overflow-auto rounded-xl border bg-card p-4 text-center">
+        <TabsContent value="preview" className="w-full min-w-0">
+          <div className="flex min-h-[120px] w-full flex-col overflow-auto rounded-xl border bg-card p-4 text-center sm:min-h-[240px]">
             <CardElements elements={buildElements(value, imageUrl)} />
           </div>
         </TabsContent>
@@ -392,10 +444,16 @@ export function MarkdownEditor({
 
       {uploadError && <p className="text-xs text-destructive">{uploadError}</p>}
 
-      {imageUrl && mode === 'write' && (
+      {imageUrl && mode === "write" && (
         <div className="flex items-center gap-3 rounded-xl border bg-muted/40 p-2">
-          <img src={imageUrl} alt="" className="h-14 w-14 rounded-md border object-cover" />
-          <span className="flex-1 truncate text-xs text-muted-foreground">{imageUrl}</span>
+          <img
+            src={imageUrl}
+            alt=""
+            className="h-14 w-14 rounded-md border object-cover"
+          />
+          <span className="flex-1 truncate text-xs text-muted-foreground">
+            {imageUrl}
+          </span>
           <Button
             type="button"
             variant="ghost"
@@ -403,19 +461,24 @@ export function MarkdownEditor({
             onClick={() => onImageUrlChange(null)}
             title="Remove image"
             aria-label="Remove image"
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 />
           </Button>
         </div>
       )}
 
-      <Dialog open={promptState.open} onOpenChange={(open) => setPromptState((prev) => ({ ...prev, open }))}>
-        {promptState.open && typeof document !== 'undefined' && createPortal(
-          <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm pointer-events-none transition-all duration-100" />,
-          document.body
-        )}
-        <DialogContent className="sm:max-w-[425px] z-[61]">
+      <Dialog
+        open={promptState.open}
+        onOpenChange={(open) => setPromptState((prev) => ({ ...prev, open }))}
+      >
+        {promptState.open &&
+          typeof document !== "undefined" &&
+          createPortal(
+            <div className="pointer-events-none fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm transition-all duration-100" />,
+            document.body
+          )}
+        <DialogContent className="z-[61] sm:max-w-[425px]">
           <DialogHeader>
             <DialogTitle>{promptState.title}</DialogTitle>
           </DialogHeader>
@@ -428,7 +491,13 @@ export function MarkdownEditor({
               className="mt-4"
             />
             <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-              <Button type="button" variant="outline" onClick={() => setPromptState((prev) => ({ ...prev, open: false }))}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() =>
+                  setPromptState((prev) => ({ ...prev, open: false }))
+                }
+              >
                 Cancel
               </Button>
               <Button type="submit">Submit</Button>
@@ -437,5 +506,5 @@ export function MarkdownEditor({
         </DialogContent>
       </Dialog>
     </div>
-  );
+  )
 }

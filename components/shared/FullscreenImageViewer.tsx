@@ -90,6 +90,39 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
     }
   };
 
+  const lastTouchDist = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      lastTouchDist.current = dist;
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLImageElement>) => {
+    if (e.touches.length === 2 && lastTouchDist.current !== null) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const delta = dist / lastTouchDist.current;
+      setScale(prev => Math.min(Math.max(prev * delta, 1), 10));
+      lastTouchDist.current = dist;
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLImageElement>) => {
+    if (e.touches.length < 2) {
+      lastTouchDist.current = null;
+      if (scale <= 1) {
+        setPosition({ x: 0, y: 0 });
+      }
+    }
+  };
+
   return createPortal(
     <div 
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-8 animate-in fade-in duration-200 overflow-hidden"
@@ -134,7 +167,7 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
           alt={alt || ''} 
           draggable={false}
           className={cn(
-            "max-h-full max-w-full object-contain drop-shadow-2xl",
+            "max-h-full max-w-full object-contain drop-shadow-2xl touch-none",
             isDragging ? "cursor-grabbing" : scale > 1 ? "cursor-grab" : "cursor-pointer",
             !isDragging && "transition-transform duration-200"
           )}
@@ -143,6 +176,9 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onClick={handleClick}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
         />
       </div>
     </div>,

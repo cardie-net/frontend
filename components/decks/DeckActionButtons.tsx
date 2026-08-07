@@ -102,14 +102,16 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             >
               <Icon className="w-7 h-7" strokeWidth={1.75} />
             </div>
-            <span className="text-sm font-medium text-center leading-tight">
-              {action.label}
-              {action.href === 'match' && matchTime?.best_time_ms != null && (
-                <span className="block text-xs text-muted-foreground mt-1">
-                  Best: {formatTime(matchTime.best_time_ms)}
-                </span>
-              )}
-            </span>
+            <div className={cn("flex items-center justify-center", isOverview ? "sm:h-10" : "h-10")}>
+              <span className="text-sm font-medium text-center leading-tight">
+                {action.label}
+              </span>
+            </div>
+            {action.href === 'match' && matchTime?.best_time_ms != null && (
+              <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
+                Best: {formatTime(matchTime.best_time_ms)}
+              </span>
+            )}
           </div>
         );
 

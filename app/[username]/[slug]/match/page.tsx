@@ -185,14 +185,29 @@ export default function MatchPage() {
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-6xl flex-col space-y-8 px-4 py-8 sm:px-10 sm:py-16">
       <div className="flex flex-col">
-        <div className="flex justify-between gap-4 items-center">
-          <div className="flex items-center gap-3">
+        <div className="flex justify-start sm:justify-between gap-4 items-center">
+          <div className="hidden sm:flex items-center gap-3">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
               <LayoutGrid className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
               Match
             </h1>
+          </div>
+
+          <div className="flex sm:hidden items-center gap-2">
+            <Link href={`/${username}/${slug}`}>
+              <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
+            {(gameState === "playing" || gameState === "done") && (
+              <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1.5 font-mono text-sm text-foreground">
+                <Timer className="h-4 w-4" />
+                {formatTime(elapsedTime)}s
+              </div>
+            )}
           </div>
 
           <div className="hidden items-center justify-end gap-2 sm:flex">
@@ -213,21 +228,6 @@ export default function MatchPage() {
       </div>
 
       <div className="mt-4 sm:mt-8 flex min-h-0 flex-1 flex-col items-center justify-center">
-        <div className="w-full flex justify-end gap-2 mb-4 sm:hidden px-1">
-          {(gameState === "playing" || gameState === "done") && (
-            <div className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-1.5 font-mono text-sm text-foreground">
-              <Timer className="h-4 w-4" />
-              {formatTime(elapsedTime)}s
-            </div>
-          )}
-          <Link href={`/${username}/${slug}`}>
-            <Button variant="outline" size="sm" className="rounded-xl gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
-        </div>
-
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
             <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />

@@ -172,30 +172,31 @@ export function SortableCardRow({
       }}
       style={style}
       className={cn(
-        'group grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-all duration-200',
+        'group grid items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-all duration-200',
+        isEditing ? 'grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr_auto]',
         isDragging && 'z-50 shadow-xl ring-2 ring-primary/30 opacity-90',
         !isDragging && 'hover:shadow-sm',
         isEditing && 'ring-2 ring-primary/20 bg-accent/30'
       )}
     >
-      {/* Drag handle */}
       <div
         className={cn(
-          'flex items-center gap-2',
-          isOwner ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'
+          'flex items-center gap-1 sm:gap-2',
+          isOwner ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
+          isEditing && 'row-span-2 sm:row-span-1'
         )}
         {...(isOwner ? { ...attributes, ...listeners } : {})}
       >
         {isOwner && (
           <GripVertical className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
         )}
-        <span className="text-xs text-muted-foreground font-mono w-6 text-right tabular-nums">
+        <span className="text-xs text-muted-foreground font-mono w-5 sm:w-6 text-right tabular-nums">
           {index + 1}
         </span>
       </div>
 
       {/* Front */}
-      <div className="min-w-0">
+      <div className={cn("min-w-0", isEditing && "col-start-2 sm:col-start-auto")}>
         {isEditing ? (
           <div className="flex min-w-0 items-center gap-2">
             {editFrontImage && <RowCellImage url={editFrontImage} interactive={false} />}
@@ -230,7 +231,7 @@ export function SortableCardRow({
       </div>
 
       {/* Back */}
-      <div className="min-w-0">
+      <div className={cn("min-w-0", isEditing && "col-start-2 sm:col-start-auto")}>
         {isEditing ? (
           <div className="flex min-w-0 items-center gap-2">
             {editBackImage && <RowCellImage url={editBackImage} interactive={false} />}
@@ -264,7 +265,12 @@ export function SortableCardRow({
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1">
+      <div className={cn(
+        "flex items-center",
+        isEditing 
+          ? "flex-col sm:flex-row gap-2 sm:gap-1 col-start-3 row-start-1 row-span-2 sm:col-start-auto sm:row-start-auto sm:row-span-1 justify-center" 
+          : "gap-1"
+      )}>
         {isEditing ? (
           <>
             <Button

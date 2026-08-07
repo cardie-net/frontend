@@ -19,7 +19,7 @@ import { CardElement, FlashCard } from '@/types';
 
 interface EditorDialogShellProps {
   title: string;
-  description: string;
+  description: ReactNode;
   deckId: string;
   front: string;
   back: string;
@@ -202,7 +202,12 @@ export function CardEditDialog({ card, deckId, onClose, onSave, isSaving }: Card
   return (
     <EditorDialogShell
       title="Edit card"
-      description="Front and back support markdown formatting. Each side can hold one image, shown separately."
+      description={
+        <>
+          <span className="hidden sm:inline">Front and back support markdown formatting. Each side can hold one image, shown separately.</span>
+          <span className="sm:hidden">Supports markdown and images.</span>
+        </>
+      }
       deckId={deckId}
       front={front}
       back={back}
@@ -242,7 +247,12 @@ export function NewCardDialog({ deckId, onClose, onSave, onSaveAnother, isSaving
   return (
     <EditorDialogShell
       title="Add card"
-      description="Front and back support markdown formatting. Each side can hold one image, shown separately."
+      description={
+        <>
+          <span className="hidden sm:inline">Front and back support markdown formatting. Each side can hold one image, shown separately.</span>
+          <span className="sm:hidden">Supports markdown and images.</span>
+        </>
+      }
       deckId={deckId}
       front={front}
       back={back}

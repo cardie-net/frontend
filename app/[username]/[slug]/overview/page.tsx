@@ -88,13 +88,20 @@ export default function OverviewPage() {
   return (
     <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col px-4 py-8 sm:px-10 sm:py-16 space-y-8">
       <div className="flex flex-col">
-        <div className="flex justify-between gap-4 items-center">
-          <div className="flex items-center gap-3">
+        <div className="flex justify-start sm:justify-between gap-4 items-center">
+          <div className="hidden sm:flex items-center gap-3">
             <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
               <Eye className="w-6 h-6" />
             </div>
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Overview</h1>
           </div>
+
+          <Link href={`/${username}/${slug}`} className="sm:hidden">
+            <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+              <ArrowLeft className="h-4 w-4" />
+              Back
+            </Button>
+          </Link>
 
           <Link href={`/${username}/${slug}`} className="hidden sm:block">
             <Button variant="outline" className="rounded-xl gap-2 font-medium">
@@ -106,14 +113,6 @@ export default function OverviewPage() {
       </div>
 
       <div className="mt-4 sm:mt-8 flex flex-1 flex-col items-center justify-center min-h-0">
-        <div className="w-full flex justify-end mb-4 sm:hidden px-1">
-          <Link href={`/${username}/${slug}`}>
-            <Button variant="outline" size="sm" className="rounded-xl gap-2">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
-        </div>
         {cards.length > 0 ? (
           <div className="w-full flex flex-col flex-1 sm:flex-none min-h-0">
             <Carousel setApi={setApi} className="w-full flex-1 sm:flex-none flex flex-col min-h-0">
