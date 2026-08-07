@@ -7,11 +7,13 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogClose,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export const ACTION_BUTTONS = [
   {
@@ -98,25 +100,27 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
               <DialogTrigger className="block text-left w-full h-full text-foreground hover:no-underline p-0 m-0 border-none bg-transparent focus:outline-none">
                 {cardContent}
               </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <div className="flex flex-col items-center gap-3 mb-2">
-                    <div className="p-4 rounded-full bg-pink-500/10 text-pink-500">
-                      <Icon className="h-10 w-10" />
-                    </div>
-                    <DialogTitle className="text-2xl font-bold">Match Mode</DialogTitle>
+              <DialogContent>
+                <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+                  <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+                    <Icon className="w-5 h-5" />
                   </div>
-                  <DialogDescription className="text-base text-center pt-2">
-                    Match the front and back of the cards as quickly as possible. Up to 10 cards will be randomly selected.
-                  </DialogDescription>
+                  <DialogTitle className="text-base font-semibold">Match Mode</DialogTitle>
                 </DialogHeader>
-                <div className="mt-6 flex justify-end">
-                  <Link href={`/${username}/${deckSlug}/match`} className="w-full">
-                    <Button size="lg" className="w-full text-lg h-12">
-                      Start Game
-                    </Button>
-                  </Link>
+                <DialogDescription className="sr-only">
+                  Match the front and back of the cards as quickly as possible.
+                </DialogDescription>
+                <div className="text-sm text-muted-foreground">
+                  Match the front and back of the cards as quickly as possible. Up to 10 cards will be randomly selected.
                 </div>
+                <DialogFooter>
+                  <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
+                    Cancel
+                  </DialogClose>
+                  <Link href={`/${username}/${deckSlug}/match`} tabIndex={-1} className={buttonVariants({ className: "w-full sm:w-auto" })}>
+                    Start Game
+                  </Link>
+                </DialogFooter>
               </DialogContent>
             </Dialog>
           );

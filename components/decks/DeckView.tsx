@@ -13,7 +13,7 @@ import {
   Layers,
   Upload,
   Download,
-  RefreshCw,
+  ArrowLeftRight,
 } from "lucide-react"
 import {
   DndContext,
@@ -373,7 +373,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   onClick={() => setShowTransposeDialog(true)}
                   title="Swap Deck Sides"
                 >
-                  <RefreshCw className="h-4 w-4" />{" "}
+                  <ArrowLeftRight className="h-4 w-4" />{" "}
                   <span className="hidden sm:inline">Swap</span>
                 </Button>
               )}
