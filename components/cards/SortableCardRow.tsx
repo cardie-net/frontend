@@ -190,7 +190,7 @@ export function SortableCardRow({
         {isOwner && (
           <GripVertical className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
         )}
-        <span className="text-xs text-muted-foreground font-mono w-5 sm:w-6 text-right tabular-nums">
+        <span className="hidden sm:inline-block text-xs text-muted-foreground font-mono w-5 sm:w-6 text-right tabular-nums">
           {index + 1}
         </span>
       </div>
@@ -312,7 +312,7 @@ export function SortableCardRow({
               variant="ghost"
               size="icon-xs"
               onClick={() => onOpenFullEdit(card)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
+              className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
               aria-label="Edit card"
               title="Edit card"
             >
@@ -322,7 +322,7 @@ export function SortableCardRow({
               variant="ghost"
               size="icon-xs"
               onClick={() => onDelete(card.id)}
-              className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+              className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
               aria-label="Delete card"
               title="Delete card"
             >
