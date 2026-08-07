@@ -10,6 +10,7 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react';
+import { createPortal } from 'react-dom';
 import {
   Bold,
   Eye,
@@ -34,6 +35,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { CardElements } from '@/components/cards/CardElements';
 import { buildElements, uploadCardImage } from '@/lib/cards';
 import { cn } from '@/lib/utils';
@@ -101,6 +104,19 @@ export function MarkdownEditor({
   // Restores the caret/selection right after a toolbar insert re-renders.
   const pendingSelection = useRef<[number, number] | null>(null);
 
+  const [promptState, setPromptState] = useState<{
+    open: boolean;
+    title: string;
+    onSubmit: (val: string) => void;
+  }>({ open: false, title: '', onSubmit: () => {} });
+  const [promptValue, setPromptValue] = useState('');
+
+  const handlePromptSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    promptState.onSubmit(promptValue);
+    setPromptState((prev) => ({ ...prev, open: false }));
+  };
+
   useLayoutEffect(() => {
     if (pendingSelection.current && taRef.current) {
       const [start, end] = pendingSelection.current;
@@ -125,21 +141,28 @@ export function MarkdownEditor({
   );
 
   const insertLink = useCallback(() => {
-    const url = window.prompt('Link URL');
-    if (!url) return;
     const ta = taRef.current;
     if (!ta) return;
     const start = ta.selectionStart;
     const end = ta.selectionEnd;
     const selected = value.slice(start, end);
-    if (selected) {
-      onChange(value.slice(0, start) + `[${selected}](${url})` + value.slice(end));
-      pendingSelection.current = [start + 1, start + 1 + selected.length];
-    } else {
-      const label = 'text';
-      onChange(value.slice(0, start) + `[${label}](${url})` + value.slice(end));
-      pendingSelection.current = [start + 1, start + 1 + label.length];
-    }
+
+    setPromptValue('');
+    setPromptState({
+      open: true,
+      title: 'Link URL',
+      onSubmit: (url) => {
+        if (!url) return;
+        if (selected) {
+          onChange(value.slice(0, start) + `[${selected}](${url})` + value.slice(end));
+          pendingSelection.current = [start + 1, start + 1 + selected.length];
+        } else {
+          const label = 'text';
+          onChange(value.slice(0, start) + `[${label}](${url})` + value.slice(end));
+          pendingSelection.current = [start + 1, start + 1 + label.length];
+        }
+      },
+    });
   }, [value, onChange]);
 
   const toggleLinePrefix = useCallback(
@@ -196,8 +219,14 @@ export function MarkdownEditor({
   );
 
   const handleImageUrl = useCallback(() => {
-    const url = window.prompt('Image URL');
-    if (url) onImageUrlChange(url.trim());
+    setPromptValue('');
+    setPromptState({
+      open: true,
+      title: 'Image URL',
+      onSubmit: (url) => {
+        if (url) onImageUrlChange(url.trim());
+      },
+    });
   }, [onImageUrlChange]);
 
   const uploadFile = useCallback(
@@ -265,8 +294,8 @@ export function MarkdownEditor({
   );
 
   return (
-    <div className={cn('flex flex-col gap-2', className)}>
-      <Tabs value={mode} onValueChange={(v) => setMode(v as 'write' | 'preview')} className="gap-1.5">
+    <div className={cn('flex flex-col gap-2 min-w-0 w-full', className)}>
+      <Tabs value={mode} onValueChange={(v) => setMode(v as 'write' | 'preview')} className="gap-1.5 min-w-0 w-full">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-muted-foreground">{label}</span>
           <TabsList className="h-7">
@@ -282,7 +311,7 @@ export function MarkdownEditor({
         </div>
 
         {mode === 'write' && (
-          <div className="flex flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1">
+          <div className="flex flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1 min-w-0 w-full">
             <ToolButton onClick={() => applyWrap('**', '**')} title="Bold (Ctrl/Cmd+B)">
               <Bold />
             </ToolButton>
@@ -322,18 +351,18 @@ export function MarkdownEditor({
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
                   <Upload />
-                  Upload image…
+                  Upload
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleImageUrl}>
                   <LinkIcon />
-                  From URL…
+                  From URL
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         )}
 
-        <TabsContent value="write">
+        <TabsContent value="write" className="min-w-0 w-full">
           <Textarea
             ref={taRef}
             value={value}
@@ -341,11 +370,12 @@ export function MarkdownEditor({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             placeholder={placeholder}
-            className="min-h-[240px] w-full resize-y md:text-base"
+            className="h-[240px] w-full resize-none overflow-y-auto md:text-base"
+            style={{ fieldSizing: 'fixed' } as any}
           />
         </TabsContent>
-        <TabsContent value="preview">
-          <div className="min-h-[240px] w-full overflow-auto rounded-xl border bg-card p-4">
+        <TabsContent value="preview" className="min-w-0 w-full">
+          <div className="flex flex-col min-h-[240px] w-full overflow-auto rounded-xl border bg-card p-4 text-center">
             <CardElements elements={buildElements(value, imageUrl)} />
           </div>
         </TabsContent>
@@ -361,7 +391,7 @@ export function MarkdownEditor({
 
       {uploadError && <p className="text-xs text-destructive">{uploadError}</p>}
 
-      {imageUrl && (
+      {imageUrl && mode === 'write' && (
         <div className="flex items-center gap-3 rounded-xl border bg-muted/40 p-2">
           <img src={imageUrl} alt="" className="h-14 w-14 rounded-md border object-cover" />
           <span className="flex-1 truncate text-xs text-muted-foreground">{imageUrl}</span>
@@ -378,6 +408,33 @@ export function MarkdownEditor({
           </Button>
         </div>
       )}
+
+      <Dialog open={promptState.open} onOpenChange={(open) => setPromptState((prev) => ({ ...prev, open }))}>
+        {promptState.open && typeof document !== 'undefined' && createPortal(
+          <div className="fixed inset-0 z-[60] bg-black/30 backdrop-blur-sm pointer-events-none transition-all duration-100" />,
+          document.body
+        )}
+        <DialogContent className="sm:max-w-[425px] z-[61]">
+          <DialogHeader>
+            <DialogTitle>{promptState.title}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePromptSubmit}>
+            <Input
+              autoFocus
+              value={promptValue}
+              onChange={(e) => setPromptValue(e.target.value)}
+              placeholder="https://..."
+              className="mt-4"
+            />
+            <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button type="button" variant="outline" onClick={() => setPromptState((prev) => ({ ...prev, open: false }))}>
+                Cancel
+              </Button>
+              <Button type="submit">Submit</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

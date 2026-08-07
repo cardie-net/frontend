@@ -40,7 +40,7 @@ import {
   useDeleteCard,
   useReorderCards,
 } from "@/hooks/useCards"
-import { buildElements, getCardImage, getCardText } from "@/lib/cards"
+import { buildElements, getCardImage, getCardText, uploadCardImage } from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 
@@ -71,6 +71,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
   const [editFront, setEditFront] = useState("")
   const [editBack, setEditBack] = useState("")
+  const [editFrontImage, setEditFrontImage] = useState<string | null>(null)
+  const [editBackImage, setEditBackImage] = useState<string | null>(null)
 
   // Latest editingCardId, readable from async callbacks (e.g. auto-save on blur).
   const editingCardIdRef = useRef<string | null>(null)
@@ -108,15 +110,27 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
 
   // Simple click on the card starts inline editing (fast path).
   const handleStartEdit = (card: FlashCard) => {
+    const frontText = getCardText(card.front)
+    const backText = getCardText(card.back)
+
+    if (frontText.includes("\n") || backText.includes("\n")) {
+      handleOpenFullEdit(card)
+      return
+    }
+
     setEditingCardId(card.id)
-    setEditFront(getCardText(card.front))
-    setEditBack(getCardText(card.back))
+    setEditFront(frontText)
+    setEditBack(backText)
+    setEditFrontImage(getCardImage(card.front)?.url ?? null)
+    setEditBackImage(getCardImage(card.back)?.url ?? null)
   }
 
   const handleCancelEdit = () => {
     setEditingCardId(null)
     setEditFront("")
     setEditBack("")
+    setEditFrontImage(null)
+    setEditBackImage(null)
   }
 
   const handleSaveEdit = () => {
@@ -124,8 +138,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
     const cardIdToSave = editingCardId
     // Preserve any image elements the card already has on each side.
     const card = cards.find((c) => c.id === cardIdToSave)
-    const frontImage = card ? (getCardImage(card.front)?.url ?? null) : null
-    const backImage = card ? (getCardImage(card.back)?.url ?? null) : null
+    const frontImage = editFrontImage ?? (card ? (getCardImage(card.front)?.url ?? null) : null)
+    const backImage = editBackImage ?? (card ? (getCardImage(card.back)?.url ?? null) : null)
     updateCard.mutate(
       {
         deckId: deck.id,
@@ -140,6 +154,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           setEditingCardId(null)
           setEditFront("")
           setEditBack("")
+          setEditFrontImage(null)
+          setEditBackImage(null)
         },
       }
     )
@@ -150,6 +166,38 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
     handleCancelEdit()
     setEditingCard(card)
   }
+
+  const handleImagePaste = async (cardId: string, side: 'front' | 'back', file: File) => {
+    if (cardId !== editingCardId) return;
+    try {
+      const url = await uploadCardImage(deck.id, file);
+      
+      if (side === 'front') {
+        setEditFrontImage(url);
+      } else {
+        setEditBackImage(url);
+      }
+
+      const card = cards.find((c) => c.id === cardId);
+      if (!card) return;
+      
+      const frontImage = side === 'front' ? url : (editFrontImage ?? (getCardImage(card.front)?.url ?? null));
+      const backImage = side === 'back' ? url : (editBackImage ?? (getCardImage(card.back)?.url ?? null));
+      
+      const finalFrontText = cardId === editingCardId ? editFront : getCardText(card.front);
+      const finalBackText = cardId === editingCardId ? editBack : getCardText(card.back);
+
+      updateCard.mutate({
+        deckId: deck.id,
+        cardId,
+        front: buildElements(finalFrontText, frontImage),
+        back: buildElements(finalBackText, backImage),
+      });
+    } catch (e) {
+      console.error(e);
+      alert('Failed to upload image');
+    }
+  };
 
   // --- Add Card ---
 
@@ -370,6 +418,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     editingCardId={editingCardId}
                     editFront={editFront}
                     editBack={editBack}
+                    editFrontImage={editFrontImage}
+                    editBackImage={editBackImage}
                     isSavingCard={
                       updateCard.isPending &&
                       updateCard.variables?.cardId === card.id
@@ -381,6 +431,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     onDelete={handleDeleteCard}
                     onEditFrontChange={setEditFront}
                     onEditBackChange={setEditBack}
+                    onImagePaste={(side, file) => handleImagePaste(card.id, side, file)}
                   />
                 ))}
               </div>

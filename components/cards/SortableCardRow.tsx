@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, type FocusEvent } from 'react';
+import { useEffect, useRef, useState, type FocusEvent } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
@@ -10,6 +10,52 @@ import { GripVertical, Maximize, Pencil, Trash2, X, Loader2 } from 'lucide-react
 import { CardElement, FlashCard, TextElement } from '@/types';
 import { getCardImage } from '@/lib/cards';
 import { CardElements } from '@/components/cards/CardElements';
+import { FullscreenImageViewer } from '@/components/shared/FullscreenImageViewer';
+
+/** Thumbnail with fullscreen preview capability */
+function RowCellImage({ url, interactive = true }: { url: string; interactive?: boolean }) {
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const handleOpen = (e: React.MouseEvent) => {
+    if (!interactive) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setIsFullscreen(true);
+  };
+
+  return (
+    <>
+      <div 
+        className={cn(
+          "relative h-8 w-8 shrink-0 overflow-hidden rounded-md border flex-shrink-0",
+          interactive ? "group/image cursor-pointer" : ""
+        )}
+        onClick={handleOpen}
+      >
+        <img
+          src={url}
+          alt=""
+          className={cn(
+            "h-full w-full object-cover transition-all duration-200",
+            interactive && "group-hover/image:blur-sm"
+          )}
+        />
+        {interactive && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/image:opacity-100 transition-opacity duration-200 bg-black/20">
+            <Maximize className="h-4 w-4 text-white drop-shadow-md" />
+          </div>
+        )}
+      </div>
+      {interactive && (
+        <FullscreenImageViewer 
+          src={url} 
+          isOpen={isFullscreen} 
+          onClose={() => setIsFullscreen(false)} 
+        />
+      )}
+    </>
+  );
+}
 
 /** Mini preview for the card list: small thumbnail to the left of compact markdown text. */
 function RowCell({ elements }: { elements: CardElement[] }) {
@@ -17,13 +63,7 @@ function RowCell({ elements }: { elements: CardElement[] }) {
   const texts = elements.filter((el): el is TextElement => el.type === 'text');
   return (
     <div className="flex min-w-0 items-center gap-2">
-      {image && (
-        <img
-          src={image.url}
-          alt=""
-          className="h-8 w-8 shrink-0 rounded-md border object-cover"
-        />
-      )}
+      {image && <RowCellImage url={image.url} />}
       {texts.length > 0 ? (
         <div className="min-w-0 flex-1 overflow-hidden">
           <CardElements elements={texts} compact className="space-y-0" />
@@ -42,6 +82,8 @@ interface SortableCardRowProps {
   editingCardId: string | null;
   editFront: string;
   editBack: string;
+  editFrontImage: string | null;
+  editBackImage: string | null;
   isSavingCard: boolean;
   onStartEdit: (card: FlashCard) => void;
   onCancelEdit: () => void;
@@ -50,6 +92,7 @@ interface SortableCardRowProps {
   onDelete: (cardId: string) => void;
   onEditFrontChange: (value: string) => void;
   onEditBackChange: (value: string) => void;
+  onImagePaste: (side: 'front' | 'back', file: File) => void;
 }
 
 export function SortableCardRow({
@@ -59,6 +102,8 @@ export function SortableCardRow({
   editingCardId,
   editFront,
   editBack,
+  editFrontImage,
+  editBackImage,
   isSavingCard,
   onStartEdit,
   onCancelEdit,
@@ -67,6 +112,7 @@ export function SortableCardRow({
   onDelete,
   onEditFrontChange,
   onEditBackChange,
+  onImagePaste,
 }: SortableCardRowProps) {
   const {
     attributes,
@@ -103,6 +149,21 @@ export function SortableCardRow({
     onSaveEdit();
   };
 
+  const handlePaste = (side: 'front' | 'back') => (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    for (const item of items) {
+      if (item.kind === 'file' && item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          onImagePaste(side, file);
+        }
+        return;
+      }
+    }
+  };
+
   return (
     <div
       ref={(node) => {
@@ -136,19 +197,23 @@ export function SortableCardRow({
       {/* Front */}
       <div className="min-w-0">
         {isEditing ? (
-          <Input
-            value={editFront}
-            onChange={(e) => onEditFrontChange(e.target.value)}
-            className="text-sm"
-            placeholder="Front of card"
-            disabled={isSavingCard}
-            autoFocus
-            onBlur={handleInputBlur}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onSaveEdit();
-              if (e.key === 'Escape') onCancelEdit();
-            }}
-          />
+          <div className="flex min-w-0 items-center gap-2">
+            {editFrontImage && <RowCellImage url={editFrontImage} interactive={false} />}
+            <Input
+              value={editFront}
+              onChange={(e) => onEditFrontChange(e.target.value)}
+              className="text-sm"
+              placeholder="Front of card"
+              disabled={isSavingCard}
+              autoFocus
+              onBlur={handleInputBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onSaveEdit();
+                if (e.key === 'Escape') onCancelEdit();
+              }}
+              onPaste={handlePaste('front')}
+            />
+          </div>
         ) : (
           <button
             type="button"
@@ -167,18 +232,22 @@ export function SortableCardRow({
       {/* Back */}
       <div className="min-w-0">
         {isEditing ? (
-          <Input
-            value={editBack}
-            onChange={(e) => onEditBackChange(e.target.value)}
-            className="text-sm"
-            placeholder="Back of card"
-            disabled={isSavingCard}
-            onBlur={handleInputBlur}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') onSaveEdit();
-              if (e.key === 'Escape') onCancelEdit();
-            }}
-          />
+          <div className="flex min-w-0 items-center gap-2">
+            {editBackImage && <RowCellImage url={editBackImage} interactive={false} />}
+            <Input
+              value={editBack}
+              onChange={(e) => onEditBackChange(e.target.value)}
+              className="text-sm"
+              placeholder="Back of card"
+              disabled={isSavingCard}
+              onBlur={handleInputBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') onSaveEdit();
+                if (e.key === 'Escape') onCancelEdit();
+              }}
+              onPaste={handlePaste('back')}
+            />
+          </div>
         ) : (
           <button
             type="button"
