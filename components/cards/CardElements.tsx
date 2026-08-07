@@ -81,6 +81,7 @@ function CardImage({ src, compact }: { src: string; compact?: boolean }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setIsFullscreen(true);
   };

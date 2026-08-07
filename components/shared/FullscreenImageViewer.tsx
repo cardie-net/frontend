@@ -132,6 +132,7 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
     >
       <div className="absolute top-4 right-4 z-[110] flex items-center gap-2">
         <button 
+          type="button"
           className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
           onClick={handleZoomOut}
           title="Zoom out"
@@ -139,6 +140,7 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
           <ZoomOut className="h-5 w-5" />
         </button>
         <button 
+          type="button"
           className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
           onClick={handleZoomIn}
           title="Zoom in"
@@ -147,6 +149,7 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
         </button>
         <div className="w-px h-6 bg-white/20 mx-1" />
         <button 
+          type="button"
           className="rounded-full bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
           onClick={(e) => {
              e.stopPropagation();
