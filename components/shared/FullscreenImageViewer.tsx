@@ -21,12 +21,14 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
   const lastPointerDown = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 
   // Reset scale and position when opened
   useEffect(() => {
     if (isOpen) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setScale(1);
       setPosition({ x: 0, y: 0 });
     }

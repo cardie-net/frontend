@@ -88,13 +88,13 @@ export default function MatchPage() {
     }, 100)
   }, [cards])
 
-  const endGame = useCallback((finalTime: number) => {
+  const endGame = (finalTime: number) => {
     setGameState("done")
     if (timerRef.current) clearInterval(timerRef.current)
     if (deck?.id) {
       updateMatchTime.mutate({ deckId: deck.id, timeMs: finalTime })
     }
-  }, [deck?.id, updateMatchTime])
+  }
 
   useEffect(() => {
     return () => {

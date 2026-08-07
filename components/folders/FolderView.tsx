@@ -36,7 +36,7 @@ import {
   useUserItems,
   useUpdateFolder,
 } from "@/hooks/useFolders"
-import { useSRSCounts } from "@/hooks/useSRSCounts"
+
 import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
@@ -65,7 +65,6 @@ export function FolderView({ username, folder }: FolderViewProps) {
     error: folderItemsError,
   } = useFolderItems(folder.id)
   const { data: allUserItems = [] } = useUserItems(folder.user_id)
-  const { data: srsCountsData } = useSRSCounts()
 
   const updateDeck = useUpdateDeck()
   const updateFolder = useUpdateFolder()
@@ -334,12 +333,6 @@ export function FolderView({ username, folder }: FolderViewProps) {
             {childFolders.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
                 {childFolders.map((subFolder) => {
-                  const count = folderItems.filter(
-                    (i) =>
-                      (i.type === "folder" && i.parent_id === subFolder.id) ||
-                      (i.type === "deck" && i.folder_id === subFolder.id)
-                  ).length
-
                   return (
                     <FolderCard
                       key={subFolder.id}

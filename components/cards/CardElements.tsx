@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
-import { ZoomIn, Maximize2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Maximize2 } from 'lucide-react';
 import Markdown, { type Components } from 'react-markdown';
 import { CardElement, ImageElement, TextElement } from '@/types';
 import { cn } from '@/lib/utils';
@@ -79,20 +79,10 @@ const compactMarkdownComponents: Components = {
 
 function CardImage({ src, compact }: { src: string; compact?: boolean }) {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const handleOpen = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsFullscreen(true);
-  };
-
-  const handleClose = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsFullscreen(false);
   };
 
   if (compact) {

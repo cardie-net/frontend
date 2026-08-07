@@ -371,6 +371,7 @@ export function MarkdownEditor({
             onPaste={handlePaste}
             placeholder={placeholder}
             className="h-[240px] w-full resize-none overflow-y-auto md:text-base"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             style={{ fieldSizing: 'fixed' } as any}
           />
         </TabsContent>

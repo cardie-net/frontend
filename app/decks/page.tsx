@@ -21,7 +21,7 @@ import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck, useDeleteDeck } from "@/hooks/useDecks"
 import { useUserItems, useUpdateFolder, useDeleteFolder } from "@/hooks/useFolders"
-import { useSRSCounts } from "@/hooks/useSRSCounts"
+
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -43,7 +43,6 @@ export default function DecksPage() {
     isLoading: itemsLoading,
     error: itemsError,
   } = useUserItems()
-  const { data: srsCountsData } = useSRSCounts()
 
   const updateDeck = useUpdateDeck()
   const deleteDeck = useDeleteDeck()
@@ -285,12 +284,6 @@ export default function DecksPage() {
             {rootFolders.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
                 {rootFolders.map((folder) => {
-                  const count = items.filter(
-                    (i) =>
-                      (i.type === "folder" && i.parent_id === folder.id) ||
-                      (i.type === "deck" && i.folder_id === folder.id)
-                  ).length
-
                   return (
                     <FolderCard
                       key={folder.id}
