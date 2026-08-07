@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BarChart3, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
+import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 export const ACTION_BUTTONS = [
   {
     label: 'Overview',
-    icon: BarChart3,
+    icon: Eye,
     href: 'overview',
     bgClasses: 'bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 hover:from-violet-500/20 hover:to-purple-500/20 dark:hover:from-violet-500/30 dark:hover:to-purple-500/30',
     iconColor: 'text-violet-600 dark:text-violet-400',

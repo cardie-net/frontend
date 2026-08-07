@@ -29,16 +29,16 @@ export function FlipCard({
   backContent,
 }: FlipCardProps) {
   return (
-    <div className="relative min-h-[400px] w-full [perspective:1000px]">
+    <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[400px] sm:min-h-[500px]">
       <div
-        className={`h-full min-h-[400px] w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
+        className={`h-full flex-1 flex flex-col min-h-0 w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
         onClick={() => {
           if (!flipped) onFlip()
         }}
       >
         {/* Front side */}
         <Card className="absolute inset-0 flex flex-col [backface-visibility:hidden]">
-          <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
+          <CardContent className="flex flex-col flex-1 min-h-0 p-8 text-center text-xl">
             <CardElements elements={front} />
           </CardContent>
           {!flipped && (
@@ -50,7 +50,7 @@ export function FlipCard({
 
         {/* Back side */}
         <Card className="absolute inset-0 flex [transform:rotateY(180deg)] flex-col [backface-visibility:hidden]">
-          <CardContent className="flex flex-1 items-center justify-center p-8 text-center text-xl">
+          <CardContent className="flex flex-col flex-1 min-h-0 p-8 text-center text-xl">
             <CardElements elements={backContent || back} />
           </CardContent>
         </Card>

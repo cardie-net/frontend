@@ -13,12 +13,12 @@ export function Flashcard({ card }: FlashcardProps) {
 
   return (
     <div
-      className="w-full max-w-lg aspect-[3/2] cursor-pointer mx-auto"
+      className="w-full flex-1 sm:flex-none flex flex-col min-h-[400px] sm:min-h-[500px] cursor-pointer mx-auto"
       style={{ perspective: '1000px' }}
       onClick={() => setIsFlipped(!isFlipped)}
     >
       <div
-        className="relative w-full h-full transition-transform duration-500"
+        className="relative w-full h-full flex-1 transition-transform duration-500"
         style={{
           transformStyle: 'preserve-3d',
           transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
@@ -26,14 +26,14 @@ export function Flashcard({ card }: FlashcardProps) {
       >
         {/* Front */}
         <Card
-          className="absolute inset-0 flex flex-col justify-center items-center p-8 text-center shadow-lg hover:shadow-xl transition-shadow bg-card"
+          className="absolute inset-0 flex flex-col p-8 text-center shadow-lg hover:shadow-xl transition-shadow bg-card"
           style={{
             backfaceVisibility: 'hidden',
             WebkitBackfaceVisibility: 'hidden',
             transform: 'rotateY(0deg)', // Explicit 0deg helps some browsers
           }}
         >
-          <CardContent className="p-0">
+          <CardContent className="flex flex-col flex-1 min-h-0 p-0">
             <CardElements elements={card.front} />
           </CardContent>
         </Card>
@@ -41,7 +41,7 @@ export function Flashcard({ card }: FlashcardProps) {
         {/* Back */}
         <Card
           className={cn(
-            'absolute inset-0 flex flex-col justify-center items-center p-8 text-center shadow-lg hover:shadow-xl transition-shadow bg-card border-primary/20'
+            'absolute inset-0 flex flex-col p-8 text-center shadow-lg hover:shadow-xl transition-shadow bg-card border-primary/20'
           )}
           style={{
             backfaceVisibility: 'hidden',
@@ -49,7 +49,7 @@ export function Flashcard({ card }: FlashcardProps) {
             transform: 'rotateY(180deg)',
           }}
         >
-          <CardContent className="p-0">
+          <CardContent className="flex flex-col flex-1 min-h-0 p-0">
             <CardElements elements={card.back} />
           </CardContent>
         </Card>

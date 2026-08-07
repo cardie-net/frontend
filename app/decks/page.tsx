@@ -296,7 +296,6 @@ export default function DecksPage() {
                       key={folder.id}
                       folder={folder}
                       username={user?.username}
-                      itemCount={count}
                       onShare={setShareFolderTarget}
                       onEdit={setEditingFolder}
                       onDelete={handleDeleteFolder}
@@ -318,7 +317,6 @@ export default function DecksPage() {
                     key={deck.id}
                     deck={deck}
                     username={user.username}
-                    srsCounts={srsCountsData?.[deck.id]}
                     onShare={setShareDeckTarget}
                     onEdit={setEditingDeckTarget}
                     onDelete={handleDeleteDeck}

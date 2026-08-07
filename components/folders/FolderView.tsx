@@ -345,7 +345,6 @@ export function FolderView({ username, folder }: FolderViewProps) {
                       key={subFolder.id}
                       folder={subFolder}
                       username={username}
-                      itemCount={count}
                       isOwner={isOwner}
                       onShare={setShareFolderTarget}
                       onEdit={setEditingFolder}
@@ -368,7 +367,6 @@ export function FolderView({ username, folder }: FolderViewProps) {
                     key={deck.id}
                     deck={deck}
                     username={username}
-                    srsCounts={srsCountsData?.[deck.id]}
                     onShare={setShareDeckTarget}
                     onEdit={setEditingDeckTarget}
                     onDelete={handleDeleteDeck}
