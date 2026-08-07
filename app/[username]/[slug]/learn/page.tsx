@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, Check, X, RotateCcw } from "lucide-react"
+import { ArrowLeft, Check, X, RotateCcw, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useDeck } from "@/hooks/useDecks"
@@ -47,14 +47,57 @@ export default function LearnPage() {
   }
 
   return (
-    <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col p-6">
-      <div className="mb-8 flex items-center gap-4">
-        <Link href={`/${username}/${slug}`}>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Deck
-          </Button>
+    <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+      <div className="flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Learn</h1>
+            </div>
+            <div className="sm:hidden">
+              <Button
+                variant="outline"
+                className="rounded-xl gap-2 font-medium h-10 w-10 p-0"
+                onClick={clearProgress}
+                title="Clear Progress"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="hidden sm:flex items-center justify-end w-full sm:w-auto gap-2">
+            <Button
+              variant="outline"
+              className="rounded-xl gap-2 font-medium"
+              onClick={clearProgress}
+              title="Clear Progress"
+            >
+              <RotateCcw className="h-4 w-4" />
+              <span className="hidden sm:inline">Clear</span>
+            </Button>
+            <Link href={`/${username}/${slug}`}>
+              <Button variant="outline" className="rounded-xl gap-2 font-medium">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Deck
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <Link
+          href={`/${username}/${slug}`}
+          className="mt-6 inline-flex sm:hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to Deck
         </Link>
+      </div>
+
+      <div className="flex items-center gap-4">
         <div className="flex-1">
           {/* Progress bar container */}
           <div className="flex h-2 w-full overflow-hidden rounded-full bg-secondary shadow-inner">
@@ -81,16 +124,6 @@ export default function LearnPage() {
         <div className="min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
           {stats.box3} / {stats.total} Mastered
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={clearProgress}
-          title="Clear Progress"
-          className="gap-2"
-        >
-          <RotateCcw className="h-4 w-4" />
-          <span className="hidden sm:inline">Clear</span>
-        </Button>
       </div>
 
       {isLoading ? (

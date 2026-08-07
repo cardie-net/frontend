@@ -251,36 +251,6 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 {cards.length}
               </Badge>
             </div>
-
-            <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
-              <Button
-                variant="outline"
-                className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
-                size="sm"
-                onClick={() => setShowExportDialog(true)}
-              >
-                <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
-              </Button>
-              {isOwner && (
-                <>
-                  <Button
-                    variant="outline"
-                    className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
-                    size="sm"
-                    onClick={() => setShowImportDialog(true)}
-                  >
-                    <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
-                  </Button>
-                  <Button
-                    className="rounded-xl gap-2 font-medium"
-                    size="sm"
-                    onClick={() => setShowAddForm(!showAddForm)}
-                  >
-                    <Plus className="h-4 w-4" /> <span>Add Card</span>
-                  </Button>
-                </>
-              )}
-            </div>
           </div>
 
           {deck.properties?.description && (
@@ -307,6 +277,35 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
       <div ref={cardsRef} id="cards" className="scroll-mt-6">
         <div className="mb-6 flex items-center justify-between gap-2">
           <h2 className="text-xl font-semibold">Cards</h2>
+          <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
+            <Button
+              variant="outline"
+              className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+              size="sm"
+              onClick={() => setShowExportDialog(true)}
+            >
+              <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
+            </Button>
+            {isOwner && (
+              <>
+                <Button
+                  variant="outline"
+                  className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+                  size="sm"
+                  onClick={() => setShowImportDialog(true)}
+                >
+                  <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
+                </Button>
+                <Button
+                  className="rounded-xl gap-2 font-medium"
+                  size="sm"
+                  onClick={() => setShowAddForm(!showAddForm)}
+                >
+                  <Plus className="h-4 w-4" /> <span>Card</span>
+                </Button>
+              </>
+            )}
+          </div>
         </div>
 
         {isOwner && showAddForm && (

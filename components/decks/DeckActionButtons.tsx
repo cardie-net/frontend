@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { BarChart3, GraduationCap, Clock, FileCheck, Layers } from 'lucide-react';
+import { BarChart3, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -18,41 +18,41 @@ export const ACTION_BUTTONS = [
     label: 'Overview',
     icon: BarChart3,
     href: 'overview',
-    gradient: 'from-violet-500/15 to-purple-500/15',
-    hoverGradient: 'from-violet-500/25 to-purple-500/25',
-    iconColor: 'text-violet-500',
+    bgClasses: 'bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 hover:from-violet-500/20 hover:to-purple-500/20 dark:hover:from-violet-500/30 dark:hover:to-purple-500/30',
+    iconColor: 'text-violet-600 dark:text-violet-400',
+    borderColor: 'border-violet-500/20 dark:border-violet-400/20 hover:border-violet-500/40 dark:hover:border-violet-400/40',
   },
   {
     label: 'Learn',
     icon: GraduationCap,
     href: 'learn',
-    gradient: 'from-blue-500/15 to-cyan-500/15',
-    hoverGradient: 'from-blue-500/25 to-cyan-500/25',
-    iconColor: 'text-blue-500',
+    bgClasses: 'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 hover:from-blue-500/20 hover:to-cyan-500/20 dark:hover:from-blue-500/30 dark:hover:to-cyan-500/30',
+    iconColor: 'text-blue-600 dark:text-blue-400',
+    borderColor: 'border-blue-500/20 dark:border-blue-400/20 hover:border-blue-500/40 dark:hover:border-blue-400/40',
   },
   {
     label: 'Spaced Repetition',
     icon: Clock,
     href: 'spaced-repetition',
-    gradient: 'from-emerald-500/15 to-teal-500/15',
-    hoverGradient: 'from-emerald-500/25 to-teal-500/25',
-    iconColor: 'text-emerald-500',
+    bgClasses: 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 hover:from-emerald-500/20 hover:to-teal-500/20 dark:hover:from-emerald-500/30 dark:hover:to-teal-500/30',
+    iconColor: 'text-emerald-600 dark:text-emerald-400',
+    borderColor: 'border-emerald-500/20 dark:border-emerald-400/20 hover:border-emerald-500/40 dark:hover:border-emerald-400/40',
   },
   {
     label: 'Exam',
     icon: FileCheck,
     href: 'exam',
-    gradient: 'from-amber-500/15 to-orange-500/15',
-    hoverGradient: 'from-amber-500/25 to-orange-500/25',
-    iconColor: 'text-amber-500',
+    bgClasses: 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 hover:from-amber-500/20 hover:to-orange-500/20 dark:hover:from-amber-500/30 dark:hover:to-orange-500/30',
+    iconColor: 'text-amber-600 dark:text-amber-400',
+    borderColor: 'border-amber-500/20 dark:border-amber-400/20 hover:border-amber-500/40 dark:hover:border-amber-400/40',
   },
   {
     label: 'Match',
-    icon: Layers,
+    icon: LayoutGrid,
     href: 'match',
-    gradient: 'from-pink-500/15 to-rose-500/15',
-    hoverGradient: 'from-pink-500/25 to-rose-500/25',
-    iconColor: 'text-pink-500',
+    bgClasses: 'bg-gradient-to-br from-pink-500/10 to-rose-500/10 dark:from-pink-500/20 dark:to-rose-500/20 hover:from-pink-500/20 hover:to-rose-500/20 dark:hover:from-pink-500/30 dark:hover:to-rose-500/30',
+    iconColor: 'text-pink-600 dark:text-pink-400',
+    borderColor: 'border-pink-500/20 dark:border-pink-400/20 hover:border-pink-500/40 dark:hover:border-pink-400/40',
   },
 ];
 
@@ -66,14 +66,16 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-12">
       {ACTION_BUTTONS.map((action) => {
         const Icon = action.icon;
+        const isOverview = action.href === 'overview';
         
         const cardContent = (
           <div
             className={cn(
-              'group relative flex flex-col items-center justify-center gap-3 rounded-2xl border p-6 aspect-square transition-all duration-300',
-              'bg-gradient-to-br hover:shadow-lg hover:-translate-y-0.5',
-              action.gradient,
-              `hover:${action.hoverGradient}`
+              'group relative flex items-center justify-center gap-3 rounded-2xl border transition-all duration-300',
+              'hover:shadow-lg hover:-translate-y-0.5',
+              action.bgClasses,
+              action.borderColor,
+              isOverview ? 'aspect-[4/1] flex-row p-4 sm:aspect-square sm:flex-col sm:p-6' : 'aspect-square flex-col p-6'
             )}
           >
             <div
@@ -124,7 +126,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
           <Link
             key={action.href}
             href={`/${username}/${deckSlug}/${action.href}`}
-            className="block"
+            className={cn("block", isOverview ? "col-span-2 sm:col-span-1" : "")}
           >
             {cardContent}
           </Link>

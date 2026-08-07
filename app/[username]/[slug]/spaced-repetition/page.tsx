@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, Check } from "lucide-react"
+import { ArrowLeft, Check, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
@@ -37,15 +37,35 @@ export default function SpacedRepetitionPage() {
   const isLoading = deckLoading || (!!deck && sessionLoading)
 
   return (
-    <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col p-6">
-      <div className="mb-8 flex items-center gap-4">
-        <Link href={`/${username}/${slug}`}>
-          <Button variant="ghost" size="sm" className="gap-2">
-            <ArrowLeft className="h-4 w-4" />
-            Back to Deck
-          </Button>
+    <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+      <div className="flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
+              <Clock className="w-6 h-6" />
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Spaced Repetition</h1>
+          </div>
+
+          <Link href={`/${username}/${slug}`} className="hidden sm:block">
+            <Button variant="outline" className="rounded-xl gap-2 font-medium">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Deck
+            </Button>
+          </Link>
+        </div>
+
+        <Link
+          href={`/${username}/${slug}`}
+          className="mt-6 inline-flex sm:hidden items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" />
+          Back to Deck
         </Link>
-        <div className="flex flex-1 justify-center gap-2">
+      </div>
+
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-1 gap-2">
           {counts.newRemaining > 0 && (
             <Badge className="bg-blue-500 px-3 py-1 text-white hover:bg-blue-600">
               {counts.newRemaining} New

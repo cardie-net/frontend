@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, Layers, Timer, RotateCcw } from "lucide-react"
+import { ArrowLeft, LayoutGrid, Timer, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -187,7 +187,7 @@ export default function MatchPage() {
         <div className="flex min-h-[60vh] items-center justify-center">
           <Card className="w-full max-w-md py-12 text-center">
             <CardContent>
-              <Layers className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+              <LayoutGrid className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
               <p className="mb-2 text-xl font-semibold">No Cards Available</p>
               <p className="mb-6 text-muted-foreground">
                 Add some cards to this deck to play Match Mode.
