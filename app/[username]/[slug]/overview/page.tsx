@@ -86,7 +86,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="container mx-auto flex min-h-[calc(100vh-64px)] max-w-4xl flex-col px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col px-4 pt-8 pb-6 sm:px-10 sm:py-16 space-y-8">
       <div className="flex flex-col">
         <div className="flex justify-start sm:justify-between gap-4 items-center">
           <div className="hidden sm:flex items-center gap-3">
