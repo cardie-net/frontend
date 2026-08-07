@@ -86,7 +86,7 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col px-4 pt-8 pb-6 sm:px-10 sm:py-16 space-y-8">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col px-4 pt-8 pb-2 sm:px-10 sm:py-16 space-y-4 sm:space-y-8">
       <div className="flex flex-col">
         <div className="flex justify-start sm:justify-between gap-4 items-center">
           <div className="hidden sm:flex items-center gap-3">
@@ -129,17 +129,17 @@ export default function OverviewPage() {
               <CarouselNext />
             </Carousel>
 
-            <div className="mt-8 px-8">
+            <div className="mt-4 sm:mt-8 px-8">
               <Progress
                 value={count > 0 ? (current / count) * 100 : 0}
                 className="h-2"
               />
-              <div className="mt-3 text-center text-sm font-medium text-muted-foreground">
+              <div className="mt-2 sm:mt-3 text-center text-sm font-medium text-muted-foreground">
                 Card {current} of {count}
               </div>
             </div>
 
-            <div className="mt-2 text-center text-xs text-muted-foreground">
+            <div className="mt-1 sm:mt-2 text-center text-xs text-muted-foreground">
               Click a card to flip it over
             </div>
           </div>

@@ -37,7 +37,7 @@ export default function SpacedRepetitionPage() {
   const isLoading = deckLoading || (!!deck && sessionLoading)
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-8 px-4 pt-8 pb-6 sm:px-10 sm:py-16">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-2 sm:px-10 sm:py-16">
       <div className="flex flex-col">
         <div className="flex justify-start sm:justify-between gap-4 items-center">
           <div className="hidden sm:flex items-center gap-3">
@@ -103,7 +103,7 @@ export default function SpacedRepetitionPage() {
               }}
             />
 
-            <div className="mt-8 px-4 sm:px-8">
+            <div className="mt-4 sm:mt-8 px-4 sm:px-8">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-1 gap-2">
                   {counts.newRemaining > 0 && (
@@ -129,49 +129,49 @@ export default function SpacedRepetitionPage() {
             </div>
 
             <div
-              className={`mt-8 flex w-full gap-3 transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              className={`mt-4 sm:mt-8 grid w-full grid-cols-2 gap-3 sm:flex sm:flex-row transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
             >
               <Button
                 size="lg"
                 variant="destructive"
-                className="h-auto flex-1 flex-col gap-1 py-3"
+                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 py-3"
                 onClick={() => handleRating(0)}
               >
-                <span className="text-base font-semibold">Again</span>
-                <span className="text-xs opacity-90">
+                <span className="text-sm sm:text-base font-semibold">Again</span>
+                <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.again}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto flex-1 flex-col gap-1 bg-orange-500 py-3 text-white hover:bg-orange-600"
+                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-orange-500 py-3 text-white hover:bg-orange-600"
                 onClick={() => handleRating(1)}
               >
-                <span className="text-base font-semibold">Hard</span>
-                <span className="text-xs opacity-90">
+                <span className="text-sm sm:text-base font-semibold">Hard</span>
+                <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.hard}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto flex-1 flex-col gap-1 bg-blue-500 py-3 text-white hover:bg-blue-600"
+                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-blue-500 py-3 text-white hover:bg-blue-600"
                 onClick={() => handleRating(2)}
               >
-                <span className="text-base font-semibold">Good</span>
-                <span className="text-xs opacity-90">
+                <span className="text-sm sm:text-base font-semibold">Good</span>
+                <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.good}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto flex-1 flex-col gap-1 bg-green-700 py-3 text-white hover:bg-green-800"
+                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-green-700 py-3 text-white hover:bg-green-800"
                 onClick={() => handleRating(3)}
               >
-                <span className="text-base font-semibold">Easy</span>
-                <span className="text-xs opacity-90">
+                <span className="text-sm sm:text-base font-semibold">Easy</span>
+                <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.easy}
                 </span>
               </Button>

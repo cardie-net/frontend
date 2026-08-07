@@ -47,7 +47,7 @@ export default function LearnPage() {
   }
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-8 px-4 pt-8 pb-6 sm:px-10 sm:py-16">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-2 sm:px-10 sm:py-16">
       <div className="flex flex-col">
         <div className="flex justify-start sm:justify-between gap-4 items-center">
           <div className="hidden sm:flex items-center gap-3">
@@ -146,7 +146,7 @@ export default function LearnPage() {
               }}
             />
 
-            <div className="mt-8 px-4 sm:px-8">
+            <div className="mt-4 sm:mt-8 px-4 sm:px-8">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   {/* Progress bar container */}
@@ -179,7 +179,7 @@ export default function LearnPage() {
 
             {/* Action Buttons */}
             <div
-              className={`mt-8 flex w-full gap-4 transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              className={`mt-4 sm:mt-8 flex w-full gap-4 transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
             >
               <Button
                 size="lg"

@@ -13,7 +13,7 @@ export function Flashcard({ card }: FlashcardProps) {
 
   return (
     <div
-      className="w-full flex-1 sm:flex-none flex flex-col min-h-[400px] sm:min-h-[500px] cursor-pointer mx-auto"
+      className="w-full flex-1 sm:flex-none flex flex-col min-h-[250px] sm:min-h-[500px] cursor-pointer mx-auto"
       style={{ perspective: '1000px' }}
       onClick={() => setIsFlipped(!isFlipped)}
     >

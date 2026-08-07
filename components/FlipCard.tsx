@@ -29,7 +29,7 @@ export function FlipCard({
   backContent,
 }: FlipCardProps) {
   return (
-    <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[400px] sm:min-h-[500px]">
+    <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[250px] sm:min-h-[500px]">
       <div
         className={`h-full flex-1 flex flex-col min-h-0 w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
         onClick={() => {
