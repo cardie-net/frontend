@@ -30,7 +30,7 @@ export function ColorPicker({ color, onChange, className }: ColorPickerProps) {
   )
 
   const handleHexChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let val = e.target.value
+    const val = e.target.value
     setCustomHex(val)
     if (val.match(/^#[0-9A-Fa-f]{6}$/i)) {
       onChange(val)

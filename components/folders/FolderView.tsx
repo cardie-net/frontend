@@ -29,16 +29,15 @@ import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
 import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
 import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
-import { useDeleteDeck, useUpdateDeck } from "@/hooks/useDecks"
+import { useUpdateDeck } from "@/hooks/useDecks"
 import {
   useFolder,
   useFolderItems,
   useUserItems,
   useUpdateFolder,
-  useDeleteFolder,
 } from "@/hooks/useFolders"
 import { useSRSCounts } from "@/hooks/useSRSCounts"
-import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
+import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -69,9 +68,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const { data: srsCountsData } = useSRSCounts()
 
   const updateDeck = useUpdateDeck()
-  const deleteDeck = useDeleteDeck()
   const updateFolder = useUpdateFolder()
-  const deleteFolder = useDeleteFolder()
 
   const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false)
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
@@ -127,9 +124,6 @@ export function FolderView({ username, folder }: FolderViewProps) {
     setMoveTarget({ id: folder.id, type: "folder", name: folder.name, currentParentId: folder.parent_id || null })
   }
 
-  const handleDeleteCurrentFolder = () => {
-    setDeleteFolderTarget(folder.id)
-  }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event

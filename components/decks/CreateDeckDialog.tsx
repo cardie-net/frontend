@@ -16,7 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useAuth } from "@/lib/AuthContext"
-import { DECK_COLORS } from "@/lib/decks"
+
 import { useCreateDeck } from "@/hooks/useDecks"
 import { Plus } from "lucide-react"
 import { ColorPicker } from "@/components/ui/color-picker"

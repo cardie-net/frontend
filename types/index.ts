@@ -64,7 +64,7 @@ export interface SocialLinks {
 
 export interface UserPreferences {
   language?: string
-  themeConfig?: Record<string, any>
+  themeConfig?: Record<string, unknown>
 }
 
 /** The authenticated user (`GET /api/v1/users/me`) or a public profile. */

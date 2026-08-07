@@ -25,7 +25,7 @@ interface FolderCardProps {
   folder: Folder
   username?: string
   isOwner?: boolean
-  itemCount?: number
+
   onShare?: (folder: Folder) => void
   onEdit?: (folder: Folder) => void
   onDelete?: (folderId: string) => void
@@ -36,7 +36,6 @@ export function FolderCard({
   folder,
   username,
   isOwner = true,
-  itemCount,
   onShare,
   onEdit,
   onDelete,

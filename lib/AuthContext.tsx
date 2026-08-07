@@ -29,7 +29,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const { importThemeJson } = useCustomTheme()
 
-  const syncPreferences = (userData: UserProfile) => {
+  const syncPreferences = useCallback((userData: UserProfile) => {
     if (userData.preferences) {
       if (userData.preferences.themeConfig) {
         // Prevent infinite loop if updateConfig triggers a patch
@@ -38,12 +38,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         importThemeJson(JSON.stringify(userData.preferences.themeConfig))
       }
       if (userData.preferences.language) {
-        void setLocale(userData.preferences.language).then(() => {
-          // A refresh might be needed, but we don't want to loop. setLocale sets a cookie.
-        })
+        if (!document.cookie.includes(`NEXT_LOCALE=${userData.preferences.language}`)) {
+          void setLocale(userData.preferences.language).then(() => {})
+        }
       }
     }
-  }
+  }, [importThemeJson])
 
   const fetchUser = useCallback(async () => {
     const response = await apiFetch(`/api/v1/users/me`)
@@ -54,6 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setUser(null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -82,6 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const logout = async () => {

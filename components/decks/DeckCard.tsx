@@ -24,7 +24,7 @@ import { useDraggable } from "@dnd-kit/core"
 interface DeckCardProps {
   deck: Deck
   username?: string
-  srsCounts?: any
+
   onShare: (deck: Deck) => void
   onEdit?: (deck: Deck) => void
   onDelete: (deckId: string) => void
@@ -34,7 +34,6 @@ interface DeckCardProps {
 export function DeckCard({
   deck,
   username,
-  srsCounts,
   onShare,
   onEdit,
   onDelete,

@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { AlertCircle, ArrowLeft, Plus, Layers, Upload, Download } from "lucide-react"
+import { ArrowLeft, Plus, Layers, Upload, Download } from "lucide-react"
 import {
   DndContext,
   closestCenter,
