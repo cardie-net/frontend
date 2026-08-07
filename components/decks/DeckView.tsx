@@ -7,7 +7,14 @@ import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, Layers, Upload, Download } from "lucide-react"
+import {
+  ArrowLeft,
+  Plus,
+  Layers,
+  Upload,
+  Download,
+  RefreshCw,
+} from "lucide-react"
 import {
   DndContext,
   closestCenter,
@@ -30,6 +37,7 @@ import {
   CardEditDialog,
   NewCardDialog,
 } from "@/components/cards/CardEditDialog"
+import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
@@ -39,8 +47,14 @@ import {
   useUpdateCard,
   useDeleteCard,
   useReorderCards,
+  useTransposeDeck,
 } from "@/hooks/useCards"
-import { buildElements, getCardImage, getCardText, uploadCardImage } from "@/lib/cards"
+import {
+  buildElements,
+  getCardImage,
+  getCardText,
+  uploadCardImage,
+} from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 
@@ -60,6 +74,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const updateCard = useUpdateCard()
   const deleteCard = useDeleteCard()
   const reorderCards = useReorderCards()
+  const transposeDeck = useTransposeDeck()
 
   // Popup (full) edit state
   const [editingCard, setEditingCard] = useState<FlashCard | null>(null)
@@ -88,6 +103,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   // Import/export dialog state
   const [showImportDialog, setShowImportDialog] = useState(false)
   const [showExportDialog, setShowExportDialog] = useState(false)
+  const [showTransposeDialog, setShowTransposeDialog] = useState(false)
 
   const cardsRef = useRef<HTMLDivElement>(null)
 
@@ -101,7 +117,11 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
 
   // Scroll to cards section if ?edit=true
   useEffect(() => {
-    if (!cardsLoading && searchParams.get("edit") === "true" && cardsRef.current) {
+    if (
+      !cardsLoading &&
+      searchParams.get("edit") === "true" &&
+      cardsRef.current
+    ) {
       cardsRef.current.scrollIntoView({ behavior: "smooth", block: "start" })
     }
   }, [cardsLoading, searchParams])
@@ -138,8 +158,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
     const cardIdToSave = editingCardId
     // Preserve any image elements the card already has on each side.
     const card = cards.find((c) => c.id === cardIdToSave)
-    const frontImage = editFrontImage ?? (card ? (getCardImage(card.front)?.url ?? null) : null)
-    const backImage = editBackImage ?? (card ? (getCardImage(card.back)?.url ?? null) : null)
+    const frontImage =
+      editFrontImage ?? (card ? (getCardImage(card.front)?.url ?? null) : null)
+    const backImage =
+      editBackImage ?? (card ? (getCardImage(card.back)?.url ?? null) : null)
     updateCard.mutate(
       {
         deckId: deck.id,
@@ -167,37 +189,49 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
     setEditingCard(card)
   }
 
-  const handleImagePaste = async (cardId: string, side: 'front' | 'back', file: File) => {
-    if (cardId !== editingCardId) return;
+  const handleImagePaste = async (
+    cardId: string,
+    side: "front" | "back",
+    file: File
+  ) => {
+    if (cardId !== editingCardId) return
     try {
-      const url = await uploadCardImage(deck.id, file);
-      
-      if (side === 'front') {
-        setEditFrontImage(url);
+      const url = await uploadCardImage(deck.id, file)
+
+      if (side === "front") {
+        setEditFrontImage(url)
       } else {
-        setEditBackImage(url);
+        setEditBackImage(url)
       }
 
-      const card = cards.find((c) => c.id === cardId);
-      if (!card) return;
-      
-      const frontImage = side === 'front' ? url : (editFrontImage ?? (getCardImage(card.front)?.url ?? null));
-      const backImage = side === 'back' ? url : (editBackImage ?? (getCardImage(card.back)?.url ?? null));
-      
-      const finalFrontText = cardId === editingCardId ? editFront : getCardText(card.front);
-      const finalBackText = cardId === editingCardId ? editBack : getCardText(card.back);
+      const card = cards.find((c) => c.id === cardId)
+      if (!card) return
+
+      const frontImage =
+        side === "front"
+          ? url
+          : (editFrontImage ?? getCardImage(card.front)?.url ?? null)
+      const backImage =
+        side === "back"
+          ? url
+          : (editBackImage ?? getCardImage(card.back)?.url ?? null)
+
+      const finalFrontText =
+        cardId === editingCardId ? editFront : getCardText(card.front)
+      const finalBackText =
+        cardId === editingCardId ? editBack : getCardText(card.back)
 
       updateCard.mutate({
         deckId: deck.id,
         cardId,
         front: buildElements(finalFrontText, frontImage),
         back: buildElements(finalBackText, backImage),
-      });
+      })
     } catch (e) {
-      console.error(e);
-      alert('Failed to upload image');
+      console.error(e)
+      alert("Failed to upload image")
     }
-  };
+  }
 
   // --- Add Card ---
 
@@ -262,236 +296,272 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   }
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex w-full flex-col">
       {deck.properties?.cover_image_url && (
-        <div className="w-full aspect-[4/1] max-h-56 sm:max-h-72 bg-muted">
-          <img 
-            src={deck.properties.cover_image_url} 
+        <div className="aspect-[4/1] max-h-56 w-full bg-muted sm:max-h-72">
+          <img
+            src={deck.properties.cover_image_url}
             alt={`${deck.name} cover`}
-            className="w-full h-full object-cover"
+            className="h-full w-full object-cover"
           />
         </div>
       )}
 
-      <div className={cn(
-        "container mx-auto max-w-4xl px-4 pb-8 sm:px-10 sm:pb-16 space-y-8",
-        deck.properties?.cover_image_url ? "pt-6 sm:pt-8" : "pt-8 sm:pt-16"
-      )}>
-      {/* Header & Navigation */}
-      <div className="flex flex-col">
-        <div className="flex flex-col w-full">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div
-                className={cn(
-                  "p-2.5 rounded-2xl flex items-center justify-center shadow-sm shrink-0",
-                  deck.properties?.color
-                    ? getDeckColorClass(deck.properties.color)
-                    : "bg-primary/10 text-primary"
-                )}
-              >
-                <Layers className="h-6 w-6" />
+      <div
+        className={cn(
+          "container mx-auto max-w-4xl space-y-8 px-4 pb-8 sm:px-10 sm:pb-16",
+          deck.properties?.cover_image_url ? "pt-6 sm:pt-8" : "pt-8 sm:pt-16"
+        )}
+      >
+        {/* Header & Navigation */}
+        <div className="flex flex-col">
+          <div className="flex w-full flex-col">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="flex items-center gap-3">
+                <div
+                  className={cn(
+                    "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm",
+                    deck.properties?.color
+                      ? getDeckColorClass(deck.properties.color)
+                      : "bg-primary/10 text-primary"
+                  )}
+                >
+                  <Layers className="h-6 w-6" />
+                </div>
+                <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
+                  {deck.name}
+                </h1>
+                <Badge
+                  variant="secondary"
+                  className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                >
+                  {cards.length}
+                </Badge>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
-                {deck.name}
-              </h1>
-              <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
-                {cards.length}
-              </Badge>
+            </div>
+
+            {deck.properties?.description && (
+              <div className="mt-4">
+                <p className="text-sm whitespace-pre-wrap text-foreground/90">
+                  {deck.properties.description}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <Link
+            href="/decks"
+            className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Back to Decks
+          </Link>
+        </div>
+
+        <DeckActionButtons username={username} deckSlug={slug} />
+
+        {/* Cards Section */}
+        <div ref={cardsRef} id="cards" className="scroll-mt-6">
+          <div className="mb-6 flex items-center justify-between gap-2">
+            <h2 className="text-xl font-semibold">Cards</h2>
+            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap">
+              {isOwner && (
+                <Button
+                  variant="outline"
+                  className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
+                  size="sm"
+                  onClick={() => setShowTransposeDialog(true)}
+                  title="Swap Deck Sides"
+                >
+                  <RefreshCw className="h-4 w-4" />{" "}
+                  <span className="hidden sm:inline">Swap</span>
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
+                size="sm"
+                onClick={() => setShowExportDialog(true)}
+              >
+                <Download className="h-4 w-4" />{" "}
+                <span className="hidden sm:inline">Export</span>
+              </Button>
+              {isOwner && (
+                <>
+                  <Button
+                    variant="outline"
+                    className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
+                    size="sm"
+                    onClick={() => setShowImportDialog(true)}
+                  >
+                    <Upload className="h-4 w-4" />{" "}
+                    <span className="hidden sm:inline">Import</span>
+                  </Button>
+                  <Button
+                    className="gap-2 rounded-xl font-medium"
+                    size="sm"
+                    onClick={() => setShowAddForm(!showAddForm)}
+                  >
+                    <Plus className="h-4 w-4" /> <span>Card</span>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
 
-          {deck.properties?.description && (
-            <div className="mt-4">
-              <p className="text-sm text-foreground/90 whitespace-pre-wrap">
-                {deck.properties.description}
-              </p>
+          {isOwner && showAddForm && (
+            <AddCardForm
+              newFront={newFront}
+              setNewFront={setNewFront}
+              newBack={newBack}
+              setNewBack={setNewBack}
+              isAddingCard={createCard.isPending}
+              onAddCard={handleAddCard}
+              onCancel={() => {
+                setShowAddForm(false)
+                setNewFront("")
+                setNewBack("")
+              }}
+              onOpenFullEditor={() => setShowNewCardDialog(true)}
+            />
+          )}
+
+          {/* Cards Table Header */}
+          {cards.length > 0 && (
+            <div className="mb-2 grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2">
+              <div className="w-10" />
+              <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                Front
+              </span>
+              <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+                Back
+              </span>
+              <div className="w-16" />
             </div>
+          )}
+
+          {/* Cards List */}
+          {cards.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center text-muted-foreground">
+              <Layers className="mb-3 h-10 w-10 opacity-40" />
+              <p className="mb-1 text-lg font-medium">No cards yet</p>
+              {isOwner && (
+                <p className="text-sm">
+                  Click &ldquo;Add Card&rdquo; to create your first flashcard.
+                </p>
+              )}
+            </div>
+          ) : (
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={cards.map((c) => c.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div className="space-y-2">
+                  {cards.map((card, index) => (
+                    <SortableCardRow
+                      key={card.id}
+                      card={card}
+                      index={index}
+                      isOwner={isOwner}
+                      editingCardId={editingCardId}
+                      editFront={editFront}
+                      editBack={editBack}
+                      editFrontImage={editFrontImage}
+                      editBackImage={editBackImage}
+                      isSavingCard={
+                        updateCard.isPending &&
+                        updateCard.variables?.cardId === card.id
+                      }
+                      onStartEdit={handleStartEdit}
+                      onCancelEdit={handleCancelEdit}
+                      onSaveEdit={handleSaveEdit}
+                      onOpenFullEdit={handleOpenFullEdit}
+                      onDelete={handleDeleteCard}
+                      onEditFrontChange={setEditFront}
+                      onEditBackChange={setEditBack}
+                      onImagePaste={(side, file) =>
+                        handleImagePaste(card.id, side, file)
+                      }
+                    />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
           )}
         </div>
 
-        <Link
-          href="/decks"
-          className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
-        >
-          <ArrowLeft className="h-3.5 w-3.5" />
-          Back to Decks
-        </Link>
-      </div>
-
-      <DeckActionButtons username={username} deckSlug={slug} />
-
-      {/* Cards Section */}
-      <div ref={cardsRef} id="cards" className="scroll-mt-6">
-        <div className="mb-6 flex items-center justify-between gap-2">
-          <h2 className="text-xl font-semibold">Cards</h2>
-          <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
-            <Button
-              variant="outline"
-              className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
-              size="sm"
-              onClick={() => setShowExportDialog(true)}
-            >
-              <Download className="h-4 w-4" /> <span className="hidden sm:inline">Export</span>
-            </Button>
-            {isOwner && (
-              <>
-                <Button
-                  variant="outline"
-                  className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
-                  size="sm"
-                  onClick={() => setShowImportDialog(true)}
-                >
-                  <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
-                </Button>
-                <Button
-                  className="rounded-xl gap-2 font-medium"
-                  size="sm"
-                  onClick={() => setShowAddForm(!showAddForm)}
-                >
-                  <Plus className="h-4 w-4" /> <span>Card</span>
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-
-        {isOwner && showAddForm && (
-          <AddCardForm
-            newFront={newFront}
-            setNewFront={setNewFront}
-            newBack={newBack}
-            setNewBack={setNewBack}
-            isAddingCard={createCard.isPending}
-            onAddCard={handleAddCard}
-            onCancel={() => {
-              setShowAddForm(false)
-              setNewFront("")
-              setNewBack("")
+        {editingCard && (
+          <CardEditDialog
+            card={editingCard}
+            deckId={deck.id}
+            onClose={() => setEditingCard(null)}
+            onSave={(front, back) => {
+              updateCard.mutate(
+                { deckId: deck.id, cardId: editingCard.id, front, back },
+                { onSuccess: () => setEditingCard(null) }
+              )
             }}
-            onOpenFullEditor={() => setShowNewCardDialog(true)}
+            isSaving={updateCard.isPending}
           />
         )}
 
-        {/* Cards Table Header */}
-        {cards.length > 0 && (
-          <div className="mb-2 grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2">
-            <div className="w-10" />
-            <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-              Front
-            </span>
-            <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-              Back
-            </span>
-            <div className="w-16" />
-          </div>
+        {showNewCardDialog && (
+          <NewCardDialog
+            key={newCardDialogKey}
+            deckId={deck.id}
+            onClose={() => setShowNewCardDialog(false)}
+            onSave={(front, back) => {
+              createCard.mutate(
+                { deckId: deck.id, front, back },
+                { onSuccess: () => setShowNewCardDialog(false) }
+              )
+            }}
+            onSaveAnother={(front, back) => {
+              createCard.mutate(
+                { deckId: deck.id, front, back },
+                { onSuccess: () => setNewCardDialogKey((k) => k + 1) }
+              )
+            }}
+            isSaving={createCard.isPending}
+          />
         )}
 
-        {/* Cards List */}
-        {cards.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center text-muted-foreground">
-            <Layers className="mb-3 h-10 w-10 opacity-40" />
-            <p className="mb-1 text-lg font-medium">No cards yet</p>
-            {isOwner && (
-              <p className="text-sm">
-                Click &ldquo;Add Card&rdquo; to create your first flashcard.
-              </p>
-            )}
-          </div>
-        ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={cards.map((c) => c.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div className="space-y-2">
-                {cards.map((card, index) => (
-                  <SortableCardRow
-                    key={card.id}
-                    card={card}
-                    index={index}
-                    isOwner={isOwner}
-                    editingCardId={editingCardId}
-                    editFront={editFront}
-                    editBack={editBack}
-                    editFrontImage={editFrontImage}
-                    editBackImage={editBackImage}
-                    isSavingCard={
-                      updateCard.isPending &&
-                      updateCard.variables?.cardId === card.id
-                    }
-                    onStartEdit={handleStartEdit}
-                    onCancelEdit={handleCancelEdit}
-                    onSaveEdit={handleSaveEdit}
-                    onOpenFullEdit={handleOpenFullEdit}
-                    onDelete={handleDeleteCard}
-                    onEditFrontChange={setEditFront}
-                    onEditBackChange={setEditBack}
-                    onImagePaste={(side, file) => handleImagePaste(card.id, side, file)}
-                  />
-                ))}
-              </div>
-            </SortableContext>
-          </DndContext>
+        {showImportDialog && isOwner && (
+          <DeckImportDialog
+            mode="append"
+            deckId={deck.id}
+            onClose={() => setShowImportDialog(false)}
+          />
+        )}
+
+        {showExportDialog && (
+          <DeckExportDialog
+            cards={cards}
+            deckSlug={deck.slug || deck.id}
+            onClose={() => setShowExportDialog(false)}
+          />
+        )}
+
+        {showTransposeDialog && isOwner && (
+          <ConfirmDialog
+            open={showTransposeDialog}
+            onOpenChange={setShowTransposeDialog}
+            title="Swap Cards"
+            description="Are you sure you want to swap all the cards this deck? They will have their front and back contents exchanged."
+            onConfirm={() => {
+              transposeDeck.mutate({ deckId: deck.id })
+            }}
+            isPending={transposeDeck.isPending}
+            confirmText="Swap"
+            destructive={false}
+          />
         )}
       </div>
-
-      {editingCard && (
-        <CardEditDialog
-          card={editingCard}
-          deckId={deck.id}
-          onClose={() => setEditingCard(null)}
-          onSave={(front, back) => {
-            updateCard.mutate(
-              { deckId: deck.id, cardId: editingCard.id, front, back },
-              { onSuccess: () => setEditingCard(null) }
-            )
-          }}
-          isSaving={updateCard.isPending}
-        />
-      )}
-
-      {showNewCardDialog && (
-        <NewCardDialog
-          key={newCardDialogKey}
-          deckId={deck.id}
-          onClose={() => setShowNewCardDialog(false)}
-          onSave={(front, back) => {
-            createCard.mutate(
-              { deckId: deck.id, front, back },
-              { onSuccess: () => setShowNewCardDialog(false) }
-            )
-          }}
-          onSaveAnother={(front, back) => {
-            createCard.mutate(
-              { deckId: deck.id, front, back },
-              { onSuccess: () => setNewCardDialogKey((k) => k + 1) }
-            )
-          }}
-          isSaving={createCard.isPending}
-        />
-      )}
-
-      {showImportDialog && isOwner && (
-        <DeckImportDialog
-          mode="append"
-          deckId={deck.id}
-          onClose={() => setShowImportDialog(false)}
-        />
-      )}
-
-      {showExportDialog && (
-        <DeckExportDialog
-          cards={cards}
-          deckSlug={deck.slug || deck.id}
-          onClose={() => setShowExportDialog(false)}
-        />
-      )}
-    </div>
     </div>
   )
 }

@@ -158,3 +158,20 @@ export function useReorderCards() {
     },
   })
 }
+
+export function useTransposeDeck() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ deckId }: { deckId: string }) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/transpose`, {
+        method: "POST",
+      })
+      if (!res.ok) throw new Error("Failed to transpose deck")
+      return true
+    },
+    onSuccess: (data, { deckId }) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.cards(deckId) })
+    },
+  })
+}
