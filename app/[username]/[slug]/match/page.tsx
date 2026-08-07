@@ -7,7 +7,7 @@ import { ArrowLeft, LayoutGrid, Timer, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useDeck } from "@/hooks/useDecks"
+import { useDeck, useUpdateDeckMatchTime } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 import { getCardText } from "@/lib/cards"
 import { shuffle } from "@/lib/utils"
@@ -39,6 +39,7 @@ export default function MatchPage() {
   const [elapsedTime, setElapsedTime] = useState(0)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
   const mismatchTimeoutRef = useRef<number | null>(null)
+  const updateMatchTime = useUpdateDeckMatchTime()
 
   const startGame = useCallback(() => {
     if (!cards.length) return
@@ -86,10 +87,13 @@ export default function MatchPage() {
     }, 100)
   }, [cards])
 
-  const endGame = useCallback(() => {
+  const endGame = useCallback((finalTime: number) => {
     setGameState("done")
     if (timerRef.current) clearInterval(timerRef.current)
-  }, [])
+    if (deck?.id) {
+      updateMatchTime.mutate({ deckId: deck.id, timeMs: finalTime })
+    }
+  }, [deck?.id, updateMatchTime])
 
   useEffect(() => {
     return () => {
@@ -137,7 +141,7 @@ export default function MatchPage() {
       const remainingUnmatched = gridItems.filter((i) => !i.matched).length
       // We just matched 2, so if remainingUnmatched was 2, we are done
       if (remainingUnmatched === 2) {
-        endGame()
+        endGame(elapsedTime)
       }
     } else {
       // Mismatch

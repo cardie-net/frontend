@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
+import { useDeck, useDeckMatchTime, useClearDeckMatchTime } from '@/hooks/useDecks';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -64,6 +65,19 @@ interface DeckActionButtonsProps {
 }
 
 export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps) {
+  const { data: deck } = useDeck(username, deckSlug);
+  const { data: matchTime } = useDeckMatchTime(deck?.id);
+  const clearMatchTime = useClearDeckMatchTime();
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000)
+    const m = Math.floor(totalSeconds / 60)
+    const s = totalSeconds % 60
+    const msStr = Math.floor((ms % 1000) / 100).toString()
+    if (m > 0) return `${m}:${s.toString().padStart(2, "0")}.${msStr}s`
+    return `${s}.${msStr}s`
+  }
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-12">
       {ACTION_BUTTONS.map((action) => {
@@ -90,6 +104,11 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             </div>
             <span className="text-sm font-medium text-center leading-tight">
               {action.label}
+              {action.href === 'match' && matchTime?.best_time_ms != null && (
+                <span className="block text-xs text-muted-foreground mt-1">
+                  Best: {formatTime(matchTime.best_time_ms)}
+                </span>
+              )}
             </span>
           </div>
         );
@@ -111,7 +130,18 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   Match the front and back of the cards as quickly as possible.
                 </DialogDescription>
                 <div className="text-sm text-muted-foreground">
-                  Match the front and back of the cards as quickly as possible. Up to 10 cards will be randomly selected.
+                  <p>Match the front and back of the cards as quickly as possible. Up to 10 cards will be randomly selected.</p>
+                  {matchTime?.best_time_ms != null && (
+                    <div className="mt-4 flex items-center justify-between bg-muted/50 rounded-lg p-3">
+                      <div>
+                        <p className="font-medium text-foreground">Best Time</p>
+                        <p className="text-xl font-mono font-bold text-primary">{formatTime(matchTime.best_time_ms)}</p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => deck?.id && clearMatchTime.mutate(deck.id)} disabled={clearMatchTime.isPending}>
+                        Clear Best
+                      </Button>
+                    </div>
+                  )}
                 </div>
                 <DialogFooter>
                   <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>

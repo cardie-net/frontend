@@ -225,3 +225,49 @@ export function useUploadDeckCover() {
     },
   })
 }
+
+export function useDeckMatchTime(deckId?: string) {
+  return useQuery<{ best_time_ms: number | null }>({
+    queryKey: ["deck-match-time", deckId],
+    queryFn: async () => {
+      if (!deckId) return { best_time_ms: null }
+      const res = await apiFetch(`/api/v1/decks/${deckId}/match-time`)
+      if (!res.ok) throw new Error("Failed to load match time")
+      return res.json()
+    },
+    enabled: !!deckId,
+  })
+}
+
+export function useUpdateDeckMatchTime() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ deckId, timeMs }: { deckId: string; timeMs: number }) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/match-time`, {
+        method: "POST",
+        body: JSON.stringify({ time_ms: timeMs }),
+      })
+      if (!res.ok) throw new Error("Failed to update match time")
+      return res.json()
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["deck-match-time", variables.deckId] })
+    },
+  })
+}
+
+export function useClearDeckMatchTime() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (deckId: string) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/match-time`, {
+        method: "DELETE",
+      })
+      if (!res.ok) throw new Error("Failed to clear match time")
+    },
+    onSuccess: (_, deckId) => {
+      queryClient.invalidateQueries({ queryKey: ["deck-match-time", deckId] })
+    },
+  })
+}
+
