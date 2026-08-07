@@ -19,6 +19,7 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const lastPointerDown = useRef({ x: 0, y: 0 });
+  const lastTouchDist = useRef<number | null>(null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -89,8 +90,6 @@ export function FullscreenImageViewer({ src, alt, isOpen, onClose }: FullscreenI
       onClose();
     }
   };
-
-  const lastTouchDist = useRef<number | null>(null);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLImageElement>) => {
     if (e.touches.length === 2) {
