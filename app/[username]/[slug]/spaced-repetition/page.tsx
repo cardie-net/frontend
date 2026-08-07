@@ -122,8 +122,8 @@ export default function SpacedRepetitionPage() {
                     </Badge>
                   )}
                 </div>
-                <div className="min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {totalRemaining} Total
+                <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
+                  {totalRemaining} <span className="hidden sm:inline">Total</span>
                 </div>
               </div>
             </div>

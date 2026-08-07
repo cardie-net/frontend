@@ -171,8 +171,8 @@ export default function LearnPage() {
                     />
                   </div>
                 </div>
-                <div className="min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {stats.box3} / {stats.total} Mastered
+                <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
+                  {stats.box3} / {stats.total} <span className="hidden sm:inline">Mastered</span>
                 </div>
               </div>
             </div>
