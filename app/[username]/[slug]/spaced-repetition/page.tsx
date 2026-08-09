@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { ArrowLeft, Check, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Kbd } from "@/components/ui/kbd"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { useDeck } from "@/hooks/useDecks"
@@ -35,6 +36,60 @@ export default function SpacedRepetitionPage() {
   const [backContent, setBackContent] = useState<CardElement[] | null>(null)
 
   const isLoading = deckLoading || (!!deck && sessionLoading)
+
+  const toggleFlip = useCallback(() => {
+    if (!currentCard) return
+    if (!isFlipped) {
+      setBackContent(currentCard.back)
+      setIsFlipped(true)
+    } else {
+      setIsFlipped(false)
+    }
+  }, [currentCard, isFlipped, setIsFlipped])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+
+      if (isLoading || error || sessionCompleted || !currentCard) return
+
+      if (e.key === "Enter" || e.key === " " || e.code === "Space") {
+        e.preventDefault()
+        toggleFlip()
+      } else if (e.key === "1" || e.code === "Digit1" || e.code === "Numpad1") {
+        e.preventDefault()
+        handleRating(0)
+      } else if (e.key === "2" || e.code === "Digit2" || e.code === "Numpad2") {
+        e.preventDefault()
+        handleRating(1)
+      } else if (e.key === "3" || e.code === "Digit3" || e.code === "Numpad3") {
+        e.preventDefault()
+        handleRating(2)
+      } else if (e.key === "4" || e.code === "Digit4" || e.code === "Numpad4") {
+        e.preventDefault()
+        handleRating(3)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [
+    isLoading,
+    error,
+    sessionCompleted,
+    currentCard,
+    toggleFlip,
+    handleRating,
+  ])
 
   return (
     <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-2 sm:px-10 sm:py-16">
@@ -97,27 +152,24 @@ export default function SpacedRepetitionPage() {
               back={currentCard.back}
               flipped={isFlipped}
               backContent={backContent}
-              onFlip={() => {
-                setBackContent(currentCard.back)
-                setIsFlipped(true)
-              }}
+              onFlip={toggleFlip}
             />
 
             <div className="mt-4 sm:mt-8 px-4 sm:px-8">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-1 gap-2">
                   {counts.newRemaining > 0 && (
-                    <Badge className="bg-blue-500 px-3 py-1 text-white hover:bg-blue-600">
+                    <Badge variant="outline" className="border-blue-300 bg-blue-100 px-3 py-1 font-semibold text-blue-950 dark:border-blue-800 dark:bg-blue-950/80 dark:text-blue-200">
                       {counts.newRemaining} New
                     </Badge>
                   )}
                   {counts.learningRemaining > 0 && (
-                    <Badge className="bg-orange-500 px-3 py-1 text-white hover:bg-orange-600">
+                    <Badge variant="outline" className="border-orange-300 bg-orange-100 px-3 py-1 font-semibold text-orange-950 dark:border-orange-800 dark:bg-orange-950/80 dark:text-orange-200">
                       {counts.learningRemaining} Learning
                     </Badge>
                   )}
                   {counts.reviewRemaining > 0 && (
-                    <Badge className="bg-green-500 px-3 py-1 text-white hover:bg-green-600">
+                    <Badge variant="outline" className="border-green-300 bg-green-100 px-3 py-1 font-semibold text-green-950 dark:border-green-800 dark:bg-green-950/80 dark:text-green-200">
                       {counts.reviewRemaining} Review
                     </Badge>
                   )}
@@ -137,7 +189,12 @@ export default function SpacedRepetitionPage() {
                 className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 py-3"
                 onClick={() => handleRating(0)}
               >
-                <span className="text-sm sm:text-base font-semibold">Again</span>
+                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                  Again
+                  <Kbd className="hidden sm:inline-flex bg-background/20 text-destructive-foreground">
+                    1
+                  </Kbd>
+                </span>
                 <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.again}
                 </span>
@@ -148,7 +205,12 @@ export default function SpacedRepetitionPage() {
                 className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-orange-500 py-3 text-white hover:bg-orange-600"
                 onClick={() => handleRating(1)}
               >
-                <span className="text-sm sm:text-base font-semibold">Hard</span>
+                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                  Hard
+                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                    2
+                  </Kbd>
+                </span>
                 <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.hard}
                 </span>
@@ -159,7 +221,12 @@ export default function SpacedRepetitionPage() {
                 className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-blue-500 py-3 text-white hover:bg-blue-600"
                 onClick={() => handleRating(2)}
               >
-                <span className="text-sm sm:text-base font-semibold">Good</span>
+                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                  Good
+                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                    3
+                  </Kbd>
+                </span>
                 <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.good}
                 </span>
@@ -170,7 +237,12 @@ export default function SpacedRepetitionPage() {
                 className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-green-700 py-3 text-white hover:bg-green-800"
                 onClick={() => handleRating(3)}
               >
-                <span className="text-sm sm:text-base font-semibold">Easy</span>
+                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                  Easy
+                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                    4
+                  </Kbd>
+                </span>
                 <span className="text-xs opacity-90 font-normal">
                   {previewIntervals.easy}
                 </span>

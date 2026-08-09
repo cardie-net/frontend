@@ -5,6 +5,7 @@ import Link from "next/link"
 import { useParams } from "next/navigation"
 import { ArrowLeft, AlertCircle, Loader2, Eye } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Kbd } from "@/components/ui/kbd"
 import { Flashcard } from "@/components/Flashcard"
 import {
   Carousel,
@@ -35,6 +36,7 @@ export default function OverviewPage() {
   const [api, setApi] = useState<CarouselApi>()
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
+  const [isFlipped, setIsFlipped] = useState(false)
 
   useEffect(() => {
     if (!api) return
@@ -42,6 +44,7 @@ export default function OverviewPage() {
     const update = () => {
       setCount(api.scrollSnapList().length)
       setCurrent(api.selectedScrollSnap() + 1)
+      setIsFlipped(false)
     }
 
     api.on("select", update)
@@ -56,6 +59,35 @@ export default function OverviewPage() {
       api.off("select", update)
       api.off("reInit", update)
     }
+  }, [api])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault()
+        api?.scrollPrev()
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault()
+        api?.scrollNext()
+      } else if (e.key === "Enter" || e.key === " " || e.code === "Space") {
+        e.preventDefault()
+        setIsFlipped((prev) => !prev)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
   }, [api])
 
   if (loading) {
@@ -117,10 +149,14 @@ export default function OverviewPage() {
           <div className="w-full flex flex-col flex-1 sm:flex-none min-h-0">
             <Carousel setApi={setApi} className="w-full flex-1 sm:flex-none flex flex-col min-h-0">
               <CarouselContent className="flex-1 sm:flex-none min-h-0">
-                {cards.map((card) => (
+                {cards.map((card, index) => (
                   <CarouselItem key={card.id} className="flex flex-col min-h-0">
                     <div className="p-1 flex-1 sm:flex-none flex flex-col min-h-0">
-                      <Flashcard card={card} />
+                      <Flashcard
+                        card={card}
+                        flipped={index === current - 1 ? isFlipped : false}
+                        onFlip={() => setIsFlipped((prev) => !prev)}
+                      />
                     </div>
                   </CarouselItem>
                 ))}
@@ -140,7 +176,10 @@ export default function OverviewPage() {
             </div>
 
             <div className="mt-1 sm:mt-2 text-center text-xs text-muted-foreground">
-              Click a card to flip it over
+              <span className="sm:hidden">Click anywhere on the card to flip</span>
+              <span className="hidden sm:inline-flex items-center justify-center gap-1.5">
+                Click anywhere on the card or press <Kbd className="text-[10px]">Space</Kbd> / <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use arrow keys to navigate
+              </span>
             </div>
           </div>
         ) : (

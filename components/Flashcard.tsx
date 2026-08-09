@@ -6,16 +6,27 @@ import { CardElements } from '@/components/cards/CardElements';
 
 interface FlashcardProps {
   card: FlashCardData;
+  flipped?: boolean;
+  onFlip?: () => void;
 }
 
-export function Flashcard({ card }: FlashcardProps) {
-  const [isFlipped, setIsFlipped] = useState(false);
+export function Flashcard({ card, flipped, onFlip }: FlashcardProps) {
+  const [internalIsFlipped, setInternalIsFlipped] = useState(false);
+  const isFlipped = flipped !== undefined ? flipped : internalIsFlipped;
+
+  const handleClick = () => {
+    if (onFlip) {
+      onFlip();
+    } else {
+      setInternalIsFlipped(!internalIsFlipped);
+    }
+  };
 
   return (
     <div
       className="w-full flex-1 sm:flex-none flex flex-col min-h-[250px] sm:min-h-[500px] cursor-pointer mx-auto"
       style={{ perspective: '1000px' }}
-      onClick={() => setIsFlipped(!isFlipped)}
+      onClick={handleClick}
     >
       <div
         className="relative w-full h-full flex-1 transition-transform duration-500"

@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { ArrowLeft, Check, X, RotateCcw, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Kbd } from "@/components/ui/kbd"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useDeck } from "@/hooks/useDecks"
 import { useLearningSession } from "@/hooks/useLearningSession"
@@ -41,10 +42,58 @@ export default function LearnPage() {
   const box2Percent = stats.total > 0 ? (stats.box2 / stats.total) * 100 : 0
   const box3Percent = stats.total > 0 ? (stats.box3 / stats.total) * 100 : 0
 
-  const handleAnswerClick = (knewIt: boolean) => {
+  const handleAnswerClick = useCallback((knewIt: boolean) => {
     setIsFlipped(false)
     handleAnswer(knewIt)
-  }
+  }, [setIsFlipped, handleAnswer])
+
+  const toggleFlip = useCallback(() => {
+    if (!currentCard) return
+    if (!isFlipped) {
+      setBackContent(currentCard.back)
+      setIsFlipped(true)
+    } else {
+      setIsFlipped(false)
+    }
+  }, [currentCard, isFlipped, setIsFlipped])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.tagName === "SELECT" ||
+          target.isContentEditable)
+      ) {
+        return
+      }
+
+      if (isLoading || error || sessionCompleted || !currentCard) return
+
+      if (e.key === "Enter" || e.key === " " || e.code === "Space") {
+        e.preventDefault()
+        toggleFlip()
+      } else if (e.key === "1" || e.code === "Digit1" || e.code === "Numpad1") {
+        e.preventDefault()
+        handleAnswerClick(false)
+      } else if (e.key === "2" || e.code === "Digit2" || e.code === "Numpad2") {
+        e.preventDefault()
+        handleAnswerClick(true)
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [
+    isLoading,
+    error,
+    sessionCompleted,
+    currentCard,
+    toggleFlip,
+    handleAnswerClick,
+  ])
 
   return (
     <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-2 sm:px-10 sm:py-16">
@@ -121,12 +170,12 @@ export default function LearnPage() {
               You have mastered all the cards currently available in this deck.
             </p>
             <div className="flex w-full flex-col gap-3 sm:flex-row">
-              <Link href={`/${username}/${slug}`} className="flex-1">
+              <Link href={`/${username}/${slug}`} className="w-full sm:flex-1">
                 <Button size="lg" className="w-full" variant="outline">
                   Return to Deck
                 </Button>
               </Link>
-              <Button size="lg" className="flex-1" onClick={restartLearning}>
+              <Button size="lg" className="w-full sm:flex-1" onClick={restartLearning}>
                 <RotateCcw className="mr-2 h-4 w-4" />
                 Restart Learning
               </Button>
@@ -140,10 +189,7 @@ export default function LearnPage() {
               back={currentCard.back}
               flipped={isFlipped}
               backContent={backContent}
-              onFlip={() => {
-                setBackContent(currentCard.back)
-                setIsFlipped(true)
-              }}
+              onFlip={toggleFlip}
             />
 
             <div className="mt-4 sm:mt-8 px-4 sm:px-8">
@@ -184,20 +230,26 @@ export default function LearnPage() {
               <Button
                 size="lg"
                 variant="destructive"
-                className="group h-14 flex-1"
+                className="group h-14 flex-1 font-semibold"
                 onClick={() => handleAnswerClick(false)}
               >
                 <X className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                Didn&apos;t Know
+                <span>Didn&apos;t Know</span>
+                <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-destructive-foreground">
+                  1
+                </Kbd>
               </Button>
 
               <Button
                 size="lg"
-                className="group h-14 flex-1 bg-green-700 text-white hover:bg-green-800"
+                className="group h-14 flex-1 bg-green-700 text-white hover:bg-green-800 font-semibold"
                 onClick={() => handleAnswerClick(true)}
               >
                 <Check className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                Knew It
+                <span>Knew It</span>
+                <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-white">
+                  2
+                </Kbd>
               </Button>
             </div>
           </div>
