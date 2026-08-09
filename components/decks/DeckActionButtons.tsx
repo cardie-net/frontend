@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
 import { useDeck, useDeckMatchTime, useClearDeckMatchTime } from '@/hooks/useDecks';
+import { useCards } from '@/hooks/useCards';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -15,6 +17,15 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const ACTION_BUTTONS = [
   {
@@ -68,6 +79,18 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
   const { data: deck } = useDeck(username, deckSlug);
   const { data: matchTime } = useDeckMatchTime(deck?.id);
   const clearMatchTime = useClearDeckMatchTime();
+  const { data: cards = [] } = useCards(deck?.id);
+
+  // Exam settings state
+  const [examQuestionCount, setExamQuestionCount] = useState<number | "">("");
+  const [examAnswerWith, setExamAnswerWith] = useState<"front" | "back" | "both">("back");
+  const [examDialogOpen, setExamDialogOpen] = useState(false);
+
+  const maxQuestions = cards.length;
+  // Resolve the actual count for the link — default to all cards if empty
+  const resolvedExamCount = typeof examQuestionCount === "number"
+    ? Math.min(Math.max(1, examQuestionCount), maxQuestions)
+    : maxQuestions;
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000)
@@ -151,6 +174,91 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   </DialogClose>
                   <Link href={`/${username}/${deckSlug}/match`} tabIndex={-1} className={buttonVariants({ className: "w-full sm:w-auto" })}>
                     Start Game
+                  </Link>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          );
+        }
+
+        if (action.href === 'exam') {
+          return (
+            <Dialog key={action.href} open={examDialogOpen} onOpenChange={(open) => {
+              setExamDialogOpen(open);
+              if (open) {
+                // Reset to defaults when opening
+                setExamQuestionCount("");
+                setExamAnswerWith("back");
+              }
+            }}>
+              <DialogTrigger className="block text-left w-full h-full text-foreground hover:no-underline p-0 m-0 border-none bg-transparent focus:outline-none">
+                {cardContent}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+                  <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+                    <FileCheck className="w-5 h-5" />
+                  </div>
+                  <DialogTitle className="text-base font-semibold">Exam Mode</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="sr-only">
+                  Test your knowledge with multiple-choice questions.
+                </DialogDescription>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Test your knowledge with multiple-choice questions. Random cards will be selected and you&apos;ll need to pick the correct answer.
+                  </p>
+                  <div className="grid gap-4 sm:grid-cols-2 items-start">
+                    <div className="grid gap-2">
+                      <Label>Number of questions</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={maxQuestions || 1}
+                        placeholder={`All (${maxQuestions})`}
+                        value={examQuestionCount}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          if (val === "") {
+                            setExamQuestionCount("");
+                          } else {
+                            const num = parseInt(val, 10);
+                            if (!isNaN(num)) {
+                              setExamQuestionCount(num);
+                            }
+                          }
+                        }}
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label>Answer with</Label>
+                      <Select
+                        value={examAnswerWith}
+                        onValueChange={(v) => setExamAnswerWith(v as "front" | "back" | "both")}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="front">Front</SelectItem>
+                          <SelectItem value="back">Back</SelectItem>
+                          <SelectItem value="both">Both (random)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
+                    Cancel
+                  </DialogClose>
+                  <Link
+                    href={`/${username}/${deckSlug}/exam?count=${resolvedExamCount}&answerWith=${examAnswerWith}`}
+                    tabIndex={-1}
+                    className={buttonVariants({ className: "w-full sm:w-auto" })}
+                    onClick={() => setExamDialogOpen(false)}
+                  >
+                    Start Exam
                   </Link>
                 </DialogFooter>
               </DialogContent>
