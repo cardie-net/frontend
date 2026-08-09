@@ -56,13 +56,13 @@ interface DeckImportDialogProps {
 }
 
 const FORMATS: ReadonlyArray<{
-  id: "text" | "anki" | "quizlet";
+  id: "text" | "quizlet" | "anki";
   label: string;
   comingSoon?: boolean;
 }> = [
   { id: "text", label: "Text" },
-  { id: "anki", label: "Anki", comingSoon: true },
   { id: "quizlet", label: "Quizlet", comingSoon: true },
+  { id: "anki", label: "Anki", comingSoon: true },
 ]
 
 type Format = (typeof FORMATS)[number]["id"];
@@ -408,18 +408,18 @@ export function DeckImportDialog({
             )}
           </TabsContent>
 
-          <TabsContent value="anki" className="mt-4">
-            <Alert>
-              <AlertDescription>
-                Anki import is coming soon. Use the Text format for now.
-              </AlertDescription>
-            </Alert>
-          </TabsContent>
-
           <TabsContent value="quizlet" className="mt-4">
             <Alert>
               <AlertDescription>
                 Quizlet import is coming soon. Use the Text format for now.
+              </AlertDescription>
+            </Alert>
+          </TabsContent>
+
+          <TabsContent value="anki" className="mt-4">
+            <Alert>
+              <AlertDescription>
+                Anki import is coming soon. Use the Text format for now.
               </AlertDescription>
             </Alert>
           </TabsContent>

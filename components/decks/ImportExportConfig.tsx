@@ -32,7 +32,7 @@ export function ImportExportConfig({
   onRecordSeparatorChange,
 }: ImportExportConfigProps) {
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-4 sm:grid-cols-2 items-start">
       <div className="grid gap-2">
         <Label>Field delimiter</Label>
         <Select
