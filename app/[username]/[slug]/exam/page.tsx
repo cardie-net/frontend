@@ -110,7 +110,10 @@ export default function ExamPage() {
 
   useEffect(() => {
     if (cards.length > 0 && questions.length === 0 && !initError) {
-      initializeQuestions()
+      const timer = setTimeout(() => {
+        initializeQuestions()
+      }, 0)
+      return () => clearTimeout(timer)
     }
   }, [cards, questions.length, initError, initializeQuestions])
 
