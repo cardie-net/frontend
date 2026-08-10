@@ -271,3 +271,49 @@ export function useClearDeckMatchTime() {
   })
 }
 
+export function useDeckExamScore(deckId?: string) {
+  return useQuery<{ best_score_percentage: number | null }>({
+    queryKey: ["deck-exam-score", deckId],
+    queryFn: async () => {
+      if (!deckId) return { best_score_percentage: null }
+      const res = await apiFetch(`/api/v1/decks/${deckId}/exam-score`)
+      if (!res.ok) throw new Error("Failed to load exam score")
+      return res.json()
+    },
+    enabled: !!deckId,
+  })
+}
+
+export function useUpdateDeckExamScore() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ deckId, scorePercentage }: { deckId: string; scorePercentage: number }) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/exam-score`, {
+        method: "POST",
+        body: JSON.stringify({ score_percentage: scorePercentage }),
+      })
+      if (!res.ok) throw new Error("Failed to update exam score")
+      return res.json()
+    },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["deck-exam-score", variables.deckId] })
+    },
+  })
+}
+
+export function useClearDeckExamScore() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async (deckId: string) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/exam-score`, {
+        method: "DELETE",
+      })
+      if (!res.ok) throw new Error("Failed to clear exam score")
+    },
+    onSuccess: (_, deckId) => {
+      queryClient.invalidateQueries({ queryKey: ["deck-exam-score", deckId] })
+    },
+  })
+}
+
+

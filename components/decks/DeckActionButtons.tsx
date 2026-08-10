@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
-import { useDeck, useDeckMatchTime, useClearDeckMatchTime } from '@/hooks/useDecks';
+import { useDeck, useDeckMatchTime, useClearDeckMatchTime, useDeckExamScore, useClearDeckExamScore } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
 import { cn } from '@/lib/utils';
 import {
@@ -79,6 +79,8 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
   const { data: deck } = useDeck(username, deckSlug);
   const { data: matchTime } = useDeckMatchTime(deck?.id);
   const clearMatchTime = useClearDeckMatchTime();
+  const { data: examScore } = useDeckExamScore(deck?.id);
+  const clearExamScore = useClearDeckExamScore();
   const { data: cards = [] } = useCards(deck?.id);
 
   // Exam settings state
@@ -133,6 +135,11 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             {action.href === 'match' && matchTime?.best_time_ms != null && (
               <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
                 Best: {formatTime(matchTime.best_time_ms)}
+              </span>
+            )}
+            {action.href === 'exam' && examScore?.best_score_percentage != null && (
+              <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
+                Best: {examScore.best_score_percentage}%
               </span>
             )}
           </div>
@@ -208,6 +215,17 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   <p className="text-sm text-muted-foreground">
                     Test your knowledge with multiple-choice questions. Random cards will be selected and you&apos;ll need to pick the correct answer.
                   </p>
+                  {examScore?.best_score_percentage != null && (
+                    <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
+                      <div>
+                        <p className="font-medium text-foreground text-sm">Best Score</p>
+                        <p className="text-xl font-mono font-bold text-primary">{examScore.best_score_percentage}%</p>
+                      </div>
+                      <Button variant="outline" size="sm" onClick={() => deck?.id && clearExamScore.mutate(deck.id)} disabled={clearExamScore.isPending}>
+                        Clear Best
+                      </Button>
+                    </div>
+                  )}
                   <div className="grid gap-4 sm:grid-cols-2 items-start">
                     <div className="grid gap-2">
                       <Label>Number of questions</Label>

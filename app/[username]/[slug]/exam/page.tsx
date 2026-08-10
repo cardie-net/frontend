@@ -9,7 +9,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 import { ProgressTrack, ProgressIndicator } from "@/components/ui/progress"
-import { useDeck } from "@/hooks/useDecks"
+import { useDeck, useUpdateDeckExamScore } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 import { getCardText } from "@/lib/cards"
 import { shuffle, cn } from "@/lib/utils"
@@ -37,6 +37,7 @@ export default function ExamPage() {
 
   const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
+  const updateExamScore = useUpdateDeckExamScore()
 
   const [questions, setQuestions] = useState<Question[]>([])
   const [isSubmitted, setIsSubmitted] = useState(false)
@@ -141,8 +142,16 @@ export default function ExamPage() {
       return
     }
     setIsSubmitted(true)
+    if (deck?.id && questions.length > 0) {
+      const calculatedScore = questions.filter(
+        (q) => q.options.find((o) => o.id === q.selectedOptionId)?.isCorrect
+      ).length
+      const percentage = Math.round((calculatedScore / questions.length) * 100)
+      updateExamScore.mutate({ deckId: deck.id, scorePercentage: percentage })
+    }
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
+
 
   const score = questions.filter(
     (q) => q.options.find((o) => o.id === q.selectedOptionId)?.isCorrect
