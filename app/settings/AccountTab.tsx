@@ -1,8 +1,10 @@
 "use client"
 
 import { useState, useRef } from "react"
+import Link from "next/link"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "@/lib/AuthContext"
+import { cn } from "@/lib/utils"
 import {
   AlertCircle,
   CheckCircle2,
@@ -14,7 +16,7 @@ import {
   ChevronUp,
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -691,13 +693,26 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        <Button
-          type="submit"
-          disabled={isSaving || !!displayNameError || !!usernameError}
-          className="w-full sm:w-auto"
-        >
-          {isSaving ? "Saving..." : "Save Changes"}
-        </Button>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <Button
+            type="submit"
+            disabled={isSaving || !!displayNameError || !!usernameError}
+            className="w-full sm:w-auto"
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </Button>
+
+          <Link
+            href={`/${user.username || 'profile'}`}
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "w-full sm:w-auto flex items-center justify-center gap-2 font-medium"
+            )}
+          >
+            <User className="h-4 w-4" />
+            View Profile
+          </Link>
+        </div>
       </form>
 
       {isEditorOpen && (

@@ -14,7 +14,6 @@ import {
   X,
   Layers,
   Settings,
-  User,
   LogIn,
   UserPlus,
   LogOut,
@@ -527,15 +526,6 @@ export function Navbar() {
                 icon={<Settings className="w-4 h-4" />}
                 tooltip="Settings"
                 isActive={pathname === '/settings'}
-                isRightSide={isRightSide}
-              />
-
-              {/* Profile Link */}
-              <NavItem
-                href={`/${user.username || 'profile'}`}
-                icon={<User className="w-4 h-4" />}
-                tooltip={user.username ? `@${user.username}` : 'Profile'}
-                isActive={pathname === `/${user.username}`}
                 isRightSide={isRightSide}
               />
 
