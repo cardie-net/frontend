@@ -35,8 +35,8 @@ function CustomTooltip({ text, isRightSide }: CustomTooltipProps) {
   return (
     <div
       className={cn(
-        'absolute top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none transition-all duration-200 z-50',
-        'bg-popover/90 text-popover-foreground border border-border/50 shadow-md backdrop-blur-md',
+        'absolute top-1/2 -translate-y-1/2 px-2.5 py-1 text-xs font-medium rounded-lg shadow-xl whitespace-nowrap pointer-events-none transition-[opacity,transform] duration-200 ease-out z-50 transform-gpu',
+        'bg-popover/90 text-popover-foreground border border-border/50 shadow-md backdrop-blur-sm',
         'opacity-0 group-hover/tooltip:opacity-100 group-hover/tooltip:scale-100 scale-95 origin-center',
         isRightSide ? 'right-full mr-3' : 'left-full ml-3'
       )}
@@ -76,7 +76,7 @@ function NavItem({
   const content = (
     <div
       className={cn(
-        'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-[var(--radius)] transition-all duration-200',
+        'relative group/tooltip flex items-center justify-center w-9 h-9 rounded-[var(--radius)] transition-[background-color,color,transform,box-shadow] duration-150 ease-out transform-gpu',
         isActive
           ? 'bg-primary text-primary-foreground shadow-md scale-105'
           : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 hover:scale-105 active:scale-95',
@@ -182,12 +182,15 @@ function LanguageNavItem({
       <div
         className={cn(
           'absolute top-1/2 -translate-y-1/2 flex flex-col gap-1 p-1.5 rounded-2xl min-w-[140px]',
-          'bg-background/95 backdrop-blur-xl border border-border/80 shadow-2xl shadow-black/20 z-50',
-          'transition-all duration-300 ease-out origin-center',
+          'bg-background/95 backdrop-blur-md border border-border/80 shadow-xl shadow-black/20 z-50',
+          'transition-[opacity,transform] duration-200 ease-out origin-center transform-gpu',
           isRightSide ? 'right-full mr-2.5' : 'left-full ml-2.5',
           isOpen
-            ? 'opacity-100 scale-100 pointer-events-auto'
-            : 'opacity-0 scale-95 pointer-events-none p-0 border-transparent shadow-none overflow-hidden h-0 w-0'
+            ? 'opacity-100 scale-100 pointer-events-auto translate-x-0'
+            : cn(
+                'opacity-0 scale-95 pointer-events-none',
+                isRightSide ? 'translate-x-1' : '-translate-x-1'
+              )
         )}
       >
         {SUPPORTED_LOCALES.map((loc) => {
@@ -203,7 +206,7 @@ function LanguageNavItem({
                 setIsOpen(false);
               }}
               className={cn(
-                'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 whitespace-nowrap select-none cursor-pointer w-full text-left',
+                'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-[background-color,color,transform] duration-150 ease-out whitespace-nowrap select-none cursor-pointer w-full text-left transform-gpu',
                 isSelected
                   ? 'bg-primary text-primary-foreground shadow-sm font-semibold'
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent/80 active:scale-95'
@@ -419,7 +422,7 @@ export function Navbar() {
       className={cn(
         'fixed z-50 flex items-center gap-2.5 touch-none select-none',
         !dragPos && cornerClasses[corner],
-        !isDragging && 'transition-all duration-300 ease-out',
+        !isDragging && 'transition-[top,left,bottom,right] duration-300 ease-out',
         isBottomSide ? 'flex-col-reverse' : 'flex-col'
       )}
     >
@@ -430,8 +433,8 @@ export function Navbar() {
         aria-label="Toggle menu"
         className={cn(
           'group relative w-12 h-12 rounded-[calc(var(--radius)+0.25rem)] flex items-center justify-center overflow-hidden',
-          'bg-background/85 backdrop-blur-xl border border-border/70 shadow-lg shadow-black/10',
-          'hover:scale-105 active:scale-95 transition-all duration-200 cursor-grab active:cursor-grabbing',
+          'bg-background/90 backdrop-blur-md border border-border/70 shadow-lg shadow-black/10',
+          'hover:scale-105 active:scale-95 transition-[transform,background-color,border-color] duration-150 ease-out cursor-grab active:cursor-grabbing transform-gpu',
           isOpen && 'ring-2 ring-primary/40 bg-accent/60'
         )}
       >
@@ -443,21 +446,21 @@ export function Navbar() {
               draggable={false}
               onDragStart={(e) => e.preventDefault()}
               className={cn(
-                'w-full h-full rounded-[var(--radius)] object-cover transition-all duration-300 transform pointer-events-none select-none',
+                'w-full h-full rounded-[var(--radius)] object-cover transition-[transform,opacity] duration-200 ease-out transform-gpu pointer-events-none select-none',
                 isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
               )}
             />
           ) : (
             <Menu
               className={cn(
-                'w-5 h-5 text-foreground transition-all duration-300 transform',
+                'w-5 h-5 text-foreground transition-[transform,opacity] duration-200 ease-out transform-gpu',
                 isOpen ? 'rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
               )}
             />
           )}
           <X
             className={cn(
-              'w-5 h-5 text-foreground transition-all duration-300 transform',
+              'w-5 h-5 text-foreground transition-[transform,opacity] duration-200 ease-out transform-gpu',
               !isOpen ? '-rotate-90 scale-0 opacity-0 absolute' : 'rotate-0 scale-100 opacity-100'
             )}
           />
@@ -472,94 +475,100 @@ export function Navbar() {
       {/* Extended Menu Bar */}
       <div
         className={cn(
-          'flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
-          'bg-background/85 backdrop-blur-xl border border-border/70 shadow-xl shadow-black/10',
-          'transition-all duration-300 ease-out origin-center overflow-visible',
+          'grid transition-[grid-template-rows,opacity,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] transform-gpu',
+          isBottomSide ? 'origin-bottom' : 'origin-top',
           isOpen
-            ? 'max-h-[500px] opacity-100 scale-100 pointer-events-auto'
-            : 'max-h-0 opacity-0 scale-90 pointer-events-none p-0 border-transparent shadow-none overflow-hidden',
-          isBottomSide ? 'flex-col-reverse' : 'flex-col'
+            ? 'grid-rows-[1fr] opacity-100 scale-100 pointer-events-auto'
+            : 'grid-rows-[0fr] opacity-0 scale-90 pointer-events-none'
         )}
       >
-        {/* Deck List Link */}
-        <NavItem
-          href="/decks"
-          icon={<Layers className="w-4 h-4" />}
-          tooltip="Decks"
-          isActive={pathname === '/decks'}
-          isRightSide={isRightSide}
-        />
+        <div
+          className={cn(
+            'overflow-hidden flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
+            'bg-background/90 backdrop-blur-md border border-border/70 shadow-xl shadow-black/10',
+            isBottomSide ? 'flex-col-reverse' : 'flex-col'
+          )}
+        >
+          {/* Deck List Link */}
+          <NavItem
+            href="/decks"
+            icon={<Layers className="w-4 h-4" />}
+            tooltip="Decks"
+            isActive={pathname === '/decks'}
+            isRightSide={isRightSide}
+          />
 
-        {/* Language Selection Flyout NavItem */}
-        <LanguageNavItem
-          currentLocale={currentLocale}
-          isRightSide={isRightSide}
-          onSelectLocale={handleSelectLocale}
-        />
+          {/* Language Selection Flyout NavItem */}
+          <LanguageNavItem
+            currentLocale={currentLocale}
+            isRightSide={isRightSide}
+            onSelectLocale={handleSelectLocale}
+          />
 
-        {/* Appearance Selection Popup NavItem */}
-        <AppearanceNavItem
-          isRightSide={isRightSide}
-        />
+          {/* Appearance Selection Popup NavItem */}
+          <AppearanceNavItem
+            isRightSide={isRightSide}
+          />
 
-        {isAuthenticated ? (
-          <>
-            {/* Statistics Button (Logged-in users with actual accounts only) */}
-            <NavItem
-              href="/stats"
-              icon={<BarChart3 className="w-4 h-4" />}
-              tooltip="Statistics"
-              isActive={pathname === '/stats' || pathname === '/statistics'}
-              isRightSide={isRightSide}
-            />
+          {isAuthenticated ? (
+            <>
+              {/* Statistics Button (Logged-in users with actual accounts only) */}
+              <NavItem
+                href="/stats"
+                icon={<BarChart3 className="w-4 h-4" />}
+                tooltip="Statistics"
+                isActive={pathname === '/stats' || pathname === '/statistics'}
+                isRightSide={isRightSide}
+              />
 
-            {/* Settings Link */}
-            <NavItem
-              href="/settings"
-              icon={<Settings className="w-4 h-4" />}
-              tooltip="Settings"
-              isActive={pathname === '/settings'}
-              isRightSide={isRightSide}
-            />
+              {/* Settings Link */}
+              <NavItem
+                href="/settings"
+                icon={<Settings className="w-4 h-4" />}
+                tooltip="Settings"
+                isActive={pathname === '/settings'}
+                isRightSide={isRightSide}
+              />
 
-            {/* Profile Link */}
-            <NavItem
-              href={`/${user.username || 'profile'}`}
-              icon={<User className="w-4 h-4" />}
-              tooltip={user.username ? `@${user.username}` : 'Profile'}
-              isActive={pathname === `/${user.username}`}
-              isRightSide={isRightSide}
-            />
+              {/* Profile Link */}
+              <NavItem
+                href={`/${user.username || 'profile'}`}
+                icon={<User className="w-4 h-4" />}
+                tooltip={user.username ? `@${user.username}` : 'Profile'}
+                isActive={pathname === `/${user.username}`}
+                isRightSide={isRightSide}
+              />
 
-            {/* Log Out Button */}
-            <NavItem
-              onClick={logout}
-              icon={<LogOut className="w-4 h-4 text-destructive" />}
-              tooltip="Log out"
-              isRightSide={isRightSide}
-            />
-          </>
-        ) : (
-          <>
-            {/* Log In Link */}
-            <NavItem
-              href="/login"
-              icon={<LogIn className="w-4 h-4" />}
-              tooltip="Log in"
-              isActive={pathname === '/login'}
-              isRightSide={isRightSide}
-            />
+              {/* Log Out Button */}
+              <NavItem
+                onClick={logout}
+                icon={<LogOut className="w-4 h-4 text-destructive" />}
+                tooltip="Log out"
+                isRightSide={isRightSide}
+              />
+            </>
+          ) : (
+            <>
+              {/* Log In Link */}
+              <NavItem
+                href="/login"
+                icon={<LogIn className="w-4 h-4" />}
+                tooltip="Log in"
+                isActive={pathname === '/login'}
+                isRightSide={isRightSide}
+              />
 
-            {/* Sign Up Link */}
-            <NavItem
-              href="/signup"
-              icon={<UserPlus className="w-4 h-4 text-primary" />}
-              tooltip="Sign up"
-              isActive={pathname === '/signup'}
-              isRightSide={isRightSide}
-            />
-          </>
-        )}
+              {/* Sign Up Link */}
+              <NavItem
+                href="/signup"
+                icon={<UserPlus className="w-4 h-4 text-primary" />}
+                tooltip="Sign up"
+                isActive={pathname === '/signup'}
+                isRightSide={isRightSide}
+              />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

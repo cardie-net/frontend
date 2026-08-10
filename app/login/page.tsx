@@ -103,7 +103,7 @@ function LoginContent() {
   }
 
   return (
-    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
       <CardContent className="p-6 sm:p-8">
       <h1 className="mb-2 text-2xl font-bold sm:text-3xl">Welcome Back</h1>
       <p className="mb-6 text-muted-foreground">Sign in to continue</p>
@@ -175,7 +175,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Suspense
         fallback={
-          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
             <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
               Loading...
             </CardContent>

@@ -189,7 +189,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Profile Info Card (Banner-less) */}
-      <Card className="rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+      <Card className="rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
         <CardContent className="p-6 sm:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 min-w-0">
             <div className="flex flex-row items-center gap-4 sm:gap-5 min-w-0 flex-1">

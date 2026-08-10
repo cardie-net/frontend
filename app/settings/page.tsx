@@ -11,7 +11,7 @@ export default function SettingsPage() {
         </div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
       </div>
-      <Card className="rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+      <Card className="rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
         <CardContent className="p-6 sm:p-8">
           <AccountTab />
         </CardContent>

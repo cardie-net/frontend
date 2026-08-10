@@ -73,7 +73,7 @@ function ResetPasswordContent() {
 
   if (success) {
     return (
-      <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+      <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
         <CardContent className="p-6 sm:p-8">
         <div className="text-center">
           <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
@@ -90,7 +90,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
       <CardContent className="p-6 sm:p-8">
       <h1 className="text-2xl sm:text-3xl font-bold mb-2">Set New Password</h1>
       <p className="text-muted-foreground mb-6">Enter your token and new password</p>
@@ -155,7 +155,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Suspense
         fallback={
-          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card/95 backdrop-blur-2xl overflow-hidden">
+          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
             <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
               Loading...
             </CardContent>
