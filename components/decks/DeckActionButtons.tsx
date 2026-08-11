@@ -1,8 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
+
+function getSrIntroSeenSnapshot() {
+  try {
+    return localStorage.getItem('cardie_spaced_repetition_intro_seen') === 'true';
+  } catch {
+    return true;
+  }
+}
+
+function subscribeSrIntroSeen() {
+  return () => {};
+}
 import { useDeck, useDeckMatchTime, useClearDeckMatchTime, useDeckExamScore, useClearDeckExamScore } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
 import { cn } from '@/lib/utils';
@@ -76,12 +89,23 @@ interface DeckActionButtonsProps {
 }
 
 export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps) {
+  const router = useRouter();
   const { data: deck } = useDeck(username, deckSlug);
   const { data: matchTime } = useDeckMatchTime(deck?.id);
   const clearMatchTime = useClearDeckMatchTime();
   const { data: examScore } = useDeckExamScore(deck?.id);
   const clearExamScore = useClearDeckExamScore();
   const { data: cards = [] } = useCards(deck?.id);
+
+  // Spaced Repetition first-time dialog state
+  const hasSeenSrIntroFromStore = useSyncExternalStore(
+    subscribeSrIntroSeen,
+    getSrIntroSeenSnapshot,
+    () => true
+  );
+  const [hasSeenSrIntroState, setHasSeenSrIntroState] = useState<boolean | null>(null);
+  const hasSeenSrIntro = hasSeenSrIntroState ?? hasSeenSrIntroFromStore;
+  const [srDialogOpen, setSrDialogOpen] = useState(false);
 
   // Exam settings state
   const [examQuestionCount, setExamQuestionCount] = useState<number | "">("");
@@ -144,6 +168,60 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             )}
           </div>
         );
+
+        if (action.href === 'spaced-repetition' && !hasSeenSrIntro) {
+          return (
+            <Dialog key={action.href} open={srDialogOpen} onOpenChange={setSrDialogOpen}>
+              <DialogTrigger className="block text-left w-full h-full text-foreground hover:no-underline p-0 m-0 border-none bg-transparent focus:outline-none">
+                {cardContent}
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+                  <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+                    <Clock className="w-5 h-5" />
+                  </div>
+                  <DialogTitle className="text-base font-semibold">Spaced Repetition Mode</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="sr-only">
+                  Explanation of Spaced Repetition mode.
+                </DialogDescription>
+                <div className="space-y-3 text-sm text-muted-foreground">
+                  <p>
+                    Spaced repetition schedules cards based on your performance to maximize long-term retention.
+                  </p>
+                  <div className="rounded-lg bg-muted/50 p-3 text-xs space-y-1.5 text-foreground">
+                    <p className="font-medium">How it works</p>
+                    <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                      <li>Cards you struggle with appear more frequently; cards you know well are spaced further apart.</li>
+                      <li>Only cards due for review are shown. If no cards are due, the session will end.</li>
+                      <li>Use <strong className="text-foreground font-medium">Learn</strong> mode if you want to review all cards without scheduling constraints.</li>
+                    </ul>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
+                    Cancel
+                  </DialogClose>
+                  <Button
+                    className={buttonVariants({ className: "w-full sm:w-auto" })}
+                    onClick={() => {
+                      try {
+                        localStorage.setItem('cardie_spaced_repetition_intro_seen', 'true');
+                      } catch (e) {
+                        console.error('Failed to set localStorage', e);
+                      }
+                      setHasSeenSrIntroState(true);
+                      setSrDialogOpen(false);
+                      router.push(`/${username}/${deckSlug}/spaced-repetition`);
+                    }}
+                  >
+                    Start Session
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          );
+        }
 
         if (action.href === 'match') {
           return (
