@@ -111,3 +111,21 @@ export interface SRSReviewItem {
   card_id: string
   rating: number
 }
+
+export interface UserDailyActivity {
+  id: string
+  user_id: string
+  date: string
+  points: number
+  activities_count: number
+  details?: Record<string, number> | null
+}
+
+export interface UserActivitySummary {
+  activities: UserDailyActivity[]
+  total_points: number
+  current_streak: number
+  longest_streak: number
+  total_active_days: number
+}
+

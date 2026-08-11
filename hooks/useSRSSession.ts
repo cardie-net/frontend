@@ -7,6 +7,7 @@ import {
 } from "@/types"
 import { apiFetch } from "@/lib/api"
 import { useFlushOnUnload } from "@/hooks/useFlushOnUnload"
+import { useActivityTracker } from "@/hooks/useActivityTracker"
 
 const BATCH_SIZE = 5
 
@@ -64,8 +65,10 @@ export function computePreviewIntervals(
 }
 
 export function useSRSSession(deckId: string) {
+  const { trackSRSReview } = useActivityTracker()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
 
   const [queue, setQueue] = useState<SessionQueueItem[]>([])
   const [relearnQueue, setRelearnQueue] = useState<SessionQueueItem[]>([])
@@ -178,8 +181,11 @@ export function useSRSSession(deckId: string) {
   const handleRating = (rating: number) => {
     if (!currentItem) return
 
+    trackSRSReview()
+
     // Update remote
     updateQueueRef.current.push({ card_id: currentItem.card.id, rating })
+
     if (updateQueueRef.current.length >= BATCH_SIZE) {
       // keepalive so the batch survives tab close / navigation
       syncProgress([...updateQueueRef.current], true)

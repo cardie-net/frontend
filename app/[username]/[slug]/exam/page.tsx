@@ -29,12 +29,15 @@ type Question = {
 
 const LETTERS = ["A", "B", "C", "D"]
 
+import { useActivityTracker } from "@/hooks/useActivityTracker"
+
 export default function ExamPage() {
   const { username, slug } = useParams() as { username: string; slug: string }
   const searchParams = useSearchParams()
   const countParam = searchParams.get("count")
   const answerWith = searchParams.get("answerWith")
 
+  const { trackExamSubmit } = useActivityTracker()
   const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
   const updateExamScore = useUpdateDeckExamScore()
@@ -43,6 +46,7 @@ export default function ExamPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [initError, setInitError] = useState(false)
   const firstUnansweredRef = useRef<HTMLDivElement | null>(null)
+
 
   const initializeQuestions = useCallback(() => {
     if (!cards || cards.length === 0) return
@@ -145,6 +149,7 @@ export default function ExamPage() {
       return
     }
     setIsSubmitted(true)
+    trackExamSubmit()
     if (deck?.id && questions.length > 0) {
       const calculatedScore = questions.filter(
         (q) => q.options.find((o) => o.id === q.selectedOptionId)?.isCorrect

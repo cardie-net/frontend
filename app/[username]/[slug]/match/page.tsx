@@ -11,6 +11,8 @@ import { useDeck, useUpdateDeckMatchTime } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 import { getCardText } from "@/lib/cards"
 import { shuffle } from "@/lib/utils"
+import { useActivityTracker } from "@/hooks/useActivityTracker"
+
 
 type GridItem = {
   id: string
@@ -25,6 +27,7 @@ export default function MatchPage() {
   const username = params.username
   const slug = params.slug
 
+  const { trackMatchComplete } = useActivityTracker()
   const { data: deck, isLoading: deckLoading } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
 
@@ -90,6 +93,7 @@ export default function MatchPage() {
 
   const endGame = (finalTime: number) => {
     setGameState("done")
+    trackMatchComplete()
     if (timerRef.current) clearInterval(timerRef.current)
     if (deck?.id) {
       updateMatchTime.mutate({ deckId: deck.id, timeMs: finalTime })

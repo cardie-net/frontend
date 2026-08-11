@@ -22,12 +22,17 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 
+import { useUserActivity } from "@/hooks/useActivity"
+import { ActivityGraph } from "@/components/ActivityGraph"
+
 export default function StatisticsPage() {
   const { user, loading: authLoading } = useAuth()
   const { data: items = [], isLoading: itemsLoading } = useUserItems()
   const { data: srsCountsData = {}, isLoading: srsLoading } = useSRSCounts()
+  const { data: activitySummary, isLoading: activityLoading } = useUserActivity()
 
-  const loading = authLoading || (!!user && !user.is_guest && (itemsLoading || srsLoading))
+  const loading = authLoading || (!!user && !user.is_guest && (itemsLoading || srsLoading || activityLoading))
+
 
   const isGuestOrUnauthenticated = !authLoading && (!user || user.is_guest)
 
@@ -186,6 +191,9 @@ export default function StatisticsPage() {
           </div>
         </Card>
       </div>
+
+      {/* GitHub-like Learning Activity Graph */}
+      <ActivityGraph summary={activitySummary} isLoading={activityLoading} />
 
       {/* Deck Statistics Breakdown Table / Cards */}
       <Card className="rounded-3xl border-border/80 shadow-sm overflow-hidden bg-card">

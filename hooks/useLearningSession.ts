@@ -3,10 +3,13 @@ import { FlashCard, CardProgress } from "@/types"
 import { apiFetch } from "@/lib/api"
 import { shuffle } from "@/lib/utils"
 import { useFlushOnUnload } from "@/hooks/useFlushOnUnload"
+import { useActivityTracker } from "@/hooks/useActivityTracker"
+
 
 const BATCH_SIZE = 5
 
 export function useLearningSession(deckId: string) {
+  const { trackLearnSwipe } = useActivityTracker()
   const [cards, setCards] = useState<FlashCard[]>([])
   const [progressMap, setProgressMap] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
@@ -18,6 +21,7 @@ export function useLearningSession(deckId: string) {
   const [sessionCards, setSessionCards] = useState<FlashCard[]>([])
   const [sessionCompleted, setSessionCompleted] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
+
 
   const fetchSessionData = useCallback(async () => {
     if (!deckId) return
@@ -108,9 +112,13 @@ export function useLearningSession(deckId: string) {
   const handleAnswer = (knewIt: boolean) => {
     if (!sessionCards[currentCardIndex]) return
 
+    // Track activity points for swiping/answering card
+    trackLearnSwipe()
+
     const cardId = sessionCards[currentCardIndex].id
     const currentBox = progressMap[cardId] || 1
     let nextBox = knewIt ? currentBox + 1 : 1
+
     if (nextBox > 3) nextBox = 3
 
     // Update local state

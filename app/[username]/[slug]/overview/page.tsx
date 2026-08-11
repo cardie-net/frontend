@@ -19,10 +19,14 @@ import { Progress } from "@/components/ui/progress"
 import { useDeck } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 
+import { useActivityTracker } from "@/hooks/useActivityTracker"
+
 export default function OverviewPage() {
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
+
+  const { trackOverviewCard } = useActivityTracker()
 
   const {
     data: deck,
@@ -47,7 +51,12 @@ export default function OverviewPage() {
       setIsFlipped(false)
     }
 
-    api.on("select", update)
+    const handleSelect = () => {
+      update()
+      trackOverviewCard()
+    }
+
+    api.on("select", handleSelect)
     api.on("reInit", update)
     // Defer the initial sync: the carousel has already initialized before this
     // effect runs, and calling setState synchronously here is flagged by
@@ -56,10 +65,11 @@ export default function OverviewPage() {
 
     return () => {
       window.clearTimeout(id)
-      api.off("select", update)
+      api.off("select", handleSelect)
       api.off("reInit", update)
     }
-  }, [api])
+  }, [api, trackOverviewCard])
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
