@@ -33,47 +33,57 @@ export default function StatisticsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto max-w-5xl space-y-8 px-4 py-12">
-        <div className="space-y-3">
-          <Skeleton className="h-9 w-64" />
-          <Skeleton className="h-5 w-96" />
+      <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+        <div className="flex items-center gap-3 mb-8">
+          <Skeleton className="h-11 w-11 rounded-2xl" />
+          <Skeleton className="h-9 w-48 rounded-xl" />
         </div>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-2xl" />
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
         </div>
-        <Skeleton className="h-96 w-full rounded-2xl" />
+        <Skeleton className="h-64 w-full rounded-3xl" />
       </div>
     )
   }
 
   if (isGuestOrUnauthenticated) {
     return (
-      <div className="container mx-auto max-w-3xl px-4 py-20 text-center">
-        <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-inner">
-          <BarChart3 className="h-10 w-10" />
+      <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
+            <BarChart3 className="w-6 h-6" />
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Study Statistics</h1>
         </div>
-        <h1 className="mb-3 text-3xl font-extrabold tracking-tight sm:text-4xl">
-          Study Statistics & Analytics
-        </h1>
-        <p className="mx-auto mb-8 max-w-lg text-lg text-muted-foreground">
-          Track your learning velocity, SRS recall rates, deck mastery, and daily study streaks with a registered account.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Link href="/login">
-            <Button size="lg" className="gap-2 rounded-full px-6 shadow-md">
-              <LogIn className="h-4 w-4" />
-              Log In
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button size="lg" variant="outline" className="gap-2 rounded-full px-6">
-              <UserPlus className="h-4 w-4 text-primary" />
-              Create Free Account
-            </Button>
-          </Link>
-        </div>
+
+        <Card className="rounded-3xl border-border/80 p-8 sm:p-12 text-center shadow-sm space-y-6">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm">
+            <BarChart3 className="h-8 w-8" />
+          </div>
+          <div className="space-y-2 max-w-lg mx-auto">
+            <h2 className="text-2xl font-bold tracking-tight">Study Statistics & Analytics</h2>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              Track your learning velocity, SRS recall rates, deck mastery, and daily study streaks with a registered account.
+            </p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            <Link href="/login">
+              <Button className="rounded-xl px-6 gap-2 font-medium">
+                <LogIn className="h-4 w-4" />
+                Log In
+              </Button>
+            </Link>
+            <Link href="/signup">
+              <Button variant="outline" className="rounded-xl px-6 gap-2 font-medium border-border/80">
+                <UserPlus className="h-4 w-4 text-primary" />
+                Create Free Account
+              </Button>
+            </Link>
+          </div>
+        </Card>
       </div>
     )
   }
@@ -96,133 +106,136 @@ export default function StatisticsPage() {
   const totalDue = totalLearningCards + totalReviewCards
   const totalActiveSRSCards = totalNewCards + totalLearningCards + totalReviewCards
 
+  const activeSrsDecks = userDecks.filter((deck) => {
+    const srs = srsCountsData[deck.id]
+    if (!srs) return false
+    const totalDeckSrs = (srs.new_count || 0) + (srs.learning_count || 0) + (srs.review_count || 0)
+    return totalDeckSrs > 0
+  })
+
   return (
-    <div className="container mx-auto max-w-5xl space-y-10 px-4 py-10">
+    <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
       {/* Header */}
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <BarChart3 className="h-5 w-5" />
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight">Study Statistics</h1>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
+            <BarChart3 className="w-6 h-6" />
           </div>
-          <p className="mt-1 text-muted-foreground">
-            Overview of your flashcard collections, SRS review queues, and learning performance.
-          </p>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Study Statistics</h1>
         </div>
 
-        <Link href="/decks">
-          <Button variant="outline" className="gap-2 rounded-full">
+        <Link href="/decks" className="hidden sm:block">
+          <Button variant="outline" className="rounded-xl gap-2 font-medium border-border/80" size="sm">
             <BookOpen className="h-4 w-4" />
-            Study Decks
+            <span>Study Decks</span>
           </Button>
         </Link>
       </div>
 
       {/* Summary Cards Grid */}
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <Card className="relative overflow-hidden border-border/60 bg-gradient-to-br from-background via-background to-muted/20 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Decks</CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/10 text-blue-500 dark:bg-blue-500/20">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="relative overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm space-y-3 hover:border-border transition-all">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Decks</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:bg-blue-500/20 shrink-0">
               <Layers className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalDecks}</div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Decks in your collection
-            </p>
-          </CardContent>
+          </div>
+          <div>
+            <div className="text-3xl font-bold tracking-tight">{totalDecks}</div>
+            <p className="mt-1 text-xs text-muted-foreground">Decks in your collection</p>
+          </div>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/60 bg-gradient-to-br from-background via-background to-muted/20 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Due for Review</CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 dark:bg-amber-500/20">
+        <Card className="relative overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm space-y-3 hover:border-border transition-all">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Due for Review</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 dark:bg-amber-500/20 shrink-0">
               <Clock className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalDue}</div>
-            <p className="mt-1 text-xs text-muted-foreground">
-              {totalLearningCards} learning, {totalReviewCards} review
-            </p>
-          </CardContent>
+          </div>
+          <div>
+            <div className="text-3xl font-bold tracking-tight">{totalDue}</div>
+            <p className="mt-1 text-xs text-muted-foreground">{totalLearningCards} learning, {totalReviewCards} review</p>
+          </div>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/60 bg-gradient-to-br from-background via-background to-muted/20 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">New Cards</CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20">
+        <Card className="relative overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm space-y-3 hover:border-border transition-all">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">New Cards</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20 shrink-0">
               <Sparkles className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalNewCards}</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold tracking-tight">{totalNewCards}</div>
             <p className="mt-1 text-xs text-muted-foreground">Ready to introduce into SRS</p>
-          </CardContent>
+          </div>
         </Card>
 
-        <Card className="relative overflow-hidden border-border/60 bg-gradient-to-br from-background via-background to-muted/20 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">SRS Active Cards</CardTitle>
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-500/10 text-purple-500 dark:bg-purple-500/20">
+        <Card className="relative overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm space-y-3 hover:border-border transition-all">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">SRS Active</span>
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500 dark:bg-purple-500/20 shrink-0">
               <Brain className="h-4 w-4" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl font-bold">{totalActiveSRSCards}</div>
+          </div>
+          <div>
+            <div className="text-3xl font-bold tracking-tight">{totalActiveSRSCards}</div>
             <p className="mt-1 text-xs text-muted-foreground">Cards tracked in SRS system</p>
-          </CardContent>
+          </div>
         </Card>
       </div>
 
       {/* Deck Statistics Breakdown Table / Cards */}
-      <Card className="border-border/60 shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl font-bold">
+      <Card className="rounded-3xl border-border/80 shadow-sm overflow-hidden bg-card">
+        <CardHeader className="p-6 sm:p-8 pb-4 sm:pb-4 border-b border-border/50">
+          <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
             <Zap className="h-5 w-5 text-amber-500" />
             Deck SRS Breakdown
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-xs sm:text-sm text-muted-foreground">
             Detailed view of memory review queues per deck
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          {userDecks.length === 0 ? (
+        <CardContent className="p-6 sm:p-8">
+          {activeSrsDecks.length === 0 ? (
             <div className="py-12 text-center text-muted-foreground">
               <BookOpen className="mx-auto mb-3 h-10 w-10 opacity-40" />
-              <p className="text-base font-medium">No decks found</p>
-              <p className="text-sm">Create a deck to start collecting study statistics.</p>
+              <p className="text-base font-medium text-foreground">No active SRS decks</p>
+              <p className="text-sm mt-1">
+                {userDecks.length === 0
+                  ? "Create a deck to start collecting study statistics."
+                  : "Decks with cards ready to learn or review will appear here."}
+              </p>
               <Link href="/decks" className="mt-4 inline-block">
-                <Button variant="outline" size="sm" className="mt-2 rounded-full">
-                  Create Deck
+                <Button variant="outline" size="sm" className="mt-2 rounded-xl font-medium border-border/80">
+                  {userDecks.length === 0 ? "Create Deck" : "View Decks"}
                 </Button>
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
-              {userDecks.map((deck) => {
+            <div className="space-y-3">
+              {activeSrsDecks.map((deck) => {
                 const srs = srsCountsData[deck.id] || { new_count: 0, learning_count: 0, review_count: 0 }
                 const deckDue = (srs.learning_count || 0) + (srs.review_count || 0)
                 const totalDeckSrs = (srs.new_count || 0) + (srs.learning_count || 0) + (srs.review_count || 0)
+                const deckHref = user?.username ? `/${user.username}/${deck.slug}` : `/decks/${deck.id}`
 
                 return (
                   <div
                     key={deck.id}
-                    className="flex flex-col gap-4 rounded-xl border border-border/50 bg-card p-4 transition-all hover:border-border sm:flex-row sm:items-center sm:justify-between"
+                    className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-4 sm:p-5 transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between"
                   >
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Link
-                          href={`/decks/${deck.id}`}
-                          className="font-semibold text-foreground hover:underline"
+                          href={deckHref}
+                          className="font-bold text-foreground hover:text-primary transition-colors truncate"
                         >
                           {deck.name}
                         </Link>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
                           {totalDeckSrs} SRS cards
                         </Badge>
                       </div>
@@ -233,24 +246,24 @@ export default function StatisticsPage() {
                       )}
                     </div>
 
-                    <div className="flex items-center gap-3">
-                      <div className="flex items-center gap-2 text-xs">
-                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-1 font-medium text-blue-600 dark:text-blue-400">
+                    <div className="flex items-center gap-3 justify-between sm:justify-end shrink-0 flex-wrap sm:flex-nowrap">
+                      <div className="flex items-center gap-1.5 text-xs font-medium">
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-blue-500/10 px-2.5 py-1 font-semibold text-blue-600 dark:text-blue-400">
                           {srs.new_count || 0} New
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-2.5 py-1 font-medium text-amber-600 dark:text-amber-400">
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2.5 py-1 font-semibold text-amber-600 dark:text-amber-400">
                           {srs.learning_count || 0} Learn
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2.5 py-1 font-medium text-emerald-600 dark:text-emerald-400">
+                        <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-600 dark:text-emerald-400">
                           {srs.review_count || 0} Review
                         </span>
                       </div>
 
-                      <Link href={`/decks/${deck.id}`}>
+                      <Link href={deckHref}>
                         <Button
                           size="sm"
                           variant={deckDue > 0 ? "default" : "outline"}
-                          className="rounded-full px-4 text-xs"
+                          className="rounded-xl px-4 text-xs font-medium shrink-0"
                         >
                           {deckDue > 0 ? `Study (${deckDue})` : "View Deck"}
                         </Button>
@@ -266,3 +279,4 @@ export default function StatisticsPage() {
     </div>
   )
 }
+
