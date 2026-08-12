@@ -1,23 +1,12 @@
 'use client';
 
-import { useState, useSyncExternalStore } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
-
-function getSrIntroSeenSnapshot() {
-  try {
-    return localStorage.getItem('cardie_spaced_repetition_intro_seen') === 'true';
-  } catch {
-    return true;
-  }
-}
-
-function subscribeSrIntroSeen() {
-  return () => {};
-}
 import { useDeck, useDeckMatchTime, useClearDeckMatchTime, useDeckExamScore, useClearDeckExamScore } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
+import { useSRSCounts, useActivateSRS } from '@/hooks/useSRSCounts';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -96,15 +85,10 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
   const { data: examScore } = useDeckExamScore(deck?.id);
   const clearExamScore = useClearDeckExamScore();
   const { data: cards = [] } = useCards(deck?.id);
+  const { data: srsCountsData = {} } = useSRSCounts();
+  const activateSRS = useActivateSRS();
 
-  // Spaced Repetition first-time dialog state
-  const hasSeenSrIntroFromStore = useSyncExternalStore(
-    subscribeSrIntroSeen,
-    getSrIntroSeenSnapshot,
-    () => true
-  );
-  const [hasSeenSrIntroState, setHasSeenSrIntroState] = useState<boolean | null>(null);
-  const hasSeenSrIntro = hasSeenSrIntroState ?? hasSeenSrIntroFromStore;
+  const isSrsActivated = deck?.id ? (srsCountsData[deck.id]?.activated ?? false) : false;
   const [srDialogOpen, setSrDialogOpen] = useState(false);
 
   // Exam settings state
@@ -169,7 +153,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
           </div>
         );
 
-        if (action.href === 'spaced-repetition' && !hasSeenSrIntro) {
+        if (action.href === 'spaced-repetition' && !isSrsActivated) {
           return (
             <Dialog key={action.href} open={srDialogOpen} onOpenChange={setSrDialogOpen}>
               <DialogTrigger className="block text-left w-full h-full text-foreground hover:no-underline p-0 m-0 border-none bg-transparent focus:outline-none">
@@ -203,19 +187,21 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                     Cancel
                   </DialogClose>
                   <Button
+                    disabled={activateSRS.isPending}
                     className={buttonVariants({ className: "w-full sm:w-auto" })}
-                    onClick={() => {
-                      try {
-                        localStorage.setItem('cardie_spaced_repetition_intro_seen', 'true');
-                      } catch (e) {
-                        console.error('Failed to set localStorage', e);
+                    onClick={async () => {
+                      if (deck?.id) {
+                        try {
+                          await activateSRS.mutateAsync(deck.id);
+                        } catch (e) {
+                          console.error('Failed to activate SRS', e);
+                        }
                       }
-                      setHasSeenSrIntroState(true);
                       setSrDialogOpen(false);
                       router.push(`/${username}/${deckSlug}/spaced-repetition`);
                     }}
                   >
-                    Start Session
+                    {activateSRS.isPending ? 'Activating...' : 'Activate'}
                   </Button>
                 </DialogFooter>
               </DialogContent>

@@ -96,6 +96,7 @@ export interface SRSCardProgress {
 }
 
 export interface SRSDeckCounts {
+  activated: boolean
   new_count: number
   learning_count: number
   review_count: number

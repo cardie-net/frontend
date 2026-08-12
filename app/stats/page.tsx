@@ -102,10 +102,12 @@ export default function StatisticsPage() {
   let totalReviewCards = 0
 
   userDecks.forEach((deck) => {
-    const srs = srsCountsData[deck.id] || { new_count: 0, learning_count: 0, review_count: 0 }
-    totalNewCards += srs.new_count || 0
-    totalLearningCards += srs.learning_count || 0
-    totalReviewCards += srs.review_count || 0
+    const srs = srsCountsData[deck.id]
+    if (srs?.activated) {
+      totalNewCards += srs.new_count || 0
+      totalLearningCards += srs.learning_count || 0
+      totalReviewCards += srs.review_count || 0
+    }
   })
 
   const totalDue = totalLearningCards + totalReviewCards
@@ -113,9 +115,7 @@ export default function StatisticsPage() {
 
   const activeSrsDecks = userDecks.filter((deck) => {
     const srs = srsCountsData[deck.id]
-    if (!srs) return false
-    const totalDeckSrs = (srs.new_count || 0) + (srs.learning_count || 0) + (srs.review_count || 0)
-    return totalDeckSrs > 0
+    return srs?.activated === true
   })
 
   return (
@@ -214,7 +214,7 @@ export default function StatisticsPage() {
               <p className="text-sm mt-1">
                 {userDecks.length === 0
                   ? "Create a deck to start collecting study statistics."
-                  : "Decks with cards ready to learn or review will appear here."}
+                  : "Decks with Spaced Repetition activated will appear here."}
               </p>
               <Link href="/decks" className="mt-4 inline-block">
                 <Button variant="outline" size="sm" className="mt-2 rounded-xl font-medium border-border/80">

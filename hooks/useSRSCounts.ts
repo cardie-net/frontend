@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
 import { useAuth } from "@/lib/AuthContext"
@@ -20,3 +20,24 @@ export function useSRSCounts() {
     refetchOnMount: "always",
   })
 }
+
+export function useActivateSRS() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async (deckId: string) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/srs/activate`, {
+        method: "POST",
+      })
+      if (!res.ok) throw new Error("Failed to activate SRS")
+      return res.json() as Promise<SRSDeckCounts>
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.srsCounts(user?.id),
+      })
+    },
+  })
+}
+
