@@ -23,11 +23,21 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useDeck } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 import { useActivityTracker } from "@/hooks/useActivityTracker"
+import { useAuth } from "@/lib/AuthContext"
+
+type OverrideValue = "default" | "yes" | "no"
 
 function shuffleList<T>(list: T[]): T[] {
   const array = [...list]
@@ -38,11 +48,18 @@ function shuffleList<T>(list: T[]): T[] {
   return array
 }
 
+function resolveOverride(override: OverrideValue, globalDefault: boolean): boolean {
+  if (override === "yes") return true
+  if (override === "no") return false
+  return globalDefault
+}
+
 export default function OverviewPage() {
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
 
+  const { user } = useAuth()
   const { trackOverviewCard } = useActivityTracker()
 
   const { data: deck, isLoading: deckLoading, error } = useDeck(username, slug)
@@ -72,21 +89,30 @@ export default function OverviewPage() {
     return false
   })
 
-  const [isShuffled, setIsShuffled] = useState(() => {
-    if (typeof window === "undefined" || !username || !slug) return false
+  const [shuffleOverride, setShuffleOverride] = useState<OverrideValue>(() => {
+    if (typeof window === "undefined" || !username || !slug) return "default"
     try {
       const saved = localStorage.getItem(
         `overview_settings_${username}_${slug}`
       )
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (typeof parsed.isShuffled === "boolean") return parsed.isShuffled
+        if (parsed.shuffleOverride === "yes" || parsed.shuffleOverride === "no") {
+          return parsed.shuffleOverride
+        }
+        // Migrate old boolean format
+        if (typeof parsed.isShuffled === "boolean") {
+          return parsed.isShuffled ? "yes" : "no"
+        }
       }
     } catch (e) {
       console.error("Failed to load overview settings from localStorage", e)
     }
-    return false
+    return "default"
   })
+
+  const globalShuffleDefault = user?.preferences?.overview_shuffle ?? false
+  const isShuffled = resolveOverride(shuffleOverride, globalShuffleDefault)
 
   useEffect(() => {
     if (!username || !slug) return
@@ -98,8 +124,12 @@ export default function OverviewPage() {
         const timerId = window.setTimeout(() => {
           if (typeof parsed.isReversed === "boolean")
             setIsReversed(parsed.isReversed)
-          if (typeof parsed.isShuffled === "boolean")
-            setIsShuffled(parsed.isShuffled)
+          if (parsed.shuffleOverride === "yes" || parsed.shuffleOverride === "no") {
+            setShuffleOverride(parsed.shuffleOverride)
+          } else if (typeof parsed.isShuffled === "boolean") {
+            // Migrate old boolean format
+            setShuffleOverride(parsed.isShuffled ? "yes" : "no")
+          }
         }, 0)
         return () => window.clearTimeout(timerId)
       }
@@ -111,37 +141,12 @@ export default function OverviewPage() {
   const [shuffledCards, setShuffledCards] = useState<typeof cards>([])
 
   useEffect(() => {
-    if (!username || !slug) return
-    const storageKey = `overview_settings_${username}_${slug}`
-    try {
-      const saved = localStorage.getItem(storageKey)
-      if (saved) {
-        const parsed = JSON.parse(saved)
-        const timerId = window.setTimeout(() => {
-          if (typeof parsed.isReversed === "boolean")
-            setIsReversed(parsed.isReversed)
-          if (typeof parsed.isShuffled === "boolean") {
-            setIsShuffled(parsed.isShuffled)
-            if (parsed.isShuffled && cards.length > 0) {
-              setShuffledCards(shuffleList(cards))
-            }
-          }
-        }, 0)
-        return () => window.clearTimeout(timerId)
-      }
-    } catch (e) {
-      console.error("Failed to load overview settings from localStorage", e)
+    if (isShuffled && cards.length > 0) {
+      setShuffledCards(shuffleList(cards))
+    } else {
+      setShuffledCards([])
     }
-  }, [username, slug, cards])
-
-  useEffect(() => {
-    if (isShuffled && cards.length > 0 && shuffledCards.length === 0) {
-      const timerId = window.setTimeout(() => {
-        setShuffledCards(shuffleList(cards))
-      }, 0)
-      return () => window.clearTimeout(timerId)
-    }
-  }, [cards, isShuffled, shuffledCards.length])
+  }, [cards, isShuffled])
 
   const handleToggleReversed = (checked: boolean) => {
     setIsReversed(checked)
@@ -161,11 +166,8 @@ export default function OverviewPage() {
     }
   }
 
-  const handleToggleShuffled = (checked: boolean) => {
-    setIsShuffled(checked)
-    if (checked) {
-      setShuffledCards(shuffleList(cards))
-    }
+  const handleShuffleOverrideChange = (value: OverrideValue) => {
+    setShuffleOverride(value)
     setIsFlipped(false)
     if (api) {
       api.scrollTo(0)
@@ -175,9 +177,11 @@ export default function OverviewPage() {
       try {
         const saved = localStorage.getItem(storageKey)
         const parsed = saved ? JSON.parse(saved) : {}
+        // Remove old boolean key, use new override key
+        delete parsed.isShuffled
         localStorage.setItem(
           storageKey,
-          JSON.stringify({ ...parsed, isShuffled: checked })
+          JSON.stringify({ ...parsed, shuffleOverride: value })
         )
       } catch (e) {
         console.error("Failed to save overview settings to localStorage", e)
@@ -395,7 +399,15 @@ export default function OverviewPage() {
             <div>
               <DialogTitle className="text-base font-semibold">Overview Settings</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Configure display settings for this deck overview.
+                Defaults can be configured in{" "}
+                <Link
+                  href="/settings#learning-settings"
+                  className="text-primary underline underline-offset-2 hover:text-primary/80"
+                  onClick={() => setIsSettingsOpen(false)}
+                >
+                  settings
+                </Link>
+                .
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -428,14 +440,22 @@ export default function OverviewPage() {
                   Shuffle cards
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Randomize the order of cards (refresh the page to re-shuffle)
+                  Randomize the order of cards
                 </p>
               </div>
-              <Switch
-                id="shuffle-cards"
-                checked={isShuffled}
-                onCheckedChange={(checked) => handleToggleShuffled(checked)}
-              />
+              <Select
+                value={shuffleOverride}
+                onValueChange={(v) => handleShuffleOverrideChange(v as OverrideValue)}
+              >
+                <SelectTrigger size="sm" className="w-[110px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="default">Default</SelectItem>
+                  <SelectItem value="yes">Yes</SelectItem>
+                  <SelectItem value="no">No</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </DialogContent>

@@ -255,7 +255,7 @@ function AccountForm({ user }: { user: UserProfile }) {
   }
 
   const [socialInputs, setSocialInputs] = useState<Record<keyof SocialLinks, string>>(initialSocialInputs)
-  const [bioAndSocialExpanded, setBioAndSocialExpanded] = useState(true)
+  const [bioAndSocialExpanded, setBioAndSocialExpanded] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
   const [selectedImageSrc, setSelectedImageSrc] = useState<string>("")

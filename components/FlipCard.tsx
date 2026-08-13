@@ -16,6 +16,10 @@ interface FlipCardProps {
    * animation when the current card changes.
    */
   backContent?: CardElement[] | null
+  /**
+   * If true, clicking on the card will not flip it and the flip instructions footer will be hidden.
+   */
+  disableFlip?: boolean
 }
 
 /**
@@ -28,13 +32,16 @@ export function FlipCard({
   flipped,
   onFlip,
   backContent,
+  disableFlip = false,
 }: FlipCardProps) {
   return (
-    <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[250px] sm:min-h-[500px]">
+    <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[200px] sm:min-h-[500px]">
       <div
-        className={`h-full flex-1 flex flex-col min-h-0 w-full cursor-pointer transition-all duration-500 [transform-style:preserve-3d] ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
+        className={`h-full flex-1 flex flex-col min-h-0 w-full transition-all duration-500 [transform-style:preserve-3d] ${disableFlip ? "cursor-default" : "cursor-pointer"} ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
         onClick={() => {
-          onFlip()
+          if (!disableFlip) {
+            onFlip()
+          }
         }}
       >
         {/* Front side */}
@@ -42,7 +49,7 @@ export function FlipCard({
           <CardContent className="flex flex-col flex-1 min-h-0 p-8 text-center text-xl">
             <CardElements elements={front} />
           </CardContent>
-          {!flipped && (
+          {!flipped && !disableFlip && (
             <div className="border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground rounded-b-[min(var(--radius-4xl),24px)]">
               <span className="sm:hidden">Click anywhere on the card to flip</span>
               <span className="hidden sm:inline-flex items-center justify-center gap-1.5">

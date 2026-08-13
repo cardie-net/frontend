@@ -65,6 +65,8 @@ export interface SocialLinks {
 export interface UserPreferences {
   language?: string
   themeConfig?: Record<string, unknown>
+  learning_multiple_choice?: boolean
+  overview_shuffle?: boolean
 }
 
 /** The authenticated user (`GET /api/v1/users/me`) or a public profile. */

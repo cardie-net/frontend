@@ -202,6 +202,7 @@ export function useLearningSession(deckId: string) {
     error,
     sessionCompleted,
     currentCard: sessionCards[currentCardIndex],
+    cards,
     isFlipped,
     setIsFlipped,
     handleAnswer,

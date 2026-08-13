@@ -5,8 +5,9 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
-import { Settings, User } from "lucide-react"
+import { Settings, User, GraduationCap } from "lucide-react"
 import { AccountTab } from "./AccountTab"
+import { LearningTab } from "./LearningTab"
 
 export default function SettingsPage() {
   return (
@@ -32,6 +33,21 @@ export default function SettingsPage() {
         </CardHeader>
         <CardContent className="relative p-0">
           <AccountTab />
+        </CardContent>
+      </Card>
+
+      <Card id="learning-settings" className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
+        <CardHeader className="p-0">
+          <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
+            <GraduationCap className="h-5 w-5 text-primary" />
+            Learning Settings
+          </CardTitle>
+          <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            Configure your default study and learning preferences across all decks
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="relative p-0">
+          <LearningTab />
         </CardContent>
       </Card>
     </div>
