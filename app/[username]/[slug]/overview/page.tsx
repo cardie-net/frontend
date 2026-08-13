@@ -142,6 +142,7 @@ export default function OverviewPage() {
 
   useEffect(() => {
     if (isShuffled && cards.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShuffledCards(shuffleList(cards))
     } else {
       setShuffledCards([])

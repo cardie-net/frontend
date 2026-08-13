@@ -6,7 +6,7 @@ import { apiFetch } from "@/lib/api"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { CheckCircle2, AlertCircle, ListTodo, Shuffle } from "lucide-react"
+import { AlertCircle, ListTodo, Shuffle } from "lucide-react"
 
 export function LearningTab() {
   const { user, refreshUser } = useAuth()
@@ -18,9 +18,9 @@ export function LearningTab() {
   )
   const [isSaving, setIsSaving] = useState(false)
   const [error, setError] = useState("")
-  const [success, setSuccess] = useState("")
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMultipleChoice(user?.preferences?.learning_multiple_choice ?? false)
     setOverviewShuffle(user?.preferences?.overview_shuffle ?? false)
   }, [user?.preferences])
@@ -28,7 +28,6 @@ export function LearningTab() {
   const savePreference = useCallback(async (prefs: Record<string, boolean>) => {
     setIsSaving(true)
     setError("")
-    setSuccess("")
 
     try {
       const response = await apiFetch("/api/v1/users/me", {
@@ -39,9 +38,7 @@ export function LearningTab() {
       })
 
       if (response.ok) {
-        setSuccess("Preference updated.")
         await refreshUser()
-        setTimeout(() => setSuccess(""), 3000)
       } else {
         const errData = await response.json().catch(() => ({}))
         setError(
@@ -77,13 +74,7 @@ export function LearningTab() {
         </Alert>
       )}
 
-      {success && (
-        <Alert className="border-green-500 bg-green-50/50 text-green-900 dark:bg-green-900/20 dark:text-green-300">
-          <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-          <AlertTitle>Success</AlertTitle>
-          <AlertDescription>{success}</AlertDescription>
-        </Alert>
-      )}
+
 
       <div className="flex items-center justify-between gap-4">
         <div className="space-y-1">

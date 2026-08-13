@@ -239,6 +239,7 @@ export default function LearnPage() {
 
   useEffect(() => {
     if (!currentCard || !cards || cards.length === 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMcOptions([])
       return
     }
@@ -345,6 +346,7 @@ export default function LearnPage() {
     mcOptions,
     isAnswering,
     handleSelectMCOption,
+    handleNextMC,
   ])
 
   return (
@@ -524,7 +526,7 @@ export default function LearnPage() {
                 </div>
                 <div
                   className={cn(
-                    "mt-3 sm:mt-6 flex justify-center w-full transition-opacity duration-300",
+                    "mt-3 sm:mt-6 flex justify-center sm:justify-end w-full transition-opacity duration-300",
                     isAnswering ? "opacity-100" : "opacity-0 pointer-events-none"
                   )}
                 >
