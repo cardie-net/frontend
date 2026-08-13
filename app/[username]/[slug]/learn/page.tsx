@@ -3,10 +3,19 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, Check, X, RotateCcw, GraduationCap } from "lucide-react"
+import { ArrowLeft, Check, X, RotateCcw, GraduationCap, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
 import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import { useDeck } from "@/hooks/useDecks"
 import { useLearningSession } from "@/hooks/useLearningSession"
 import { FlipCard } from "@/components/FlipCard"
@@ -32,6 +41,65 @@ export default function LearnPage() {
     stats,
   } = useLearningSession(deck?.id || "")
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+  const [confirmClear, setConfirmClear] = useState(false)
+
+  useEffect(() => {
+    if (confirmClear) {
+      const timer = setTimeout(() => setConfirmClear(false), 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [confirmClear])
+
+  const [isReversed, setIsReversed] = useState(() => {
+    if (typeof window === "undefined" || !username || !slug) return false
+    try {
+      const saved = localStorage.getItem(`learn_settings_${username}_${slug}`)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (typeof parsed.isReversed === "boolean") return parsed.isReversed
+      }
+    } catch (e) {
+      console.error("Failed to load learn settings from localStorage", e)
+    }
+    return false
+  })
+
+  useEffect(() => {
+    if (!username || !slug) return
+    const storageKey = `learn_settings_${username}_${slug}`
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        const timerId = window.setTimeout(() => {
+          if (typeof parsed.isReversed === "boolean") setIsReversed(parsed.isReversed)
+        }, 0)
+        return () => window.clearTimeout(timerId)
+      }
+    } catch (e) {
+      console.error("Failed to load learn settings from localStorage", e)
+    }
+  }, [username, slug])
+
+  const handleToggleReversed = (checked: boolean) => {
+    setIsReversed(checked)
+    setIsFlipped(false)
+    if (username && slug) {
+      const storageKey = `learn_settings_${username}_${slug}`
+      try {
+        const saved = localStorage.getItem(storageKey)
+        const parsed = saved ? JSON.parse(saved) : {}
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({ ...parsed, isReversed: checked })
+        )
+      } catch (e) {
+        console.error("Failed to save learn settings to localStorage", e)
+      }
+    }
+  }
+
   // Keep track of what to show on the back of the card so it doesn't change text while flipping away
   const [backContent, setBackContent] = useState<CardElement[] | null>(null)
 
@@ -50,12 +118,12 @@ export default function LearnPage() {
   const toggleFlip = useCallback(() => {
     if (!currentCard) return
     if (!isFlipped) {
-      setBackContent(currentCard.back)
+      setBackContent(isReversed ? currentCard.front : currentCard.back)
       setIsFlipped(true)
     } else {
       setIsFlipped(false)
     }
-  }, [currentCard, isFlipped, setIsFlipped])
+  }, [currentCard, isFlipped, isReversed, setIsFlipped])
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -108,44 +176,31 @@ export default function LearnPage() {
             </h1>
           </div>
 
-          <div className="flex sm:hidden items-center gap-2">
-            <Link href={`/${username}/${slug}`}>
+          <div className="flex items-center gap-2">
+            <Link href={`/${username}/${slug}`} className="sm:hidden">
               <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
             </Link>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-xl gap-2 font-medium"
-              onClick={clearProgress}
-              title="Clear Progress"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Clear
-            </Button>
-          </div>
 
-          <div className="hidden items-center justify-end gap-2 sm:flex">
-            <Button
-              variant="outline"
-              className="gap-2 rounded-xl font-medium"
-              onClick={clearProgress}
-              title="Clear Progress"
-            >
-              <RotateCcw className="h-4 w-4" />
-              Clear
-            </Button>
-            <Link href={`/${username}/${slug}`}>
-              <Button
-                variant="outline"
-                className="gap-2 rounded-xl font-medium"
-              >
+            <Link href={`/${username}/${slug}`} className="hidden sm:block">
+              <Button variant="outline" className="rounded-xl gap-2 font-medium">
                 <ArrowLeft className="h-4 w-4" />
                 Back to Deck
               </Button>
             </Link>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl"
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="Settings"
+              title="Settings"
+            >
+              <Settings className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>
@@ -185,8 +240,8 @@ export default function LearnPage() {
           <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
             {/* Card Component */}
             <FlipCard
-              front={currentCard.front}
-              back={currentCard.back}
+              front={isReversed ? currentCard.back : currentCard.front}
+              back={isReversed ? currentCard.front : currentCard.back}
               flipped={isFlipped}
               backContent={backContent}
               onFlip={toggleFlip}
@@ -255,6 +310,74 @@ export default function LearnPage() {
           </div>
         ) : null}
       </div>
+
+      <Dialog
+        open={isSettingsOpen}
+        onOpenChange={(open) => {
+          setIsSettingsOpen(open)
+          if (!open) setConfirmClear(false)
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Settings className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Learn Settings</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Configure display settings and options for learning mode.
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          <div className="space-y-6 py-2">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <Label htmlFor="reverse-cards" className="text-sm font-medium leading-none cursor-pointer">
+                  Reverse cards
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Show back side first, then front after flipping
+                </p>
+              </div>
+              <Switch
+                id="reverse-cards"
+                checked={isReversed}
+                onCheckedChange={(checked) => handleToggleReversed(checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-end sm:justify-between gap-4 pt-0 sm:pt-2 sm:border-t">
+              <div className="hidden sm:block space-y-0.5">
+                <span className="text-sm font-medium leading-none text-destructive">
+                  Reset Progress
+                </span>
+                <p className="text-xs text-muted-foreground">
+                  Clear all card progress for this deck
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-[140px] rounded-xl gap-2 font-medium shrink-0 justify-center transition-all"
+                onClick={() => {
+                  if (!confirmClear) {
+                    setConfirmClear(true)
+                  } else {
+                    clearProgress()
+                    setConfirmClear(false)
+                    setIsSettingsOpen(false)
+                  }
+                }}
+              >
+                <RotateCcw className="h-4 w-4" />
+                {confirmClear ? "Are you sure?" : "Clear Progress"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
+

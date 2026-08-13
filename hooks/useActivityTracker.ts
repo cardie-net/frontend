@@ -75,7 +75,7 @@ export function useActivityTracker() {
         pendingRef.current.details[k] = (pendingRef.current.details[k] || 0) + v
       }
     }
-  }, [isEligible, user?.id, queryClient])
+  }, [isEligible, user, queryClient])
 
   useFlushOnUnload(flush)
 

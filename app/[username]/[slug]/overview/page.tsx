@@ -1,9 +1,9 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
-import { ArrowLeft, AlertCircle, Loader2, Eye } from "lucide-react"
+import { ArrowLeft, AlertCircle, Loader2, Eye, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
 import { Flashcard } from "@/components/Flashcard"
@@ -16,10 +16,27 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Progress } from "@/components/ui/progress"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Switch } from "@/components/ui/switch"
+import { Label } from "@/components/ui/label"
 import { useDeck } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
-
 import { useActivityTracker } from "@/hooks/useActivityTracker"
+
+function shuffleList<T>(list: T[]): T[] {
+  const array = [...list]
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
 
 export default function OverviewPage() {
   const params = useParams<{ username: string; slug: string }>()
@@ -28,11 +45,7 @@ export default function OverviewPage() {
 
   const { trackOverviewCard } = useActivityTracker()
 
-  const {
-    data: deck,
-    isLoading: deckLoading,
-    error,
-  } = useDeck(username, slug)
+  const { data: deck, isLoading: deckLoading, error } = useDeck(username, slug)
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck?.id)
 
   const loading = deckLoading || (!!deck && cardsLoading)
@@ -41,6 +54,146 @@ export default function OverviewPage() {
   const [current, setCurrent] = useState(0)
   const [count, setCount] = useState(0)
   const [isFlipped, setIsFlipped] = useState(false)
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false)
+
+  const [isReversed, setIsReversed] = useState(() => {
+    if (typeof window === "undefined" || !username || !slug) return false
+    try {
+      const saved = localStorage.getItem(
+        `overview_settings_${username}_${slug}`
+      )
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (typeof parsed.isReversed === "boolean") return parsed.isReversed
+      }
+    } catch (e) {
+      console.error("Failed to load overview settings from localStorage", e)
+    }
+    return false
+  })
+
+  const [isShuffled, setIsShuffled] = useState(() => {
+    if (typeof window === "undefined" || !username || !slug) return false
+    try {
+      const saved = localStorage.getItem(
+        `overview_settings_${username}_${slug}`
+      )
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        if (typeof parsed.isShuffled === "boolean") return parsed.isShuffled
+      }
+    } catch (e) {
+      console.error("Failed to load overview settings from localStorage", e)
+    }
+    return false
+  })
+
+  useEffect(() => {
+    if (!username || !slug) return
+    const storageKey = `overview_settings_${username}_${slug}`
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        const timerId = window.setTimeout(() => {
+          if (typeof parsed.isReversed === "boolean")
+            setIsReversed(parsed.isReversed)
+          if (typeof parsed.isShuffled === "boolean")
+            setIsShuffled(parsed.isShuffled)
+        }, 0)
+        return () => window.clearTimeout(timerId)
+      }
+    } catch (e) {
+      console.error("Failed to load overview settings from localStorage", e)
+    }
+  }, [username, slug])
+
+  const [shuffledCards, setShuffledCards] = useState<typeof cards>([])
+
+  useEffect(() => {
+    if (!username || !slug) return
+    const storageKey = `overview_settings_${username}_${slug}`
+    try {
+      const saved = localStorage.getItem(storageKey)
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        const timerId = window.setTimeout(() => {
+          if (typeof parsed.isReversed === "boolean")
+            setIsReversed(parsed.isReversed)
+          if (typeof parsed.isShuffled === "boolean") {
+            setIsShuffled(parsed.isShuffled)
+            if (parsed.isShuffled && cards.length > 0) {
+              setShuffledCards(shuffleList(cards))
+            }
+          }
+        }, 0)
+        return () => window.clearTimeout(timerId)
+      }
+    } catch (e) {
+      console.error("Failed to load overview settings from localStorage", e)
+    }
+  }, [username, slug, cards])
+
+  useEffect(() => {
+    if (isShuffled && cards.length > 0 && shuffledCards.length === 0) {
+      const timerId = window.setTimeout(() => {
+        setShuffledCards(shuffleList(cards))
+      }, 0)
+      return () => window.clearTimeout(timerId)
+    }
+  }, [cards, isShuffled, shuffledCards.length])
+
+  const handleToggleReversed = (checked: boolean) => {
+    setIsReversed(checked)
+    setIsFlipped(false)
+    if (username && slug) {
+      const storageKey = `overview_settings_${username}_${slug}`
+      try {
+        const saved = localStorage.getItem(storageKey)
+        const parsed = saved ? JSON.parse(saved) : {}
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({ ...parsed, isReversed: checked })
+        )
+      } catch (e) {
+        console.error("Failed to save overview settings to localStorage", e)
+      }
+    }
+  }
+
+  const handleToggleShuffled = (checked: boolean) => {
+    setIsShuffled(checked)
+    if (checked) {
+      setShuffledCards(shuffleList(cards))
+    }
+    setIsFlipped(false)
+    if (api) {
+      api.scrollTo(0)
+    }
+    if (username && slug) {
+      const storageKey = `overview_settings_${username}_${slug}`
+      try {
+        const saved = localStorage.getItem(storageKey)
+        const parsed = saved ? JSON.parse(saved) : {}
+        localStorage.setItem(
+          storageKey,
+          JSON.stringify({ ...parsed, isShuffled: checked })
+        )
+      } catch (e) {
+        console.error("Failed to save overview settings to localStorage", e)
+      }
+    }
+  }
+
+  const activeCards = useMemo(() => {
+    return isShuffled && shuffledCards.length > 0 ? shuffledCards : cards
+  }, [isShuffled, shuffledCards, cards])
+
+  const displayedCards = useMemo(() => {
+    return activeCards.map((card) =>
+      isReversed ? { ...card, front: card.back, back: card.front } : card
+    )
+  }, [activeCards, isReversed])
 
   useEffect(() => {
     if (!api) return
@@ -69,7 +222,6 @@ export default function OverviewPage() {
       api.off("reInit", update)
     }
   }, [api, trackOverviewCard])
-
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -128,40 +280,65 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col px-4 pt-8 pb-2 sm:px-10 sm:py-16 space-y-4 sm:space-y-8">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-8 sm:px-10 sm:py-16">
       <div className="flex flex-col">
-        <div className="flex justify-start sm:justify-between gap-4 items-center">
-          <div className="hidden sm:flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
-              <Eye className="w-6 h-6" />
+        <div className="flex items-center justify-start gap-4 sm:justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
+            <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
+              <Eye className="h-6 w-6" />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">Overview</h1>
+            <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
+              Overview
+            </h1>
           </div>
 
-          <Link href={`/${username}/${slug}`} className="sm:hidden">
-            <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
-              <ArrowLeft className="h-4 w-4" />
-              Back
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href={`/${username}/${slug}`} className="sm:hidden">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-xl font-medium"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </Button>
+            </Link>
 
-          <Link href={`/${username}/${slug}`} className="hidden sm:block">
-            <Button variant="outline" className="rounded-xl gap-2 font-medium">
-              <ArrowLeft className="h-4 w-4" />
-              Back to Deck
+            <Link href={`/${username}/${slug}`} className="hidden sm:block">
+              <Button
+                variant="outline"
+                className="gap-2 rounded-xl font-medium"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back to Deck
+              </Button>
+            </Link>
+
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-xl"
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="Settings"
+              title="Settings"
+            >
+              <Settings className="h-4 w-4" />
             </Button>
-          </Link>
+          </div>
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-8 flex flex-1 flex-col items-center justify-center min-h-0">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
         {cards.length > 0 ? (
-          <div className="w-full flex flex-col flex-1 sm:flex-none min-h-0">
-            <Carousel setApi={setApi} className="w-full flex-1 sm:flex-none flex flex-col min-h-0">
-              <CarouselContent className="flex-1 sm:flex-none min-h-0">
-                {cards.map((card, index) => (
-                  <CarouselItem key={card.id} className="flex flex-col min-h-0">
-                    <div className="p-1 flex-1 sm:flex-none flex flex-col min-h-0">
+          <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
+            <Carousel
+              setApi={setApi}
+              className="flex min-h-0 w-full flex-1 flex-col sm:flex-none"
+            >
+              <CarouselContent className="min-h-0 flex-1 sm:flex-none">
+                {displayedCards.map((card, index) => (
+                  <CarouselItem key={card.id} className="flex min-h-0 flex-col">
+                    <div className="flex min-h-0 flex-1 flex-col p-1 sm:flex-none">
                       <Flashcard
                         card={card}
                         flipped={index === current - 1 ? isFlipped : false}
@@ -175,20 +352,25 @@ export default function OverviewPage() {
               <CarouselNext />
             </Carousel>
 
-            <div className="mt-4 sm:mt-8 px-8">
+            <div className="mt-4 px-8 sm:mt-8">
               <Progress
                 value={count > 0 ? (current / count) * 100 : 0}
                 className="h-2"
               />
-              <div className="mt-2 sm:mt-3 text-center text-sm font-medium text-muted-foreground">
+              <div className="mt-2 text-center text-sm font-medium text-muted-foreground sm:mt-3">
                 Card {current} of {count}
               </div>
             </div>
 
-            <div className="mt-1 sm:mt-2 text-center text-xs text-muted-foreground">
-              <span className="sm:hidden">Click anywhere on the card to flip</span>
-              <span className="hidden sm:inline-flex items-center justify-center gap-1.5">
-                Click anywhere on the card or press <Kbd className="text-[10px]">Space</Kbd> / <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use arrow keys to navigate
+            <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
+              <span className="sm:hidden">
+                Click anywhere on the card to flip
+              </span>
+              <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
+                Click anywhere on the card or press{" "}
+                <Kbd className="text-[10px]">Space</Kbd> /{" "}
+                <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use
+                arrow keys to navigate
               </span>
             </div>
           </div>
@@ -203,6 +385,61 @@ export default function OverviewPage() {
           </div>
         )}
       </div>
+
+      <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+              <Settings className="w-5 h-5" />
+            </div>
+            <div>
+              <DialogTitle className="text-base font-semibold">Overview Settings</DialogTitle>
+              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+                Configure display settings for this deck overview.
+              </DialogDescription>
+            </div>
+          </DialogHeader>
+          <div className="space-y-6 py-2">
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="reverse-cards"
+                  className="cursor-pointer text-sm leading-none font-medium"
+                >
+                  Reverse cards
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Show back side first, then front after flipping
+                </p>
+              </div>
+              <Switch
+                id="reverse-cards"
+                checked={isReversed}
+                onCheckedChange={(checked) => handleToggleReversed(checked)}
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-4">
+              <div className="space-y-0.5">
+                <Label
+                  htmlFor="shuffle-cards"
+                  className="cursor-pointer text-sm leading-none font-medium"
+                >
+                  Shuffle cards
+                </Label>
+                <p className="text-xs text-muted-foreground">
+                  Randomize the order of cards (refresh the page to re-shuffle)
+                </p>
+              </div>
+              <Switch
+                id="shuffle-cards"
+                checked={isShuffled}
+                onCheckedChange={(checked) => handleToggleShuffled(checked)}
+              />
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
