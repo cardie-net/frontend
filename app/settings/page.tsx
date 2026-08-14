@@ -1,3 +1,5 @@
+"use client"
+
 import {
   Card,
   CardContent,
@@ -8,8 +10,25 @@ import {
 import { Settings, User, GraduationCap } from "lucide-react"
 import { AccountTab } from "./AccountTab"
 import { LearningTab } from "./LearningTab"
+import { useAuth } from "@/lib/AuthContext"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SettingsPage() {
+  const { user, loading } = useAuth()
+
+  if (loading) {
+    return (
+      <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-11 w-11 rounded-2xl" />
+          <Skeleton className="h-9 w-48 rounded-xl" />
+        </div>
+        <Skeleton className="h-[400px] w-full rounded-3xl" />
+        <Skeleton className="h-[400px] w-full rounded-3xl" />
+      </div>
+    )
+  }
+
   return (
     <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
       <div className="flex items-center gap-3">
@@ -21,20 +40,22 @@ export default function SettingsPage() {
         </h1>
       </div>
 
-      <Card className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
-        <CardHeader className="p-0">
-          <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
-            <User className="h-5 w-5 text-primary" />
-            Account Settings
-          </CardTitle>
-          <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Manage your profile settings and public information
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="relative p-0">
-          <AccountTab />
-        </CardContent>
-      </Card>
+      {!user?.is_guest && (
+        <Card className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
+          <CardHeader className="p-0">
+            <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
+              <User className="h-5 w-5 text-primary" />
+              Account Settings
+            </CardTitle>
+            <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
+              Manage your profile settings and public information
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="relative p-0">
+            <AccountTab />
+          </CardContent>
+        </Card>
+      )}
 
       <Card id="learning-settings" className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
         <CardHeader className="p-0">
