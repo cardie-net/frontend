@@ -60,8 +60,8 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     if (!target) return;
 
     const newConfig: ThemeConfig = {
-      radius: target.radius,
-      fontFamily: target.fontFamily,
+      radius: config.radius,
+      fontFamily: config.fontFamily,
       colors: { ...target.colors },
     };
 
@@ -98,7 +98,12 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   };
 
   const resetToDefault = () => {
-    applyPreset(DEFAULT_PRESET.id);
+    const newConfig: ThemeConfig = {
+      radius: DEFAULT_PRESET.radius,
+      fontFamily: DEFAULT_PRESET.fontFamily,
+      colors: { ...DEFAULT_PRESET.colors },
+    };
+    updateConfig(newConfig);
   };
 
   const exportThemeJson = (): string => {

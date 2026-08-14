@@ -129,6 +129,13 @@ function LanguageNavItem({
     setIsOpen((prev) => !prev);
   };
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, []);
+
   // Close when clicking outside
   useEffect(() => {
     function handleClickOutside(e: MouseEvent | TouchEvent) {
@@ -183,7 +190,9 @@ function LanguageNavItem({
           'absolute top-1/2 -translate-y-1/2 flex flex-col gap-1 p-1.5 rounded-2xl min-w-[140px]',
           'bg-background/95 backdrop-blur-md border border-border/80 shadow-xl shadow-black/20 z-50',
           'transition-[opacity,transform] duration-200 ease-out origin-center transform-gpu',
-          isRightSide ? 'right-full mr-2.5' : 'left-full ml-2.5',
+          // Invisible hover bridge to prevent premature closing when moving mouse across the gap
+          'before:absolute before:top-0 before:bottom-0 before:w-3',
+          isRightSide ? 'right-full mr-2.5 before:-right-3' : 'left-full ml-2.5 before:-left-3',
           isOpen
             ? 'opacity-100 scale-100 pointer-events-auto translate-x-0'
             : cn(
@@ -419,7 +428,8 @@ export function Navbar() {
           : undefined
       }
       className={cn(
-        'fixed z-50 flex items-center gap-2.5 touch-none select-none',
+        'fixed z-50 flex items-center gap-2.5 select-none',
+        isDragging && 'touch-none',
         !dragPos && cornerClasses[corner],
         !isDragging && 'transition-[top,left,bottom,right] duration-300 ease-out',
         isBottomSide ? 'flex-col-reverse' : 'flex-col'
@@ -431,7 +441,7 @@ export function Navbar() {
         onPointerDown={handlePointerDown}
         aria-label="Toggle menu"
         className={cn(
-          'group relative w-12 h-12 rounded-[calc(var(--radius)+0.25rem)] flex items-center justify-center overflow-hidden',
+          'group relative w-12 h-12 rounded-[calc(var(--radius)+0.25rem)] flex items-center justify-center overflow-hidden touch-none',
           'bg-background/90 backdrop-blur-md border border-border/70 shadow-lg shadow-black/10',
           'hover:scale-105 active:scale-95 transition-[transform,background-color,border-color] duration-150 ease-out cursor-grab active:cursor-grabbing transform-gpu',
           isOpen && 'ring-2 ring-primary/40 bg-accent/60'
@@ -483,8 +493,9 @@ export function Navbar() {
       >
         <div
           className={cn(
-            'overflow-hidden flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
+            'flex flex-col items-center gap-1.5 p-1.5 rounded-[calc(var(--radius)+0.375rem)]',
             'bg-background/90 backdrop-blur-md border border-border/70 shadow-xl shadow-black/10',
+            isOpen ? 'overflow-visible' : 'overflow-hidden min-h-0',
             isBottomSide ? 'flex-col-reverse' : 'flex-col'
           )}
         >
