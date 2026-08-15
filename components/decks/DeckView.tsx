@@ -14,6 +14,8 @@ import {
   Upload,
   Download,
   ArrowLeftRight,
+  Calendar,
+  Clock,
 } from "lucide-react"
 import {
   DndContext,
@@ -56,7 +58,7 @@ import {
   uploadCardImage,
 } from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
-import { cn } from "@/lib/utils"
+import { cn, formatDate, formatDateTime, formatRelativeTime } from "@/lib/utils"
 
 interface DeckViewProps {
   username: string
@@ -339,6 +341,32 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 </Badge>
               </div>
             </div>
+
+            {(deck.created_at || deck.updated_at) && (
+              <div className="mt-2.5 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-xs text-muted-foreground">
+                {deck.created_at && (
+                  <span
+                    className="inline-flex items-center gap-1.5"
+                    title={formatDateTime(deck.created_at)}
+                  >
+                    <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
+                    <span>
+                      <span className="hidden sm:inline">Created </span>
+                      {formatDate(deck.created_at)}
+                    </span>
+                  </span>
+                )}
+                {deck.updated_at && (
+                  <span
+                    className="inline-flex items-center gap-1.5"
+                    title={formatDateTime(deck.updated_at)}
+                  >
+                    <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
+                    <span>Updated {formatRelativeTime(deck.updated_at)}</span>
+                  </span>
+                )}
+              </div>
+            )}
 
             {deck.properties?.description && (
               <div className="mt-4">

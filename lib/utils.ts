@@ -20,10 +20,35 @@ export function shuffle<T>(input: readonly T[]): T[] {
   return arr
 }
 
-export function formatDate(dateString?: string | null): string {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return ""
+/**
+ * Safely parse any ISO / date string into a Date object.
+ * If the string has no timezone offset, it is treated as UTC from the server.
+ */
+export function parseDate(dateInput?: string | Date | null): Date | null {
+  if (!dateInput) return null
+  if (dateInput instanceof Date) {
+    return isNaN(dateInput.getTime()) ? null : dateInput
+  }
+  let str = String(dateInput).trim()
+  if (!str) return null
+
+  // Replace space separator with T if in SQL format (YYYY-MM-DD HH:MM:SS)
+  if (/^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}/.test(str)) {
+    str = str.replace(" ", "T")
+  }
+
+  // If no timezone indicator (Z, +HH:MM, -HH:MM) is present, treat as UTC
+  if (!/Z|[+-]\d{2}(?::?\d{2})?$/i.test(str)) {
+    str += "Z"
+  }
+
+  const date = new Date(str)
+  return isNaN(date.getTime()) ? null : date
+}
+
+export function formatDate(dateString?: string | Date | null): string {
+  const date = parseDate(dateString)
+  if (!date) return ""
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -31,10 +56,9 @@ export function formatDate(dateString?: string | null): string {
   }).format(date)
 }
 
-export function formatDateTime(dateString?: string | null): string {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return ""
+export function formatDateTime(dateString?: string | Date | null): string {
+  const date = parseDate(dateString)
+  if (!date) return ""
   return new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "short",
@@ -44,10 +68,9 @@ export function formatDateTime(dateString?: string | null): string {
   }).format(date)
 }
 
-export function formatRelativeTime(dateString?: string | null): string {
-  if (!dateString) return ""
-  const date = new Date(dateString)
-  if (isNaN(date.getTime())) return ""
+export function formatRelativeTime(dateString?: string | Date | null): string {
+  const date = parseDate(dateString)
+  if (!date) return ""
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
@@ -66,5 +89,5 @@ export function formatRelativeTime(dateString?: string | null): string {
   if (diffInDays < 30) {
     return `${diffInDays}d ago`
   }
-  return formatDate(dateString)
+  return formatDate(date)
 }
