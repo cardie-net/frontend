@@ -45,6 +45,37 @@ export function useCreateCard() {
   })
 }
 
+export function useBatchCreateCards() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({
+      deckId,
+      cards,
+    }: {
+      deckId: string
+      cards: { front: CardElement[]; back: CardElement[] }[]
+    }) => {
+      const res = await apiFetch(`/api/v1/decks/${deckId}/cards/batch`, {
+        method: "POST",
+        body: JSON.stringify({ cards }),
+      })
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.detail || "Failed to batch create cards")
+      }
+      return res.json() as Promise<FlashCard[]>
+    },
+    onSuccess: (newCards, { deckId }) => {
+      queryClient.setQueryData(
+        queryKeys.cards(deckId),
+        (old: FlashCard[] | undefined) =>
+          old ? [...old, ...newCards] : newCards
+      )
+    },
+  })
+}
+
 export function useUpdateCard() {
   const queryClient = useQueryClient()
 

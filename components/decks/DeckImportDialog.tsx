@@ -8,7 +8,6 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Progress } from "@/components/ui/progress";
 import {
   Dialog,
   DialogContent,
@@ -33,8 +32,8 @@ import {
   isSeparatorConfigValid,
   parseTextImport,
 } from "@/lib/importExport";
-import { useCreateCard } from "@/hooks/useCards";
-import { useCreateDeck } from "@/hooks/useDecks";
+import { useBatchCreateCards } from "@/hooks/useCards";
+import { useImportDeck } from "@/hooks/useDecks";
 import { Deck } from "@/types";
 
 type Phase = "idle" | "creating" | "importing" | "done" | "failed";
@@ -75,8 +74,8 @@ export function DeckImportDialog({
   folderId,
 }: DeckImportDialogProps) {
   const router = useRouter();
-  const createCard = useCreateCard();
-  const createDeck = useCreateDeck();
+  const batchCreateCards = useBatchCreateCards();
+  const importDeck = useImportDeck();
 
   const [format, setFormat] = useState<Format>("text");
   const [text, setText] = useState("");
@@ -90,19 +89,13 @@ export function DeckImportDialog({
   const [createdDeck, setCreatedDeck] = useState<Deck | null>(null);
 
   const [phase, setPhase] = useState<Phase>("idle");
-  const [progress, setProgress] = useState({ done: 0, total: 0 });
   const [result, setResult] = useState<{ imported: number; skipped: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  /** Index of the first card not yet imported (used to retry after a partial failure). */
-  const [failIndex, setFailIndex] = useState(0);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Max size of a file read through the picker (beyond that, paste instead).
   const MAX_IMPORT_FILE_SIZE = 2 * 1024 * 1024;
-
-  // The dialog is mounted fresh each time it is opened (callers render it
-  // conditionally), so all state initializers below are the "empty" defaults.
 
   const preview = useMemo(() => {
     if (format !== "text" || !text.trim()) return null;
@@ -112,13 +105,12 @@ export function DeckImportDialog({
   const busy = phase === "creating" || phase === "importing";
   const configValid =
     isSeparatorConfigValid(delimiter) && isSeparatorConfigValid(recordSeparator);
-  const remainingCount = preview ? preview.cards.length - failIndex : 0;
   const canImport =
     !busy &&
     configValid &&
     !!preview &&
-    remainingCount > 0 &&
-    (mode === "append" || !!createdDeck || !!deckName.trim());
+    preview.cards.length > 0 &&
+    (mode === "append" || !!deckName.trim());
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -137,22 +129,16 @@ export function DeckImportDialog({
     reader.readAsText(file);
   };
 
-  /** Updates the source text and invalidates any partial-failure retry offset. */
   const updateText = (value: string) => {
     setText(value);
-    setFailIndex(0);
   };
 
-  // Changing the parser config re-parses the text into different cards, so a
-  // partial-failure retry offset no longer applies.
   const handleDelimiterChange = (value: DelimiterConfig) => {
     setDelimiter(value);
-    setFailIndex(0);
   };
 
   const handleRecordSeparatorChange = (value: RecordSeparatorConfig) => {
     setRecordSeparator(value);
-    setFailIndex(0);
   };
 
   const handleImport = async () => {
@@ -160,49 +146,35 @@ export function DeckImportDialog({
     setError(null);
     setResult(null);
 
-    // Resume from where a previous attempt stopped (partial-failure retry),
-    // and reuse the deck already created by a failed create-mode attempt.
-    const startIndex = failIndex;
-    const remaining = preview.cards.slice(startIndex);
-    let targetDeckId = deckId ?? createdDeck?.id;
-    let imported = startIndex;
+    const formattedCards = preview.cards.map((card) => ({
+      front: [{ type: "text" as const, content: card.front }],
+      back: [{ type: "text" as const, content: card.back }],
+    }));
+
     try {
-      if (mode === "create" && !targetDeckId) {
+      if (mode === "create") {
         setPhase("creating");
-        const deck = await createDeck.mutateAsync({
+        const deck = await importDeck.mutateAsync({
           name: deckName.trim(),
           color: deckColor,
           folderId,
+          cards: formattedCards,
         });
         setCreatedDeck(deck);
-        targetDeckId = deck.id;
-      }
-
-      setPhase("importing");
-      setProgress({ done: startIndex, total: preview.cards.length });
-      for (const card of remaining) {
-        await createCard.mutateAsync({
-          deckId: targetDeckId!,
-          front: [{ type: "text", content: card.front }],
-          back: [{ type: "text", content: card.back }],
+        setResult({ imported: preview.cards.length, skipped: preview.skipped });
+        setPhase("done");
+      } else if (mode === "append" && deckId) {
+        setPhase("importing");
+        await batchCreateCards.mutateAsync({
+          deckId,
+          cards: formattedCards,
         });
-        imported += 1;
-        setProgress({ done: imported, total: preview.cards.length });
+        setResult({ imported: preview.cards.length, skipped: preview.skipped });
+        setPhase("done");
       }
-
-      setFailIndex(0);
-      setResult({ imported, skipped: preview.skipped });
-      setPhase("done");
     } catch (err) {
-      setFailIndex(imported);
       const message = err instanceof Error ? err.message : "Import failed";
-      setError(
-        `Import failed: ${message}${
-          imported > startIndex
-            ? ` — ${imported - startIndex} card(s) were imported before the failure.`
-            : ""
-        }`
-      );
+      setError(`Import failed: ${message}`);
       setPhase("failed");
     }
   };
@@ -377,18 +349,12 @@ export function DeckImportDialog({
             )}
 
             {(phase === "importing" || phase === "creating") && (
-              <div className="grid gap-2">
-                <Progress
-                  value={
-                    progress.total > 0
-                      ? Math.round((progress.done / progress.total) * 100)
-                      : 0
-                  }
-                />
-                <span className="text-sm text-muted-foreground">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                <span>
                   {phase === "creating"
-                    ? "Creating deck…"
-                    : `Importing cards… ${progress.done}/${progress.total}`}
+                    ? `Creating deck with ${preview?.cards.length ?? 0} cards…`
+                    : `Importing ${preview?.cards.length ?? 0} cards…`}
                 </span>
               </div>
             )}
@@ -446,8 +412,8 @@ export function DeckImportDialog({
                 ? "Creating…"
                 : phase === "importing"
                   ? "Importing…"
-                  : phase === "failed" && remainingCount > 0
-                    ? `Retry remaining (${remainingCount})`
+                  : phase === "failed"
+                    ? "Retry Import"
                     : "Import"}
             </Button>
           )}

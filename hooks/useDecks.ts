@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
-import { Deck } from "@/types"
+import { Deck, CardElement } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
 
 export function useDecks() {
@@ -78,6 +78,61 @@ export function useCreateDeck() {
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
         throw new Error(errData.detail || "Failed to create deck")
+      }
+      return res.json()
+    },
+    onSuccess: (newDeck) => {
+      queryClient.setQueryData(
+        queryKeys.decks(user?.id),
+        (old: Deck[] | undefined) => (old ? [...old, newDeck] : [newDeck])
+      )
+      queryClient.invalidateQueries({ queryKey: queryKeys.userItems(user?.id) })
+      if (newDeck.folder_id) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.folderItems(newDeck.folder_id),
+        })
+      }
+    },
+  })
+}
+
+export function useImportDeck() {
+  const queryClient = useQueryClient()
+  const { user } = useAuth()
+
+  return useMutation({
+    mutationFn: async ({
+      name,
+      color,
+      folderId,
+      description,
+      cards,
+    }: {
+      name: string
+      color: string
+      folderId?: string | null
+      description?: string
+      cards: { front: CardElement[]; back: CardElement[] }[]
+    }): Promise<Deck> => {
+      const properties: Record<string, unknown> = {
+        color: color === "default" ? null : color,
+      }
+      if (description) {
+        properties.description = description
+      }
+      const res = await apiFetch("/api/v1/decks/import", {
+        method: "POST",
+        body: JSON.stringify({
+          name,
+          privacy: "private",
+          folder_id: folderId || null,
+          properties,
+          cards,
+        }),
+      })
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.detail || "Failed to import deck")
       }
       return res.json()
     },
