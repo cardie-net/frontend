@@ -65,6 +65,7 @@ export interface ItemOwner {
   username: string
   display_name: string
   avatar_url?: string
+  is_guest?: boolean
 }
 
 export interface CommunityDeck extends Deck {

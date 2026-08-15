@@ -85,7 +85,7 @@ export default function ProfilePage() {
     )
   }
 
-  if (error || !profileUser) {
+  if (error || !profileUser || profileUser.is_guest) {
     return (
       <div className="container mx-auto max-w-xl px-4 py-16 text-center">
         <Card className="rounded-3xl border-border/80 p-8 sm:p-12 shadow-sm">
@@ -93,7 +93,7 @@ export default function ProfilePage() {
             <AlertCircle className="h-7 w-7" />
           </div>
           <h2 className="mb-2 text-2xl font-bold tracking-tight">
-            {error?.message || "Profile not found"}
+            User not found
           </h2>
           <p className="mb-6 text-sm text-muted-foreground">
             The user profile you are looking for might have been moved or doesn&apos;t exist.
@@ -213,11 +213,6 @@ export default function ProfilePage() {
                   <h2 className="text-2xl sm:text-3xl font-bold tracking-tight truncate max-w-full">
                     {profileUser.display_name}
                   </h2>
-                  {profileUser.is_guest && (
-                    <Badge variant="secondary" className="rounded-xl px-2.5 py-0.5 text-xs font-semibold shrink-0">
-                      Guest
-                    </Badge>
-                  )}
                 </div>
                 <div className="flex items-center gap-x-5 gap-y-1.5 flex-wrap text-xs text-muted-foreground pt-0.5">
                   <span className="font-mono text-xs sm:text-sm text-muted-foreground truncate max-w-full">

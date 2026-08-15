@@ -186,28 +186,46 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
           {/* Author Chip (Bottom Left) */}
           <div className="relative z-20 pt-3 mt-auto flex items-center justify-between pointer-events-auto">
-            <Link
-              href={`/${folder.owner.username}`}
-              className={cn(
-                'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline',
-                folder.properties?.cover_image_url
-                  ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-1'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              <Avatar className="w-4 h-4 rounded-full border border-border/50">
-                <AvatarImage
-                  src={folder.owner.avatar_url}
-                  alt={folder.owner.display_name}
-                />
-                <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
-                  {folder.owner.display_name.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <span className="truncate max-w-[130px] font-medium">
-                {folder.owner.display_name || folder.owner.username}
-              </span>
-            </Link>
+            {folder.owner?.is_guest ? (
+              <div
+                className={cn(
+                  'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default',
+                  folder.properties?.cover_image_url
+                    ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-1'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                  <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
+                    G
+                  </AvatarFallback>
+                </Avatar>
+                <span className="font-medium">Guest</span>
+              </div>
+            ) : (
+              <Link
+                href={`/${folder.owner.username}`}
+                className={cn(
+                  'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline',
+                  folder.properties?.cover_image_url
+                    ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-1'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                  <AvatarImage
+                    src={folder.owner.avatar_url}
+                    alt={folder.owner.display_name}
+                  />
+                  <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
+                    {folder.owner.display_name.slice(0, 2).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="truncate max-w-[130px] font-medium">
+                  {folder.owner.display_name || folder.owner.username}
+                </span>
+              </Link>
+            )}
           </div>
         </Card>
       </div>
