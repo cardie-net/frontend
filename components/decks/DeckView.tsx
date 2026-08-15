@@ -316,10 +316,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         )}
       >
         {/* Header & Navigation */}
-        <div className="flex flex-col">
-          <div className="flex w-full flex-col">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-              <div className="flex items-center gap-3">
+        <div className="flex flex-col min-w-0">
+          <div className="flex w-full flex-col min-w-0">
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center min-w-0">
+              <div className="flex items-center gap-3 min-w-0">
                 <div
                   className={cn(
                     "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm",
@@ -330,7 +330,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 >
                   <Layers className="h-6 w-6" />
                 </div>
-                <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
+                <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl min-w-0">
                   {deck.name}
                 </h1>
                 <Badge
@@ -369,8 +369,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             )}
 
             {deck.properties?.description && (
-              <div className="mt-4">
-                <p className="text-sm whitespace-pre-wrap text-foreground/90">
+              <div className="mt-4 min-w-0">
+                <p className="text-sm whitespace-pre-wrap break-all text-foreground/90">
                   {deck.properties.description}
                 </p>
               </div>

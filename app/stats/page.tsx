@@ -321,7 +321,7 @@ export default function StatisticsPage() {
                         </Badge>
                       </div>
                       {deck.properties?.description && (
-                        <p className="line-clamp-1 text-xs text-muted-foreground">
+                        <p className="line-clamp-2 break-all text-xs text-muted-foreground">
                           {deck.properties.description}
                         </p>
                       )}

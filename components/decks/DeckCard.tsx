@@ -77,7 +77,7 @@ export function DeckCard({
             "relative z-10 flex flex-col h-full pointer-events-none",
             deck.properties?.cover_image_url ? "text-white" : ""
           )}>
-            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 relative pr-6">
+            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-6">
               <CardTitle className={cn(
                 "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
                 deck.properties?.cover_image_url ? "text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start" : "group-hover:text-primary"
@@ -93,15 +93,12 @@ export function DeckCard({
                     {deck.cards_count}
                   </Badge>
                 )}
-                <span className="leading-tight">{deck.name}</span>
+                <span className="leading-tight break-all">{deck.name}</span>
               </CardTitle>
               {deck.properties?.description && !deck.properties?.cover_image_url && (
-                <div className="relative flex-1 min-h-0 overflow-hidden pr-2">
-                  <CardDescription className="text-xs leading-relaxed whitespace-pre-wrap break-words h-full text-muted-foreground">
-                    {deck.properties.description}
-                  </CardDescription>
-                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-card to-transparent" />
-                </div>
+                <CardDescription className="text-xs leading-relaxed break-all line-clamp-2 text-muted-foreground">
+                  {deck.properties.description}
+                </CardDescription>
               )}
             </CardHeader>
           </div>
