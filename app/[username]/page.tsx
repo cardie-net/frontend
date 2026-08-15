@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
-import { cn } from "@/lib/utils"
+import { cn, formatDate } from "@/lib/utils"
 import { getDeckColorClass } from "@/lib/decks"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import {
   AlertCircle,
+  Calendar,
   Globe,
   Link as LinkIcon,
   User,
@@ -218,9 +219,17 @@ export default function ProfilePage() {
                     </Badge>
                   )}
                 </div>
-                <p className="font-mono text-xs sm:text-sm text-muted-foreground truncate max-w-full">
-                  @{profileUser.username}
-                </p>
+                <div className="flex items-center gap-x-5 gap-y-1.5 flex-wrap text-xs text-muted-foreground pt-0.5">
+                  <span className="font-mono text-xs sm:text-sm text-muted-foreground truncate max-w-full">
+                    @{profileUser.username}
+                  </span>
+                  {profileUser.created_at && (
+                    <span className="inline-flex items-center gap-1.5 text-muted-foreground/90">
+                      <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
+                      <span>Joined {formatDate(profileUser.created_at)}</span>
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 

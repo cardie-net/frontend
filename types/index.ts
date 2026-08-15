@@ -81,6 +81,8 @@ export interface UserProfile {
   bio?: string
   social_links?: SocialLinks
   preferences?: UserPreferences
+  created_at?: string
+  last_active_at?: string
 }
 
 export interface CardProgress {
