@@ -16,5 +16,14 @@ export const queryKeys = {
   folderBySlug: (username?: string, slug?: string) =>
     ["folder-by-slug", username, slug] as const,
   userActivity: (userId?: string) => ["user-activity", userId] as const,
+  community: (params?: {
+    item_type?: string
+    sort?: string
+    q?: string
+    page?: number
+    limit?: number
+  }) => ["community", params] as const,
+  userStarred: () => ["user-starred"] as const,
+  userFavorites: () => ["user-favorites"] as const,
 }
 

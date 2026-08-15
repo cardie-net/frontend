@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,7 @@ import {
   ArrowLeftRight,
   Calendar,
   Clock,
+  Star,
 } from "lucide-react"
 import {
   DndContext,
@@ -58,6 +59,7 @@ import {
   uploadCardImage,
 } from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
+import { useStarDeck, useUnstarDeck, useUserStarred } from "@/hooks/useCommunity"
 import { cn, formatDate, formatDateTime, formatRelativeTime } from "@/lib/utils"
 
 interface DeckViewProps {
@@ -67,6 +69,7 @@ interface DeckViewProps {
 }
 
 export function DeckView({ username, slug, deck }: DeckViewProps) {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
 
@@ -77,6 +80,41 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const deleteCard = useDeleteCard()
   const reorderCards = useReorderCards()
   const transposeDeck = useTransposeDeck()
+
+  const { data: starredData } = useUserStarred()
+  const starDeck = useStarDeck()
+  const unstarDeck = useUnstarDeck()
+
+  const isStarred =
+    starredData?.deck_ids !== undefined
+      ? starredData.deck_ids.includes(deck.id)
+      : (deck.is_starred ?? false)
+
+  const starsCount = deck.stars_count ?? 0
+  const [isStarPending, setIsStarPending] = useState(false)
+
+  const handleToggleStar = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!user || user.is_guest) {
+      router.push("/login")
+      return
+    }
+
+    if (isStarPending) return
+    setIsStarPending(true)
+
+    try {
+      if (isStarred) {
+        await unstarDeck.mutateAsync(deck.id)
+      } else {
+        await starDeck.mutateAsync(deck.id)
+      }
+    } finally {
+      setIsStarPending(false)
+    }
+  }
 
   // Popup (full) edit state
   const [editingCard, setEditingCard] = useState<FlashCard | null>(null)
@@ -333,12 +371,37 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl min-w-0">
                   {deck.name}
                 </h1>
-                <Badge
-                  variant="secondary"
-                  className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                >
-                  {cards.length}
-                </Badge>
+                {isOwner ? (
+                  <Badge
+                    variant="secondary"
+                    className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                  >
+                    {cards.length}
+                  </Badge>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleToggleStar}
+                    disabled={isStarPending}
+                    aria-label={isStarred ? "Unstar deck" : "Star deck"}
+                    className={cn(
+                      "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0",
+                      isStarred
+                        ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                        : "bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
+                    )}
+                  >
+                    <Star
+                      className={cn(
+                        "w-3.5 h-3.5 transition-transform duration-200",
+                        isStarred
+                          ? "fill-current text-amber-500 scale-110"
+                          : "text-muted-foreground"
+                      )}
+                    />
+                    <span>{starsCount}</span>
+                  </button>
+                )}
               </div>
             </div>
 

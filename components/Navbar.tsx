@@ -20,6 +20,7 @@ import {
   Palette,
   Languages,
   BarChart3,
+  Globe,
 } from 'lucide-react';
 import { AppearancePopup } from '@/components/theme/appearance-popup';
 
@@ -505,6 +506,15 @@ export function Navbar() {
             icon={<Layers className="w-4 h-4" />}
             tooltip="Decks"
             isActive={pathname === '/decks'}
+            isRightSide={isRightSide}
+          />
+
+          {/* Community Link */}
+          <NavItem
+            href="/community"
+            icon={<Globe className="w-4 h-4" />}
+            tooltip="Community"
+            isActive={pathname === '/community'}
             isRightSide={isRightSide}
           />
 

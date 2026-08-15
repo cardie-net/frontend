@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck, useDeleteDeck } from "@/hooks/useDecks"
 import { useUserItems, useUpdateFolder, useDeleteFolder } from "@/hooks/useFolders"
+import { useUserFavorites } from "@/hooks/useCommunity"
 
 import { cn } from "@/lib/utils"
 import { Badge } from "@/components/ui/badge"
@@ -39,10 +40,12 @@ export default function DecksPage() {
   const { user, loading: authLoading } = useAuth()
 
   const {
-    data: items = [],
+    data: ownedItems = [],
     isLoading: itemsLoading,
     error: itemsError,
   } = useUserItems()
+
+  const { data: favorites = [] } = useUserFavorites()
 
   const updateDeck = useUpdateDeck()
   const deleteDeck = useDeleteDeck()
@@ -67,7 +70,14 @@ export default function DecksPage() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
 
-  const filteredItems = items.filter((item) =>
+  // Merge owned items with favorited items that were created by others
+  const allItems = useMemo(() => {
+    const ownedIds = new Set(ownedItems.map((item) => item.id))
+    const externalFavorites = favorites.filter((fav) => !ownedIds.has(fav.id))
+    return [...ownedItems, ...externalFavorites]
+  }, [ownedItems, favorites])
+
+  const filteredItems = allItems.filter((item) =>
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -284,15 +294,17 @@ export default function DecksPage() {
             {rootFolders.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
                 {rootFolders.map((folder) => {
+                  const isOwner = folder.user_id === user?.id
                   return (
                     <FolderCard
                       key={folder.id}
                       folder={folder}
                       username={user?.username}
-                      onShare={setShareFolderTarget}
-                      onEdit={setEditingFolder}
-                      onDelete={handleDeleteFolder}
-                      onMove={handleMoveFolder}
+                      isOwner={isOwner}
+                      onShare={isOwner ? setShareFolderTarget : undefined}
+                      onEdit={isOwner ? setEditingFolder : undefined}
+                      onDelete={isOwner ? handleDeleteFolder : undefined}
+                      onMove={isOwner ? handleMoveFolder : undefined}
                     />
                   )
                 })}
@@ -305,17 +317,21 @@ export default function DecksPage() {
 
             {rootDecks.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {rootDecks.map((deck) => (
-                  <DeckCard
-                    key={deck.id}
-                    deck={deck}
-                    username={user.username}
-                    onShare={setShareDeckTarget}
-                    onEdit={setEditingDeckTarget}
-                    onDelete={handleDeleteDeck}
-                    onMove={handleMoveDeck}
-                  />
-                ))}
+                {rootDecks.map((deck) => {
+                  const isOwner = deck.user_id === user?.id
+                  return (
+                    <DeckCard
+                      key={deck.id}
+                      deck={deck}
+                      username={user?.username}
+                      isOwner={isOwner}
+                      onShare={isOwner ? setShareDeckTarget : undefined}
+                      onEdit={isOwner ? setEditingDeckTarget : undefined}
+                      onDelete={isOwner ? handleDeleteDeck : undefined}
+                      onMove={isOwner ? handleMoveDeck : undefined}
+                    />
+                  )
+                })}
               </div>
             )}
           </div>

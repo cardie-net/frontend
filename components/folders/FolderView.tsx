@@ -15,6 +15,7 @@ import {
   Search,
   Upload,
   X,
+  Star,
 } from "lucide-react"
 import { Deck, Folder } from "@/types"
 import { CreateDeckDialog } from "@/components/decks/CreateDeckDialog"
@@ -36,6 +37,7 @@ import {
   useUserItems,
   useUpdateFolder,
 } from "@/hooks/useFolders"
+import { useStarFolder, useUnstarFolder, useUserStarred } from "@/hooks/useCommunity"
 
 import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
@@ -68,6 +70,41 @@ export function FolderView({ username, folder }: FolderViewProps) {
 
   const updateDeck = useUpdateDeck()
   const updateFolder = useUpdateFolder()
+
+  const { data: starredData } = useUserStarred()
+  const starFolder = useStarFolder()
+  const unstarFolder = useUnstarFolder()
+
+  const isStarred =
+    starredData?.folder_ids !== undefined
+      ? starredData.folder_ids.includes(folder.id)
+      : (folder.is_starred ?? false)
+
+  const starsCount = folder.stars_count ?? 0
+  const [isStarPending, setIsStarPending] = useState(false)
+
+  const handleToggleStar = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+
+    if (!user || user.is_guest) {
+      router.push("/login")
+      return
+    }
+
+    if (isStarPending) return
+    setIsStarPending(true)
+
+    try {
+      if (isStarred) {
+        await unstarFolder.mutateAsync(folder.id)
+      } else {
+        await starFolder.mutateAsync(folder.id)
+      }
+    } finally {
+      setIsStarPending(false)
+    }
+  }
 
   const [isCreateDeckOpen, setIsCreateDeckOpen] = useState(false)
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
@@ -200,9 +237,34 @@ export function FolderView({ username, folder }: FolderViewProps) {
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">
                 {folder.name}
               </h1>
-              <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
-                {totalItems}
-              </Badge>
+              {isOwner ? (
+                <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
+                  {totalItems}
+                </Badge>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleToggleStar}
+                  disabled={isStarPending}
+                  aria-label={isStarred ? "Unstar folder" : "Star folder"}
+                  className={cn(
+                    "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0",
+                    isStarred
+                      ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                      : "bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
+                  )}
+                >
+                  <Star
+                    className={cn(
+                      "w-3.5 h-3.5 transition-transform duration-200",
+                      isStarred
+                        ? "fill-current text-amber-500 scale-110"
+                        : "text-muted-foreground"
+                    )}
+                  />
+                  <span>{starsCount}</span>
+                </button>
+              )}
             </div>
 
             <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">

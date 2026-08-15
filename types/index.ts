@@ -32,6 +32,9 @@ export interface Deck {
     cover_image_url?: string
   }
   cards_count?: number
+  stars_count?: number
+  is_starred?: boolean
+  owner?: ItemOwner
   created_at?: string
   updated_at?: string
 }
@@ -49,6 +52,59 @@ export interface Folder {
     description?: string
     cover_image_url?: string
   }
+  decks_count?: number
+  stars_count?: number
+  is_starred?: boolean
+  owner?: ItemOwner
+  created_at?: string
+  updated_at?: string
+}
+
+export interface ItemOwner {
+  id: string
+  username: string
+  display_name: string
+  avatar_url?: string
+}
+
+export interface CommunityDeck extends Deck {
+  type: "deck"
+  stars_count: number
+  is_starred?: boolean
+  created_at: string
+  updated_at: string
+  owner: ItemOwner
+}
+
+export interface CommunityFolder extends Folder {
+  type: "folder"
+  decks_count: number
+  stars_count: number
+  is_starred?: boolean
+  created_at: string
+  updated_at: string
+  owner: ItemOwner
+}
+
+export type CommunityItem = CommunityDeck | CommunityFolder
+
+export interface CommunityResponse {
+  items: CommunityItem[]
+  total: number
+  page: number
+  limit: number
+  total_pages: number
+  has_more: boolean
+}
+
+export interface StarResponse {
+  starred: boolean
+  stars_count: number
+}
+
+export interface UserStarredResponse {
+  deck_ids: string[]
+  folder_ids: string[]
 }
 
 export type UserItem = (Folder & { type: "folder" }) | (Deck & { type?: "deck" })
