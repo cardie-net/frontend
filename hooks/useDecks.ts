@@ -15,7 +15,7 @@ export function useDecks() {
       const data = await res.json()
       return data.filter((item: { type: string }) => item.type === "deck")
     },
-    enabled: !!user && !user.is_guest,
+    enabled: !!user,
     // The deck-list cache is kept in sync by the create/update/delete mutations.
   })
 }

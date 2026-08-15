@@ -15,7 +15,7 @@ export function useUserItems(userId?: string) {
       if (!res.ok) throw new Error("Failed to fetch items")
       return res.json()
     },
-    enabled: !!targetUserId && !(user && targetUserId === user.id && user.is_guest),
+    enabled: !!targetUserId,
   })
 }
 

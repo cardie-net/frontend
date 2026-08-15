@@ -13,7 +13,7 @@ export function useSRSCounts() {
       if (!res.ok) throw new Error("Failed to fetch SRS counts")
       return res.json()
     },
-    enabled: !!user && !user.is_guest,
+    enabled: !!user,
     // SRS counts change after every session, so the /decks page badge row must
     // refetch whenever it mounts (targeted override; other queries use the
     // default staleTime).

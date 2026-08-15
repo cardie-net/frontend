@@ -147,7 +147,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
 
   const cardsRef = useRef<HTMLDivElement>(null)
 
-  const isOwner = !!(user && deck && user.id === deck.user_id && !user.is_guest)
+  const isOwner = !!(user && deck && user.id === deck.user_id)
 
   // DnD sensors
   const sensors = useSensors(

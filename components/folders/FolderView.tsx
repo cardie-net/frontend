@@ -127,8 +127,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const isOwner = !!(
     user &&
     folder &&
-    user.id === folder.user_id &&
-    !user.is_guest
+    user.id === folder.user_id
   )
 
   const itemsToSearch = searchQuery.length > 0 ? allUserItems : folderItems

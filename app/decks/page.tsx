@@ -155,7 +155,7 @@ export default function DecksPage() {
     )
   }
 
-  if (!user || user.is_guest) {
+  if (!user) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
         <p>Please log in to view your decks.</p>
