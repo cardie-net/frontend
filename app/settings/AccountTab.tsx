@@ -383,6 +383,25 @@ function AccountForm({ user }: { user: UserProfile }) {
     }))
   }
 
+  const handleSocialInputBlur = (key: keyof SocialLinks) => {
+    if (key === "website") {
+      const raw = socialInputs.website?.trim()
+      if (!raw) {
+        if (socialInputs.website !== "") {
+          setSocialInputs((prev) => ({ ...prev, website: "" }))
+        }
+        return
+      }
+      const formatted = !/^https?:\/\//i.test(raw) ? `https://${raw}` : raw
+      if (formatted !== socialInputs.website) {
+        setSocialInputs((prev) => ({
+          ...prev,
+          website: formatted,
+        }))
+      }
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -424,6 +443,7 @@ function AccountForm({ user }: { user: UserProfile }) {
           return
         }
         cleanSocialLinks.website = websiteUrl
+        setSocialInputs((prev) => ({ ...prev, website: websiteUrl }))
         hasSocialLinks = true
       } else {
         const usernameVal = extractUsernameFromUrl(config.key, val)
@@ -568,7 +588,7 @@ function AccountForm({ user }: { user: UserProfile }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div className="space-y-2">
           <Label htmlFor="displayName">Display Name</Label>
           <Input
@@ -681,6 +701,7 @@ function AccountForm({ user }: { user: UserProfile }) {
                           onChange={(e) =>
                             handleSocialInputChange(platform.key, e.target.value)
                           }
+                          onBlur={() => handleSocialInputBlur(platform.key)}
                           placeholder={platform.placeholder}
                           className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-full text-sm px-1.5 shadow-none"
                         />
