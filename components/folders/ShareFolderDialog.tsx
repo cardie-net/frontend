@@ -21,10 +21,11 @@ import { useUpdateFolder } from "@/hooks/useFolders"
 
 interface ShareFolderDialogProps {
   folder: Folder | null
+  username?: string
   onClose: () => void
 }
 
-export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
+export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDialogProps) {
   const { user } = useAuth()
   const updateFolder = useUpdateFolder()
 
@@ -33,9 +34,17 @@ export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
   const [shareError, setShareError] = useState("")
   const [isLinkCopied, setIsLinkCopied] = useState(false)
 
+  const isOwner = !!(user && folder && (!folder.user_id || user.id === folder.user_id))
+  const ownerUsername = folder?.owner?.username || username || user?.username
+
   const handleSaveShare = async (e: React.FormEvent) => {
     e.preventDefault()
     setShareError("")
+
+    if (!isOwner) {
+      onClose()
+      return
+    }
 
     if (!/^[a-z0-9-]+$/.test(shareSlug)) {
       setShareError(
@@ -63,12 +72,18 @@ export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
   }
 
   const handleCopyLink = () => {
+    const ownerName = folder?.owner?.username || username || user?.username || ""
     navigator.clipboard.writeText(
-      `${window.location.origin}/${user?.username}/${shareSlug || folder?.id}`
+      `${window.location.origin}/${ownerName}/${shareSlug || folder?.slug || folder?.id}`
     )
     setIsLinkCopied(true)
     setTimeout(() => setIsLinkCopied(false), 2000)
   }
+
+  const shareUrl =
+    typeof window !== "undefined"
+      ? `${window.location.origin}/${ownerUsername || ""}/${shareSlug || folder?.slug || folder?.id}`
+      : ""
 
   return (
     <Dialog
@@ -82,79 +97,83 @@ export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
               <Share2 className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Share Settings</DialogTitle>
+              <DialogTitle className="text-base font-semibold">
+                {isOwner ? "Share Settings" : "Share Folder"}
+              </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Update the privacy and URL slug for your folder.
+                {isOwner
+                  ? "Update the privacy and URL slug for your folder."
+                  : "Share this folder with others."}
               </DialogDescription>
             </div>
           </DialogHeader>
           <div className="grid gap-4 py-4 px-1">
             {shareError && <Alert variant="destructive">{shareError}</Alert>}
 
-            <div className="grid gap-2">
-              <Label>Privacy</Label>
-              <div className="grid grid-cols-3 gap-1 p-1 bg-muted/60 rounded-2xl text-xs font-medium mt-1">
-                {(
-                  [
-                    {
-                      id: "private",
-                      label: "Private",
-                      icon: <LockKeyhole className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "unlisted",
-                      label: "Unlisted",
-                      icon: <EyeOff className="h-3.5 w-3.5" />,
-                    },
-                    {
-                      id: "public",
-                      label: "Public",
-                      icon: <Globe className="h-3.5 w-3.5" />,
-                    },
-                  ] as const
-                ).map((opt) => (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    onClick={() => setSharePrivacy(opt.id)}
-                    disabled={updateFolder.isPending}
-                    className={cn(
-                      "flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all",
-                      sharePrivacy === opt.id
-                        ? "bg-background text-foreground shadow-sm font-semibold"
-                        : "text-muted-foreground hover:text-foreground",
-                      updateFolder.isPending && "opacity-50 cursor-not-allowed"
-                    )}
-                  >
-                    {opt.icon}
-                    <span>{opt.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+            {isOwner && (
+              <>
+                <div className="grid gap-2">
+                  <Label>Privacy</Label>
+                  <div className="grid grid-cols-3 gap-1 p-1 bg-muted/60 rounded-2xl text-xs font-medium mt-1">
+                    {(
+                      [
+                        {
+                          id: "private",
+                          label: "Private",
+                          icon: <LockKeyhole className="h-3.5 w-3.5" />,
+                        },
+                        {
+                          id: "unlisted",
+                          label: "Unlisted",
+                          icon: <EyeOff className="h-3.5 w-3.5" />,
+                        },
+                        {
+                          id: "public",
+                          label: "Public",
+                          icon: <Globe className="h-3.5 w-3.5" />,
+                        },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.id}
+                        type="button"
+                        onClick={() => setSharePrivacy(opt.id)}
+                        disabled={updateFolder.isPending}
+                        className={cn(
+                          "flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all",
+                          sharePrivacy === opt.id
+                            ? "bg-background text-foreground shadow-sm font-semibold"
+                            : "text-muted-foreground hover:text-foreground",
+                          updateFolder.isPending && "opacity-50 cursor-not-allowed"
+                        )}
+                      >
+                        {opt.icon}
+                        <span>{opt.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-            <div className="grid gap-2">
-              <Label>URL Slug</Label>
-              <Input
-                value={shareSlug}
-                onChange={(e) => setShareSlug(e.target.value)}
-                maxLength={50}
-                disabled={updateFolder.isPending}
-                required
-                className="font-mono"
-              />
-            </div>
+                <div className="grid gap-2">
+                  <Label>URL Slug</Label>
+                  <Input
+                    value={shareSlug}
+                    onChange={(e) => setShareSlug(e.target.value)}
+                    maxLength={50}
+                    disabled={updateFolder.isPending}
+                    required
+                    className="font-mono"
+                  />
+                </div>
+              </>
+            )}
 
             <div className="grid gap-2">
               <Label>Share Link</Label>
               <div className="flex gap-2">
                 <Input
                   readOnly
-                  value={
-                    typeof window !== "undefined"
-                      ? `${window.location.origin}/${user?.username}/${shareSlug || folder?.id}`
-                      : ""
-                  }
+                  value={shareUrl}
                   className="font-mono text-xs opacity-70"
                 />
                 <Button
@@ -178,11 +197,13 @@ export function ShareFolderDialog({ folder, onClose }: ShareFolderDialogProps) {
               onClick={onClose}
               disabled={updateFolder.isPending}
             >
-              Cancel
+              {isOwner ? "Cancel" : "Close"}
             </Button>
-            <Button type="submit" disabled={updateFolder.isPending}>
-              {updateFolder.isPending ? "Saving..." : "Save Settings"}
-            </Button>
+            {isOwner && (
+              <Button type="submit" disabled={updateFolder.isPending}>
+                {updateFolder.isPending ? "Saving..." : "Save Settings"}
+              </Button>
+            )}
           </DialogFooter>
         </form>
       </DialogContent>

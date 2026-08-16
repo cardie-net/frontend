@@ -17,6 +17,7 @@ import {
   Calendar,
   Clock,
   Star,
+  Share2,
 } from "lucide-react"
 import {
   DndContext,
@@ -44,6 +45,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
+import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
+import { useFolder } from "@/hooks/useFolders"
 import {
   useCards,
   useCreateCard,
@@ -74,6 +77,9 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const { user } = useAuth()
 
   const { data: cards = [], isLoading: cardsLoading } = useCards(deck.id)
+  const { data: parentFolder } = useFolder(deck.folder_id || undefined)
+
+  const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
 
   const createCard = useCreateCard()
   const updateCard = useUpdateCard()
@@ -357,7 +363,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         <div className="flex flex-col min-w-0">
           <div className="flex w-full flex-col min-w-0">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center min-w-0">
-              <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
                 <div
                   className={cn(
                     "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm mt-0.5 sm:mt-0",
@@ -403,6 +409,19 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   )}
                 </h1>
               </div>
+
+              <div className="hidden sm:flex items-center shrink-0">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => setShareDeckTarget(deck)}
+                  className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0"
+                  title="Share deck"
+                  aria-label="Share deck"
+                >
+                  <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
+                </Button>
+              </div>
             </div>
 
             {(deck.created_at || deck.updated_at) && (
@@ -440,13 +459,30 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             )}
           </div>
 
-          <Link
-            href="/decks"
-            className="mt-6 inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-            Back to Decks
-          </Link>
+          <div className="mt-6 flex items-center justify-between">
+            <Link
+              href={
+                parentFolder?.slug
+                  ? `/${username}/${parentFolder.slug}`
+                  : "/decks"
+              }
+              className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              {parentFolder ? `Back to ${parentFolder.name}` : "Back to Decks"}
+            </Link>
+
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setShareDeckTarget(deck)}
+              className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0 sm:hidden"
+              title="Share deck"
+              aria-label="Share deck"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
         <DeckActionButtons username={username} deckSlug={slug} />
@@ -652,6 +688,13 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             destructive={false}
           />
         )}
+
+        <ShareDeckDialog
+          key={shareDeckTarget?.id ?? "closed-share-deck"}
+          deck={shareDeckTarget}
+          username={username}
+          onClose={() => setShareDeckTarget(null)}
+        />
       </div>
     </div>
   )
