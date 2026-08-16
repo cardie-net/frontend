@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { Star } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getDeckColorClass, getDeckColorStyle } from '@/lib/decks'
@@ -24,6 +25,8 @@ interface CommunityDeckCardProps {
 }
 
 export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
+  const t = useTranslations('Community')
+  const tCommon = useTranslations('Common')
   const router = useRouter()
   const { user } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
@@ -129,7 +132,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
                         G
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium text-[11px]">Guest</span>
+                    <span className="font-medium text-[11px]">{tCommon('guest')}</span>
                   </div>
                 ) : (
                   <Link
@@ -157,7 +160,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
               type="button"
               onClick={isOwner ? undefined : handleToggleStar}
               disabled={isOwner || isPending}
-              title={isOwner ? 'You cannot star your own deck' : undefined}
+              title={isOwner ? t('cannotStarOwn') : undefined}
               className={cn(
                 'flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm',
                 isOwner
@@ -253,7 +256,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
             type="button"
             onClick={isOwner ? undefined : handleToggleStar}
             disabled={isOwner || isPending}
-            title={isOwner ? 'You cannot star your own deck' : undefined}
+            title={isOwner ? t('cannotStarOwn') : undefined}
             className={cn(
               'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 shadow-sm',
               isOwner
@@ -296,7 +299,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
                   G
                 </AvatarFallback>
               </Avatar>
-              <span className="font-medium truncate">Guest</span>
+              <span className="font-medium truncate">{tCommon('guest')}</span>
             </div>
           ) : (
             <Link

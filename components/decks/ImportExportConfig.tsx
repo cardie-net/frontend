@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   DelimiterConfig,
   RecordSeparatorConfig,
@@ -31,10 +32,12 @@ export function ImportExportConfig({
   recordSeparator,
   onRecordSeparatorChange,
 }: ImportExportConfigProps) {
+  const t = useTranslations("ImportExport");
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 items-start">
       <div className="grid gap-2">
-        <Label>Field delimiter</Label>
+        <Label>{t("fieldDelimiter")}</Label>
         <Select
           value={delimiter.kind}
           onValueChange={(kind) =>
@@ -48,9 +51,9 @@ export function ImportExportConfig({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="tab">Tab</SelectItem>
-            <SelectItem value="comma">Comma</SelectItem>
-            <SelectItem value="custom">Custom…</SelectItem>
+            <SelectItem value="tab">{t("tab")}</SelectItem>
+            <SelectItem value="comma">{t("comma")}</SelectItem>
+            <SelectItem value="custom">{t("custom")}</SelectItem>
           </SelectContent>
         </Select>
         {delimiter.kind === "custom" && (
@@ -66,7 +69,7 @@ export function ImportExportConfig({
       </div>
 
       <div className="grid gap-2">
-        <Label>Separate cards with</Label>
+        <Label>{t("separateCardsWith")}</Label>
         <Select
           value={recordSeparator.kind}
           onValueChange={(kind) =>
@@ -80,9 +83,9 @@ export function ImportExportConfig({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="newline">New line</SelectItem>
-            <SelectItem value="semicolon">Semicolon</SelectItem>
-            <SelectItem value="custom">Custom…</SelectItem>
+            <SelectItem value="newline">{t("newLine")}</SelectItem>
+            <SelectItem value="semicolon">{t("semicolon")}</SelectItem>
+            <SelectItem value="custom">{t("custom")}</SelectItem>
           </SelectContent>
         </Select>
         {recordSeparator.kind === "custom" && (

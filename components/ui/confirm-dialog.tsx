@@ -1,3 +1,6 @@
+"use client"
+
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -27,10 +30,14 @@ export function ConfirmDialog({
   description,
   onConfirm,
   isPending = false,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText,
+  cancelText,
   destructive = true,
 }: ConfirmDialogProps) {
+  const t = useTranslations("Common")
+  const displayConfirmText = confirmText ?? t("confirm")
+  const displayCancelText = cancelText ?? t("cancel")
+
   return (
     <Dialog open={open} onOpenChange={(val) => !isPending && onOpenChange(val)}>
       <DialogContent className="sm:max-w-[425px]">
@@ -45,7 +52,7 @@ export function ConfirmDialog({
             onClick={() => onOpenChange(false)}
             disabled={isPending}
           >
-            {cancelText}
+            {displayCancelText}
           </Button>
           <Button
             type="button"
@@ -56,7 +63,7 @@ export function ConfirmDialog({
             }}
             disabled={isPending}
           >
-            {isPending ? "Loading..." : confirmText}
+            {isPending ? t("loading") : displayConfirmText}
           </Button>
         </DialogFooter>
       </DialogContent>

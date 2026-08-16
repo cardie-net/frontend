@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   Globe,
   Search,
@@ -26,6 +27,8 @@ import { useCommunityItems } from '@/hooks/useCommunity'
 import { useCustomTheme } from '@/components/theme/custom-theme-provider'
 
 export default function CommunityPage() {
+  const t = useTranslations('Community')
+  const tCommon = useTranslations('Common')
   const { deckDisplayMode } = useCustomTheme()
   const isLineMode = deckDisplayMode === 'line'
   const [mode, setMode] = useState<CommunitySortMode>('popular')
@@ -83,7 +86,7 @@ export default function CommunityPage() {
           </div>
           <div className="flex items-center gap-2.5">
             <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              Community
+              {t('title')}
             </h1>
             {!isLoading && (
               <Badge
@@ -115,7 +118,7 @@ export default function CommunityPage() {
             <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search public decks, folders, authors..."
+              placeholder={t('searchPlaceholder')}
               className="pl-9 pr-8 h-10 rounded-xl border-border bg-background/80 text-sm focus-visible:ring-primary/40"
               autoFocus
             />
@@ -132,10 +135,10 @@ export default function CommunityPage() {
           <Button
             type="submit"
             className="h-10 px-3 sm:px-5 rounded-xl font-semibold gap-1.5 shrink-0"
-            aria-label="Search"
+            aria-label={t('searchButton')}
           >
             <Search className="w-4 h-4" />
-            <span className="hidden sm:inline">Search</span>
+            <span className="hidden sm:inline">{t('searchButton')}</span>
           </Button>
         </form>
       ) : (
@@ -152,7 +155,7 @@ export default function CommunityPage() {
                   : 'text-muted-foreground hover:text-foreground'
               )}
             >
-              All Items
+              {t('allItems')}
             </button>
             <button
               type="button"
@@ -165,7 +168,7 @@ export default function CommunityPage() {
               )}
             >
               <Layers className="w-3.5 h-3.5" />
-              <span>Decks</span>
+              <span>{t('decks')}</span>
             </button>
             <button
               type="button"
@@ -178,7 +181,7 @@ export default function CommunityPage() {
               )}
             >
               <FolderIcon className="w-3.5 h-3.5" />
-              <span>Folders</span>
+              <span>{t('folders')}</span>
             </button>
           </div>
         </div>
@@ -197,7 +200,7 @@ export default function CommunityPage() {
       ) : isError ? (
         <Card className="rounded-3xl border-border/80 p-8 text-center bg-card/60">
           <p className="text-sm text-destructive">
-            {error?.message || 'Failed to load community items.'}
+            {error?.message || t('failed')}
           </p>
         </Card>
       ) : items.length === 0 ? (
@@ -211,17 +214,17 @@ export default function CommunityPage() {
           </div>
           <p className="text-lg font-semibold text-foreground mb-1">
             {mode === 'search' && submittedQuery
-              ? 'No matches found'
+              ? t('noMatchesTitle')
               : mode === 'search'
-              ? 'Start searching'
-              : 'No community items yet'}
+              ? t('startSearchingTitle')
+              : t('noItemsTitle')}
           </p>
           <p className="text-sm text-muted-foreground max-w-md mx-auto">
             {mode === 'search' && submittedQuery
-              ? `No public decks or folders matched "${submittedQuery}". Try refining your query or search terms.`
+              ? t('noMatchesDesc', { query: submittedQuery })
               : mode === 'search'
-              ? 'Type a keyword and click Search to find public decks and folders.'
-              : 'Be the first to share a public deck or folder with the community!'}
+              ? t('startSearchingDesc')
+              : t('noItemsDesc')}
           </p>
           {mode === 'search' && submittedQuery && (
             <Button
@@ -230,7 +233,7 @@ export default function CommunityPage() {
               onClick={handleClearSearch}
               className="mt-5 rounded-xl"
             >
-              Clear search
+              {t('clearSearch')}
             </Button>
           )}
         </Card>
@@ -251,8 +254,12 @@ export default function CommunityPage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border/60">
               <span className="text-xs text-muted-foreground">
-                Showing page <span className="font-semibold text-foreground">{page}</span> of{' '}
-                <span className="font-semibold text-foreground">{totalPages}</span> ({total} items total)
+                {t.rich('showingPage', {
+                  page,
+                  totalPages,
+                  items: total,
+                  bold: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>,
+                })}
               </span>
 
               <div className="flex items-center gap-1.5">
@@ -264,7 +271,7 @@ export default function CommunityPage() {
                   className="rounded-xl h-8 px-2.5 gap-1 font-medium text-xs"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">Previous</span>
+                  <span className="hidden sm:inline">{tCommon('previous')}</span>
                 </Button>
 
                 {/* Page Number Buttons */}
@@ -314,7 +321,7 @@ export default function CommunityPage() {
                   disabled={page >= totalPages}
                   className="rounded-xl h-8 px-2.5 gap-1 font-medium text-xs"
                 >
-                  <span className="hidden sm:inline">Next</span>
+                  <span className="hidden sm:inline">{tCommon('next')}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </Button>
               </div>

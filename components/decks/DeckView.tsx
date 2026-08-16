@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -72,6 +73,7 @@ interface DeckViewProps {
 }
 
 export function DeckView({ username, slug, deck }: DeckViewProps) {
+  const t = useTranslations("DeckView")
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -388,7 +390,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                       type="button"
                       onClick={handleToggleStar}
                       disabled={isStarPending}
-                      aria-label={isStarred ? "Unstar deck" : "Star deck"}
+                      aria-label={isStarred ? t("unstarDeck") : t("starDeck")}
                       className={cn(
                         "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0 ml-2.5 align-middle -translate-y-0.5",
                         isStarred
@@ -416,8 +418,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   size="icon"
                   onClick={() => setShareDeckTarget(deck)}
                   className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0"
-                  title="Share deck"
-                  aria-label="Share deck"
+                  title={t("shareDeck")}
+                  aria-label={t("shareDeck")}
                 >
                   <Share2 className="h-4 w-4 sm:h-5 sm:w-5" />
                 </Button>
@@ -433,8 +435,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   >
                     <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
                     <span>
-                      <span className="hidden sm:inline">Created </span>
-                      {formatDate(deck.created_at)}
+                      {t("created", { date: formatDate(deck.created_at) })}
                     </span>
                   </span>
                 )}
@@ -444,7 +445,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     title={formatDateTime(deck.updated_at)}
                   >
                     <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
-                    <span>Updated {formatRelativeTime(deck.updated_at)}</span>
+                    <span>{t("updated", { time: formatRelativeTime(deck.updated_at) })}</span>
                   </span>
                 )}
               </div>
@@ -469,7 +470,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
               className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              {parentFolder ? `Back to ${parentFolder.name}` : "Back to Decks"}
+              {parentFolder ? t("backTo", { name: parentFolder.name }) : t("backToDecks")}
             </Link>
 
             <Button
@@ -477,8 +478,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
               size="icon"
               onClick={() => setShareDeckTarget(deck)}
               className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0 sm:hidden"
-              title="Share deck"
-              aria-label="Share deck"
+              title={t("shareDeck")}
+              aria-label={t("shareDeck")}
             >
               <Share2 className="h-4 w-4" />
             </Button>
@@ -490,7 +491,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         {/* Cards Section */}
         <div ref={cardsRef} id="cards" className="scroll-mt-6">
           <div className="mb-6 flex items-center justify-between gap-2">
-            <h2 className="text-xl font-semibold">Cards</h2>
+            <h2 className="text-xl font-semibold">{t("cardsTitle")}</h2>
             <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap">
               {isOwner && (
                 <Button
@@ -498,10 +499,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
                   size="sm"
                   onClick={() => setShowTransposeDialog(true)}
-                  title="Swap Deck Sides"
+                  title={t("swap")}
                 >
                   <ArrowLeftRight className="h-4 w-4" />{" "}
-                  <span className="hidden sm:inline">Swap</span>
+                  <span className="hidden sm:inline">{t("swap")}</span>
                 </Button>
               )}
               <Button
@@ -511,7 +512,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 onClick={() => setShowExportDialog(true)}
               >
                 <Download className="h-4 w-4" />{" "}
-                <span className="hidden sm:inline">Export</span>
+                <span className="hidden sm:inline">{t("export")}</span>
               </Button>
               {isOwner && (
                 <>
@@ -522,14 +523,14 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     onClick={() => setShowImportDialog(true)}
                   >
                     <Upload className="h-4 w-4" />{" "}
-                    <span className="hidden sm:inline">Import</span>
+                    <span className="hidden sm:inline">{t("import")}</span>
                   </Button>
                   <Button
                     className="gap-2 rounded-xl font-medium"
                     size="sm"
                     onClick={() => setShowAddForm(!showAddForm)}
                   >
-                    <Plus className="h-4 w-4" /> <span>Card</span>
+                    <Plus className="h-4 w-4" /> <span>{t("addCard")}</span>
                   </Button>
                 </>
               )}
@@ -558,10 +559,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             <div className="mb-2 grid grid-cols-[auto_1fr_1fr_auto] items-center gap-3 px-4 py-2">
               <div className="w-10" />
               <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                Front
+                {t("frontHeader")}
               </span>
               <span className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-                Back
+                {t("backHeader")}
               </span>
               <div className="w-16" />
             </div>
@@ -571,10 +572,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           {cards.length === 0 ? (
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center text-muted-foreground">
               <Layers className="mb-3 h-10 w-10 opacity-40" />
-              <p className="mb-1 text-lg font-medium">No cards yet</p>
+              <p className="mb-1 text-lg font-medium">{t("noCardsTitle")}</p>
               {isOwner && (
                 <p className="text-sm">
-                  Click &ldquo;Add Card&rdquo; to create your first flashcard.
+                  {t("noCardsOwner")}
                 </p>
               )}
             </div>
@@ -678,13 +679,13 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           <ConfirmDialog
             open={showTransposeDialog}
             onOpenChange={setShowTransposeDialog}
-            title="Swap Cards"
-            description="Are you sure you want to swap all the cards this deck? They will have their front and back contents exchanged."
+            title={t("swapDialogTitle")}
+            description={t("swapDialogDesc")}
             onConfirm={() => {
               transposeDeck.mutate({ deckId: deck.id })
             }}
             isPending={transposeDeck.isPending}
-            confirmText="Swap"
+            confirmText={t("swapDialogConfirm")}
             destructive={false}
           />
         )}

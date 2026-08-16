@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -26,6 +27,8 @@ interface ShareFolderDialogProps {
 }
 
 export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDialogProps) {
+  const t = useTranslations("Folders.shareDialog")
+  const tCommon = useTranslations("Common")
   const { user } = useAuth()
   const updateFolder = useUpdateFolder()
 
@@ -47,9 +50,7 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
     }
 
     if (!/^[a-z0-9-]+$/.test(shareSlug)) {
-      setShareError(
-        "Slug can only contain lowercase letters, numbers, and hyphens."
-      )
+      setShareError(t("invalidSlug"))
       return
     }
 
@@ -65,7 +66,7 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
         onSuccess: () => onClose(),
         onError: (err) =>
           setShareError(
-            err instanceof Error ? err.message : "An error occurred"
+            err instanceof Error ? err.message : tCommon("error")
           ),
       }
     )
@@ -98,12 +99,12 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
             </div>
             <div>
               <DialogTitle className="text-base font-semibold">
-                {isOwner ? "Share Settings" : "Share Folder"}
+                {isOwner ? t("titleOwner") : t("titleViewer")}
               </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
                 {isOwner
-                  ? "Update the privacy and URL slug for your folder."
-                  : "Share this folder with others."}
+                  ? t("descOwner")
+                  : t("descViewer")}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -113,23 +114,23 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
             {isOwner && (
               <>
                 <div className="grid gap-2">
-                  <Label>Privacy</Label>
+                  <Label>{t("privacyLabel")}</Label>
                   <div className="grid grid-cols-3 gap-1 p-1 bg-muted/60 rounded-2xl text-xs font-medium mt-1">
                     {(
                       [
                         {
                           id: "private",
-                          label: "Private",
+                          label: t("privacyPrivate"),
                           icon: <LockKeyhole className="h-3.5 w-3.5" />,
                         },
                         {
                           id: "unlisted",
-                          label: "Unlisted",
+                          label: t("privacyUnlisted"),
                           icon: <EyeOff className="h-3.5 w-3.5" />,
                         },
                         {
                           id: "public",
-                          label: "Public",
+                          label: t("privacyPublic"),
                           icon: <Globe className="h-3.5 w-3.5" />,
                         },
                       ] as const
@@ -155,7 +156,7 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
                 </div>
 
                 <div className="grid gap-2">
-                  <Label>URL Slug</Label>
+                  <Label>{t("slugLabel")}</Label>
                   <Input
                     value={shareSlug}
                     onChange={(e) => setShareSlug(e.target.value)}
@@ -169,7 +170,7 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
             )}
 
             <div className="grid gap-2">
-              <Label>Share Link</Label>
+              <Label>{t("shareLinkLabel")}</Label>
               <div className="flex gap-2">
                 <Input
                   readOnly
@@ -197,11 +198,11 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
               onClick={onClose}
               disabled={updateFolder.isPending}
             >
-              {isOwner ? "Cancel" : "Close"}
+              {isOwner ? tCommon("cancel") : tCommon("close")}
             </Button>
             {isOwner && (
               <Button type="submit" disabled={updateFolder.isPending}>
-                {updateFolder.isPending ? "Saving..." : "Save Settings"}
+                {updateFolder.isPending ? tCommon("saving") : tCommon("save")}
               </Button>
             )}
           </DialogFooter>

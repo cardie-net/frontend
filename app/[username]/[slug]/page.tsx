@@ -2,6 +2,7 @@
 
 import { Suspense } from "react"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useDeck } from "@/hooks/useDecks"
 import { useFolderBySlug } from "@/hooks/useFolders"
 import { FolderView } from "@/components/folders/FolderView"
@@ -34,6 +35,7 @@ function LoadingSkeleton() {
 }
 
 function SlugPageContent() {
+  const tCommon = useTranslations("Common")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -69,12 +71,12 @@ function SlugPageContent() {
       <div className="text-center">
         <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
         <h2 className="mb-4 text-2xl font-bold">
-          {deckError?.message || folderError?.message || "Item not found"}
+          {deckError?.message || folderError?.message || tCommon("notFound")}
         </h2>
         <Link href={`/${username}`}>
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to profile
+            {tCommon("back")}
           </Button>
         </Link>
       </div>

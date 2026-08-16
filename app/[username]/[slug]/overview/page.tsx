@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, AlertCircle, Loader2, Eye, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
@@ -55,6 +56,8 @@ function resolveOverride(override: OverrideValue, globalDefault: boolean): boole
 }
 
 export default function OverviewPage() {
+  const t = useTranslations("Overview")
+  const tCommon = useTranslations("Common")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -271,12 +274,12 @@ export default function OverviewPage() {
         <div className="text-center">
           <AlertCircle className="mx-auto mb-4 h-12 w-12 text-destructive" />
           <h2 className="mb-4 text-2xl font-bold">
-            {error?.message || "Deck not found"}
+            {error?.message || t("notFound")}
           </h2>
           <Link href={`/${username}/${slug}`}>
             <Button variant="outline">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to deck
+              {t("backToDeck")}
             </Button>
           </Link>
         </div>
@@ -293,7 +296,7 @@ export default function OverviewPage() {
               <Eye className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-              Overview
+              {t("title")}
             </h1>
           </div>
 
@@ -305,7 +308,7 @@ export default function OverviewPage() {
                 className="gap-2 rounded-xl font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t("back")}
               </Button>
             </Link>
 
@@ -315,7 +318,7 @@ export default function OverviewPage() {
                 className="gap-2 rounded-xl font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Deck
+                {t("backToDeck")}
               </Button>
             </Link>
 
@@ -324,8 +327,8 @@ export default function OverviewPage() {
               size="icon"
               className="rounded-xl"
               onClick={() => setIsSettingsOpen(true)}
-              aria-label="Settings"
-              title="Settings"
+              aria-label={tCommon("settings")}
+              title={tCommon("settings")}
             >
               <Settings className="h-4 w-4" />
             </Button>
@@ -362,19 +365,19 @@ export default function OverviewPage() {
               className="h-2"
             />
             <div className="mt-2 text-center text-sm font-medium text-muted-foreground sm:mt-3">
-              Card {current} of {count}
+              {t("cardCounter", { current, count })}
             </div>
           </div>
 
           <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
             <span className="sm:hidden">
-              Click anywhere on the card to flip
+              {t("flipHintMobile")}
             </span>
             <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
-              Click anywhere on the card or press{" "}
-              <Kbd className="text-[10px]">Space</Kbd> /{" "}
-              <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use
-              arrow keys to navigate
+              {t.rich("flipHintDesktop", {
+                space: (chunks) => <Kbd className="text-[10px]">{chunks}</Kbd>,
+                enter: (chunks) => <Kbd className="text-[10px]">{chunks}</Kbd>,
+              })}
             </span>
           </div>
         </div>
@@ -387,17 +390,19 @@ export default function OverviewPage() {
               <Settings className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Overview Settings</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("settingsTitle")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Defaults can be configured in{" "}
-                <Link
-                  href="/settings#learning-settings"
-                  className="text-primary underline underline-offset-2 hover:text-primary/80"
-                  onClick={() => setIsSettingsOpen(false)}
-                >
-                  settings
-                </Link>
-                .
+                {t.rich("settingsDefaults", {
+                  link: (chunks) => (
+                    <Link
+                      href="/settings#learning-settings"
+                      className="text-primary underline underline-offset-2 hover:text-primary/80"
+                      onClick={() => setIsSettingsOpen(false)}
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -408,10 +413,10 @@ export default function OverviewPage() {
                   htmlFor="reverse-cards"
                   className="cursor-pointer text-sm leading-none font-medium"
                 >
-                  Reverse cards
+                  {t("reverseCards")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Show back side first, then front after flipping
+                  {t("reverseCardsDesc")}
                 </p>
               </div>
               <Switch
@@ -427,10 +432,10 @@ export default function OverviewPage() {
                   htmlFor="shuffle-cards"
                   className="cursor-pointer text-sm leading-none font-medium"
                 >
-                  Shuffle cards
+                  {t("shuffleCards")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Randomize the order of cards
+                  {t("shuffleCardsDesc")}
                 </p>
               </div>
               <Select
@@ -441,9 +446,9 @@ export default function OverviewPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="default">{tCommon("default")}</SelectItem>
+                  <SelectItem value="yes">{tCommon("yes")}</SelectItem>
+                  <SelectItem value="no">{tCommon("no")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

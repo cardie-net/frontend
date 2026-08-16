@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { apiFetch } from "@/lib/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,28 +13,41 @@ import { useAuth } from "@/lib/AuthContext"
 import GoogleSignInButton from "@/components/GoogleSignInButton"
 import AuthDivider from "@/components/AuthDivider"
 import { Card, CardContent } from "@/components/ui/card"
-const OAUTH_ERROR_MESSAGES: Record<string, string> = {
-  oauth_invalid_state: "Authentication failed. Please try again",
-  oauth_state_expired: "Authentication session expired. Please try again",
-  oauth_csrf_mismatch: "Security check failed. Please try again",
-  oauth_no_email: "Could not retrieve your email from Google",
-  oauth_profile_error: "Could not retrieve your Google profile",
-  oauth_user_exists:
-    "An account with this email already exists with a different sign-in method",
-  oauth_user_inactive: "Your account has been deactivated",
-}
 
 function LoginContent() {
+  const t = useTranslations("Auth.login")
+  const tOauth = useTranslations("Auth.oauth")
   const searchParams = useSearchParams()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  const getOAuthErrorMessage = (key: string | null): string => {
+    if (!key) return ""
+    switch (key) {
+      case "oauth_invalid_state":
+        return tOauth("invalidState")
+      case "oauth_state_expired":
+        return tOauth("stateExpired")
+      case "oauth_csrf_mismatch":
+        return tOauth("csrfMismatch")
+      case "oauth_no_email":
+        return tOauth("noEmail")
+      case "oauth_profile_error":
+        return tOauth("profileError")
+      case "oauth_user_exists":
+        return tOauth("userExists")
+      case "oauth_user_inactive":
+        return tOauth("userInactive")
+      default:
+        return ""
+    }
+  }
+
   // Pre-fill from the OAuth redirect (`/login?error=...`); the page remounts on
   // navigation, so a one-time initializer is sufficient.
   const [error, setError] = useState<React.ReactNode>(() => {
     const oauthError = searchParams.get("error")
-    return oauthError && OAUTH_ERROR_MESSAGES[oauthError]
-      ? OAUTH_ERROR_MESSAGES[oauthError]
-      : ""
+    return getOAuthErrorMessage(oauthError)
   })
   const [isLoading, setIsLoading] = useState(false)
   const { refreshUser } = useAuth()
@@ -44,13 +58,13 @@ function LoginContent() {
     setIsLoading(true)
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("Please enter a valid email address.")
+      setError(t("validEmailRequired"))
       setIsLoading(false)
       return
     }
 
     if (!password) {
-      setError("Please enter your password.")
+      setError(t("passwordRequired"))
       setIsLoading(false)
       return
     }
@@ -76,27 +90,27 @@ function LoginContent() {
         if (errData.detail === "USER_NOT_VERIFIED") {
           setError(
             <span>
-              Your email is not verified.{" "}
+              {t("emailNotVerified")}{" "}
               <Link
                 href={`/verify?email=${encodeURIComponent(email)}`}
                 className="underline"
               >
-                Verify now
+                {t("verifyNow")}
               </Link>
             </span>
           )
         } else if (errData.detail === "LOGIN_BAD_CREDENTIALS") {
-          setError("Invalid email or password")
+          setError(t("invalidCredentials"))
         } else {
           setError(
             typeof errData.detail === "string"
               ? errData.detail
-              : "Invalid email or password"
+              : t("invalidCredentials")
           )
         }
       }
     } catch {
-      setError("An error occurred while logging in. Please try again.")
+      setError(t("genericError"))
     } finally {
       setIsLoading(false)
     }
@@ -105,8 +119,8 @@ function LoginContent() {
   return (
     <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
       <CardContent className="p-6 sm:p-8">
-      <h1 className="mb-2 text-2xl font-bold sm:text-3xl">Welcome Back</h1>
-      <p className="mb-6 text-muted-foreground">Sign in to continue</p>
+      <h1 className="mb-2 text-2xl font-bold sm:text-3xl">{t("title")}</h1>
+      <p className="mb-6 text-muted-foreground">{t("subtitle")}</p>
 
       {error && (
         <Alert variant="destructive" className="mb-6">
@@ -120,11 +134,11 @@ function LoginContent() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">Email address</Label>
+          <Label htmlFor="email">{t("emailLabel")}</Label>
           <Input
             id="email"
             type="email"
-            placeholder="you@example.com"
+            placeholder={t("emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -133,12 +147,12 @@ function LoginContent() {
 
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("passwordLabel")}</Label>
             <Link
               href="/forgot-password"
               className="text-sm font-medium text-muted-foreground hover:underline"
             >
-              Forgot password?
+              {t("forgotPassword")}
             </Link>
           </div>
           <Input
@@ -152,17 +166,17 @@ function LoginContent() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Signing in..." : "Sign In"}
+          {isLoading ? t("signingIn") : t("signIn")}
         </Button>
       </form>
 
       <p className="mt-6 flex justify-center gap-1 text-center text-sm text-muted-foreground">
-        Don&apos;t have an account?
+        {t("noAccount")}
         <Link
           href="/signup"
           className="font-medium text-foreground hover:underline"
         >
-          Sign up
+          {t("signUp")}
         </Link>
       </p>
       </CardContent>
@@ -171,13 +185,15 @@ function LoginContent() {
 }
 
 export default function LoginPage() {
+  const tCommon = useTranslations("Common")
+
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <Suspense
         fallback={
           <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
             <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
-              Loading...
+              {tCommon("loading")}
             </CardContent>
           </Card>
         }

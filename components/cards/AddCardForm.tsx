@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,29 +28,32 @@ export function AddCardForm({
   onCancel,
   onOpenFullEditor,
 }: AddCardFormProps) {
+  const t = useTranslations('Cards');
+  const tCommon = useTranslations('Common');
+
   return (
     <Card className="mb-6 border-dashed">
       <CardContent className="pt-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="text-sm font-medium text-muted-foreground mb-1.5 block">
-              Front
+              {t('front')}
             </label>
             <Input
               value={newFront}
               onChange={(e) => setNewFront(e.target.value)}
-              placeholder="Question or term"
+              placeholder={t('questionPlaceholder')}
               disabled={isAddingCard}
             />
           </div>
           <div>
             <label className="text-sm font-medium text-muted-foreground mb-1.5 block">
-              Back
+              {t('back')}
             </label>
             <Input
               value={newBack}
               onChange={(e) => setNewBack(e.target.value)}
-              placeholder="Answer or definition"
+              placeholder={t('answerPlaceholder')}
               disabled={isAddingCard}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') onAddCard();
@@ -65,7 +69,7 @@ export function AddCardForm({
             disabled={isAddingCard}
           >
             <Maximize className="w-4 h-4 mr-1.5" />
-            Full editor
+            {t('fullEditor')}
           </Button>
           <div className="flex gap-2">
             <Button
@@ -74,7 +78,7 @@ export function AddCardForm({
               onClick={onCancel}
               disabled={isAddingCard}
             >
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               size="sm"
@@ -84,12 +88,12 @@ export function AddCardForm({
               {isAddingCard ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
-                  Adding...
+                  {t('adding')}
                 </>
               ) : (
                 <>
                   <Plus className="w-4 h-4 mr-1.5" />
-                  Add
+                  {t('add')}
                 </>
               )}
             </Button>

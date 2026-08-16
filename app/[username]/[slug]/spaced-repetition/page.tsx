@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, Check, Clock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
@@ -14,6 +15,8 @@ import { FlipCard } from "@/components/FlipCard"
 import { CardElement } from "@/types"
 
 export default function SpacedRepetitionPage() {
+  const t = useTranslations("SpacedRepetition")
+  const tCommon = useTranslations("Common")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -100,21 +103,21 @@ export default function SpacedRepetitionPage() {
               <Clock className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-              Spaced Repetition
+              {t("title")}
             </h1>
           </div>
 
           <Link href={`/${username}/${slug}`} className="sm:hidden">
             <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("back")}
             </Button>
           </Link>
 
           <Link href={`/${username}/${slug}`} className="hidden sm:block">
             <Button variant="outline" className="gap-2 rounded-xl font-medium">
               <ArrowLeft className="h-4 w-4" />
-              Back to Deck
+              {t("backToDeck")}
             </Button>
           </Link>
         </div>
@@ -128,20 +131,20 @@ export default function SpacedRepetitionPage() {
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <p className="mb-4 text-destructive">{error}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+            <Button onClick={() => window.location.reload()}>{tCommon("tryAgain")}</Button>
           </div>
         ) : sessionCompleted ? (
           <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center text-center">
             <div className="mb-6 rounded-full bg-primary/10 p-6">
               <Check className="h-12 w-12 text-primary" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold">Session Complete!</h2>
+            <h2 className="mb-2 text-2xl font-bold">{t("sessionCompleteTitle")}</h2>
             <p className="mb-8 text-muted-foreground">
-              You have reviewed all cards due for today. Great job!
+              {t("sessionCompleteDesc")}
             </p>
             <Link href={`/${username}/${slug}`} className="w-full">
               <Button size="lg" className="w-full" variant="outline">
-                Return to Deck
+                {t("returnToDeck")}
               </Button>
             </Link>
           </div>
@@ -160,22 +163,22 @@ export default function SpacedRepetitionPage() {
                 <div className="flex flex-1 gap-2">
                   {counts.newRemaining > 0 && (
                     <Badge variant="outline" className="border-blue-300 bg-blue-100 px-3 py-1 font-semibold text-blue-950 dark:border-blue-800 dark:bg-blue-950/80 dark:text-blue-200">
-                      {counts.newRemaining} New
+                      {counts.newRemaining} {t("new")}
                     </Badge>
                   )}
                   {counts.learningRemaining > 0 && (
                     <Badge variant="outline" className="border-orange-300 bg-orange-100 px-3 py-1 font-semibold text-orange-950 dark:border-orange-800 dark:bg-orange-950/80 dark:text-orange-200">
-                      {counts.learningRemaining} Learning
+                      {counts.learningRemaining} {t("learning")}
                     </Badge>
                   )}
                   {counts.reviewRemaining > 0 && (
                     <Badge variant="outline" className="border-green-300 bg-green-100 px-3 py-1 font-semibold text-green-950 dark:border-green-800 dark:bg-green-950/80 dark:text-green-200">
-                      {counts.reviewRemaining} Review
+                      {counts.reviewRemaining} {t("review")}
                     </Badge>
                   )}
                 </div>
                 <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {totalRemaining} <span className="hidden sm:inline">Total</span>
+                  {totalRemaining} <span className="hidden sm:inline">{t("total")}</span>
                 </div>
               </div>
             </div>
@@ -190,7 +193,7 @@ export default function SpacedRepetitionPage() {
                 onClick={() => handleRating(0)}
               >
                 <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
-                  Again
+                  {t("again")}
                   <Kbd className="hidden sm:inline-flex bg-background/20 text-destructive-foreground">
                     1
                   </Kbd>
@@ -206,7 +209,7 @@ export default function SpacedRepetitionPage() {
                 onClick={() => handleRating(1)}
               >
                 <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
-                  Hard
+                  {t("hard")}
                   <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
                     2
                   </Kbd>
@@ -222,7 +225,7 @@ export default function SpacedRepetitionPage() {
                 onClick={() => handleRating(2)}
               >
                 <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
-                  Good
+                  {t("good")}
                   <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
                     3
                   </Kbd>
@@ -238,7 +241,7 @@ export default function SpacedRepetitionPage() {
                 onClick={() => handleRating(3)}
               >
                 <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
-                  Easy
+                  {t("easy")}
                   <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
                     4
                   </Kbd>

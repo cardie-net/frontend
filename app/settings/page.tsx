@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import {
   Card,
   CardContent,
@@ -14,6 +15,7 @@ import { useAuth } from "@/lib/AuthContext"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function SettingsPage() {
+  const t = useTranslations("Settings")
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -36,7 +38,7 @@ export default function SettingsPage() {
           <Settings className="h-6 w-6" />
         </div>
         <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-          Settings
+          {t("title")}
         </h1>
       </div>
 
@@ -45,10 +47,10 @@ export default function SettingsPage() {
           <CardHeader className="p-0">
             <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
               <User className="h-5 w-5 text-primary" />
-              Account Settings
+              {t("accountTitle")}
             </CardTitle>
             <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              Manage your profile settings and public information
+              {t("accountDesc")}
             </CardDescription>
           </CardHeader>
           <CardContent className="relative p-0">
@@ -61,10 +63,10 @@ export default function SettingsPage() {
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
             <GraduationCap className="h-5 w-5 text-primary" />
-            Learning Settings
+            {t("learningTitle")}
           </CardTitle>
           <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Configure your default study and learning preferences across all decks
+            {t("learningDesc")}
           </CardDescription>
         </CardHeader>
         <CardContent className="relative p-0">

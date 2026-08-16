@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { apiFetch } from "@/lib/api"
 import { Switch } from "@/components/ui/switch"
@@ -9,6 +10,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { AlertCircle, ListTodo, Shuffle } from "lucide-react"
 
 export function LearningTab() {
+  const t = useTranslations("Settings.learning")
+  const tCommon = useTranslations("Common")
   const { user, refreshUser } = useAuth()
   const [multipleChoice, setMultipleChoice] = useState<boolean>(
     user?.preferences?.learning_multiple_choice ?? false
@@ -44,15 +47,15 @@ export function LearningTab() {
         setError(
           typeof errData.detail === "string"
             ? errData.detail
-            : "Failed to update preference."
+            : t("updateFailed")
         )
       }
     } catch {
-      setError("An error occurred while saving preference.")
+      setError(t("saveError"))
     } finally {
       setIsSaving(false)
     }
-  }, [refreshUser])
+  }, [refreshUser, t])
 
   const handleToggleMultipleChoice = (checked: boolean) => {
     setMultipleChoice(checked)
@@ -69,12 +72,10 @@ export function LearningTab() {
       {error && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{tCommon("error")}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
-
 
       <div className="flex items-center justify-between gap-4">
         <div className="space-y-1">
@@ -84,11 +85,11 @@ export function LearningTab() {
               htmlFor="learning-multiple-choice"
               className="text-sm sm:text-base font-medium cursor-pointer"
             >
-              Multiple Choice Answers
+              {t("multipleChoice")}
             </Label>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Show 4 multiple choice options instead of Knew / Didn&apos;t Know buttons in Learning mode by default.
+            {t("multipleChoiceDesc")}
           </p>
         </div>
         <Switch
@@ -107,11 +108,11 @@ export function LearningTab() {
               htmlFor="overview-shuffle"
               className="text-sm sm:text-base font-medium cursor-pointer"
             >
-              Shuffle Cards in Overview
+              {t("overviewShuffle")}
             </Label>
           </div>
           <p className="text-xs sm:text-sm text-muted-foreground">
-            Randomize the order of cards in Overview mode by default.
+            {t("overviewShuffleDesc")}
           </p>
         </div>
         <Switch

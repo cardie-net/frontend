@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -29,6 +30,8 @@ interface MoveItemDialogProps {
 }
 
 export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
+  const t = useTranslations("MoveItem")
+  const tCommon = useTranslations("Common")
   const { data: items = [], isLoading } = useUserItems()
   const updateDeck = useUpdateDeck()
   const updateFolder = useUpdateFolder()
@@ -152,6 +155,8 @@ export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
     }
   }
 
+  const itemTypeName = item?.type === "deck" ? t("deck") : t("folder")
+
   return (
     <Dialog open={!!item} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[425px] rounded-2xl">
@@ -160,21 +165,26 @@ export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
               <MoveRight className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Move {item?.type === "deck" ? "Deck" : "Folder"}</DialogTitle>
+              <DialogTitle className="text-base font-semibold">
+                {t("title", { type: itemTypeName })}
+              </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Select a new location for this item.
+                {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
 
         <div className="py-4">
           <p className="text-sm text-muted-foreground mb-4">
-            Select a destination for <strong>{item?.name}</strong>.
+            {t.rich("selectDestination", {
+              name: item?.name || "",
+              strong: (chunks) => <strong>{chunks}</strong>,
+            })}
           </p>
 
           {isLoading ? (
             <div className="flex justify-center p-4 text-muted-foreground">
-              Loading folders...
+              {t("loadingFolders")}
             </div>
           ) : (
             <div className="max-h-[250px] overflow-y-auto pr-2 border rounded-xl p-2 bg-muted/20">
@@ -190,7 +200,7 @@ export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
                 >
                   <div className="flex items-center gap-2">
                     <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
-                    Root (Top Level)
+                    {t("root")}
                   </div>
                   {selectedFolderId === null && <Check className="w-4 h-4" />}
                 </button>
@@ -205,10 +215,10 @@ export function MoveItemDialog({ item, onClose }: MoveItemDialogProps) {
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isMoving}>
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button onClick={handleMove} disabled={isMoving}>
-            {isMoving ? "Moving..." : "Move"}
+            {isMoving ? t("moving") : t("move")}
           </Button>
         </DialogFooter>
       </DialogContent>

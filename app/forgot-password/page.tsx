@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,6 +12,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function ForgotPasswordPage() {
+  const t = useTranslations('Auth.forgotPassword');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -22,7 +24,7 @@ export default function ForgotPasswordPage() {
     setSuccess(false);
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError(t('validEmailRequired'));
       return;
     }
 
@@ -42,15 +44,15 @@ export default function ForgotPasswordPage() {
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail === 'USER_NOT_EXISTS') {
-          setError('No account found with this email address');
+          setError(t('userNotFound'));
         } else {
           setError(
-            typeof errData.detail === 'string' ? errData.detail : 'Failed to request password reset'
+            typeof errData.detail === 'string' ? errData.detail : t('failed')
           );
         }
       }
     } catch {
-      setError('An error occurred. Please try again');
+      setError(t('genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -60,8 +62,8 @@ export default function ForgotPasswordPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
         <CardContent className="p-6 sm:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Reset Password</h1>
-        <p className="text-muted-foreground mb-6">Enter your email to receive a reset link</p>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
+        <p className="text-muted-foreground mb-6">{t('subtitle')}</p>
 
         {error && (
           <Alert variant="destructive" className="mb-6 flex gap-2">
@@ -74,20 +76,20 @@ export default function ForgotPasswordPage() {
           <div className="text-center">
             <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
               <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-              <AlertDescription>Password reset link sent! Please check your email inbox.</AlertDescription>
+              <AlertDescription>{t('linkSent')}</AlertDescription>
             </Alert>
             <Link href="/login" className="w-full block">
-              <Button className="w-full">Return to Login</Button>
+              <Button className="w-full">{t('returnToLogin')}</Button>
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
+              <Label htmlFor="email">{t('emailLabel')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="you@example.com"
+                placeholder={t('emailPlaceholder')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -95,16 +97,16 @@ export default function ForgotPasswordPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Sending...' : 'Send Reset Link'}
+              {isLoading ? t('sending') : t('sendLink')}
             </Button>
           </form>
         )}
 
         {!success && (
           <p className="mt-6 text-center text-sm text-muted-foreground flex gap-1 justify-center">
-            Remember your password?{' '}
+            {t('rememberPassword')}{' '}
             <Link href="/login" className="font-medium hover:underline text-foreground">
-              Log in
+              {t('logIn')}
             </Link>
           </p>
         )}

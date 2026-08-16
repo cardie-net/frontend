@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useDeleteFolder } from "@/hooks/useFolders"
 
@@ -12,6 +13,8 @@ export function DeleteFolderDialog({
   onClose,
   onDeleted,
 }: DeleteFolderDialogProps) {
+  const t = useTranslations("Folders.deleteDialog")
+  const tCommon = useTranslations("Common")
   const deleteFolder = useDeleteFolder()
 
   const handleConfirm = () => {
@@ -28,11 +31,11 @@ export function DeleteFolderDialog({
     <ConfirmDialog
       open={!!folderId}
       onOpenChange={(open) => !open && onClose()}
-      title="Delete Folder"
-      description="Are you sure you want to delete this folder AND ALL ITS CONTENTS? This action cannot be undone."
+      title={t("title")}
+      description={t("description")}
       onConfirm={handleConfirm}
       isPending={deleteFolder.isPending}
-      confirmText="Delete"
+      confirmText={tCommon("delete")}
     />
   )
 }

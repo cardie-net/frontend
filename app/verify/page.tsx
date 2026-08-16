@@ -3,6 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from "@/components/ui/card";
 
 function VerifyContent() {
+  const t = useTranslations('Auth.verify');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [token, setToken] = useState(searchParams.get('token') || '');
@@ -33,7 +35,7 @@ function VerifyContent() {
 
   const handleResend = async () => {
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError(t('validEmailRequired'));
       return;
     }
     setError('');
@@ -51,10 +53,10 @@ function VerifyContent() {
         setResendSuccess(true);
         setCooldown(60);
       } else {
-        setError('Failed to resend verification email.');
+        setError(t('resendFailed'));
       }
     } catch {
-      setError('An error occurred. Please try again.');
+      setError(t('genericError'));
     } finally {
       setIsResending(false);
     }
@@ -66,7 +68,7 @@ function VerifyContent() {
     setSuccess(false);
 
     if (!token.trim()) {
-      setError('Please enter a verification token.');
+      setError(t('tokenRequired'));
       return;
     }
 
@@ -90,18 +92,18 @@ function VerifyContent() {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail) {
           if (errData.detail === 'VERIFY_USER_BAD_TOKEN') {
-            setError('Invalid or expired verification code');
+            setError(t('badToken'));
           } else if (errData.detail === 'VERIFY_USER_ALREADY_VERIFIED') {
-            setError('Your email is already verified');
+            setError(t('alreadyVerified'));
           } else {
-            setError(typeof errData.detail === 'string' ? errData.detail : 'Verification failed');
+            setError(typeof errData.detail === 'string' ? errData.detail : t('failed'));
           }
         } else {
-          setError('Verification failed. Invalid or expired token');
+          setError(t('failed'));
         }
       }
     } catch {
-      setError('An error occurred during verification. Please try again');
+      setError(t('genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -110,8 +112,8 @@ function VerifyContent() {
   return (
     <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
       <CardContent className="p-6 sm:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Verify Email</h1>
-      <p className="text-muted-foreground mb-6">Enter your verification token</p>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
+      <p className="text-muted-foreground mb-6">{t('subtitle')}</p>
 
       {error && (
         <Alert variant="destructive" className="mb-6 flex gap-2">
@@ -122,23 +124,23 @@ function VerifyContent() {
       {success && (
         <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
           <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-          <AlertDescription>Email verified successfully! Redirecting to login...</AlertDescription>
+          <AlertDescription>{t('successMessage')}</AlertDescription>
         </Alert>
       )}
       {resendSuccess && (
         <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
           <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-          <AlertDescription>Verification email sent successfully. Please check your inbox.</AlertDescription>
+          <AlertDescription>{t('resendSuccess')}</AlertDescription>
         </Alert>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="token">Verification Token</Label>
+          <Label htmlFor="token">{t('tokenLabel')}</Label>
           <Input
             id="token"
             type="text"
-            placeholder="Paste your token here"
+            placeholder={t('tokenPlaceholder')}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             required
@@ -146,17 +148,17 @@ function VerifyContent() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading || success}>
-          {isLoading ? 'Verifying...' : 'Verify'}
+          {isLoading ? t('verifying') : t('verify')}
         </Button>
       </form>
 
       <div className="mt-8 pt-4 border-t">
-        <p className="text-muted-foreground mb-4">Didn&apos;t receive the email?</p>
+        <p className="text-muted-foreground mb-4">{t('didntReceive')}</p>
         <div className="space-y-4">
           <Input
             id="email"
             type="email"
-            placeholder="Enter email to resend"
+            placeholder={t('resendEmailPlaceholder')}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
@@ -168,17 +170,17 @@ function VerifyContent() {
             disabled={isResending || cooldown > 0 || success}
           >
             {isResending
-              ? 'Sending...'
+              ? t('verifying')
               : cooldown > 0
-                ? `Resend in ${cooldown}s`
-                : 'Resend Verification Email'}
+                ? t('resendIn', { seconds: cooldown })
+                : t('resendButton')}
           </Button>
         </div>
       </div>
 
       <p className="mt-4 text-center text-sm text-muted-foreground flex gap-1 justify-center">
         <Link href="/login" className="font-medium hover:underline text-foreground">
-          Back to login
+          {t('backToLogin')}
         </Link>
       </p>
       </CardContent>
@@ -187,13 +189,15 @@ function VerifyContent() {
 }
 
 export default function VerifyPage() {
+  const tCommon = useTranslations('Common');
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Suspense
         fallback={
           <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
             <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
-              Loading...
+              {tCommon('loading')}
             </CardContent>
           </Card>
         }

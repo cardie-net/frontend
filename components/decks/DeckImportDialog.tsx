@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { AlertCircle, CheckCircle2, FileUp, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -73,6 +74,8 @@ export function DeckImportDialog({
   username,
   folderId,
 }: DeckImportDialogProps) {
+  const t = useTranslations("ImportExport");
+  const tCommon = useTranslations("Common");
   const router = useRouter();
   const batchCreateCards = useBatchCreateCards();
   const importDeck = useImportDeck();
@@ -117,15 +120,13 @@ export function DeckImportDialog({
     e.target.value = "";
     if (!file) return;
     if (file.size > MAX_IMPORT_FILE_SIZE) {
-      setError(
-        "File is too large (max 2 MB). Please paste the content into the text field instead."
-      );
+      setError(t("fileTooLarge"));
       return;
     }
     setError(null);
     const reader = new FileReader();
     reader.onload = () => updateText(String(reader.result ?? ""));
-    reader.onerror = () => setError("Could not read the selected file.");
+    reader.onerror = () => setError(t("fileReadError"));
     reader.readAsText(file);
   };
 
@@ -173,8 +174,8 @@ export function DeckImportDialog({
         setPhase("done");
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Import failed";
-      setError(`Import failed: ${message}`);
+      const message = err instanceof Error ? err.message : tCommon("error");
+      setError(`${tCommon("error")}: ${message}`);
       setPhase("failed");
     }
   };
@@ -200,11 +201,11 @@ export function DeckImportDialog({
               <Upload className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{mode === "create" ? "Import to New Deck" : "Import Cards"}</DialogTitle>
+              <DialogTitle className="text-base font-semibold">
+                {mode === "create" ? t("importNewTitle") : t("importCardsTitle")}
+              </DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Import flashcards from text. {mode === "create"
-              ? "A new deck will be created with the cards."
-              : "Cards will be appended to this deck."}
+                {mode === "create" ? t("importNewDesc") : t("importAppendDesc")}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -212,11 +213,8 @@ export function DeckImportDialog({
         {mode === "append" && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Appending cards</AlertTitle>
-            <AlertDescription>
-              The imported cards will be added to the end of this deck. No
-              existing cards will be modified.
-            </AlertDescription>
+            <AlertTitle>{t("appendingAlertTitle")}</AlertTitle>
+            <AlertDescription>{t("appendingAlertDesc")}</AlertDescription>
           </Alert>
         )}
 
@@ -231,7 +229,7 @@ export function DeckImportDialog({
           <TabsList>
             {FORMATS.map((f) => (
               <TabsTrigger key={f.id} value={f.id} disabled={f.comingSoon}>
-                {f.label}
+                {f.id === "text" ? t("textTab") : f.label}
                 {f.comingSoon ? " (soon)" : ""}
               </TabsTrigger>
             ))}
@@ -241,18 +239,18 @@ export function DeckImportDialog({
             {mode === "create" && (
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="import-deck-name">Deck Name</Label>
+                  <Label htmlFor="import-deck-name">{t("deckName")}</Label>
                   <Input
                     id="import-deck-name"
                     value={deckName}
                     onChange={(e) => setDeckName(e.target.value)}
-                    placeholder="e.g. Spanish Vocabulary"
+                    placeholder={t("deckNamePlaceholder")}
                     maxLength={80}
                     disabled={busy}
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label>Color</Label>
+                  <Label>{t("color")}</Label>
                   <Select
                     value={deckColor}
                     onValueChange={(value) => {
@@ -276,11 +274,11 @@ export function DeckImportDialog({
             )}
 
             <div className="grid gap-2">
-              <Label>Cards text</Label>
+              <Label>{t("cardsText")}</Label>
               <Textarea
                 value={text}
                 onChange={(e) => updateText(e.target.value)}
-                placeholder={"One card per line, front and back separated by the delimiter, e.g.\nfront\tback"}
+                placeholder={t("cardsTextPlaceholder")}
                 rows={8}
                 disabled={busy}
               />
@@ -293,7 +291,7 @@ export function DeckImportDialog({
                   disabled={busy}
                 >
                   <FileUp className="mr-1.5 h-4 w-4" />
-                  Choose file…
+                  {t("chooseFile")}
                 </Button>
                 <input
                   ref={fileInputRef}
@@ -306,17 +304,16 @@ export function DeckImportDialog({
                   <span className="text-sm text-muted-foreground">
                     {preview.cards.length > 0 ? (
                       <>
-                        Will import{" "}
-                        <strong className="text-foreground">
-                          {preview.cards.length}
-                        </strong>{" "}
-                        card{preview.cards.length === 1 ? "" : "s"}
+                        {t.rich("willImport", {
+                          count: preview.cards.length,
+                          bold: (chunks) => <strong className="text-foreground">{chunks}</strong>,
+                        })}
                         {preview.skipped > 0 &&
-                          ` · ${preview.skipped} record${preview.skipped === 1 ? "" : "s"} skipped`}
+                          t("skipped", { count: preview.skipped })}
                       </>
                     ) : (
                       <span className="text-destructive">
-                        No importable cards found
+                        {t("noCardsFound")}
                       </span>
                     )}
                   </span>
@@ -333,17 +330,16 @@ export function DeckImportDialog({
 
             {!configValid && (
               <Alert variant="destructive">
-                <AlertTitle>Custom separator needed</AlertTitle>
+                <AlertTitle>{t("customSeparatorNeeded")}</AlertTitle>
                 <AlertDescription>
-                  Enter a non-empty value for the custom delimiter and/or
-                  record separator.
+                  {t("customSeparatorNeededDesc")}
                 </AlertDescription>
               </Alert>
             )}
 
             {error && (
               <Alert variant="destructive">
-                <AlertTitle>Import failed</AlertTitle>
+                <AlertTitle>{tCommon("error")}</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
@@ -353,8 +349,8 @@ export function DeckImportDialog({
                 <Loader2 className="h-4 w-4 animate-spin text-primary" />
                 <span>
                   {phase === "creating"
-                    ? `Creating deck with ${preview?.cards.length ?? 0} cards…`
-                    : `Importing ${preview?.cards.length ?? 0} cards…`}
+                    ? t("creatingProgress", { count: preview?.cards.length ?? 0 })
+                    : t("importingProgress", { count: preview?.cards.length ?? 0 })}
                 </span>
               </div>
             )}
@@ -362,13 +358,15 @@ export function DeckImportDialog({
             {phase === "done" && result && (
               <Alert>
                 <CheckCircle2 className="h-4 w-4" />
-                <AlertTitle>Import complete</AlertTitle>
+                <AlertTitle>{t("importComplete")}</AlertTitle>
                 <AlertDescription>
-                  Imported {result.imported} card
-                  {result.imported === 1 ? "" : "s"}
-                  {result.skipped > 0 &&
-                    `, skipped ${result.skipped} record${result.skipped === 1 ? "" : "s"}`}
-                  .
+                  {t("importedResult", {
+                    count: result.imported,
+                    skippedText:
+                      result.skipped > 0
+                        ? t("skippedResultText", { count: result.skipped })
+                        : "",
+                  })}
                 </AlertDescription>
               </Alert>
             )}
@@ -377,7 +375,7 @@ export function DeckImportDialog({
           <TabsContent value="quizlet" className="mt-4">
             <Alert>
               <AlertDescription>
-                Quizlet import is coming soon. Use the Text format for now.
+                {t("quizletSoon")}
               </AlertDescription>
             </Alert>
           </TabsContent>
@@ -385,7 +383,7 @@ export function DeckImportDialog({
           <TabsContent value="anki" className="mt-4">
             <Alert>
               <AlertDescription>
-                Anki import is coming soon. Use the Text format for now.
+                {t("ankiSoon")}
               </AlertDescription>
             </Alert>
           </TabsContent>
@@ -398,23 +396,23 @@ export function DeckImportDialog({
             onClick={() => onClose()}
             disabled={busy}
           >
-            {phase === "done" || phase === "failed" ? "Close" : "Cancel"}
+            {phase === "done" || phase === "failed" ? tCommon("close") : tCommon("cancel")}
           </Button>
           {(phase === "done" || phase === "failed") &&
             mode === "create" &&
             createdDeck && (
-              <Button onClick={handleOpenDeck}>Open Deck</Button>
+              <Button onClick={handleOpenDeck}>{t("openDeck")}</Button>
             )}
           {phase !== "done" && (
             <Button onClick={handleImport} disabled={!canImport}>
               {busy && <Loader2 className="h-4 w-4 animate-spin" />}
               {phase === "creating"
-                ? "Creating…"
+                ? tCommon("creating")
                 : phase === "importing"
-                  ? "Importing…"
+                  ? tCommon("importing")
                   : phase === "failed"
-                    ? "Retry Import"
-                    : "Import"}
+                    ? t("retryImport")
+                    : tCommon("import")}
             </Button>
           )}
         </DialogFooter>

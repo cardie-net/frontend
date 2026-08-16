@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { useParams, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, FileCheck, Check, X, RotateCcw, Send } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -32,6 +33,7 @@ const LETTERS = ["A", "B", "C", "D"]
 import { useActivityTracker } from "@/hooks/useActivityTracker"
 
 export default function ExamPage() {
+  const t = useTranslations("Exam")
   const { username, slug } = useParams() as { username: string; slug: string }
   const searchParams = useSearchParams()
   const countParam = searchParams.get("count")
@@ -214,31 +216,31 @@ export default function ExamPage() {
               <FileCheck className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-              {isSubmitted ? "Exam Results" : "Exam"}
+              {isSubmitted ? t("resultsTitle") : t("title")}
             </h1>
           </div>
 
           <Link href={`/${username}/${slug}`} className="sm:hidden">
             <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
               <ArrowLeft className="h-4 w-4" />
-              Back
+              {t("back")}
             </Button>
           </Link>
 
           <div className="hidden items-center justify-end gap-3 sm:flex">
             {!isSubmitted ? (
               <div className="text-sm font-medium text-muted-foreground">
-                {answeredCount} of {questions.length} answered
+                {t("answeredCount", { answered: answeredCount, total: questions.length })}
               </div>
             ) : (
               <div className="text-sm font-medium text-primary">
-                {score} of {questions.length} correct ({percentage}%)
+                {t("correctCount", { score, total: questions.length, percent: percentage })}
               </div>
             )}
             <Link href={`/${username}/${slug}`}>
               <Button variant="outline" className="gap-2 rounded-xl font-medium">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Deck
+                {t("backToDeck")}
               </Button>
             </Link>
           </div>
@@ -254,7 +256,7 @@ export default function ExamPage() {
                 {score}
                 <span className="text-2xl text-muted-foreground">/{questions.length}</span>
               </div>
-              <div className="text-sm text-muted-foreground">{percentage}% Score</div>
+              <div className="text-sm text-muted-foreground">{t("scorePercent", { percent: percentage })}</div>
             </div>
             <div className="flex w-full flex-1 flex-col gap-3 sm:gap-3">
               <ProgressPrimitive.Root value={percentage} className="flex w-full">
@@ -264,10 +266,10 @@ export default function ExamPage() {
               </ProgressPrimitive.Root>
               <div className="flex justify-end gap-3">
                 <Button onClick={handleTryAgain} variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none">
-                  <RotateCcw className="mr-2 h-3.5 w-3.5" /> Try Again
+                  <RotateCcw className="mr-2 h-3.5 w-3.5" /> {t("tryAgain")}
                 </Button>
                 <Link href={`/${username}/${slug}`} className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl flex-1 sm:flex-none justify-center" })}>
-                  Back to Deck
+                  {t("backToDeck")}
                 </Link>
               </div>
             </div>
@@ -394,10 +396,7 @@ export default function ExamPage() {
               {/* Show correct answer text after submit if user was wrong */}
               {isSubmitted && !isCorrectAnswer && (
                 <p className="pl-11 text-sm text-muted-foreground">
-                  Correct answer:{" "}
-                  <span className="font-medium text-green-600 dark:text-green-400">
-                    {question.options.find((o) => o.isCorrect)?.text}
-                  </span>
+                  {t("correctAnswer", { answer: question.options.find((o) => o.isCorrect)?.text || "" })}
                 </p>
               )}
             </div>
@@ -428,7 +427,7 @@ export default function ExamPage() {
               className="gap-2 rounded-xl"
             >
               <Send className="h-4 w-4" />
-              Submit Exam
+              {t("submitExam")}
             </Button>
           </div>
         </div>

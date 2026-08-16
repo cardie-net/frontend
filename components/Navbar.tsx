@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/AuthContext';
 import { cn } from '@/lib/utils';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { setLocale } from '@/app/actions';
 import { apiFetch } from '@/lib/api';
 import { SUPPORTED_LOCALES, LOCALE_LABELS, Locale } from '@/i18n/config';
@@ -110,6 +110,7 @@ function LanguageNavItem({
   isRightSide,
   onSelectLocale,
 }: LanguageNavItemProps) {
+  const t = useTranslations('Navbar');
   const [isOpen, setIsOpen] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -165,7 +166,7 @@ function LanguageNavItem({
         type="button"
         onClick={handleToggle}
         className="focus:outline-none"
-        aria-label="Select language"
+        aria-label={t('selectLanguage')}
       >
         <div
           className={cn(
@@ -178,7 +179,7 @@ function LanguageNavItem({
           <Languages className="w-4 h-4" />
           {!isOpen && (
             <CustomTooltip
-              text={`Language (${currentLocale.toUpperCase()})`}
+              text={t('language', { locale: currentLocale.toUpperCase() })}
               isRightSide={isRightSide}
             />
           )}
@@ -236,6 +237,7 @@ interface AppearanceNavItemProps {
 }
 
 function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
+  const t = useTranslations('Navbar');
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -244,7 +246,7 @@ function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className="focus:outline-none"
-        aria-label="Appearance"
+        aria-label={t('appearance')}
       >
         <div
           className={cn(
@@ -256,7 +258,7 @@ function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
         >
           <Palette className="w-4 h-4" />
           {!isOpen && (
-            <CustomTooltip text="Appearance" isRightSide={isRightSide} />
+            <CustomTooltip text={t('appearance')} isRightSide={isRightSide} />
           )}
         </div>
       </button>
@@ -270,6 +272,7 @@ function AppearanceNavItem({ isRightSide }: AppearanceNavItemProps) {
 }
 
 export function Navbar() {
+  const t = useTranslations('Navbar');
   const { user, loading, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -478,7 +481,7 @@ export function Navbar() {
 
         {/* Floating helper tooltip when navbar is closed */}
         {!isOpen && !isDragging && (
-          <CustomTooltip text="Menu" isRightSide={isRightSide} />
+          <CustomTooltip text={t('menu')} isRightSide={isRightSide} />
         )}
       </button>
 
@@ -504,7 +507,7 @@ export function Navbar() {
           <NavItem
             href="/decks"
             icon={<Layers className="w-4 h-4" />}
-            tooltip="Decks"
+            tooltip={t('decks')}
             isActive={pathname === '/decks'}
             isRightSide={isRightSide}
           />
@@ -513,7 +516,7 @@ export function Navbar() {
           <NavItem
             href="/community"
             icon={<Globe className="w-4 h-4" />}
-            tooltip="Community"
+            tooltip={t('community')}
             isActive={pathname === '/community'}
             isRightSide={isRightSide}
           />
@@ -536,7 +539,7 @@ export function Navbar() {
               <NavItem
                 href="/stats"
                 icon={<BarChart3 className="w-4 h-4" />}
-                tooltip="Statistics"
+                tooltip={t('statistics')}
                 isActive={pathname === '/stats' || pathname === '/statistics'}
                 isRightSide={isRightSide}
               />
@@ -545,7 +548,7 @@ export function Navbar() {
               <NavItem
                 href="/settings"
                 icon={<Settings className="w-4 h-4" />}
-                tooltip="Settings"
+                tooltip={t('settings')}
                 isActive={pathname === '/settings'}
                 isRightSide={isRightSide}
               />
@@ -554,7 +557,7 @@ export function Navbar() {
               <NavItem
                 onClick={logout}
                 icon={<LogOut className="w-4 h-4 text-destructive" />}
-                tooltip="Log out"
+                tooltip={t('logout')}
                 isRightSide={isRightSide}
               />
             </>
@@ -564,7 +567,7 @@ export function Navbar() {
               <NavItem
                 href="/login"
                 icon={<LogIn className="w-4 h-4" />}
-                tooltip="Log in"
+                tooltip={t('login')}
                 isActive={pathname === '/login'}
                 isRightSide={isRightSide}
               />
@@ -573,7 +576,7 @@ export function Navbar() {
               <NavItem
                 href="/signup"
                 icon={<UserPlus className="w-4 h-4 text-primary" />}
-                tooltip="Sign up"
+                tooltip={t('signup')}
                 isActive={pathname === '/signup'}
                 isRightSide={isRightSide}
               />

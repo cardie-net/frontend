@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, LayoutGrid, Timer, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,6 +23,7 @@ type GridItem = {
 }
 
 export default function MatchPage() {
+  const t = useTranslations("Match")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -195,7 +197,7 @@ export default function MatchPage() {
               <LayoutGrid className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-              Match
+              {t("title")}
             </h1>
           </div>
 
@@ -207,7 +209,7 @@ export default function MatchPage() {
                 className="gap-2 rounded-xl font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t("back")}
               </Button>
             </Link>
             {(gameState === "playing" || gameState === "done") && (
@@ -231,7 +233,7 @@ export default function MatchPage() {
                 className="gap-2 rounded-xl font-medium"
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back to Deck
+                {t("backToDeck")}
               </Button>
             </Link>
           </div>
@@ -289,12 +291,12 @@ export default function MatchPage() {
                     <Timer className="h-10 w-10" />
                   </div>
                   <CardTitle className="text-3xl font-bold">
-                    Finished!
+                    {t("finishedTitle")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="mb-2 text-lg text-muted-foreground">
-                    Your time:
+                    {t("yourTime")}
                   </p>
                   <p className="mb-8 font-mono text-4xl font-bold text-primary">
                     {formatTime(elapsedTime)}s
@@ -302,11 +304,11 @@ export default function MatchPage() {
                   <div className="flex flex-col gap-3">
                     <Button size="lg" className="w-full" onClick={startGame}>
                       <RotateCcw className="mr-2 h-4 w-4" />
-                      Play Again
+                      {t("playAgain")}
                     </Button>
                     <Link href={`/${username}/${slug}`} className="w-full">
                       <Button variant="outline" size="lg" className="w-full">
-                        Back to Deck
+                        {t("backToDeck")}
                       </Button>
                     </Link>
                   </div>

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useDeleteDeck } from "@/hooks/useDecks"
 
@@ -8,6 +9,8 @@ interface DeleteDeckDialogProps {
 }
 
 export function DeleteDeckDialog({ deckId, onClose, onDeleted }: DeleteDeckDialogProps) {
+  const t = useTranslations("Decks.deleteDialog")
+  const tCommon = useTranslations("Common")
   const deleteDeck = useDeleteDeck()
 
   const handleConfirm = () => {
@@ -24,11 +27,11 @@ export function DeleteDeckDialog({ deckId, onClose, onDeleted }: DeleteDeckDialo
     <ConfirmDialog
       open={!!deckId}
       onOpenChange={(open) => !open && onClose()}
-      title="Delete Deck"
-      description="Are you sure you want to delete this deck? All cards will be permanently lost."
+      title={t("title")}
+      description={t("description")}
       onConfirm={handleConfirm}
       isPending={deleteDeck.isPending}
-      confirmText="Delete"
+      confirmText={tCommon("delete")}
     />
   )
 }

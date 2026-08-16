@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -32,6 +33,8 @@ export function CreateDeckDialog({
   onOpenChange,
   folderId,
 }: CreateDeckDialogProps) {
+  const t = useTranslations("Decks.createDialog")
+  const tCommon = useTranslations("Common")
   const router = useRouter()
   const { user } = useAuth()
   const createDeck = useCreateDeck()
@@ -45,7 +48,7 @@ export function CreateDeckDialog({
     e.preventDefault()
     setCreateError("")
     if (!newDeckName.trim()) {
-      setCreateError("Deck name is required.")
+      setCreateError(t("nameRequired"))
       return
     }
 
@@ -61,7 +64,7 @@ export function CreateDeckDialog({
         },
         onError: (err) =>
           setCreateError(
-            err instanceof Error ? err.message : "An error occurred"
+            err instanceof Error ? err.message : tCommon("error")
           ),
       }
     )
@@ -76,27 +79,27 @@ export function CreateDeckDialog({
               <Plus className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Create New Deck</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Enter a name and choose a color for your new deck.
+                {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             {createError && <Alert variant="destructive">{createError}</Alert>}
             <div className="grid gap-2">
-              <Label htmlFor="name">Deck Name</Label>
+              <Label htmlFor="name">{t("nameLabel")}</Label>
               <Input
                 id="name"
                 value={newDeckName}
                 onChange={(e) => setNewDeckName(e.target.value)}
-                placeholder="e.g. Spanish Vocabulary"
+                placeholder={t("namePlaceholder")}
                 maxLength={80}
                 disabled={createDeck.isPending}
               />
             </div>
             <div className="grid gap-2">
-              <Label>Color</Label>
+              <Label>{t("colorLabel")}</Label>
               <ColorPicker
                 color={newDeckColor}
                 onChange={setNewDeckColor}
@@ -104,12 +107,12 @@ export function CreateDeckDialog({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">Description (Optional)</Label>
+              <Label htmlFor="description">{t("descriptionLabel")}</Label>
               <Textarea
                 id="description"
                 value={newDeckDescription}
                 onChange={(e) => setNewDeckDescription(e.target.value)}
-                placeholder="What is this deck about?"
+                placeholder={t("descriptionPlaceholder")}
                 maxLength={500}
                 disabled={createDeck.isPending}
                 className="resize-none h-20"
@@ -123,10 +126,10 @@ export function CreateDeckDialog({
               onClick={() => onOpenChange(false)}
               disabled={createDeck.isPending}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={createDeck.isPending}>
-              {createDeck.isPending ? "Creating..." : "Create"}
+              {createDeck.isPending ? tCommon("creating") : tCommon("create")}
             </Button>
           </DialogFooter>
         </form>

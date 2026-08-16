@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -25,6 +26,8 @@ interface EditDeckDialogProps {
 }
 
 export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
+  const t = useTranslations("Decks.editDialog")
+  const tCommon = useTranslations("Common")
   const updateDeck = useUpdateDeck()
   const uploadDeckCover = useUploadDeckCover()
 
@@ -53,7 +56,7 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
     setEditError("")
 
     if (!editName.trim()) {
-      setEditError("Deck name is required.")
+      setEditError(t("nameRequired"))
       return
     }
 
@@ -69,7 +72,7 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
       updateDeck.mutate(
         { 
           deckId: deck.id, 
-          name: editName.trim(),
+          name: editName.trim(), 
           description: editDescription.trim() || null,
           color: editColor,
           coverImageUrl: finalCoverUrl
@@ -78,12 +81,12 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
           onSuccess: () => onClose(),
           onError: (err) =>
             setEditError(
-              err instanceof Error ? err.message : "An error occurred"
+              err instanceof Error ? err.message : tCommon("error")
             ),
         }
       )
     } catch (err) {
-      setEditError(err instanceof Error ? err.message : "An error occurred uploading cover image")
+      setEditError(err instanceof Error ? err.message : t("coverUploadError"))
     }
   }
 
@@ -99,9 +102,9 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
               <Pencil className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Edit Deck</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Update the name, description, color, and cover image for your deck.
+                {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -109,7 +112,7 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
             {editError && <Alert variant="destructive">{editError}</Alert>}
 
             <div className="grid gap-2">
-              <Label>Name</Label>
+              <Label>{t("nameLabel")}</Label>
               <Input
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
@@ -120,18 +123,18 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label>Description</Label>
+              <Label>{t("descriptionLabel")}</Label>
               <Textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
                 maxLength={500}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
-                placeholder="Optional description..."
+                placeholder={t("descriptionPlaceholder")}
               />
             </div>
             
             <div className="grid gap-2">
-              <Label>Color Accent</Label>
+              <Label>{t("colorLabel")}</Label>
               <ColorPicker
                 color={editColor}
                 onChange={setEditColor}
@@ -140,7 +143,7 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label>Cover Image</Label>
+              <Label>{t("coverImageLabel")}</Label>
               <Input
                 type="file"
                 accept="image/*"
@@ -150,10 +153,10 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
                 }}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
               />
-              <div className="text-xs text-muted-foreground text-center">OR</div>
+              <div className="text-xs text-muted-foreground text-center">{t("or")}</div>
               <Input
                 type="url"
-                placeholder="https://example.com/image.png"
+                placeholder={t("coverUrlPlaceholder")}
                 value={coverUrl}
                 onChange={(e) => {
                   setCoverUrl(e.target.value)
@@ -170,10 +173,10 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
               onClick={onClose}
               disabled={updateDeck.isPending || uploadDeckCover.isPending}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={updateDeck.isPending || uploadDeckCover.isPending}>
-              {updateDeck.isPending || uploadDeckCover.isPending ? "Saving..." : "Save Changes"}
+              {updateDeck.isPending || uploadDeckCover.isPending ? tCommon("saving") : tCommon("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

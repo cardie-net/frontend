@@ -3,6 +3,7 @@
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { apiFetch } from '@/lib/api';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from "@/components/ui/card";
 
 function ResetPasswordContent() {
+  const t = useTranslations('Auth.resetPassword');
   const router = useRouter();
   const searchParams = useSearchParams();
   const [token, setToken] = useState(searchParams.get('token') || '');
@@ -26,12 +28,12 @@ function ResetPasswordContent() {
     setError('');
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long.');
+      setError(t('passwordLength'));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError(t('passwordsDontMatch'));
       return;
     }
 
@@ -55,17 +57,17 @@ function ResetPasswordContent() {
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail === 'RESET_PASSWORD_BAD_TOKEN') {
-          setError('Invalid or expired reset token');
+          setError(t('badToken'));
         } else {
           setError(
             typeof errData.detail === 'string'
               ? errData.detail
-              : 'Failed to reset password. Invalid or expired token'
+              : t('failed')
           );
         }
       }
     } catch {
-      setError('An error occurred. Please try again.');
+      setError(t('genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -78,10 +80,10 @@ function ResetPasswordContent() {
         <div className="text-center">
           <Alert className="mb-6 flex gap-2 text-left border-green-500 text-green-700 bg-green-50 dark:bg-green-900/20 dark:text-green-400">
             <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" />
-            <AlertDescription>Password reset successfully! Redirecting to login...</AlertDescription>
+            <AlertDescription>{t('successMessage')}</AlertDescription>
           </Alert>
           <Link href="/login" className="w-full block">
-            <Button className="w-full">Go to Login now</Button>
+            <Button className="w-full">{t('goToLogin')}</Button>
           </Link>
         </div>
         </CardContent>
@@ -92,8 +94,8 @@ function ResetPasswordContent() {
   return (
     <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
       <CardContent className="p-6 sm:p-8">
-      <h1 className="text-2xl sm:text-3xl font-bold mb-2">Set New Password</h1>
-      <p className="text-muted-foreground mb-6">Enter your token and new password</p>
+      <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
+      <p className="text-muted-foreground mb-6">{t('subtitle')}</p>
 
       {error && (
         <Alert variant="destructive" className="mb-6 flex gap-2">
@@ -104,11 +106,11 @@ function ResetPasswordContent() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="token">Reset Token</Label>
+          <Label htmlFor="token">{t('tokenLabel')}</Label>
           <Input
             id="token"
             type="text"
-            placeholder="Paste your token here"
+            placeholder={t('tokenPlaceholder')}
             value={token}
             onChange={(e) => setToken(e.target.value)}
             required
@@ -116,7 +118,7 @@ function ResetPasswordContent() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="password">New Password</Label>
+          <Label htmlFor="password">{t('newPasswordLabel')}</Label>
           <Input
             id="password"
             type="password"
@@ -129,7 +131,7 @@ function ResetPasswordContent() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="confirmPassword">Confirm New Password</Label>
+          <Label htmlFor="confirmPassword">{t('confirmPasswordLabel')}</Label>
           <Input
             id="confirmPassword"
             type="password"
@@ -142,7 +144,7 @@ function ResetPasswordContent() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? 'Resetting...' : 'Reset Password'}
+          {isLoading ? t('resetting') : t('resetPassword')}
         </Button>
       </form>
       </CardContent>
@@ -151,13 +153,15 @@ function ResetPasswordContent() {
 }
 
 export default function ResetPasswordPage() {
+  const tCommon = useTranslations('Common');
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <Suspense
         fallback={
           <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
             <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
-              Loading...
+              {tCommon('loading')}
             </CardContent>
           </Card>
         }

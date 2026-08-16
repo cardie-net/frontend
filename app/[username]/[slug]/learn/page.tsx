@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { ArrowLeft, Check, X, RotateCcw, GraduationCap, Settings, Maximize } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
@@ -78,6 +79,8 @@ function MCOptionThumbnail({ url }: { url: string }) {
 const LETTERS = ["A", "B", "C", "D"]
 
 export default function LearnPage() {
+  const t = useTranslations("Learn")
+  const tCommon = useTranslations("Common")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -361,7 +364,7 @@ export default function LearnPage() {
               <GraduationCap className="h-6 w-6" />
             </div>
             <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-              Learn
+              {t("title")}
             </h1>
           </div>
 
@@ -369,14 +372,14 @@ export default function LearnPage() {
             <Link href={`/${username}/${slug}`} className="sm:hidden">
               <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t("back")}
               </Button>
             </Link>
 
             <Link href={`/${username}/${slug}`} className="hidden sm:block">
               <Button variant="outline" className="rounded-xl gap-2 font-medium">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Deck
+                {t("backToDeck")}
               </Button>
             </Link>
 
@@ -385,8 +388,8 @@ export default function LearnPage() {
               size="icon"
               className="rounded-xl"
               onClick={() => setIsSettingsOpen(true)}
-              aria-label="Settings"
-              title="Settings"
+              aria-label={tCommon("settings")}
+              title={tCommon("settings")}
             >
               <Settings className="h-4 w-4" />
             </Button>
@@ -402,26 +405,26 @@ export default function LearnPage() {
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <p className="mb-4 text-destructive">{error}</p>
-            <Button onClick={() => window.location.reload()}>Try Again</Button>
+            <Button onClick={() => window.location.reload()}>{tCommon("tryAgain")}</Button>
           </div>
         ) : sessionCompleted ? (
           <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center text-center">
             <div className="mb-6 rounded-full bg-primary/10 p-6">
               <Check className="h-12 w-12 text-primary" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold">Session Complete!</h2>
+            <h2 className="mb-2 text-2xl font-bold">{t("sessionCompleteTitle")}</h2>
             <p className="mb-8 text-muted-foreground">
-              You have mastered all the cards currently available in this deck.
+              {t("sessionCompleteDesc")}
             </p>
             <div className="flex w-full flex-col gap-3 sm:flex-row">
               <Link href={`/${username}/${slug}`} className="w-full sm:flex-1">
                 <Button size="lg" className="w-full" variant="outline">
-                  Return to Deck
+                  {t("returnToDeck")}
                 </Button>
               </Link>
               <Button size="lg" className="w-full sm:flex-1" onClick={restartLearning}>
                 <RotateCcw className="mr-2 h-4 w-4" />
-                Restart Learning
+                {t("restartLearning")}
               </Button>
             </div>
           </div>
@@ -446,24 +449,24 @@ export default function LearnPage() {
                     <div
                       className="h-full bg-green-500 transition-all duration-300 ease-in-out"
                       style={{ width: `${box3Percent}%` }}
-                      title={`Mastered: ${stats.box3}`}
+                      title={`${t("mastered")}: ${stats.box3}`}
                     />
                     {/* Box 2 - Yellow (Reviewing) */}
                     <div
                       className="h-full bg-yellow-400 transition-all duration-300 ease-in-out"
                       style={{ width: `${box2Percent}%` }}
-                      title={`Reviewing: ${stats.box2}`}
+                      title={`${t("reviewing")}: ${stats.box2}`}
                     />
                     {/* Box 1 - Grey (Learning/New) */}
                     <div
                       className="h-full bg-gray-400 transition-all duration-300 ease-in-out dark:bg-gray-500"
                       style={{ width: `${box1Percent}%` }}
-                      title={`Learning: ${stats.box1}`}
+                      title={`${t("learning")}: ${stats.box1}`}
                     />
                   </div>
                 </div>
                 <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {stats.box3} / {stats.total} <span className="hidden sm:inline">Mastered</span>
+                  {stats.box3} / {stats.total} <span className="hidden sm:inline">{t("mastered")}</span>
                 </div>
               </div>
             </div>
@@ -511,7 +514,7 @@ export default function LearnPage() {
                         </span>
                         {opt.imageUrl && <MCOptionThumbnail url={opt.imageUrl} />}
                         <span className="truncate text-sm sm:text-base font-normal">
-                          {opt.text ? opt.text : (!opt.imageUrl && <span className="italic text-muted-foreground">Empty</span>)}
+                          {opt.text ? opt.text : (!opt.imageUrl && <span className="italic text-muted-foreground">{tCommon("empty")}</span>)}
                         </span>
                       </div>
                       <Kbd
@@ -538,7 +541,7 @@ export default function LearnPage() {
                     className="w-full sm:w-1/2 md:w-1/3 h-12 sm:h-14 font-semibold shadow-sm"
                     onClick={handleNextMC}
                   >
-                    Next
+                    {t("next")}
                     <Kbd className="hidden sm:inline-flex ml-2 bg-primary-foreground/20 text-primary-foreground border-transparent">
                       Enter
                     </Kbd>
@@ -556,7 +559,7 @@ export default function LearnPage() {
                   onClick={() => handleAnswerClick(false)}
                 >
                   <X className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                  <span>Didn&apos;t Know</span>
+                  <span>{t("didntKnow")}</span>
                   <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-destructive-foreground">
                     1
                   </Kbd>
@@ -568,7 +571,7 @@ export default function LearnPage() {
                   onClick={() => handleAnswerClick(true)}
                 >
                   <Check className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
-                  <span>Knew It</span>
+                  <span>{t("knewIt")}</span>
                   <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-white">
                     2
                   </Kbd>
@@ -592,17 +595,19 @@ export default function LearnPage() {
               <Settings className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Learn Settings</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("settingsTitle")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Defaults can be configured in{" "}
-                <Link
-                  href="/settings#learning-settings"
-                  className="text-primary underline underline-offset-2 hover:text-primary/80"
-                  onClick={() => setIsSettingsOpen(false)}
-                >
-                  settings
-                </Link>
-                .
+                {t.rich("settingsDefaults", {
+                  link: (chunks) => (
+                    <Link
+                      href="/settings#learning-settings"
+                      className="text-primary underline underline-offset-2 hover:text-primary/80"
+                      onClick={() => setIsSettingsOpen(false)}
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -610,10 +615,10 @@ export default function LearnPage() {
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <Label htmlFor="reverse-cards" className="text-sm font-medium leading-none cursor-pointer">
-                  Reverse cards
+                  {t("reverseCards")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Show back side first, then front after flipping
+                  {t("reverseCardsDesc")}
                 </p>
               </div>
               <Switch
@@ -626,10 +631,10 @@ export default function LearnPage() {
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
                 <Label htmlFor="multiple-choice" className="text-sm font-medium leading-none cursor-pointer">
-                  Multiple choice answers
+                  {t("multipleChoice")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Show 4 multiple choice options instead of Knew / Didn&apos;t know buttons
+                  {t("multipleChoiceDesc")}
                 </p>
               </div>
               <Select
@@ -640,9 +645,9 @@ export default function LearnPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="default">Default</SelectItem>
-                  <SelectItem value="yes">Yes</SelectItem>
-                  <SelectItem value="no">No</SelectItem>
+                  <SelectItem value="default">{tCommon("default")}</SelectItem>
+                  <SelectItem value="yes">{tCommon("yes")}</SelectItem>
+                  <SelectItem value="no">{tCommon("no")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -650,10 +655,10 @@ export default function LearnPage() {
             <div className="flex items-center justify-end sm:justify-between gap-4 pt-0 sm:pt-2 sm:border-t">
               <div className="hidden sm:block space-y-0.5">
                 <span className="text-sm font-medium leading-none text-destructive">
-                  Reset Progress
+                  {t("resetProgress")}
                 </span>
                 <p className="text-xs text-muted-foreground">
-                  Clear all card progress for this deck
+                  {t("resetProgressDesc")}
                 </p>
               </div>
               <Button
@@ -671,7 +676,7 @@ export default function LearnPage() {
                 }}
               >
                 <RotateCcw className="h-4 w-4" />
-                {confirmClear ? "Are you sure?" : "Clear Progress"}
+                {confirmClear ? tCommon("areYouSure") : t("clearProgress")}
               </Button>
             </div>
           </div>

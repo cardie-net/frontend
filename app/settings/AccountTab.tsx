@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "@/lib/AuthContext"
 import { cn } from "@/lib/utils"
@@ -183,12 +184,13 @@ function buildSocialUrl(key: keyof SocialLinks, input: string): string {
 const BIO_MAX_LENGTH = 500
 
 export function AccountTab() {
+  const t = useTranslations("Settings.account")
   const { user, loading } = useAuth()
 
   if (loading) {
     return (
       <div className="font-medium text-muted-foreground">
-        Loading account details...
+        {t("loading")}
       </div>
     )
   }
@@ -196,7 +198,7 @@ export function AccountTab() {
   if (!user) {
     return (
       <div className="font-medium text-muted-foreground">
-        Please log in to manage your account.
+        {t("notLoggedIn")}
       </div>
     )
   }
@@ -235,6 +237,8 @@ const validateUsername = (name: string): string => {
 }
 
 function AccountForm({ user }: { user: UserProfile }) {
+  const t = useTranslations("Settings.account")
+  const tCommon = useTranslations("Common")
   const { refreshUser } = useAuth()
   const [displayName, setDisplayName] = useState(user.display_name || "")
   const [username, setUsername] = useState(user.username || "")
@@ -242,6 +246,36 @@ function AccountForm({ user }: { user: UserProfile }) {
   const [usernameError, setUsernameError] = useState<string>("")
   const [avatarUrl, setAvatarUrl] = useState(user.avatar_url || "")
   const [bio, setBio] = useState(user.bio || "")
+
+  const validateDisplayName = (name: string): string => {
+    const trimmed = name.trim()
+    if (!trimmed) {
+      return t("displayNameEmpty")
+    }
+    if (trimmed.length < 2) {
+      return t("displayNameMin")
+    }
+    if (trimmed.length > 50) {
+      return t("displayNameMax")
+    }
+    return ""
+  }
+
+  const validateUsername = (name: string): string => {
+    if (!name) {
+      return t("usernameEmpty")
+    }
+    if (name.length < 8) {
+      return t("usernameMin")
+    }
+    if (name.length > 32) {
+      return t("usernameMax")
+    }
+    if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
+      return t("usernameInvalid")
+    }
+    return ""
+  }
 
   const initialSocialInputs: Record<keyof SocialLinks, string> = {
     website: extractUsernameFromUrl("website", user.social_links?.website || ""),
@@ -273,7 +307,7 @@ function AccountForm({ user }: { user: UserProfile }) {
     if (!file) return
 
     if (!file.type.startsWith("image/")) {
-      setError("Please select a valid image file.")
+      setError(t("validImageRequired"))
       scrollToTop()
       return
     }
@@ -309,7 +343,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       if (response.ok) {
         const data = await response.json()
         setAvatarUrl(data.avatar_url || "")
-        setSuccess("Profile picture updated successfully.")
+        setSuccess(t("avatarUpdated"))
         scrollToTop()
         setIsEditorOpen(false)
         setSelectedImageSrc("")
@@ -319,12 +353,12 @@ function AccountForm({ user }: { user: UserProfile }) {
         setError(
           typeof errData.detail === "string"
             ? errData.detail
-            : "Failed to upload profile picture."
+            : t("avatarUploadFailed")
         )
         scrollToTop()
       }
     } catch {
-      setError("An error occurred while uploading. Please try again.")
+      setError(tCommon("error"))
       scrollToTop()
     } finally {
       setIsUploadingAvatar(false)
@@ -343,7 +377,7 @@ function AccountForm({ user }: { user: UserProfile }) {
 
       if (response.ok) {
         setAvatarUrl("")
-        setSuccess("Profile picture removed successfully.")
+        setSuccess(t("avatarRemoved"))
         scrollToTop()
         await refreshUser()
       } else {
@@ -351,12 +385,12 @@ function AccountForm({ user }: { user: UserProfile }) {
         setError(
           typeof errData.detail === "string"
             ? errData.detail
-            : "Failed to remove profile picture."
+            : t("avatarRemoveFailed")
         )
         scrollToTop()
       }
     } catch {
-      setError("An error occurred while removing. Please try again.")
+      setError(tCommon("error"))
       scrollToTop()
     } finally {
       setIsUploadingAvatar(false)
@@ -419,7 +453,7 @@ function AccountForm({ user }: { user: UserProfile }) {
     }
 
     if (bio.length > BIO_MAX_LENGTH) {
-      setError(`Bio must be ${BIO_MAX_LENGTH} characters or fewer.`)
+      setError(t("bioMax", { max: BIO_MAX_LENGTH }))
       scrollToTop()
       return
     }
@@ -438,7 +472,7 @@ function AccountForm({ user }: { user: UserProfile }) {
         }
         const urlPattern = /^https?:\/\/[^\s/$.?#].[^\s]*$/i
         if (!urlPattern.test(websiteUrl)) {
-          setError("Website URL must be a valid web address.")
+          setError(t("websiteInvalid"))
           scrollToTop()
           return
         }
@@ -448,7 +482,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       } else {
         const usernameVal = extractUsernameFromUrl(config.key, val)
         if (!/^[a-zA-Z0-9_.-]+$/.test(usernameVal)) {
-          setError(`Invalid username for ${config.label}. Use only letters, numbers, dots, hyphens, and underscores.`)
+          setError(t("socialUsernameInvalid", { platform: config.label }))
           scrollToTop()
           return
         }
@@ -474,7 +508,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       })
 
       if (response.ok) {
-        setSuccess("Profile updated successfully.")
+        setSuccess(t("profileUpdated"))
         scrollToTop()
         await refreshUser()
       } else {
@@ -484,24 +518,24 @@ function AccountForm({ user }: { user: UserProfile }) {
           detail === "UPDATE_USER_EMAIL_ALREADY_EXISTS" ||
           detail === "EMAIL_ALREADY_EXISTS"
         ) {
-          setError("A user with that email already exists.")
+          setError(t("emailExists"))
         } else if (
           detail === "UPDATE_USER_USERNAME_ALREADY_EXISTS" ||
           detail === "USERNAME_ALREADY_EXISTS" ||
           (typeof detail === "string" && detail.includes("USERNAME_ALREADY_EXISTS"))
         ) {
-          const userErr = "A user with that username already exists."
+          const userErr = t("usernameExists")
           setError(userErr)
           setUsernameError(userErr)
         } else if (typeof detail === "string") {
           setError(detail)
         } else {
-          setError("Failed to update profile.")
+          setError(t("updateFailed"))
         }
         scrollToTop()
       }
     } catch {
-      setError("An error occurred. Please try again.")
+      setError(tCommon("error"))
       scrollToTop()
     } finally {
       setIsSaving(false)
@@ -517,7 +551,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       {error && (
         <Alert variant="destructive" className="mb-6">
           <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{tCommon("error")}</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -525,7 +559,7 @@ function AccountForm({ user }: { user: UserProfile }) {
       {success && (
         <Alert className="mb-6 border-green-500 bg-green-50/50 text-green-900 dark:bg-green-900/20 dark:text-green-300">
           <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-          <AlertTitle>Success</AlertTitle>
+          <AlertTitle>{tCommon("success")}</AlertTitle>
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
@@ -561,10 +595,10 @@ function AccountForm({ user }: { user: UserProfile }) {
             >
               <Upload className="h-4 w-4" />
               <span className="sm:hidden">
-                {isUploadingAvatar ? "Uploading..." : "Upload"}
+                {isUploadingAvatar ? t("uploading") : t("upload")}
               </span>
               <span className="hidden sm:inline">
-                {isUploadingAvatar ? "Uploading..." : "Upload Avatar"}
+                {isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
               </span>
             </Button>
             {avatarUrl && (
@@ -574,23 +608,23 @@ function AccountForm({ user }: { user: UserProfile }) {
                 className="flex h-8 w-8 items-center justify-center gap-2 p-0 sm:h-8 sm:w-auto sm:px-3"
                 onClick={handleRemoveAvatar}
                 disabled={isUploadingAvatar}
-                aria-label="Remove avatar"
-                title="Remove avatar"
+                aria-label={t("remove")}
+                title={t("remove")}
               >
                 <Trash2 className="h-4 w-4" />
-                <span className="hidden sm:inline">Remove</span>
+                <span className="hidden sm:inline">{t("remove")}</span>
               </Button>
             )}
           </div>
           <p className="mt-2 text-sm text-muted-foreground">
-            Recommended: Square image, max 10MB.
+            {t("recommendedAvatar")}
           </p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="displayName">Display Name</Label>
+          <Label htmlFor="displayName">{t("displayName")}</Label>
           <Input
             id="displayName"
             type="text"
@@ -607,7 +641,7 @@ function AccountForm({ user }: { user: UserProfile }) {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="username">Username</Label>
+          <Label htmlFor="username">{t("username")}</Label>
           <Input
             id="username"
             type="text"
@@ -623,7 +657,7 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        {/* Simpler Collapsible Bio & Social Links Section (No card/border, same indentation) */}
+        {/* Simpler Collapsible Bio & Social Links Section */}
         <div className="space-y-4">
           <button
             type="button"
@@ -637,10 +671,10 @@ function AccountForm({ user }: { user: UserProfile }) {
                 <ChevronDown className="h-4 w-4" />
               )}
             </span>
-            <span className="text-sm font-semibold">Bio & Social Links</span>
+            <span className="text-sm font-semibold">{t("bioAndSocial")}</span>
             {filledLinksCount > 0 && (
               <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-                {filledLinksCount} {filledLinksCount === 1 ? "link" : "links"}
+                {t("linksCount", { count: filledLinksCount })}
               </span>
             )}
           </button>
@@ -655,7 +689,7 @@ function AccountForm({ user }: { user: UserProfile }) {
                   onChange={(e) => setBio(e.target.value)}
                   maxLength={BIO_MAX_LENGTH}
                   rows={3}
-                  placeholder="Tell others a bit about yourself..."
+                  placeholder={t("bioPlaceholder")}
                   className="min-h-[90px] pb-6 resize-y"
                 />
                 <span
@@ -674,7 +708,7 @@ function AccountForm({ user }: { user: UserProfile }) {
               {/* Social Links Section */}
               <div className="space-y-3">
                 <Label className="text-sm font-medium text-muted-foreground">
-                  Social Links
+                  {t("socialLinks")}
                 </Label>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {PLATFORM_CONFIGS.map((platform) => (
@@ -720,7 +754,7 @@ function AccountForm({ user }: { user: UserProfile }) {
             disabled={isSaving || !!displayNameError || !!usernameError}
             className="w-full sm:w-auto"
           >
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? t("saving") : t("saveChanges")}
           </Button>
 
           <Link
@@ -731,7 +765,7 @@ function AccountForm({ user }: { user: UserProfile }) {
             )}
           >
             <User className="h-4 w-4" />
-            View Profile
+            {t("viewProfile")}
           </Link>
         </div>
       </form>

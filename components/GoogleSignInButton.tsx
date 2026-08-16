@@ -1,10 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 
 export default function GoogleSignInButton() {
+  const t = useTranslations('Auth');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleSignIn = () => {
@@ -26,7 +28,7 @@ export default function GoogleSignInButton() {
       ) : (
         <GoogleIcon />
       )}
-      {isLoading ? 'Redirecting...' : 'Continue with Google'}
+      {isLoading ? t('redirecting') : t('continueWithGoogle')}
     </Button>
   );
 }

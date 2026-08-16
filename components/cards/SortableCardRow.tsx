@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, type FocusEvent } from 'react';
+import { useTranslations } from 'next-intl';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { cn } from '@/lib/utils';
@@ -59,6 +60,7 @@ function RowCellImage({ url, interactive = true }: { url: string; interactive?: 
 
 /** Mini preview for the card list: small thumbnail to the left of compact markdown text. */
 function RowCell({ elements }: { elements: CardElement[] }) {
+  const tCommon = useTranslations('Common');
   const image = getCardImage(elements);
   const texts = elements.filter((el): el is TextElement => el.type === 'text');
   return (
@@ -69,7 +71,7 @@ function RowCell({ elements }: { elements: CardElement[] }) {
           <CardElements elements={texts} compact className="space-y-0" />
         </div>
       ) : (
-        !image && <span className="text-muted-foreground italic">Empty</span>
+        !image && <span className="text-muted-foreground italic">{tCommon('empty')}</span>
       )}
     </div>
   );
@@ -114,6 +116,7 @@ export function SortableCardRow({
   onEditBackChange,
   onImagePaste,
 }: SortableCardRowProps) {
+  const t = useTranslations('Cards');
   const {
     attributes,
     listeners,
@@ -204,7 +207,7 @@ export function SortableCardRow({
               value={editFront}
               onChange={(e) => onEditFrontChange(e.target.value)}
               className="text-sm"
-              placeholder="Front of card"
+              placeholder={t('frontPlaceholder')}
               disabled={isSavingCard}
               autoFocus
               onBlur={handleInputBlur}
@@ -239,7 +242,7 @@ export function SortableCardRow({
               value={editBack}
               onChange={(e) => onEditBackChange(e.target.value)}
               className="text-sm"
-              placeholder="Back of card"
+              placeholder={t('backPlaceholder')}
               disabled={isSavingCard}
               onBlur={handleInputBlur}
               onKeyDown={(e) => {
@@ -281,8 +284,8 @@ export function SortableCardRow({
               }}
               onClick={() => onOpenFullEdit(card)}
               disabled={isSavingCard}
-              aria-label="Open full editor"
-              title="Open full editor"
+              aria-label={t('openFullEditor')}
+              title={t('openFullEditor')}
               className="text-muted-foreground hover:text-foreground"
             >
               <Maximize className="w-3.5 h-3.5" />
@@ -295,8 +298,8 @@ export function SortableCardRow({
               }}
               onClick={onCancelEdit}
               disabled={isSavingCard}
-              aria-label="Discard changes"
-              title="Discard changes"
+              aria-label={t('discardChanges')}
+              title={t('discardChanges')}
               className="text-muted-foreground hover:text-destructive hover:bg-destructive/10"
             >
               {isSavingCard ? (
@@ -313,8 +316,8 @@ export function SortableCardRow({
               size="icon-xs"
               onClick={() => onOpenFullEdit(card)}
               className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground"
-              aria-label="Edit card"
-              title="Edit card"
+              aria-label={t('editCard')}
+              title={t('editCard')}
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -323,8 +326,8 @@ export function SortableCardRow({
               size="icon-xs"
               onClick={() => onDelete(card.id)}
               className="opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-              aria-label="Delete card"
-              title="Delete card"
+              aria-label={t('deleteCard')}
+              title={t('deleteCard')}
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>

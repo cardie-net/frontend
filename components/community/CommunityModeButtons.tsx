@@ -2,14 +2,15 @@
 
 import React from 'react'
 import { Flame, Sparkles, Clock, Search } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 
 export type CommunitySortMode = 'popular' | 'created' | 'updated' | 'search'
 
 export interface ModeButtonConfig {
   id: CommunitySortMode
-  label: string
-  subtitle: string
+  labelKey: string
+  subtitleKey: string
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
   bgClasses: string
   iconColor: string
@@ -20,8 +21,8 @@ export interface ModeButtonConfig {
 export const COMMUNITY_MODES: ModeButtonConfig[] = [
   {
     id: 'popular',
-    label: 'Popular',
-    subtitle: 'Most starred',
+    labelKey: 'popular',
+    subtitleKey: 'popularSubtitle',
     icon: Flame,
     bgClasses:
       'bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 hover:from-amber-500/20 hover:to-orange-500/20 dark:hover:from-amber-500/30 dark:hover:to-orange-500/30',
@@ -32,8 +33,8 @@ export const COMMUNITY_MODES: ModeButtonConfig[] = [
   },
   {
     id: 'created',
-    label: 'Newest',
-    subtitle: 'Recently created',
+    labelKey: 'newest',
+    subtitleKey: 'newestSubtitle',
     icon: Sparkles,
     bgClasses:
       'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 hover:from-blue-500/20 hover:to-cyan-500/20 dark:hover:from-blue-500/30 dark:hover:to-cyan-500/30',
@@ -44,8 +45,8 @@ export const COMMUNITY_MODES: ModeButtonConfig[] = [
   },
   {
     id: 'updated',
-    label: 'Recently updated',
-    subtitle: 'Recently modified',
+    labelKey: 'updated',
+    subtitleKey: 'updatedSubtitle',
     icon: Clock,
     bgClasses:
       'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 hover:from-emerald-500/20 hover:to-teal-500/20 dark:hover:from-emerald-500/30 dark:hover:to-teal-500/30',
@@ -56,8 +57,8 @@ export const COMMUNITY_MODES: ModeButtonConfig[] = [
   },
   {
     id: 'search',
-    label: 'Search',
-    subtitle: 'Find by query',
+    labelKey: 'search',
+    subtitleKey: 'searchSubtitle',
     icon: Search,
     bgClasses:
       'bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 hover:from-violet-500/20 hover:to-purple-500/20 dark:hover:from-violet-500/30 dark:hover:to-purple-500/30',
@@ -77,6 +78,8 @@ export function CommunityModeButtons({
   currentMode,
   onSelectMode,
 }: CommunityModeButtonsProps) {
+  const t = useTranslations('Community.modes')
+
   return (
     <div className="flex justify-center w-full mb-8 sm:mb-12">
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 w-full max-w-[650px]">
@@ -107,7 +110,7 @@ export function CommunityModeButtons({
               </div>
               <div className="flex items-center justify-center h-auto sm:h-10">
                 <span className="text-xs sm:text-sm font-medium text-center leading-tight">
-                  {mode.label}
+                  {t(mode.labelKey)}
                 </span>
               </div>
             </button>

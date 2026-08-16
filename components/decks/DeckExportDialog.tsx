@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Check, Copy, Download, ImageOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -50,6 +51,8 @@ export function DeckExportDialog({
   deckSlug,
   onClose,
 }: DeckExportDialogProps) {
+  const t = useTranslations("ImportExport");
+  const tCommon = useTranslations("Common");
   const [format, setFormat] = useState<Format>("text");
   const [delimiter, setDelimiter] = useState<DelimiterConfig>({ kind: "tab" });
   const [recordSeparator, setRecordSeparator] = useState<RecordSeparatorConfig>({
@@ -96,27 +99,24 @@ export function DeckExportDialog({
               <Download className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Export Cards</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("exportTitle")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Export this deck to text. Anyone who can view the deck can export
-            it.
+                {t("exportDesc")}
               </DialogDescription>
             </div>
           </DialogHeader>
 
         <Alert>
           <ImageOff className="h-4 w-4" />
-          <AlertTitle>Images are excluded</AlertTitle>
+          <AlertTitle>{t("imagesExcludedTitle")}</AlertTitle>
           <AlertDescription>
-            The text export contains only the text of each card side. Images
-            are discarded, and cards with no text on the front are omitted.
+            {t("imagesExcludedDesc")}
           </AlertDescription>
         </Alert>
         <Alert>
-          <AlertTitle className="text-sm font-medium">One line per card</AlertTitle>
+          <AlertTitle className="text-sm font-medium">{t("oneLineTitle")}</AlertTitle>
           <AlertDescription>
-            Multi-line card text (e.g. markdown with line breaks or code
-            blocks) is flattened onto a single line in the export.
+            {t("oneLineDesc")}
           </AlertDescription>
         </Alert>
 
@@ -127,7 +127,7 @@ export function DeckExportDialog({
           <TabsList>
             {FORMATS.map((f) => (
               <TabsTrigger key={f.id} value={f.id} disabled={f.comingSoon}>
-                {f.label}
+                {f.id === "text" ? t("textTab") : f.label}
                 {f.comingSoon ? " (soon)" : ""}
               </TabsTrigger>
             ))}
@@ -143,27 +143,26 @@ export function DeckExportDialog({
 
             {!configValid && (
               <Alert variant="destructive">
-                <AlertTitle>Custom separator needed</AlertTitle>
+                <AlertTitle>{t("customSeparatorNeeded")}</AlertTitle>
                 <AlertDescription>
-                  Enter a non-empty value for the custom delimiter and/or
-                  record separator.
+                  {t("customSeparatorNeededDesc")}
                 </AlertDescription>
               </Alert>
             )}
 
             <div className="grid gap-2">
-              <Label>Preview</Label>
+              <Label>{t("preview")}</Label>
               <Textarea
                 value={text}
                 readOnly
                 rows={8}
-                placeholder="Nothing to export yet."
+                placeholder={t("nothingToExport")}
                 className="font-mono text-xs"
               />
               <span className="text-sm text-muted-foreground">
                 {text.trim()
-                  ? `${countExportableCards(cards)} card(s) in the export`
-                  : "0 cards to export"}
+                  ? t("cardsInExport", { count: countExportableCards(cards) })
+                  : t("zeroCardsToExport")}
               </span>
             </div>
           </TabsContent>
@@ -171,7 +170,7 @@ export function DeckExportDialog({
           <TabsContent value="anki" className="mt-4">
             <Alert>
               <AlertDescription>
-                Anki export is coming soon. Use the Text format for now.
+                {t("ankiExportSoon")}
               </AlertDescription>
             </Alert>
           </TabsContent>
@@ -179,21 +178,21 @@ export function DeckExportDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            Close
+            {tCommon("close")}
           </Button>
           <Button variant="outline" onClick={handleCopy} disabled={!text}>
             {copied ? (
               <>
-                <Check className="mr-1.5 h-4 w-4" /> Copied
+                <Check className="mr-1.5 h-4 w-4" /> {t("copied")}
               </>
             ) : (
               <>
-                <Copy className="mr-1.5 h-4 w-4" /> Copy
+                <Copy className="mr-1.5 h-4 w-4" /> {t("copy")}
               </>
             )}
           </Button>
           <Button onClick={handleDownload} disabled={!text}>
-            <Download className="mr-1.5 h-4 w-4" /> Download .txt
+            <Download className="mr-1.5 h-4 w-4" /> {t("downloadTxt")}
           </Button>
         </DialogFooter>
       </DialogContent>

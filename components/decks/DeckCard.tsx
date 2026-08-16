@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { getDeckColorClass, getDeckColorStyle } from '@/lib/decks'
 import {
@@ -56,6 +57,7 @@ export function DeckCard({
   onDelete,
   onMove,
 }: DeckCardProps) {
+  const tCommon = useTranslations('Common')
   const router = useRouter()
   const { user } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
@@ -176,7 +178,7 @@ export function DeckCard({
                           G
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium text-[11px]">Guest</span>
+                      <span className="font-medium text-[11px]">{tCommon('guest')}</span>
                     </div>
                   ) : (
                     <Link
@@ -229,19 +231,19 @@ export function DeckCard({
                     {onShare && (
                       <DropdownMenuItem onClick={() => onShare(deck)}>
                         <Share2 className="mr-2 h-4 w-4" />
-                        Share
+                        {tCommon('share')}
                       </DropdownMenuItem>
                     )}
                     {onEdit && (
                       <DropdownMenuItem onClick={() => onEdit(deck)}>
                         <Pencil className="mr-2 h-4 w-4" />
-                        Edit
+                        {tCommon('edit')}
                       </DropdownMenuItem>
                     )}
                     {onMove && (
                       <DropdownMenuItem onClick={() => onMove(deck)}>
                         <Move className="mr-2 h-4 w-4" />
-                        Move
+                        {tCommon('move')}
                       </DropdownMenuItem>
                     )}
                     {onDelete && (
@@ -250,7 +252,7 @@ export function DeckCard({
                         className="text-destructive focus:text-destructive"
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
+                        {tCommon('delete')}
                       </DropdownMenuItem>
                     )}
                   </DropdownMenuContent>
@@ -377,19 +379,19 @@ export function DeckCard({
                   {onShare && (
                     <DropdownMenuItem onClick={() => onShare(deck)}>
                       <Share2 className="mr-2 h-4 w-4" />
-                      Share
+                      {tCommon('share')}
                     </DropdownMenuItem>
                   )}
                   {onEdit && (
                     <DropdownMenuItem onClick={() => onEdit(deck)}>
                       <Pencil className="mr-2 h-4 w-4" />
-                      Edit
+                      {tCommon('edit')}
                     </DropdownMenuItem>
                   )}
                   {onMove && (
                     <DropdownMenuItem onClick={() => onMove(deck)}>
                       <Move className="mr-2 h-4 w-4" />
-                      Move
+                      {tCommon('move')}
                     </DropdownMenuItem>
                   )}
                   {onDelete && (
@@ -398,7 +400,7 @@ export function DeckCard({
                       className="text-destructive focus:text-destructive"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
-                      Delete
+                      {tCommon('delete')}
                     </DropdownMenuItem>
                   )}
                 </DropdownMenuContent>
@@ -449,7 +451,7 @@ export function DeckCard({
                       G
                     </AvatarFallback>
                   </Avatar>
-                  <span className="font-medium truncate">Guest</span>
+                  <span className="font-medium truncate">{tCommon('guest')}</span>
                 </div>
               ) : (
                 <Link

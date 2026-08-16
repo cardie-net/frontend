@@ -1,5 +1,6 @@
 "use client"
 
+import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Kbd } from "@/components/ui/kbd"
 import { CardElements } from "@/components/cards/CardElements"
@@ -34,6 +35,8 @@ export function FlipCard({
   backContent,
   disableFlip = false,
 }: FlipCardProps) {
+  const t = useTranslations("Cards")
+
   return (
     <div className="relative flex-1 sm:flex-none flex flex-col w-full [perspective:1000px] min-h-[200px] sm:min-h-[500px]">
       <div
@@ -51,9 +54,12 @@ export function FlipCard({
           </CardContent>
           {!flipped && !disableFlip && (
             <div className="border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground rounded-b-[min(var(--radius-4xl),24px)]">
-              <span className="sm:hidden">Click anywhere on the card to flip</span>
+              <span className="sm:hidden">{t("clickToFlipMobile")}</span>
               <span className="hidden sm:inline-flex items-center justify-center gap-1.5">
-                Click anywhere on the card or press <Kbd className="text-xs">Space</Kbd> / <Kbd className="text-xs">Enter</Kbd> to flip
+                {t.rich("clickToFlipDesktop", {
+                  space: (chunks) => <Kbd className="text-xs">{chunks}</Kbd>,
+                  enter: (chunks) => <Kbd className="text-xs">{chunks}</Kbd>,
+                })}
               </span>
             </div>
           )}

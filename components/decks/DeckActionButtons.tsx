@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid, AlertCircle } from 'lucide-react';
 import { useDeck, useDeckMatchTime, useClearDeckMatchTime, useDeckExamScore, useClearDeckExamScore } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
@@ -31,7 +32,7 @@ import {
 
 export const ACTION_BUTTONS = [
   {
-    label: 'Overview',
+    key: 'overview',
     icon: Eye,
     href: 'overview',
     bgClasses: 'bg-gradient-to-br from-violet-500/10 to-purple-500/10 dark:from-violet-500/20 dark:to-purple-500/20 hover:from-violet-500/20 hover:to-purple-500/20 dark:hover:from-violet-500/30 dark:hover:to-purple-500/30',
@@ -39,7 +40,7 @@ export const ACTION_BUTTONS = [
     borderColor: 'border-violet-500/20 dark:border-violet-400/20 hover:border-violet-500/40 dark:hover:border-violet-400/40',
   },
   {
-    label: 'Learn',
+    key: 'learn',
     icon: GraduationCap,
     href: 'learn',
     bgClasses: 'bg-gradient-to-br from-blue-500/10 to-cyan-500/10 dark:from-blue-500/20 dark:to-cyan-500/20 hover:from-blue-500/20 hover:to-cyan-500/20 dark:hover:from-blue-500/30 dark:hover:to-cyan-500/30',
@@ -47,7 +48,7 @@ export const ACTION_BUTTONS = [
     borderColor: 'border-blue-500/20 dark:border-blue-400/20 hover:border-blue-500/40 dark:hover:border-blue-400/40',
   },
   {
-    label: 'Spaced Repetition',
+    key: 'spacedRepetition',
     icon: Clock,
     href: 'spaced-repetition',
     bgClasses: 'bg-gradient-to-br from-emerald-500/10 to-teal-500/10 dark:from-emerald-500/20 dark:to-teal-500/20 hover:from-emerald-500/20 hover:to-teal-500/20 dark:hover:from-emerald-500/30 dark:hover:to-teal-500/30',
@@ -55,7 +56,7 @@ export const ACTION_BUTTONS = [
     borderColor: 'border-emerald-500/20 dark:border-emerald-400/20 hover:border-emerald-500/40 dark:hover:border-emerald-400/40',
   },
   {
-    label: 'Exam',
+    key: 'exam',
     icon: FileCheck,
     href: 'exam',
     bgClasses: 'bg-gradient-to-br from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 hover:from-amber-500/20 hover:to-orange-500/20 dark:hover:from-amber-500/30 dark:hover:to-orange-500/30',
@@ -63,7 +64,7 @@ export const ACTION_BUTTONS = [
     borderColor: 'border-amber-500/20 dark:border-amber-400/20 hover:border-amber-500/40 dark:hover:border-amber-400/40',
   },
   {
-    label: 'Match',
+    key: 'match',
     icon: LayoutGrid,
     href: 'match',
     bgClasses: 'bg-gradient-to-br from-pink-500/10 to-rose-500/10 dark:from-pink-500/20 dark:to-rose-500/20 hover:from-pink-500/20 hover:to-rose-500/20 dark:hover:from-pink-500/30 dark:hover:to-rose-500/30',
@@ -78,6 +79,8 @@ interface DeckActionButtonsProps {
 }
 
 export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps) {
+  const t = useTranslations('DeckActions');
+  const tCommon = useTranslations('Common');
   const router = useRouter();
   const { data: deck } = useDeck(username, deckSlug);
   const { data: matchTime } = useDeckMatchTime(deck?.id);
@@ -141,17 +144,17 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
               </div>
               <div className={cn("flex items-center justify-center", isOverview ? "sm:h-10" : "h-10")}>
                 <span className="text-sm font-medium text-center leading-tight">
-                  {action.label}
+                  {t(action.key as any)}
                 </span>
               </div>
               {action.href === 'match' && matchTime?.best_time_ms != null && (
                 <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
-                  Best: {formatTime(matchTime.best_time_ms)}
+                  {t('best', { value: formatTime(matchTime.best_time_ms) })}
                 </span>
               )}
               {action.href === 'exam' && examScore?.best_score_percentage != null && (
                 <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
-                  Best: {examScore.best_score_percentage}%
+                  {t('best', { value: `${examScore.best_score_percentage}%` })}
                 </span>
               )}
             </div>
@@ -184,27 +187,27 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   <div className="p-2 rounded-2xl bg-primary/10 text-primary">
                     <Clock className="w-5 h-5" />
                   </div>
-                  <DialogTitle className="text-base font-semibold">Spaced Repetition Mode</DialogTitle>
+                  <DialogTitle className="text-base font-semibold">{t('srsDialog.title')}</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="sr-only">
-                  Explanation of Spaced Repetition mode.
+                  {t('srsDialog.description')}
                 </DialogDescription>
                 <div className="space-y-3 text-sm text-muted-foreground">
                   <p>
-                    Spaced repetition schedules cards based on your performance to maximize long-term retention.
+                    {t('srsDialog.description')}
                   </p>
                   <div className="rounded-lg bg-muted/50 p-3 text-xs space-y-1.5 text-foreground">
-                    <p className="font-medium">How it works</p>
+                    <p className="font-medium">{t('srsDialog.howItWorks')}</p>
                     <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-                      <li>Cards you struggle with appear more frequently; cards you know well are spaced further apart.</li>
-                      <li>Only cards due for review are shown. If no cards are due, the session will end.</li>
-                      <li>Use <strong className="text-foreground font-medium">Learn</strong> mode if you want to review all cards without scheduling constraints.</li>
+                      <li>{t('srsDialog.point1')}</li>
+                      <li>{t('srsDialog.point2')}</li>
+                      <li>{t.rich('srsDialog.point3', { bold: (chunks) => <strong className="text-foreground font-medium">{chunks}</strong> })}</li>
                     </ul>
                   </div>
                 </div>
                 <DialogFooter>
                   <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
-                    Cancel
+                    {tCommon('cancel')}
                   </DialogClose>
                   <Button
                     disabled={activateSRS.isPending}
@@ -221,7 +224,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                       router.push(`/${username}/${deckSlug}/spaced-repetition`);
                     }}
                   >
-                    {activateSRS.isPending ? 'Activating...' : 'Activate'}
+                    {activateSRS.isPending ? t('srsDialog.activating') : t('srsDialog.activate')}
                   </Button>
                 </DialogFooter>
               </DialogContent>
@@ -240,31 +243,31 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   <div className="p-2 rounded-2xl bg-primary/10 text-primary">
                     <Icon className="w-5 h-5" />
                   </div>
-                  <DialogTitle className="text-base font-semibold">Match Mode</DialogTitle>
+                  <DialogTitle className="text-base font-semibold">{t('matchDialog.title')}</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="sr-only">
-                  Match the front and back of the cards as quickly as possible.
+                  {t('matchDialog.description')}
                 </DialogDescription>
                 <div className="text-sm text-muted-foreground">
-                  <p>Match the front and back of the cards as quickly as possible. Up to 10 cards will be randomly selected.</p>
+                  <p>{t('matchDialog.description')}</p>
                   {matchTime?.best_time_ms != null && (
                     <div className="mt-4 flex items-center justify-between bg-muted/50 rounded-lg p-3">
                       <div>
-                        <p className="font-medium text-foreground">Best Time</p>
+                        <p className="font-medium text-foreground">{t('matchDialog.bestTime')}</p>
                         <p className="text-xl font-mono font-bold text-primary">{formatTime(matchTime.best_time_ms)}</p>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => deck?.id && clearMatchTime.mutate(deck.id)} disabled={clearMatchTime.isPending}>
-                        Clear Best
+                        {t('matchDialog.clearBest')}
                       </Button>
                     </div>
                   )}
                 </div>
                 <DialogFooter>
                   <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
-                    Cancel
+                    {tCommon('cancel')}
                   </DialogClose>
                   <Link href={`/${username}/${deckSlug}/match`} tabIndex={-1} className={buttonVariants({ className: "w-full sm:w-auto" })}>
-                    Start Game
+                    {t('matchDialog.startGame')}
                   </Link>
                 </DialogFooter>
               </DialogContent>
@@ -290,34 +293,34 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                   <div className="p-2 rounded-2xl bg-primary/10 text-primary">
                     <FileCheck className="w-5 h-5" />
                   </div>
-                  <DialogTitle className="text-base font-semibold">Exam Mode</DialogTitle>
+                  <DialogTitle className="text-base font-semibold">{t('examDialog.title')}</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="sr-only">
-                  Test your knowledge with multiple-choice questions.
+                  {t('examDialog.description')}
                 </DialogDescription>
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Test your knowledge with multiple-choice questions. Random cards will be selected and you&apos;ll need to pick the correct answer.
+                    {t('examDialog.description')}
                   </p>
                   {examScore?.best_score_percentage != null && (
                     <div className="flex items-center justify-between bg-muted/50 rounded-lg p-3">
                       <div>
-                        <p className="font-medium text-foreground text-sm">Best Score</p>
+                        <p className="font-medium text-foreground text-sm">{t('examDialog.bestScore')}</p>
                         <p className="text-xl font-mono font-bold text-primary">{examScore.best_score_percentage}%</p>
                       </div>
                       <Button variant="outline" size="sm" onClick={() => deck?.id && clearExamScore.mutate(deck.id)} disabled={clearExamScore.isPending}>
-                        Clear Best
+                        {t('examDialog.clearBest')}
                       </Button>
                     </div>
                   )}
                   <div className="grid gap-4 sm:grid-cols-2 items-start">
                     <div className="grid gap-2">
-                      <Label>Number of questions</Label>
+                      <Label>{t('examDialog.questionCount')}</Label>
                       <Input
                         type="number"
                         min={1}
                         max={maxQuestions || 1}
-                        placeholder={`All (${maxQuestions})`}
+                        placeholder={t('examDialog.allQuestions', { count: maxQuestions })}
                         value={examQuestionCount}
                         onChange={(e) => {
                           const val = e.target.value;
@@ -333,7 +336,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                       />
                     </div>
                     <div className="grid gap-2">
-                      <Label>Answer with</Label>
+                      <Label>{t('examDialog.answerWith')}</Label>
                       <Select
                         value={examAnswerWith}
                         onValueChange={(v) => setExamAnswerWith(v as "front" | "back" | "both")}
@@ -342,9 +345,9 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="front">Front</SelectItem>
-                          <SelectItem value="back">Back</SelectItem>
-                          <SelectItem value="both">Both (random)</SelectItem>
+                          <SelectItem value="front">{t('examDialog.front')}</SelectItem>
+                          <SelectItem value="back">{t('examDialog.back')}</SelectItem>
+                          <SelectItem value="both">{t('examDialog.both')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -352,7 +355,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                 </div>
                 <DialogFooter>
                   <DialogClose type="button" className={buttonVariants({ variant: "outline" })}>
-                    Cancel
+                    {tCommon('cancel')}
                   </DialogClose>
                   <Link
                     href={`/${username}/${deckSlug}/exam?count=${resolvedExamCount}&answerWith=${examAnswerWith}`}
@@ -360,7 +363,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                     className={buttonVariants({ className: "w-full sm:w-auto" })}
                     onClick={() => setExamDialogOpen(false)}
                   >
-                    Start Exam
+                    {t('examDialog.startExam')}
                   </Link>
                 </DialogFooter>
               </DialogContent>
@@ -387,15 +390,15 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             <AlertCircle className="w-5 h-5" />
           </div>
           <div>
-            <DialogTitle className="text-base font-semibold">Deck is empty</DialogTitle>
+            <DialogTitle className="text-base font-semibold">{t('emptyDialog.title')}</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-              No cards available to study
+              {t('emptyDialog.subtitle')}
             </DialogDescription>
           </div>
         </DialogHeader>
         <div className="text-sm text-muted-foreground py-2">
           <p>
-            This deck does not contain any cards yet. Add at least one card before starting a learning session.
+            {t('emptyDialog.description')}
           </p>
         </div>
         <DialogFooter>
@@ -404,7 +407,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
             className="w-full sm:w-auto"
             onClick={() => setEmptyDeckDialogOpen(false)}
           >
-            Close
+            {tCommon('close')}
           </Button>
         </DialogFooter>
       </DialogContent>

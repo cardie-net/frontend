@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useMemo, useState, useEffect, useRef } from "react"
+import { useTranslations, useLocale } from "next-intl"
 import { UserActivitySummary, UserDailyActivity } from "@/types"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Flame, Trophy, Zap, Calendar, Activity } from "lucide-react"
@@ -19,12 +20,16 @@ type DayCell = {
 }
 
 export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
+  const t = useTranslations("Stats")
+  const tCommon = useTranslations("Common")
+  const locale = useLocale()
+
   const [hoveredCell, setHoveredCell] = useState<DayCell | null>(null)
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   // Generate 52 weeks (364/365 days) grid data ending today
-  const { weeks, monthLabels } = useMemo(() => {
+  const { weeks, monthLabels, dayLabels } = useMemo(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
 
@@ -80,7 +85,7 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
       if (currentWeek.length === 1) {
         const m = iterDate.getMonth()
         if (m !== lastMonth) {
-          const monthName = iterDate.toLocaleString("en-US", { month: "short" })
+          const monthName = iterDate.toLocaleString(locale, { month: "short" })
           mLabels.push({ name: monthName, weekIndex: weekIdx })
           lastMonth = m
         }
@@ -104,8 +109,18 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
       (lbl) => lbl.weekIndex < weeksList.length - 2
     )
 
-    return { weeks: weeksList, monthLabels: filteredMonthLabels }
-  }, [summary])
+    // Dynamic weekday names (Mon, Wed, Fri)
+    const monDate = new Date(2026, 0, 5) // Monday
+    const wedDate = new Date(2026, 0, 7) // Wednesday
+    const friDate = new Date(2026, 0, 9) // Friday
+    const dLabels = {
+      mon: monDate.toLocaleString(locale, { weekday: "short" }),
+      wed: wedDate.toLocaleString(locale, { weekday: "short" }),
+      fri: friDate.toLocaleString(locale, { weekday: "short" }),
+    }
+
+    return { weeks: weeksList, monthLabels: filteredMonthLabels, dayLabels: dLabels }
+  }, [summary, locale])
 
   // Scroll to the right-most side by default (so today/recent days are in view)
   useEffect(() => {
@@ -161,16 +176,16 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
           <div>
             <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
               <Activity className="h-5 w-5 text-primary" />
-              <span className="sm:hidden">Learning Activity</span>
-              <span className="hidden sm:inline">Learning Activity Graph</span>
+              <span className="sm:hidden">{t("activityTitle")}</span>
+              <span className="hidden sm:inline">{t("activityTitleLong")}</span>
             </CardTitle>
             <CardDescription className="text-xs sm:text-sm text-muted-foreground mt-1">
-              Study points earned daily across all study modes over the past year
+              {t("activityDesc")}
             </CardDescription>
           </div>
 
           <div className="hidden sm:flex items-center gap-2 text-xs text-muted-foreground">
-            <span>Less</span>
+            <span>{t("less")}</span>
             <div className="flex gap-1 items-center">
               <div className="h-3 w-3 rounded-xs bg-muted/50 border border-border/40" />
               <div className="h-3 w-3 rounded-xs bg-emerald-200 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-900" />
@@ -178,7 +193,7 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
               <div className="h-3 w-3 rounded-xs bg-emerald-500 dark:bg-emerald-500 border border-emerald-600 dark:border-emerald-400" />
               <div className="h-3 w-3 rounded-xs bg-emerald-700 dark:bg-emerald-300 border border-emerald-800 dark:border-emerald-200" />
             </div>
-            <span>More</span>
+            <span>{t("more")}</span>
           </div>
         </div>
       </CardHeader>
@@ -192,8 +207,8 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
                 <Flame className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-lg font-bold tracking-tight">{summary?.current_streak || 0} days</div>
-                <div className="text-[11px] font-medium text-muted-foreground">Current Streak</div>
+                <div className="text-lg font-bold tracking-tight">{summary?.current_streak || 0} {tCommon("days")}</div>
+                <div className="text-[11px] font-medium text-muted-foreground">{t("currentStreak")}</div>
               </div>
             </div>
 
@@ -202,8 +217,8 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
                 <Trophy className="h-5 w-5" />
               </div>
               <div>
-                <div className="text-lg font-bold tracking-tight">{summary?.longest_streak || 0} days</div>
-                <div className="text-[11px] font-medium text-muted-foreground">Longest Streak</div>
+                <div className="text-lg font-bold tracking-tight">{summary?.longest_streak || 0} {tCommon("days")}</div>
+                <div className="text-[11px] font-medium text-muted-foreground">{t("longestStreak")}</div>
               </div>
             </div>
 
@@ -213,7 +228,7 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
               </div>
               <div>
                 <div className="text-lg font-bold tracking-tight">{summary?.total_points || 0}</div>
-                <div className="text-[11px] font-medium text-muted-foreground">Total Points</div>
+                <div className="text-[11px] font-medium text-muted-foreground">{t("totalPoints")}</div>
               </div>
             </div>
 
@@ -223,14 +238,14 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
               </div>
               <div>
                 <div className="text-lg font-bold tracking-tight">{summary?.total_active_days || 0}</div>
-                <div className="text-[11px] font-medium text-muted-foreground">Active Days</div>
+                <div className="text-[11px] font-medium text-muted-foreground">{t("activeDays")}</div>
               </div>
             </div>
           </div>
 
           {/* Mobile Legend (Displayed under streak/points blocks on mobile) */}
           <div className="flex sm:hidden items-center justify-end gap-2 text-xs text-muted-foreground">
-            <span>Less</span>
+            <span>{t("less")}</span>
             <div className="flex gap-1 items-center">
               <div className="h-3 w-3 rounded-xs bg-muted/50 border border-border/40" />
               <div className="h-3 w-3 rounded-xs bg-emerald-200 dark:bg-emerald-950/80 border border-emerald-300 dark:border-emerald-900" />
@@ -238,7 +253,7 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
               <div className="h-3 w-3 rounded-xs bg-emerald-500 dark:bg-emerald-500 border border-emerald-600 dark:border-emerald-400" />
               <div className="h-3 w-3 rounded-xs bg-emerald-700 dark:bg-emerald-300 border border-emerald-800 dark:border-emerald-200" />
             </div>
-            <span>More</span>
+            <span>{t("more")}</span>
           </div>
 
           {/* Heatmap Grid Container */}
@@ -249,7 +264,7 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
                 {monthLabels.map((lbl, idx) => (
                   <div
                     key={idx}
-                    className="absolute top-0"
+                    className="absolute top-0 capitalize"
                     style={{
                       left: `${lbl.weekIndex * 15 + 28}px`,
                     }}
@@ -263,11 +278,11 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
                 {/* Day of Week Labels (Sticky on the left) */}
                 <div className="sticky left-0 z-20 bg-card grid grid-rows-7 gap-[3px] pr-2 text-[10px] font-medium text-muted-foreground leading-[12px] shrink-0">
                   <span className="h-3"></span>
-                  <span className="h-3 flex items-center">Mon</span>
+                  <span className="h-3 flex items-center capitalize">{dayLabels.mon}</span>
                   <span className="h-3"></span>
-                  <span className="h-3 flex items-center">Wed</span>
+                  <span className="h-3 flex items-center capitalize">{dayLabels.wed}</span>
                   <span className="h-3"></span>
-                  <span className="h-3 flex items-center">Fri</span>
+                  <span className="h-3 flex items-center capitalize">{dayLabels.fri}</span>
                   <span className="h-3"></span>
                 </div>
 
@@ -303,10 +318,10 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
             }}
           >
             <div className="font-semibold text-foreground">
-              {hoveredCell.points > 0 ? `${hoveredCell.points} points` : "No study activity"}
+              {hoveredCell.points > 0 ? `${hoveredCell.points} ${tCommon("points")}` : t("noActivity")}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">
-              {hoveredCell.dateObj.toLocaleDateString("en-US", {
+            <div className="text-[11px] text-muted-foreground mt-0.5 capitalize">
+              {hoveredCell.dateObj.toLocaleDateString(locale, {
                 weekday: "short",
                 month: "short",
                 day: "numeric",

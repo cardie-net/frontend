@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react"
 import { createPortal } from "react-dom"
+import { useTranslations } from "next-intl"
 import {
   Bold,
   Eye,
@@ -102,6 +103,8 @@ export function MarkdownEditor({
   placeholder,
   className,
 }: MarkdownEditorProps) {
+  const t = useTranslations("Cards.markdown")
+  const tCommon = useTranslations("Common")
   const [mode, setMode] = useState<"write" | "preview">("write")
   const [uploading, setUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
@@ -158,7 +161,7 @@ export function MarkdownEditor({
     setPromptValue("")
     setPromptState({
       open: true,
-      title: "Link URL",
+      title: t("linkUrl"),
       onSubmit: (url) => {
         if (!url) return
         if (selected) {
@@ -175,7 +178,7 @@ export function MarkdownEditor({
         }
       },
     })
-  }, [value, onChange])
+  }, [value, onChange, t])
 
   const toggleLinePrefix = useCallback(
     (marker: string) => {
@@ -248,17 +251,17 @@ export function MarkdownEditor({
     setPromptValue("")
     setPromptState({
       open: true,
-      title: "Image URL",
+      title: t("imageUrl"),
       onSubmit: (url) => {
         if (url) onImageUrlChange(url.trim())
       },
     })
-  }, [onImageUrlChange])
+  }, [onImageUrlChange, t])
 
   const uploadFile = useCallback(
     async (file: File) => {
       if (imageUrl) {
-        setUploadError("One image per side — remove the current image first")
+        setUploadError(t("oneImageLimit"))
         return
       }
       setUploading(true)
@@ -268,13 +271,13 @@ export function MarkdownEditor({
         onImageUrlChange(url)
       } catch (e) {
         setUploadError(
-          e instanceof Error ? e.message : "Failed to upload image"
+          e instanceof Error ? e.message : t("uploadFailed")
         )
       } finally {
         setUploading(false)
       }
     },
-    [deckId, imageUrl, onImageUrlChange]
+    [deckId, imageUrl, onImageUrlChange, t]
   )
 
   const handleFileChange = useCallback(
@@ -335,11 +338,11 @@ export function MarkdownEditor({
           <TabsList className="h-7">
             <TabsTrigger value="write">
               <PenLine />
-              Write
+              {t("write")}
             </TabsTrigger>
             <TabsTrigger value="preview">
               <Eye />
-              Preview
+              {t("preview")}
             </TabsTrigger>
           </TabsList>
         </div>
@@ -348,36 +351,36 @@ export function MarkdownEditor({
           <div className="flex w-full min-w-0 flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1">
             <ToolButton
               onClick={() => applyWrap("**", "**")}
-              title="Bold (Ctrl/Cmd+B)"
+              title={t("bold")}
             >
               <Bold />
             </ToolButton>
             <ToolButton
               onClick={() => applyWrap("*", "*")}
-              title="Italic (Ctrl/Cmd+I)"
+              title={t("italic")}
             >
               <Italic />
             </ToolButton>
             <span className="mx-0.5 h-5 w-px bg-border" />
-            <ToolButton onClick={() => toggleHeading(1)} title="Heading 1">
+            <ToolButton onClick={() => toggleHeading(1)} title={t("h1")}>
               <Heading1 />
             </ToolButton>
-            <ToolButton onClick={() => toggleHeading(2)} title="Heading 2">
+            <ToolButton onClick={() => toggleHeading(2)} title={t("h2")}>
               <Heading2 />
             </ToolButton>
             <span className="mx-0.5 h-5 w-px bg-border" />
-            <ToolButton onClick={insertLink} title="Link (Ctrl/Cmd+K)">
+            <ToolButton onClick={insertLink} title={t("link")}>
               <LinkIcon />
             </ToolButton>
             <ToolButton
               onClick={() => toggleLinePrefix("- ")}
-              title="Bullet list"
+              title={t("bulletList")}
             >
               <List />
             </ToolButton>
             <ToolButton
               onClick={() => toggleLinePrefix("1. ")}
-              title="Numbered list"
+              title={t("numberedList")}
             >
               <ListOrdered />
             </ToolButton>
@@ -387,8 +390,8 @@ export function MarkdownEditor({
                 disabled={imageUrl !== null || uploading}
                 title={
                   imageUrl
-                    ? "One image per side — remove the current image first"
-                    : "Add image"
+                    ? t("oneImageLimit")
+                    : t("addImage")
                 }
                 render={
                   <Button variant="ghost" size="icon-sm" className="h-7 w-7" />
@@ -403,11 +406,11 @@ export function MarkdownEditor({
               <DropdownMenuContent align="start">
                 <DropdownMenuItem onClick={() => fileInputRef.current?.click()}>
                   <Upload />
-                  Upload
+                  {t("upload")}
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleImageUrl}>
                   <LinkIcon />
-                  From URL
+                  {t("fromUrl")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -459,8 +462,8 @@ export function MarkdownEditor({
             variant="ghost"
             size="icon-sm"
             onClick={() => onImageUrlChange(null)}
-            title="Remove image"
-            aria-label="Remove image"
+            title={t("removeImage")}
+            aria-label={t("removeImage")}
             className="text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
             <Trash2 />
@@ -498,9 +501,9 @@ export function MarkdownEditor({
                   setPromptState((prev) => ({ ...prev, open: false }))
                 }
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit">{t("submit")}</Button>
             </DialogFooter>
           </form>
         </DialogContent>

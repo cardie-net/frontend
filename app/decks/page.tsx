@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
@@ -38,6 +39,7 @@ import {
 } from "@dnd-kit/core"
 
 export default function DecksPage() {
+  const t = useTranslations("Decks")
   const { user, loading: authLoading } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
   const isLineMode = deckDisplayMode === 'line'
@@ -161,9 +163,9 @@ export default function DecksPage() {
   if (!user) {
     return (
       <div className="flex min-h-[50vh] flex-col items-center justify-center gap-4">
-        <p>Please log in to view your decks.</p>
+        <p>{t("notLoggedIn")}</p>
         <Link href="/login">
-          <Button className="rounded-xl">Log In</Button>
+          <Button className="rounded-xl">{t("logIn")}</Button>
         </Link>
       </div>
     )
@@ -178,7 +180,7 @@ export default function DecksPage() {
           <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
             <Layers className="w-6 h-6" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">My Decks</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">{t("title")}</h1>
           <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
             {filteredItems.filter(item => item.type === 'deck').length}
           </Badge>
@@ -191,7 +193,7 @@ export default function DecksPage() {
             size="sm"
             onClick={() => setIsImportDialogOpen(true)}
           >
-            <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
+            <Upload className="h-4 w-4" /> <span className="hidden sm:inline">{t("import")}</span>
           </Button>
           <Button
             variant="outline"
@@ -199,13 +201,13 @@ export default function DecksPage() {
             size="sm"
             onClick={() => setIsCreateFolderOpen(true)}
           >
-            <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">Folder</span>
+            <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">{t("folder")}</span>
           </Button>
           <Button 
             className="rounded-xl gap-2 font-medium"
             size="sm"
             onClick={() => setIsCreateDeckOpen(true)}>
-            <Plus className="h-4 w-4" /> <span>Deck</span>
+            <Plus className="h-4 w-4" /> <span>{t("deck")}</span>
           </Button>
 
           <div className="relative sm:ml-2">
@@ -228,7 +230,7 @@ export default function DecksPage() {
               <div className="absolute right-0 top-12 z-20 flex items-center">
                 <Input
                   autoFocus
-                  placeholder="Search..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-[200px] sm:w-48 md:w-64 pr-8 rounded-xl h-9 sm:h-10 border-border bg-card/95 backdrop-blur-md shadow-lg text-sm"
@@ -272,21 +274,21 @@ export default function DecksPage() {
             <Layers className="w-6 h-6" />
           </div>
           <p className="text-lg font-semibold text-foreground mb-1">
-            {searchQuery ? "No matches found" : "No decks yet"}
+            {searchQuery ? t("noMatchesTitle") : t("noDecksTitle")}
           </p>
           <p className="text-sm text-muted-foreground mb-6">
             {searchQuery
-              ? `No decks or folders matched "${searchQuery}".`
-              : "Create your first deck to start studying with flashcards!"}
+              ? t("noMatchesDesc", { query: searchQuery })
+              : t("noDecksDesc")}
           </p>
           {!searchQuery && (
             <div className="flex justify-center gap-3 flex-wrap">
               <Button onClick={() => setIsCreateFolderOpen(true)} variant="outline" className="rounded-xl">
-                Create a folder
+                {t("createFolder")}
               </Button>
               <Button onClick={() => setIsCreateDeckOpen(true)} className="rounded-xl gap-2 font-medium">
                 <Plus className="w-4 h-4" />
-                Create First Deck
+                {t("createFirstDeck")}
               </Button>
             </div>
           )}

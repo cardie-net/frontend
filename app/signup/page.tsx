@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { apiFetch } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +13,9 @@ import { AlertCircle } from 'lucide-react';
 import GoogleSignInButton from '@/components/GoogleSignInButton';
 import AuthDivider from '@/components/AuthDivider';
 import { Card, CardContent } from "@/components/ui/card";
+
 export default function SignupPage() {
+  const t = useTranslations('Auth.signup');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -25,13 +28,13 @@ export default function SignupPage() {
     setIsLoading(true);
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError(t('validEmailRequired'));
       setIsLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError('Password must be at least 8 characters long.');
+      setError(t('passwordLength'));
       setIsLoading(false);
       return;
     }
@@ -56,20 +59,20 @@ export default function SignupPage() {
 
         if (errData.detail) {
           if (errData.detail === 'REGISTER_USER_ALREADY_EXISTS') {
-            setError('A user with this email already exists');
+            setError(t('userExists'));
           } else if (typeof errData.detail === 'string') {
             setError(errData.detail);
           } else if (Array.isArray(errData.detail)) {
             setError(errData.detail.map((d: { msg: string }) => d.msg).join(', '));
           } else {
-            setError('Registration failed. Please check your inputs.');
+            setError(t('registrationFailed'));
           }
         } else {
-          setError('Registration failed.');
+          setError(t('genericFailed'));
         }
       }
     } catch {
-      setError('An error occurred during registration. Please try again.');
+      setError(t('genericError'));
     } finally {
       setIsLoading(false);
     }
@@ -79,8 +82,8 @@ export default function SignupPage() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
         <CardContent className="p-6 sm:p-8">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">Create Account</h1>
-        <p className="text-muted-foreground mb-6">Join to start learning</p>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">{t('title')}</h1>
+        <p className="text-muted-foreground mb-6">{t('subtitle')}</p>
 
         {error && (
           <Alert variant="destructive" className="mb-6 flex gap-2">
@@ -95,11 +98,11 @@ export default function SignupPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email address</Label>
+            <Label htmlFor="email">{t('emailLabel')}</Label>
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t('emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -107,11 +110,11 @@ export default function SignupPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t('passwordLabel')}</Label>
             <Input
               id="password"
               type="password"
-              placeholder="Create a strong password"
+              placeholder={t('passwordPlaceholder')}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -120,14 +123,14 @@ export default function SignupPage() {
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
-            {isLoading ? 'Creating account...' : 'Sign Up'}
+            {isLoading ? t('creatingAccount') : t('signUp')}
           </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground flex gap-1 justify-center">
-          Already have an account?
+          {t('hasAccount')}
           <Link href="/login" className="font-medium hover:underline text-foreground">
-            Log in
+            {t('logIn')}
           </Link>
         </p>
         </CardContent>

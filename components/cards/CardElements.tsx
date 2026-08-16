@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Maximize2 } from 'lucide-react';
 import Markdown, { type Components } from 'react-markdown';
 import { CardElement, ImageElement, TextElement } from '@/types';
@@ -135,8 +136,10 @@ export function CardElements({
   className?: string;
   compact?: boolean;
 }) {
+  const t = useTranslations('Common');
+
   if (!elements || elements.length === 0) {
-    return <div className="text-muted-foreground">Empty</div>;
+    return <div className="text-muted-foreground">{t('empty')}</div>;
   }
 
   const images = elements.filter((el): el is ImageElement => el.type === 'image');

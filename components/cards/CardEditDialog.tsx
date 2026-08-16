@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type ReactNode } from 'react';
+import { useTranslations } from 'next-intl';
 import { Loader2, Pencil } from "lucide-react";
 import {
   Dialog,
@@ -61,10 +62,12 @@ function EditorDialogShell({
   onClose,
   onSave,
   onSaveAnother,
-  saveLabel = 'Save',
+  saveLabel,
   isSaving,
   children,
 }: EditorDialogShellProps) {
+  const t = useTranslations('Cards');
+  const tCommon = useTranslations('Common');
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleOpenChange = (open: boolean) => {
@@ -94,22 +97,22 @@ function EditorDialogShell({
         {/* Desktop view */}
         <div className="hidden sm:grid sm:grid-cols-2 gap-6 min-w-0 w-full">
           <MarkdownEditor
-            label="Front"
+            label={t('front')}
             value={front}
             onChange={onFrontChange}
             deckId={deckId}
             imageUrl={frontImage}
             onImageUrlChange={onFrontImageChange}
-            placeholder="Question or term"
+            placeholder={t('questionPlaceholder')}
           />
           <MarkdownEditor
-            label="Back"
+            label={t('back')}
             value={back}
             onChange={onBackChange}
             deckId={deckId}
             imageUrl={backImage}
             onImageUrlChange={onBackImageChange}
-            placeholder="Answer or definition"
+            placeholder={t('answerPlaceholder')}
           />
         </div>
 
@@ -117,29 +120,29 @@ function EditorDialogShell({
         <div className="block sm:hidden min-w-0 w-full">
           <Tabs defaultValue="front" className="w-full min-w-0">
             <TabsList className="grid w-full grid-cols-2 mb-4">
-              <TabsTrigger value="front">Front</TabsTrigger>
-              <TabsTrigger value="back">Back</TabsTrigger>
+              <TabsTrigger value="front">{t('front')}</TabsTrigger>
+              <TabsTrigger value="back">{t('back')}</TabsTrigger>
             </TabsList>
             <TabsContent value="front" className="mt-0 min-w-0 w-full">
               <MarkdownEditor
-                label="Front"
+                label={t('front')}
                 value={front}
                 onChange={onFrontChange}
                 deckId={deckId}
                 imageUrl={frontImage}
                 onImageUrlChange={onFrontImageChange}
-                placeholder="Question or term"
+                placeholder={t('questionPlaceholder')}
               />
             </TabsContent>
             <TabsContent value="back" className="mt-0 min-w-0 w-full">
               <MarkdownEditor
-                label="Back"
+                label={t('back')}
                 value={back}
                 onChange={onBackChange}
                 deckId={deckId}
                 imageUrl={backImage}
                 onImageUrlChange={onBackImageChange}
-                placeholder="Answer or definition"
+                placeholder={t('answerPlaceholder')}
               />
             </TabsContent>
           </Tabs>
@@ -149,16 +152,16 @@ function EditorDialogShell({
 
         <DialogFooter>
           <Button variant="outline" onClick={() => handleOpenChange(false)} disabled={isSaving}>
-            Cancel
+            {tCommon('cancel')}
           </Button>
           {onSaveAnother && (
             <Button variant="secondary" onClick={onSaveAnother} disabled={isSaving}>
-              Save & add another
+              {t('saveAndAddAnother')}
             </Button>
           )}
           <Button onClick={onSave} disabled={isSaving}>
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
-            {saveLabel}
+            {saveLabel || tCommon('save')}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -167,10 +170,10 @@ function EditorDialogShell({
     <ConfirmDialog
       open={showConfirm}
       onOpenChange={setShowConfirm}
-      title="Discard unsaved changes?"
-      description="Are you sure you want to discard your unsaved changes? This action cannot be undone."
+      title={t('discardTitle')}
+      description={t('discardDesc')}
       onConfirm={onClose}
-      confirmText="Discard"
+      confirmText={tCommon('discard')}
       destructive
     />
   </>
@@ -188,6 +191,7 @@ interface CardEditDialogProps {
 
 /** Full popup editor for an existing card. */
 export function CardEditDialog({ card, deckId, onClose, onSave, isSaving }: CardEditDialogProps) {
+  const t = useTranslations('Cards');
   const [front, setFront] = useState(() => getCardText(card.front));
   const [back, setBack] = useState(() => getCardText(card.back));
   const [frontImage, setFrontImage] = useState<string | null>(() => getCardImage(card.front)?.url ?? null);
@@ -201,11 +205,11 @@ export function CardEditDialog({ card, deckId, onClose, onSave, isSaving }: Card
 
   return (
     <EditorDialogShell
-      title="Edit card"
+      title={t('editCard')}
       description={
         <>
-          <span className="hidden sm:inline">Front and back support markdown formatting. Each side can hold one image, shown separately.</span>
-          <span className="sm:hidden">Supports markdown and images.</span>
+          <span className="hidden sm:inline">{t('editorDescDesktop')}</span>
+          <span className="sm:hidden">{t('editorDescMobile')}</span>
         </>
       }
       deckId={deckId}
@@ -237,6 +241,7 @@ interface NewCardDialogProps {
 
 /** Full popup editor for creating a new card (starts empty). */
 export function NewCardDialog({ deckId, onClose, onSave, onSaveAnother, isSaving }: NewCardDialogProps) {
+  const t = useTranslations('Cards');
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
   const [frontImage, setFrontImage] = useState<string | null>(null);
@@ -246,11 +251,11 @@ export function NewCardDialog({ deckId, onClose, onSave, onSaveAnother, isSaving
 
   return (
     <EditorDialogShell
-      title="Add card"
+      title={t('addCard')}
       description={
         <>
-          <span className="hidden sm:inline">Front and back support markdown formatting. Each side can hold one image, shown separately.</span>
-          <span className="sm:hidden">Supports markdown and images.</span>
+          <span className="hidden sm:inline">{t('editorDescDesktop')}</span>
+          <span className="sm:hidden">{t('editorDescMobile')}</span>
         </>
       }
       deckId={deckId}
@@ -270,7 +275,7 @@ export function NewCardDialog({ deckId, onClose, onSave, onSaveAnother, isSaving
           ? () => onSaveAnother(buildElements(front, frontImage), buildElements(back, backImage))
           : undefined
       }
-      saveLabel="Save & close"
+      saveLabel={t('saveAndClose')}
       isSaving={isSaving}
     />
   );

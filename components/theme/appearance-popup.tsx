@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import { useCustomTheme } from './custom-theme-provider';
 import { loadAllPreviewFonts, getFontFamilyCss } from '@/lib/theme/font-loader';
 import { cn } from '@/lib/utils';
@@ -34,6 +35,8 @@ export function AppearancePopup({
   isOpen,
   onClose,
 }: AppearancePopupProps) {
+  const t = useTranslations('Appearance');
+  const tCommon = useTranslations('Common');
   const {
     config,
     presets,
@@ -102,9 +105,9 @@ export function AppearancePopup({
             <Palette className="w-5 h-5" />
           </div>
           <div>
-            <DialogTitle className="text-base font-semibold">Appearance</DialogTitle>
+            <DialogTitle className="text-base font-semibold">{t('title')}</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-              Select theme palette, rounding & typography
+              {t('description')}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -121,7 +124,7 @@ export function AppearancePopup({
             )}
           >
             <Sparkles className="w-3.5 h-3.5" />
-            Themes
+            {t('themes')}
           </button>
           <button
             onClick={() => setActiveTab('tweak')}
@@ -133,7 +136,7 @@ export function AppearancePopup({
             )}
           >
             <Sliders className="w-3.5 h-3.5" />
-            Customize
+            {t('customize')}
           </button>
         </div>
 
@@ -189,7 +192,7 @@ export function AppearancePopup({
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                 <Maximize2 className="w-3.5 h-3.5 text-primary" />
-                Rounding (Border Radius)
+                {t('rounding')}
               </div>
               <div className="grid grid-cols-5 gap-1 bg-muted/40 p-1 rounded-2xl">
                 {radiusOptions.map((opt) => {
@@ -216,7 +219,7 @@ export function AppearancePopup({
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
                 <Type className="w-3.5 h-3.5 text-primary" />
-                Typography (Font Family)
+                {t('typography')}
               </div>
               <div className="grid grid-cols-2 gap-1.5">
                 {availableFonts.map((font) => {
@@ -245,10 +248,10 @@ export function AppearancePopup({
               <div className="space-y-0.5 min-w-0">
                 <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
                   <Rows className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span>Compact deck view</span>
+                  <span>{t('compactDeckView')}</span>
                 </div>
                 <p className="text-[11px] text-muted-foreground leading-tight">
-                  Display decks as horizontal lines instead of cards
+                  {t('compactDeckViewDesc')}
                 </p>
               </div>
               <Switch
@@ -267,28 +270,28 @@ export function AppearancePopup({
           <button
             onClick={resetToDefault}
             className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-            title="Reset to default theme"
+            title={t('reset')}
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            Reset
+            {t('reset')}
           </button>
 
           <div className="flex items-center gap-2">
             <button
               onClick={handleExport}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-accent/60 hover:bg-accent text-foreground transition-colors"
-              title="Export Theme JSON"
+              title={t('exportTheme')}
             >
               <Download className="w-3 h-3" />
-              Export
+              {tCommon('export')}
             </button>
             <button
               onClick={() => fileInputRef.current?.click()}
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-accent/60 hover:bg-accent text-foreground transition-colors"
-              title="Import Theme JSON"
+              title={t('importTheme')}
             >
               <Upload className="w-3 h-3" />
-              Import
+              {tCommon('import')}
             </button>
             <input
               ref={fileInputRef}
@@ -302,7 +305,7 @@ export function AppearancePopup({
 
         {importError && (
           <p className="text-[11px] text-destructive mt-1 text-center">
-            Invalid theme JSON file
+            {t('invalidThemeFile')}
           </p>
         )}
       </DialogContent>

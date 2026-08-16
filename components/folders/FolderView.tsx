@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
@@ -58,6 +59,8 @@ interface FolderViewProps {
 }
 
 export function FolderView({ username, folder }: FolderViewProps) {
+  const t = useTranslations("Folders")
+  const tDecks = useTranslations("Decks")
   const router = useRouter()
   const { user } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
@@ -248,7 +251,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                   type="button"
                   onClick={handleToggleStar}
                   disabled={isStarPending}
-                  aria-label={isStarred ? "Unstar folder" : "Star folder"}
+                  aria-label={isStarred ? t("unstarFolder") : t("starFolder")}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0",
                     isStarred
@@ -278,7 +281,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                   size="sm"
                   onClick={() => setIsImportDialogOpen(true)}
                 >
-                  <Upload className="h-4 w-4" /> <span className="hidden sm:inline">Import</span>
+                  <Upload className="h-4 w-4" /> <span className="hidden sm:inline">{tDecks("import")}</span>
                 </Button>
                 <Button
                   variant="outline"
@@ -286,13 +289,13 @@ export function FolderView({ username, folder }: FolderViewProps) {
                   size="sm"
                   onClick={() => setIsCreateFolderOpen(true)}
                 >
-                  <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">Folder</span>
+                  <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">{tDecks("folder")}</span>
                 </Button>
                 <Button 
                   className="rounded-xl gap-2 font-medium"
                   size="sm"
                   onClick={() => setIsCreateDeckOpen(true)}>
-                  <Plus className="h-4 w-4" /> <span>Deck</span>
+                  <Plus className="h-4 w-4" /> <span>{tDecks("deck")}</span>
                 </Button>
               </>
             )}
@@ -317,7 +320,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 <div className="absolute right-0 top-12 z-20 flex items-center">
                   <Input
                     autoFocus
-                    placeholder="Search..."
+                    placeholder={tDecks("searchPlaceholder")}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-[200px] sm:w-48 md:w-64 pr-8 rounded-xl h-9 sm:h-10 border-border bg-card/95 backdrop-blur-md shadow-lg text-sm"
@@ -353,7 +356,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
           className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground w-fit"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
-          {parentFolder ? `Back to ${parentFolder.name}` : "Back to Decks"}
+          {parentFolder ? t("backTo", { name: parentFolder.name }) : t("backToDecks")}
         </Link>
       </div>
 
@@ -365,28 +368,28 @@ export function FolderView({ username, folder }: FolderViewProps) {
 
       {/* Items Grid */}
       {folderItemsLoading ? (
-        <div className="p-8">Loading folder items...</div>
+        <div className="p-8">{t("loadingItems")}</div>
       ) : totalItems === 0 ? (
         <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
           <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
             <FolderIcon className="w-6 h-6" />
           </div>
           <p className="text-lg font-semibold text-foreground mb-1">
-            {searchQuery ? "No matches found" : "This folder is empty"}
+            {searchQuery ? tDecks("noMatchesTitle") : t("emptyFolderTitle")}
           </p>
           <p className="text-sm text-muted-foreground mb-6">
             {searchQuery
-              ? `No decks or folders matched "${searchQuery}".`
-              : "Create your first deck or subfolder here!"}
+              ? tDecks("noMatchesDesc", { query: searchQuery })
+              : t("emptyFolderDesc")}
           </p>
           {!searchQuery && isOwner && (
             <div className="flex justify-center gap-3 flex-wrap">
               <Button onClick={() => setIsCreateFolderOpen(true)} variant="outline" className="rounded-xl">
-                Create a subfolder
+                {t("createSubfolder")}
               </Button>
               <Button onClick={() => setIsCreateDeckOpen(true)} className="rounded-xl gap-2 font-medium">
                 <Plus className="w-4 h-4" />
-                Create a deck
+                {t("createDeck")}
               </Button>
             </div>
           )}

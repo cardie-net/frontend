@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -25,6 +26,8 @@ interface EditFolderDialogProps {
 }
 
 export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
+  const t = useTranslations("Folders.editDialog")
+  const tCommon = useTranslations("Common")
   const updateFolder = useUpdateFolder()
   const uploadFolderCover = useUploadFolderCover()
 
@@ -55,7 +58,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
     if (!folder) return
 
     if (!name.trim()) {
-      setError("Folder name is required.")
+      setError(t("nameRequired"))
       return
     }
 
@@ -77,11 +80,11 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
         {
           onSuccess: () => onClose(),
           onError: (err) =>
-            setError(err instanceof Error ? err.message : "An error occurred"),
+            setError(err instanceof Error ? err.message : tCommon("error")),
         }
       )
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred uploading cover image")
+      setError(err instanceof Error ? err.message : t("coverUploadError"))
     }
   }
 
@@ -97,9 +100,9 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
               <Pencil className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Edit Folder</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Update the name, description, color, and cover image for your folder.
+                {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -107,7 +110,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             {error && <Alert variant="destructive">{error}</Alert>}
 
             <div className="grid gap-2">
-              <Label>Name</Label>
+              <Label>{t("nameLabel")}</Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -118,18 +121,18 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label>Description</Label>
+              <Label>{t("descriptionLabel")}</Label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 maxLength={500}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
-                placeholder="Optional description..."
+                placeholder={t("descriptionPlaceholder")}
               />
             </div>
 
             <div className="grid gap-2">
-              <Label>Color Accent</Label>
+              <Label>{t("colorLabel")}</Label>
               <ColorPicker
                 color={color}
                 onChange={setColor}
@@ -138,7 +141,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             </div>
 
             <div className="grid gap-2">
-              <Label>Cover Image</Label>
+              <Label>{t("coverImageLabel")}</Label>
               <Input
                 type="file"
                 accept="image/*"
@@ -148,10 +151,10 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
                 }}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
               />
-              <div className="text-xs text-muted-foreground text-center">OR</div>
+              <div className="text-xs text-muted-foreground text-center">{t("or")}</div>
               <Input
                 type="url"
-                placeholder="https://example.com/image.png"
+                placeholder={t("coverUrlPlaceholder")}
                 value={coverUrl}
                 onChange={(e) => {
                   setCoverUrl(e.target.value)
@@ -168,10 +171,10 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
               onClick={onClose}
               disabled={updateFolder.isPending || uploadFolderCover.isPending}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={updateFolder.isPending || uploadFolderCover.isPending}>
-              {updateFolder.isPending || uploadFolderCover.isPending ? "Saving..." : "Save Changes"}
+              {updateFolder.isPending || uploadFolderCover.isPending ? tCommon("saving") : tCommon("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

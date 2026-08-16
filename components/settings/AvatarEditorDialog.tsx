@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useRef, useEffect, useCallback } from "react"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -35,6 +36,8 @@ export function AvatarEditorDialog({
   onSave,
   isUploading,
 }: AvatarEditorDialogProps) {
+  const t = useTranslations("Settings.avatarEditor")
+  const tCommon = useTranslations("Common")
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -286,9 +289,9 @@ export function AvatarEditorDialog({
             <ImageIcon className="w-5 h-5" />
           </div>
           <div>
-            <DialogTitle className="text-base font-semibold">Edit Avatar</DialogTitle>
+            <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
             <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-              Upload and crop your profile picture.
+              {t("description")}
             </DialogDescription>
           </div>
         </DialogHeader>
@@ -354,7 +357,7 @@ export function AvatarEditorDialog({
                 variant="outline"
                 size="icon"
                 onClick={handleRotateCcw}
-                title="Rotate Left 90°"
+                title={t("rotateLeft")}
                 disabled={isUploading}
               >
                 <RotateCcw className="h-4 w-4" />
@@ -364,7 +367,7 @@ export function AvatarEditorDialog({
                 variant="outline"
                 size="icon"
                 onClick={handleRotateCw}
-                title="Rotate Right 90°"
+                title={t("rotateRight")}
                 disabled={isUploading}
               >
                 <RotateCw className="h-4 w-4" />
@@ -374,7 +377,7 @@ export function AvatarEditorDialog({
                 variant="outline"
                 size="icon"
                 onClick={handleFlipHorizontal}
-                title="Flip Horizontal"
+                title={t("flipHorizontal")}
                 className={flipX ? "bg-muted text-primary" : ""}
                 disabled={isUploading}
               >
@@ -385,7 +388,7 @@ export function AvatarEditorDialog({
                 variant="outline"
                 size="icon"
                 onClick={handleFlipVertical}
-                title="Flip Vertical"
+                title={t("flipVertical")}
                 className={flipY ? "bg-muted text-primary" : ""}
                 disabled={isUploading}
               >
@@ -396,7 +399,7 @@ export function AvatarEditorDialog({
                 variant="outline"
                 size="icon"
                 onClick={handleReset}
-                title="Reset Transform"
+                title={t("resetTransform")}
                 disabled={isUploading}
               >
                 <RefreshCw className="h-4 w-4" />
@@ -412,7 +415,7 @@ export function AvatarEditorDialog({
             onClick={onClose}
             disabled={isUploading}
           >
-            Cancel
+            {tCommon("cancel")}
           </Button>
           <Button
             type="button"
@@ -423,12 +426,12 @@ export function AvatarEditorDialog({
             {isUploading ? (
               <>
                 <Upload className="h-4 w-4 animate-bounce" />
-                Uploading...
+                {tCommon("uploading")}
               </>
             ) : (
               <>
                 <Check className="h-4 w-4" />
-                Save & Apply
+                {t("saveAndApply")}
               </>
             )}
           </Button>

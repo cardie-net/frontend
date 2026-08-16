@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -29,6 +30,8 @@ export function CreateFolderDialog({
   onOpenChange,
   parentId,
 }: CreateFolderDialogProps) {
+  const t = useTranslations("Folders.createDialog")
+  const tCommon = useTranslations("Common")
   const createFolder = useCreateFolder()
 
   const [name, setName] = useState("")
@@ -40,7 +43,7 @@ export function CreateFolderDialog({
     e.preventDefault()
     setCreateError("")
     if (!name.trim()) {
-      setCreateError("Folder name is required.")
+      setCreateError(t("nameRequired"))
       return
     }
 
@@ -60,7 +63,7 @@ export function CreateFolderDialog({
         },
         onError: (err) =>
           setCreateError(
-            err instanceof Error ? err.message : "An error occurred"
+            err instanceof Error ? err.message : tCommon("error")
           ),
       }
     )
@@ -75,9 +78,9 @@ export function CreateFolderDialog({
               <FolderPlus className="w-5 h-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">Create New Folder</DialogTitle>
+              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
               <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                Enter details for your new folder.
+                {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
@@ -85,12 +88,12 @@ export function CreateFolderDialog({
             {createError && <Alert variant="destructive">{createError}</Alert>}
 
             <div className="grid gap-2">
-              <Label htmlFor="folder-name">Folder Name</Label>
+              <Label htmlFor="folder-name">{t("nameLabel")}</Label>
               <Input
                 id="folder-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Science Decks"
+                placeholder={t("namePlaceholder")}
                 maxLength={80}
                 disabled={createFolder.isPending}
                 required
@@ -98,7 +101,7 @@ export function CreateFolderDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label>Color Accent</Label>
+              <Label>{t("colorLabel")}</Label>
               <ColorPicker
                 color={color}
                 onChange={setColor}
@@ -107,12 +110,12 @@ export function CreateFolderDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="folder-description">Description (Optional)</Label>
+              <Label htmlFor="folder-description">{t("descriptionLabel")}</Label>
               <Textarea
                 id="folder-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="What is this folder about?"
+                placeholder={t("descriptionPlaceholder")}
                 maxLength={500}
                 disabled={createFolder.isPending}
                 className="resize-none h-20"
@@ -126,10 +129,10 @@ export function CreateFolderDialog({
               onClick={() => onOpenChange(false)}
               disabled={createFolder.isPending}
             >
-              Cancel
+              {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={createFolder.isPending}>
-              {createFolder.isPending ? "Creating..." : "Create"}
+              {createFolder.isPending ? tCommon("creating") : tCommon("create")}
             </Button>
           </DialogFooter>
         </form>

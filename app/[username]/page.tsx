@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { cn, formatDate } from "@/lib/utils"
 import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
@@ -37,6 +38,7 @@ import { useProfile, useProfileItems } from "@/hooks/useProfile"
 import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 export default function ProfilePage() {
+  const t = useTranslations("Profile")
   const params = useParams<{ username: string }>()
   const username = params.username
 
@@ -96,14 +98,14 @@ export default function ProfilePage() {
             <AlertCircle className="h-7 w-7" />
           </div>
           <h2 className="mb-2 text-2xl font-bold tracking-tight">
-            User not found
+            {t("userNotFound")}
           </h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            The user profile you are looking for might have been moved or doesn&apos;t exist.
+            {t("userNotFoundDesc")}
           </p>
           <Link href="/">
             <Button variant="outline" className="rounded-xl font-medium">
-              Go back home
+              {t("goHome")}
             </Button>
           </Link>
         </Card>
@@ -186,7 +188,7 @@ export default function ProfilePage() {
               className="rounded-xl gap-2 font-medium border-border/80 hover:bg-accent hover:text-accent-foreground transition-all shadow-sm"
             >
               <Settings className="w-4 h-4 text-primary" />
-              Edit Profile
+              {t("editProfile")}
             </Button>
           </Link>
         )}
@@ -224,7 +226,7 @@ export default function ProfilePage() {
                   {profileUser.created_at && (
                     <span className="inline-flex items-center gap-1.5 text-muted-foreground/90">
                       <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
-                      <span>Joined {formatDate(profileUser.created_at)}</span>
+                      <span>{t("joined", { date: formatDate(profileUser.created_at) })}</span>
                     </span>
                   )}
                 </div>
@@ -283,7 +285,7 @@ export default function ProfilePage() {
             <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
               <Layers className="w-5 h-5" />
             </div>
-            <h2 className="text-2xl font-bold tracking-tight">Decks</h2>
+            <h2 className="text-2xl font-bold tracking-tight">{t("decks")}</h2>
             <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
               {decks.length}
             </Badge>
@@ -309,7 +311,7 @@ export default function ProfilePage() {
               <div className="absolute right-0 top-12 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
                 <Input
                   autoFocus
-                  placeholder="Search decks & folders..."
+                  placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-[240px] sm:w-48 md:w-64 pr-8 rounded-xl h-10 border-border bg-card/95 backdrop-blur-md shadow-lg sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none"
@@ -336,20 +338,20 @@ export default function ProfilePage() {
               <Layers className="w-6 h-6" />
             </div>
             <p className="text-lg font-semibold text-foreground mb-1">
-              {searchQuery ? "No matches found" : "No decks yet"}
+              {searchQuery ? t("noMatchesTitle") : t("noDecksTitle")}
             </p>
             <p className="text-sm text-muted-foreground mb-6">
               {searchQuery
-                ? `No decks or folders matched "${searchQuery}".`
+                ? t("noMatchesDesc", { query: searchQuery })
                 : isOwnProfile
-                ? "Create your first deck to start studying with flashcards!"
-                : "This user hasn't created any public decks yet."}
+                ? t("noDecksOwn")
+                : t("noDecksOther")}
             </p>
             {isOwnProfile && !searchQuery && (
               <Link href="/decks?new=true">
                 <Button className="rounded-xl gap-2 font-medium">
                   <Plus className="w-4 h-4" />
-                  Create First Deck
+                  {t("createFirstDeck")}
                 </Button>
               </Link>
             )}

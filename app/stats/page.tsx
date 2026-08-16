@@ -2,6 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { useAuth } from "@/lib/AuthContext"
 import { useUserItems } from "@/hooks/useFolders"
 import { useSRSCounts } from "@/hooks/useSRSCounts"
@@ -32,6 +33,7 @@ import { useUserActivity } from "@/hooks/useActivity"
 import { ActivityGraph } from "@/components/ActivityGraph"
 
 export default function StatisticsPage() {
+  const t = useTranslations("Stats")
   const { user, loading: authLoading } = useAuth()
   const { data: items = [], isLoading: itemsLoading } = useUserItems()
   const { data: srsCountsData = {}, isLoading: srsLoading } = useSRSCounts()
@@ -72,7 +74,7 @@ export default function StatisticsPage() {
             <BarChart3 className="h-6 w-6" />
           </div>
           <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-            Study Statistics
+            {t("title")}
           </h1>
         </div>
 
@@ -82,18 +84,17 @@ export default function StatisticsPage() {
           </div>
           <div className="mx-auto max-w-lg space-y-2">
             <h2 className="text-2xl font-bold tracking-tight">
-              Study Statistics & Analytics
+              {t("analyticsTitle")}
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-              Track your learning velocity, SRS recall rates, deck mastery, and
-              daily study streaks with a registered account.
+              {t("analyticsDesc")}
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-3 pt-2">
             <Link href="/login">
               <Button className="gap-2 rounded-xl px-6 font-medium">
                 <LogIn className="h-4 w-4" />
-                Log In
+                {t("logIn")}
               </Button>
             </Link>
             <Link href="/signup">
@@ -102,7 +103,7 @@ export default function StatisticsPage() {
                 className="gap-2 rounded-xl border-border/80 px-6 font-medium"
               >
                 <UserPlus className="h-4 w-4 text-primary" />
-                Create Free Account
+                {t("createAccount")}
               </Button>
             </Link>
           </div>
@@ -151,7 +152,7 @@ export default function StatisticsPage() {
             <BarChart3 className="h-6 w-6" />
           </div>
           <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-            Study Statistics
+            {t("title")}
           </h1>
         </div>
 
@@ -162,7 +163,7 @@ export default function StatisticsPage() {
             size="sm"
           >
             <BookOpen className="h-4 w-4" />
-            <span>Study Decks</span>
+            <span>{t("studyDecks")}</span>
           </Button>
         </Link>
       </div>
@@ -172,7 +173,7 @@ export default function StatisticsPage() {
         <Card className="relative space-y-3 overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm transition-all hover:border-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Total Decks
+              {t("totalDecks")}
             </span>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 dark:bg-blue-500/20">
               <Layers className="h-4 w-4" />
@@ -183,7 +184,7 @@ export default function StatisticsPage() {
               {totalDecks}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Decks in your collection
+              {t("totalDecksDesc")}
             </p>
           </div>
         </Card>
@@ -191,7 +192,7 @@ export default function StatisticsPage() {
         <Card className="relative space-y-3 overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm transition-all hover:border-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              Due for Review
+              {t("dueForReview")}
             </span>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 dark:bg-amber-500/20">
               <Clock className="h-4 w-4" />
@@ -200,7 +201,7 @@ export default function StatisticsPage() {
           <div>
             <div className="text-3xl font-bold tracking-tight">{totalDue}</div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {totalLearningCards} learning, {totalReviewCards} review
+              {t("dueForReviewDesc", { learning: totalLearningCards, review: totalReviewCards })}
             </p>
           </div>
         </Card>
@@ -208,7 +209,7 @@ export default function StatisticsPage() {
         <Card className="relative space-y-3 overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm transition-all hover:border-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              New Cards
+              {t("newCards")}
             </span>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 dark:bg-emerald-500/20">
               <Sparkles className="h-4 w-4" />
@@ -219,7 +220,7 @@ export default function StatisticsPage() {
               {totalNewCards}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Ready to introduce into SRS
+              {t("newCardsDesc")}
             </p>
           </div>
         </Card>
@@ -227,7 +228,7 @@ export default function StatisticsPage() {
         <Card className="relative space-y-3 overflow-hidden rounded-2xl border-border/80 bg-card p-5 shadow-sm transition-all hover:border-border">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-              SRS Active
+              {t("srsActive")}
             </span>
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-500/10 text-purple-500 dark:bg-purple-500/20">
               <Brain className="h-4 w-4" />
@@ -238,7 +239,7 @@ export default function StatisticsPage() {
               {totalActiveSRSCards}
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              Cards tracked in SRS system
+              {t("srsActiveDesc")}
             </p>
           </div>
         </Card>
@@ -253,10 +254,10 @@ export default function StatisticsPage() {
           <div>
             <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
               <Zap className="h-5 w-5 text-primary" />
-              Deck SRS Breakdown
+              {t("breakdownTitle")}
             </CardTitle>
             <CardDescription className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              Memory review queues for decks with SRS cards pending
+              {t("breakdownDesc")}
             </CardDescription>
           </div>
         </CardHeader>
@@ -265,12 +266,12 @@ export default function StatisticsPage() {
             <div className="py-12 text-center text-muted-foreground">
               <BookOpen className="mx-auto mb-3 h-10 w-10 opacity-40" />
               <p className="text-base font-medium text-foreground">
-                No pending SRS cards
+                {t("noPendingTitle")}
               </p>
               <p className="mt-1 text-sm">
                 {userDecks.length === 0
-                  ? "Create a deck to start collecting study statistics."
-                  : "You're all caught up! Decks with cards pending review will appear here."}
+                  ? t("noDecksDesc")
+                  : t("allCaughtUpDesc")}
               </p>
               <Link href="/decks" className="mt-4 inline-block">
                 <Button
@@ -278,7 +279,7 @@ export default function StatisticsPage() {
                   size="sm"
                   className="mt-2 rounded-xl border-border/80 font-medium"
                 >
-                  {userDecks.length === 0 ? "Create Deck" : "View Decks"}
+                  {userDecks.length === 0 ? t("createDeck") : t("viewDecks")}
                 </Button>
               </Link>
             </div>
@@ -317,7 +318,7 @@ export default function StatisticsPage() {
                           variant="secondary"
                           className="hidden shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold sm:inline-flex"
                         >
-                          {totalDeckSrs} SRS cards
+                          {t("srsCards", { count: totalDeckSrs })}
                         </Badge>
                       </div>
                       {deck.properties?.description && (
@@ -331,15 +332,15 @@ export default function StatisticsPage() {
                       <div className="flex items-center gap-2 text-xs font-medium sm:gap-1.5">
                         <span className="font-bold text-blue-600 dark:text-blue-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-blue-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
                           {srs.new_count || 0}
-                          <span className="hidden sm:inline"> New</span>
+                          <span className="hidden sm:inline"> {t("newBadge")}</span>
                         </span>
                         <span className="font-bold text-amber-600 dark:text-amber-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-amber-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
                           {srs.learning_count || 0}
-                          <span className="hidden sm:inline"> Learn</span>
+                          <span className="hidden sm:inline"> {t("learnBadge")}</span>
                         </span>
                         <span className="font-bold text-emerald-600 dark:text-emerald-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-emerald-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
                           {srs.review_count || 0}
-                          <span className="hidden sm:inline"> Review</span>
+                          <span className="hidden sm:inline"> {t("reviewBadge")}</span>
                         </span>
                       </div>
 
@@ -349,9 +350,9 @@ export default function StatisticsPage() {
                           variant={deckDue > 0 ? "default" : "outline"}
                           className="shrink-0 rounded-xl px-3.5 text-xs font-medium sm:px-4"
                         >
-                          <span className="sm:hidden">Study</span>
+                          <span className="sm:hidden">{t("studyButton")}</span>
                           <span className="hidden sm:inline">
-                            {deckDue > 0 ? `Study (${deckDue})` : "View Deck"}
+                            {deckDue > 0 ? t("studyCountButton", { count: deckDue }) : t("viewDeckButton")}
                           </span>
                         </Button>
                       </Link>
