@@ -71,7 +71,7 @@ export const ACTION_BUTTONS = [
     iconColor: 'text-pink-600 dark:text-pink-400',
     borderColor: 'border-pink-500/20 dark:border-pink-400/20 hover:border-pink-500/40 dark:hover:border-pink-400/40',
   },
-];
+] as const;
 
 interface DeckActionButtonsProps {
   username: string;
@@ -144,7 +144,7 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
               </div>
               <div className={cn("flex items-center justify-center", isOverview ? "sm:h-10" : "h-10")}>
                 <span className="text-sm font-medium text-center leading-tight">
-                  {t(action.key as any)}
+                  {t(action.key)}
                 </span>
               </div>
               {action.href === 'match' && matchTime?.best_time_ms != null && (

@@ -206,36 +206,6 @@ export function AccountTab() {
   return <AccountForm key={user.id} user={user} />
 }
 
-const validateDisplayName = (name: string): string => {
-  const trimmed = name.trim()
-  if (!trimmed) {
-    return "Display name cannot be empty."
-  }
-  if (trimmed.length < 2) {
-    return "Display name must be at least 2 characters long."
-  }
-  if (trimmed.length > 50) {
-    return "Display name must be 50 characters or fewer."
-  }
-  return ""
-}
-
-const validateUsername = (name: string): string => {
-  if (!name) {
-    return "Username cannot be empty."
-  }
-  if (name.length < 8) {
-    return "Username must be at least 8 characters long."
-  }
-  if (name.length > 32) {
-    return "Username must be 32 characters or fewer."
-  }
-  if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
-    return "Username can only contain letters, numbers, underscores, and dashes."
-  }
-  return ""
-}
-
 function AccountForm({ user }: { user: UserProfile }) {
   const t = useTranslations("Settings.account")
   const tCommon = useTranslations("Common")
