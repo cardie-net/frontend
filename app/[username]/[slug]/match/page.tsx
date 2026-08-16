@@ -13,7 +13,6 @@ import { getCardText } from "@/lib/cards"
 import { shuffle } from "@/lib/utils"
 import { useActivityTracker } from "@/hooks/useActivityTracker"
 
-
 type GridItem = {
   id: string
   cardId: string
@@ -124,7 +123,8 @@ export default function MatchPage() {
       const id = window.setTimeout(() => {
         const container = scrollContainerRef.current
         if (container && container.scrollWidth > container.clientWidth) {
-          container.scrollLeft = (container.scrollWidth - container.clientWidth) / 2
+          container.scrollLeft =
+            (container.scrollWidth - container.clientWidth) / 2
         }
       }, 0)
       return () => window.clearTimeout(id)
@@ -187,10 +187,10 @@ export default function MatchPage() {
   const isLoading = deckLoading || cardsLoading
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-6xl flex-col space-y-8 px-4 pt-8 pb-6 sm:px-10 sm:py-16">
-      <div className="flex flex-col">
-        <div className="flex justify-start sm:justify-between gap-4 items-center">
-          <div className="hidden sm:flex items-center gap-3">
+    <div className="container mx-auto flex h-[100dvh] max-h-[100dvh] max-w-6xl flex-col overflow-hidden px-4 pt-6 pb-16 sm:h-[calc(100dvh-64px)] sm:max-h-none sm:px-10 sm:py-12 sm:pb-8">
+      <div className="flex shrink-0 flex-col">
+        <div className="flex items-center justify-start gap-4 sm:justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
               <LayoutGrid className="h-6 w-6" />
             </div>
@@ -199,9 +199,13 @@ export default function MatchPage() {
             </h1>
           </div>
 
-          <div className="flex sm:hidden items-center gap-2">
+          <div className="flex items-center gap-2 sm:hidden">
             <Link href={`/${username}/${slug}`}>
-              <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-xl font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
@@ -222,7 +226,10 @@ export default function MatchPage() {
               </div>
             )}
             <Link href={`/${username}/${slug}`}>
-              <Button variant="outline" className="gap-2 rounded-xl font-medium">
+              <Button
+                variant="outline"
+                className="gap-2 rounded-xl font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 Back to Deck
               </Button>
@@ -231,7 +238,7 @@ export default function MatchPage() {
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-8 flex min-h-0 flex-1 flex-col items-center justify-center">
+      <div className="mt-2 flex min-h-0 w-full flex-1 flex-col items-center justify-center sm:mt-8">
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
             <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
@@ -252,7 +259,7 @@ export default function MatchPage() {
             </Card>
           </div>
         ) : (
-          <div className="flex w-full flex-1 flex-col items-center justify-center">
+          <div className="flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
             {gameState === "idle" && (
               <div className="flex flex-col items-center justify-center">
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-primary"></div>
@@ -260,22 +267,28 @@ export default function MatchPage() {
             )}
 
             {gameState === "playing" && (
-              <div 
+              <div
                 ref={scrollContainerRef}
-                className="w-full max-w-full overflow-auto pb-4 px-1 scroll-smooth"
+                className="flex h-full min-h-0 w-full max-w-full items-center justify-start overflow-x-auto overflow-y-hidden scroll-smooth px-1 pb-1 sm:justify-center"
               >
-                <div 
-                  className={`grid w-full gap-3 sm:gap-4 sm:min-w-0 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 ${
-                    gridItems.length > 8 ? "grid-cols-4 min-w-[600px]" : "grid-cols-2"
-                  }`}
+                <div
+                  className="grid h-full max-h-[580px] w-full min-w-[560px] grid-cols-4 grid-rows-[repeat(var(--mobile-rows),minmax(0,1fr))] gap-2.5 sm:h-auto sm:max-h-none sm:min-w-0 sm:grid-cols-3 sm:grid-rows-none sm:gap-4 md:grid-cols-4 lg:grid-cols-5"
+                  style={
+                    {
+                      "--mobile-rows": Math.max(
+                        1,
+                        Math.ceil(gridItems.length / 4)
+                      ),
+                    } as React.CSSProperties
+                  }
                 >
                   {gridItems.map((item) => (
                     <div
                       key={item.id}
                       onClick={() => handleItemClick(item)}
-                      className={`flex aspect-[4/3] cursor-pointer items-center justify-center rounded-xl border-2 p-4 text-center transition-all duration-200 select-none ${item.matched ? "invisible opacity-0" : "visible opacity-100"} ${selectedItemId === item.id ? "scale-[1.02] border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"} ${mismatchedIds?.includes(item.id) ? "border-destructive bg-destructive/10" : ""} `}
+                      className={`flex h-full min-h-0 cursor-pointer items-center justify-center rounded-xl border-2 p-2.5 text-center transition-all duration-200 select-none sm:aspect-[4/3] sm:h-auto sm:p-4 ${item.matched ? "invisible opacity-0" : "visible opacity-100"} ${selectedItemId === item.id ? "scale-[1.02] border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"} ${mismatchedIds?.includes(item.id) ? "border-destructive bg-destructive/10" : ""} `}
                     >
-                      <div className="line-clamp-4 w-full text-sm font-medium break-words sm:text-base">
+                      <div className="line-clamp-3 w-full text-xs font-medium break-words sm:line-clamp-4 sm:text-base">
                         {item.content}
                       </div>
                     </div>
@@ -290,10 +303,14 @@ export default function MatchPage() {
                   <div className="rounded-full bg-primary/10 p-4 text-primary">
                     <Timer className="h-10 w-10" />
                   </div>
-                  <CardTitle className="text-3xl font-bold">Finished!</CardTitle>
+                  <CardTitle className="text-3xl font-bold">
+                    Finished!
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="mb-2 text-lg text-muted-foreground">Your time:</p>
+                  <p className="mb-2 text-lg text-muted-foreground">
+                    Your time:
+                  </p>
                   <p className="mb-8 font-mono text-4xl font-bold text-primary">
                     {formatTime(elapsedTime)}s
                   </p>
