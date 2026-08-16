@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Input } from "@/components/ui/input"
@@ -35,6 +35,19 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [editError, setEditError] = useState("")
 
+  useEffect(() => {
+    if (deck) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setEditName(deck.name || "")
+      setEditDescription(deck.properties?.description || "")
+      setEditColor(deck.properties?.color || "default")
+      setCoverUrl(deck.properties?.cover_image_url || "")
+      setCoverFile(null)
+      setEditError("")
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [deck])
+
   const handleSaveEdit = async (e: React.FormEvent) => {
     e.preventDefault()
     setEditError("")
@@ -56,8 +69,8 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
       updateDeck.mutate(
         { 
           deckId: deck.id, 
-          name: editName,
-          description: editDescription || undefined,
+          name: editName.trim(),
+          description: editDescription.trim() || null,
           color: editColor,
           coverImageUrl: finalCoverUrl
         },

@@ -171,7 +171,7 @@ export function useUpdateDeck() {
       slug?: string
       folderId?: string | null
       name?: string
-      description?: string
+      description?: string | null
       color?: string | null
       coverImageUrl?: string | null
     }): Promise<Deck> => {
@@ -182,7 +182,7 @@ export function useUpdateDeck() {
       if (name !== undefined) body.name = name
 
       const properties: Record<string, unknown> = {}
-      if (description !== undefined) properties.description = description
+      if (description !== undefined) properties.description = description?.trim() || null
       if (color !== undefined) properties.color = color === "default" ? null : color
       if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
       if (Object.keys(properties).length > 0) body.properties = properties

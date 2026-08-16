@@ -70,7 +70,7 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
         {
           folderId: folder.id,
           name: name.trim(),
-          description: description || undefined,
+          description: description.trim() || null,
           color,
           coverImageUrl: finalCoverUrl
         },

@@ -151,7 +151,7 @@ export function useUpdateFolder() {
       privacy?: "public" | "unlisted" | "private"
       parentId?: string | null
       color?: string | null
-      description?: string
+      description?: string | null
       coverImageUrl?: string | null
     }): Promise<Folder> => {
       const body: Record<string, unknown> = {}
@@ -162,7 +162,7 @@ export function useUpdateFolder() {
       
       const properties: Record<string, unknown> = {}
       if (color !== undefined) properties.color = color === "default" ? null : color
-      if (description !== undefined) properties.description = description
+      if (description !== undefined) properties.description = description?.trim() || null
       if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
       if (Object.keys(properties).length > 0) body.properties = properties
 
