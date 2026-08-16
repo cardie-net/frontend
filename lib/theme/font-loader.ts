@@ -45,8 +45,17 @@ export function getFontFamilyFallback(category: FontOption['category']): string 
 }
 
 export function getFontFamilyCss(font: FontOption): string {
-  const fallback = getFontFamilyFallback(font.category);
-  return `'${font.name}', ${fallback}`;
+  switch (font.id) {
+    case 'onest':
+      return `var(--font-onest), '${font.name}', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif`;
+    case 'space-grotesk':
+      return `var(--font-space-grotesk), '${font.name}', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif`;
+    case 'lora':
+      return `var(--font-lora), '${font.name}', Georgia, 'Times New Roman', serif`;
+    case 'inter':
+    default:
+      return `var(--font-inter), '${font.name}', -apple-system, BlinkMacSystemFont, sans-serif`;
+  }
 }
 
 export function loadGoogleFont(fontName: string) {

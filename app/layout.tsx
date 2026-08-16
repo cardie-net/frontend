@@ -1,4 +1,5 @@
-import { Geist_Mono, Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Geist_Mono, Inter, Onest, Space_Grotesk, Lora } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -11,12 +12,44 @@ import { Providers } from "@/components/Providers"
 import { NextIntlClientProvider } from "next-intl"
 import { getLocale, getMessages } from "next-intl/server"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const inter = Inter({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const onest = Onest({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-onest",
+  display: "swap",
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-space-grotesk",
+  display: "swap",
+})
+
+const lora = Lora({
+  subsets: ["latin", "cyrillic"],
+  variable: "--font-lora",
+  display: "swap",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 })
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+}
+
+export const metadata: Metadata = {
+  title: "Cardie",
+  description: "Flashcards and spaced repetition learning app",
+}
 
 export default async function RootLayout({
   children,
@@ -33,8 +66,11 @@ export default async function RootLayout({
       className={cn(
         "antialiased dark",
         fontMono.variable,
-        "font-sans",
-        inter.variable
+        inter.variable,
+        onest.variable,
+        spaceGrotesk.variable,
+        lora.variable,
+        "font-sans"
       )}
     >
       <head>

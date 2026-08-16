@@ -3,11 +3,25 @@ import { ThemeConfig } from '@/types/theme';
 export const THEME_STORAGE_KEY = 'cardie_custom_theme_config';
 export const STYLE_TAG_ID = 'cardie-custom-theme-vars';
 
+export function getFontFamilyCssValue(fontFamily: string): string {
+  const normalized = (fontFamily || '').toLowerCase().replace(/\s+/g, '-');
+  switch (normalized) {
+    case 'onest':
+      return `var(--font-onest), 'Onest', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+    case 'space-grotesk':
+      return `var(--font-space-grotesk), 'Space Grotesk', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+    case 'lora':
+      return `var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif`;
+    case 'inter':
+    default:
+      return `var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+  }
+}
+
 export function generateCssVariablesString(config: ThemeConfig): string {
   const { radius, fontFamily, colors } = config;
 
-  const fontFallback = ", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-  const fontValue = `'${fontFamily}'${fontFallback}`;
+  const fontValue = getFontFamilyCssValue(fontFamily);
 
   const vars: string[] = [
     `--radius: ${radius}rem;`,
@@ -46,6 +60,9 @@ export function generateCssVariablesString(config: ThemeConfig): string {
 
   return `
 :root, .dark {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   ${varsBlock}
 }
 `;

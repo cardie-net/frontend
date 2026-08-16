@@ -23,10 +23,20 @@ export function ThemeScript() {
     }
     
     var colors = config.colors;
-    var fontFallback = ", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-    var fontVal = "'" + config.fontFamily + "'" + fontFallback;
+    var rawFont = (config.fontFamily || '').toLowerCase().replace(/\s+/g, '-');
+    var fontVal = "var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    if (rawFont === 'onest') {
+      fontVal = "var(--font-onest), 'Onest', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    } else if (rawFont === 'space-grotesk') {
+      fontVal = "var(--font-space-grotesk), 'Space Grotesk', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+    } else if (rawFont === 'lora') {
+      fontVal = "var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif";
+    }
     
     var css = ':root, .dark { ' +
+      'font-size: 16px; ' +
+      '-webkit-text-size-adjust: 100%; ' +
+      'text-size-adjust: 100%; ' +
       '--radius: ' + config.radius + 'rem; ' +
       '--font-sans: ' + fontVal + '; ' +
       '--font-heading: ' + fontVal + '; ' +
