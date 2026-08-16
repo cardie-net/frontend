@@ -303,7 +303,7 @@ export default function StatisticsPage() {
                 return (
                   <div
                     key={deck.id}
-                    className="flex flex-col gap-4 rounded-2xl border border-border/70 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                    className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5 sm:gap-4"
                   >
                     <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -315,28 +315,31 @@ export default function StatisticsPage() {
                         </Link>
                         <Badge
                           variant="secondary"
-                          className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+                          className="hidden shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold sm:inline-flex"
                         >
                           {totalDeckSrs} SRS cards
                         </Badge>
                       </div>
                       {deck.properties?.description && (
-                        <p className="line-clamp-2 break-all text-xs text-muted-foreground">
+                        <p className="hidden line-clamp-2 break-all text-xs text-muted-foreground sm:block">
                           {deck.properties.description}
                         </p>
                       )}
                     </div>
 
-                    <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 sm:flex-nowrap sm:justify-end">
-                      <div className="flex items-center gap-1.5 text-xs font-medium">
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-blue-500/10 px-2.5 py-1 font-semibold text-blue-600 dark:text-blue-400">
-                          {srs.new_count || 0} New
+                    <div className="flex shrink-0 items-center justify-end gap-3 sm:flex-nowrap">
+                      <div className="flex items-center gap-2 text-xs font-medium sm:gap-1.5">
+                        <span className="font-bold text-blue-600 dark:text-blue-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-blue-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                          {srs.new_count || 0}
+                          <span className="hidden sm:inline"> New</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-amber-500/10 px-2.5 py-1 font-semibold text-amber-600 dark:text-amber-400">
-                          {srs.learning_count || 0} Learn
+                        <span className="font-bold text-amber-600 dark:text-amber-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-amber-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                          {srs.learning_count || 0}
+                          <span className="hidden sm:inline"> Learn</span>
                         </span>
-                        <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/10 px-2.5 py-1 font-semibold text-emerald-600 dark:text-emerald-400">
-                          {srs.review_count || 0} Review
+                        <span className="font-bold text-emerald-600 dark:text-emerald-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-emerald-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                          {srs.review_count || 0}
+                          <span className="hidden sm:inline"> Review</span>
                         </span>
                       </div>
 
@@ -344,9 +347,12 @@ export default function StatisticsPage() {
                         <Button
                           size="sm"
                           variant={deckDue > 0 ? "default" : "outline"}
-                          className="shrink-0 rounded-xl px-4 text-xs font-medium"
+                          className="shrink-0 rounded-xl px-3.5 text-xs font-medium sm:px-4"
                         >
-                          {deckDue > 0 ? `Study (${deckDue})` : "View Deck"}
+                          <span className="sm:hidden">Study</span>
+                          <span className="hidden sm:inline">
+                            {deckDue > 0 ? `Study (${deckDue})` : "View Deck"}
+                          </span>
                         </Button>
                       </Link>
                     </div>
