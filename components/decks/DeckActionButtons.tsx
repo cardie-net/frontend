@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid } from 'lucide-react';
+import { Eye, GraduationCap, Clock, FileCheck, LayoutGrid, AlertCircle } from 'lucide-react';
 import { useDeck, useDeckMatchTime, useClearDeckMatchTime, useDeckExamScore, useClearDeckExamScore } from '@/hooks/useDecks';
 import { useCards } from '@/hooks/useCards';
 import { useSRSCounts, useActivateSRS } from '@/hooks/useSRSCounts';
@@ -96,6 +96,9 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
   const [examAnswerWith, setExamAnswerWith] = useState<"front" | "back" | "both">("back");
   const [examDialogOpen, setExamDialogOpen] = useState(false);
 
+  const [emptyDeckDialogOpen, setEmptyDeckDialogOpen] = useState(false);
+  const hasNoCards = cards.length === 0;
+
   const maxQuestions = cards.length;
   // Resolve the actual count for the link — default to all cards if empty
   const resolvedExamCount = typeof examQuestionCount === "number"
@@ -112,46 +115,63 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-12">
-      {ACTION_BUTTONS.map((action) => {
-        const Icon = action.icon;
-        const isOverview = action.href === 'overview';
-        
-        const cardContent = (
-          <div
-            className={cn(
-              'group relative flex items-center justify-center gap-3 rounded-2xl border transition-all duration-300',
-              'hover:shadow-lg hover:-translate-y-0.5',
-              action.bgClasses,
-              action.borderColor,
-              isOverview ? 'aspect-[4/1] flex-row p-4 sm:aspect-square sm:flex-col sm:p-6' : 'aspect-square flex-col p-6'
-            )}
-          >
+    <>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-12">
+        {ACTION_BUTTONS.map((action) => {
+          const Icon = action.icon;
+          const isOverview = action.href === 'overview';
+          
+          const cardContent = (
             <div
               className={cn(
-                'rounded-xl p-3 transition-transform duration-300 group-hover:scale-110',
-                action.iconColor
+                'group relative flex items-center justify-center gap-3 rounded-2xl border transition-all duration-300',
+                'hover:shadow-lg hover:-translate-y-0.5',
+                action.bgClasses,
+                action.borderColor,
+                isOverview ? 'aspect-[4/1] flex-row p-4 sm:aspect-square sm:flex-col sm:p-6' : 'aspect-square flex-col p-6'
               )}
             >
-              <Icon className="w-7 h-7" strokeWidth={1.75} />
+              <div
+                className={cn(
+                  'rounded-xl p-3 transition-transform duration-300 group-hover:scale-110',
+                  action.iconColor
+                )}
+              >
+                <Icon className="w-7 h-7" strokeWidth={1.75} />
+              </div>
+              <div className={cn("flex items-center justify-center", isOverview ? "sm:h-10" : "h-10")}>
+                <span className="text-sm font-medium text-center leading-tight">
+                  {action.label}
+                </span>
+              </div>
+              {action.href === 'match' && matchTime?.best_time_ms != null && (
+                <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
+                  Best: {formatTime(matchTime.best_time_ms)}
+                </span>
+              )}
+              {action.href === 'exam' && examScore?.best_score_percentage != null && (
+                <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
+                  Best: {examScore.best_score_percentage}%
+                </span>
+              )}
             </div>
-            <div className={cn("flex items-center justify-center", isOverview ? "sm:h-10" : "h-10")}>
-              <span className="text-sm font-medium text-center leading-tight">
-                {action.label}
-              </span>
-            </div>
-            {action.href === 'match' && matchTime?.best_time_ms != null && (
-              <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
-                Best: {formatTime(matchTime.best_time_ms)}
-              </span>
-            )}
-            {action.href === 'exam' && examScore?.best_score_percentage != null && (
-              <span className="absolute bottom-3 sm:bottom-4 text-[10px] sm:text-xs text-muted-foreground mt-1">
-                Best: {examScore.best_score_percentage}%
-              </span>
-            )}
-          </div>
-        );
+          );
+
+          if (hasNoCards) {
+            return (
+              <button
+                key={action.href}
+                type="button"
+                onClick={() => setEmptyDeckDialogOpen(true)}
+                className={cn(
+                  "block text-left w-full h-full text-foreground hover:no-underline p-0 m-0 border-none bg-transparent focus:outline-none cursor-pointer",
+                  isOverview ? "col-span-2 sm:col-span-1" : ""
+                )}
+              >
+                {cardContent}
+              </button>
+            );
+          }
 
         if (action.href === 'spaced-repetition' && !isSrsActivated) {
           return (
@@ -359,5 +379,36 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
         );
       })}
     </div>
+
+    <Dialog open={emptyDeckDialogOpen} onOpenChange={setEmptyDeckDialogOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
+          <div className="p-2 rounded-2xl bg-primary/10 text-primary">
+            <AlertCircle className="w-5 h-5" />
+          </div>
+          <div>
+            <DialogTitle className="text-base font-semibold">Deck is empty</DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              No cards available to study
+            </DialogDescription>
+          </div>
+        </DialogHeader>
+        <div className="text-sm text-muted-foreground py-2">
+          <p>
+            This deck does not contain any cards yet. Add at least one card before starting a learning session.
+          </p>
+        </div>
+        <DialogFooter>
+          <Button
+            type="button"
+            className="w-full sm:w-auto"
+            onClick={() => setEmptyDeckDialogOpen(false)}
+          >
+            Close
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  </>
   );
 }

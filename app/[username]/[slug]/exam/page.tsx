@@ -197,15 +197,6 @@ export default function ExamPage() {
     )
   }
 
-  if (!cards || cards.length === 0) {
-    return (
-      <div className="container mx-auto max-w-4xl px-4 py-16 text-center">
-        <h2 className="text-2xl font-bold">No cards found in this deck</h2>
-        <Link href={`/${username}/${slug}`} className={buttonVariants({ className: "mt-4 rounded-xl" })}>Back to Deck</Link>
-      </div>
-    )
-  }
-
   const firstUnansweredIndex = questions.findIndex((q) => q.selectedOptionId === null)
 
   const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0

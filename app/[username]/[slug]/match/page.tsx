@@ -243,21 +243,6 @@ export default function MatchPage() {
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
             <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
           </div>
-        ) : cards.length === 0 ? (
-          <div className="flex w-full flex-1 flex-col items-center justify-center">
-            <Card className="w-full max-w-md py-12 text-center">
-              <CardContent>
-                <LayoutGrid className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                <p className="mb-2 text-xl font-semibold">No Cards Available</p>
-                <p className="mb-6 text-muted-foreground">
-                  Add some cards to this deck to play Match Mode.
-                </p>
-                <Link href={`/${username}/${slug}`}>
-                  <Button>Go Back</Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </div>
         ) : (
           <div className="flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center">
             {gameState === "idle" && (

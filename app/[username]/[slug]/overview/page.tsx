@@ -334,61 +334,50 @@ export default function OverviewPage() {
       </div>
 
       <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
-        {cards.length > 0 ? (
-          <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
-            <Carousel
-              setApi={setApi}
-              className="flex min-h-0 w-full flex-1 flex-col sm:flex-none"
-            >
-              <CarouselContent className="min-h-0 flex-1 sm:flex-none">
-                {displayedCards.map((card, index) => (
-                  <CarouselItem key={card.id} className="flex min-h-0 flex-col">
-                    <div className="flex min-h-0 flex-1 flex-col p-1 sm:flex-none">
-                      <Flashcard
-                        card={card}
-                        flipped={index === current - 1 ? isFlipped : false}
-                        onFlip={() => setIsFlipped((prev) => !prev)}
-                      />
-                    </div>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+        <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
+          <Carousel
+            setApi={setApi}
+            className="flex min-h-0 w-full flex-1 flex-col sm:flex-none"
+          >
+            <CarouselContent className="min-h-0 flex-1 sm:flex-none">
+              {displayedCards.map((card, index) => (
+                <CarouselItem key={card.id} className="flex min-h-0 flex-col">
+                  <div className="flex min-h-0 flex-1 flex-col p-1 sm:flex-none">
+                    <Flashcard
+                      card={card}
+                      flipped={index === current - 1 ? isFlipped : false}
+                      onFlip={() => setIsFlipped((prev) => !prev)}
+                    />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
 
-            <div className="mt-4 px-8 sm:mt-8">
-              <Progress
-                value={count > 0 ? (current / count) * 100 : 0}
-                className="h-2"
-              />
-              <div className="mt-2 text-center text-sm font-medium text-muted-foreground sm:mt-3">
-                Card {current} of {count}
-              </div>
-            </div>
-
-            <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
-              <span className="sm:hidden">
-                Click anywhere on the card to flip
-              </span>
-              <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
-                Click anywhere on the card or press{" "}
-                <Kbd className="text-[10px]">Space</Kbd> /{" "}
-                <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use
-                arrow keys to navigate
-              </span>
+          <div className="mt-4 px-8 sm:mt-8">
+            <Progress
+              value={count > 0 ? (current / count) * 100 : 0}
+              className="h-2"
+            />
+            <div className="mt-2 text-center text-sm font-medium text-muted-foreground sm:mt-3">
+              Card {current} of {count}
             </div>
           </div>
-        ) : (
-          <div className="w-full max-w-xl rounded-lg border p-8 text-center text-muted-foreground">
-            <p>No cards in this deck yet.</p>
-            <Link href={`/${username}/${slug}`}>
-              <Button variant="link" className="mt-2">
-                Go back to add cards
-              </Button>
-            </Link>
+
+          <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
+            <span className="sm:hidden">
+              Click anywhere on the card to flip
+            </span>
+            <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
+              Click anywhere on the card or press{" "}
+              <Kbd className="text-[10px]">Space</Kbd> /{" "}
+              <Kbd className="text-[10px]">Enter</Kbd> to flip &bull; Use
+              arrow keys to navigate
+            </span>
           </div>
-        )}
+        </div>
       </div>
 
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
