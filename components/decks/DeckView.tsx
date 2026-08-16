@@ -357,10 +357,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         <div className="flex flex-col min-w-0">
           <div className="flex w-full flex-col min-w-0">
             <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center min-w-0">
-              <div className="flex items-center gap-3 min-w-0">
+              <div className="flex items-start sm:items-center gap-3 min-w-0">
                 <div
                   className={cn(
-                    "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm",
+                    "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm mt-0.5 sm:mt-0",
                     deck.properties?.color
                       ? getDeckColorClass(deck.properties.color)
                       : "bg-primary/10 text-primary"
@@ -368,40 +368,40 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 >
                   <Layers className="h-6 w-6" />
                 </div>
-                <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl min-w-0">
-                  {deck.name}
-                </h1>
-                {isOwner ? (
-                  <Badge
-                    variant="secondary"
-                    className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                  >
-                    {cards.length}
-                  </Badge>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleToggleStar}
-                    disabled={isStarPending}
-                    aria-label={isStarred ? "Unstar deck" : "Star deck"}
-                    className={cn(
-                      "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0",
-                      isStarred
-                        ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
-                        : "bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
-                    )}
-                  >
-                    <Star
+                <h1 className="line-clamp-2 sm:truncate text-2xl font-bold tracking-tight sm:text-3xl min-w-0 break-words flex-1">
+                  <span>{deck.name}</span>{" "}
+                  {isOwner ? (
+                    <Badge
+                      variant="secondary"
+                      className="inline-flex align-middle shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2.5 -translate-y-0.5"
+                    >
+                      {cards.length}
+                    </Badge>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleToggleStar}
+                      disabled={isStarPending}
+                      aria-label={isStarred ? "Unstar deck" : "Star deck"}
                       className={cn(
-                        "w-3.5 h-3.5 transition-transform duration-200",
+                        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0 ml-2.5 align-middle -translate-y-0.5",
                         isStarred
-                          ? "fill-current text-amber-500 scale-110"
-                          : "text-muted-foreground"
+                          ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
+                          : "bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
                       )}
-                    />
-                    <span>{starsCount}</span>
-                  </button>
-                )}
+                    >
+                      <Star
+                        className={cn(
+                          "w-3.5 h-3.5 transition-transform duration-200",
+                          isStarred
+                            ? "fill-current text-amber-500 scale-110"
+                            : "text-muted-foreground"
+                        )}
+                      />
+                      <span>{starsCount}</span>
+                    </button>
+                  )}
+                </h1>
               </div>
             </div>
 
