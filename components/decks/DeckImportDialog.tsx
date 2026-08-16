@@ -398,7 +398,7 @@ export function DeckImportDialog({
             onClick={() => onClose()}
             disabled={busy}
           >
-            {phase === "failed" ? "Close" : "Cancel"}
+            {phase === "done" || phase === "failed" ? "Close" : "Cancel"}
           </Button>
           {(phase === "done" || phase === "failed") &&
             mode === "create" &&
