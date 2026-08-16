@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useCustomTheme } from './custom-theme-provider';
+import { loadAllPreviewFonts, getFontFamilyCss } from '@/lib/theme/font-loader';
 import { cn } from '@/lib/utils';
 import {
   Dialog,
@@ -51,6 +52,12 @@ export function AppearancePopup({
   const [activeTab, setActiveTab] = useState<'presets' | 'tweak'>('presets');
   const [importError, setImportError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadAllPreviewFonts();
+    }
+  }, [isOpen]);
 
   const radiusOptions = [
     { label: '0px', value: 0 },
@@ -218,6 +225,7 @@ export function AppearancePopup({
                     <button
                       key={font.id}
                       onClick={() => setFontFamily(font.name)}
+                      style={{ fontFamily: getFontFamilyCss(font) }}
                       className={cn(
                         'px-3 py-2 text-xs text-left rounded-xl border transition-all truncate',
                         isSelected

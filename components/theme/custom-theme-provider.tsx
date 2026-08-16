@@ -57,8 +57,12 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       try {
         const parsed = JSON.parse(savedJson) as ThemeConfig;
         if (parsed.colors && typeof parsed.radius === 'number' && parsed.fontFamily) {
+          const isFontValid = AVAILABLE_FONTS.some(
+            (f) => f.name.toLowerCase() === parsed.fontFamily.toLowerCase() || f.id === parsed.fontFamily.toLowerCase()
+          );
           return {
             ...parsed,
+            fontFamily: isFontValid ? parsed.fontFamily : DEFAULT_PRESET.fontFamily,
             deckDisplayMode: parsed.deckDisplayMode || 'grid',
           };
         }
@@ -175,8 +179,12 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       if (!parsed.colors || typeof parsed.radius !== 'number' || !parsed.fontFamily) {
         return false;
       }
+      const isFontValid = AVAILABLE_FONTS.some(
+        (f) => f.name.toLowerCase() === parsed.fontFamily.toLowerCase() || f.id === parsed.fontFamily.toLowerCase()
+      );
       const newConfig: ThemeConfig = {
         ...parsed,
+        fontFamily: isFontValid ? parsed.fontFamily : DEFAULT_PRESET.fontFamily,
         deckDisplayMode: parsed.deckDisplayMode || 'grid',
       };
       updateConfig(newConfig);

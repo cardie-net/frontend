@@ -6,7 +6,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-1',
     name: 'Pure Black & Purple',
     radius: 0.625, // 10px default
-    fontFamily: 'Outfit', // Outfit default
+    fontFamily: 'Onest', // Onest default
     colors: {
       background: 'oklch(0.145 0 0)',
       foreground: 'oklch(0.985 0 0)',
@@ -41,7 +41,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-2',
     name: 'Dark & Green',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.14 0.03 160)',
       foreground: 'oklch(0.98 0.01 160)',
@@ -68,7 +68,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-3',
     name: 'Dark & Blue',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.13 0.04 250)',
       foreground: 'oklch(0.98 0.01 250)',
@@ -95,7 +95,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-4',
     name: 'Dark & Red',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.14 0.03 20)',
       foreground: 'oklch(0.98 0.01 20)',
@@ -122,7 +122,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-5',
     name: 'Dark & Purple',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.14 0.04 285)',
       foreground: 'oklch(0.98 0.01 285)',
@@ -149,7 +149,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-6',
     name: 'Dark & Orange',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.14 0.03 70)',
       foreground: 'oklch(0.98 0.01 70)',
@@ -176,7 +176,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-7',
     name: 'Black & White',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.10 0 0)',
       foreground: 'oklch(0.99 0 0)',
@@ -203,7 +203,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-8',
     name: 'Pure Black & Cyan',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.145 0 0)',
       foreground: 'oklch(0.985 0 0)',
@@ -238,7 +238,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     id: 'theme-9',
     name: 'Dark & Pink',
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.14 0.04 340)',
       foreground: 'oklch(0.98 0.01 340)',
@@ -266,7 +266,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     name: 'White & Black',
     isLight: true,
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.99 0 0)',
       foreground: 'oklch(0.145 0 0)',
@@ -294,7 +294,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     name: 'White & Pink',
     isLight: true,
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.98 0.01 350)',
       foreground: 'oklch(0.18 0.03 350)',
@@ -322,7 +322,7 @@ export const PRESET_THEMES: ThemePreset[] = [
     name: 'White & Purple',
     isLight: true,
     radius: 0.625,
-    fontFamily: 'Outfit',
+    fontFamily: 'Onest',
     colors: {
       background: 'oklch(0.98 0.015 290)',
       foreground: 'oklch(0.16 0.04 290)',
