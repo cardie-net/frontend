@@ -23,8 +23,11 @@ import {
 import { CommunityDeckCard } from '@/components/community/CommunityDeckCard'
 import { CommunityFolderCard } from '@/components/community/CommunityFolderCard'
 import { useCommunityItems } from '@/hooks/useCommunity'
+import { useCustomTheme } from '@/components/theme/custom-theme-provider'
 
 export default function CommunityPage() {
+  const { deckDisplayMode } = useCustomTheme()
+  const isLineMode = deckDisplayMode === 'line'
   const [mode, setMode] = useState<CommunitySortMode>('popular')
   const [itemType, setItemType] = useState<'all' | 'deck' | 'folder'>('all')
   const [searchInput, setSearchInput] = useState('')
@@ -183,9 +186,12 @@ export default function CommunityPage() {
 
       {/* Content Area */}
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-[130px] rounded-2xl" />
+            <Skeleton
+              key={i}
+              className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")}
+            />
           ))}
         </div>
       ) : isError ? (
@@ -231,7 +237,7 @@ export default function CommunityPage() {
       ) : (
         <div className="space-y-6">
           {/* Mixed items grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
             {items.map((item) =>
               item.type === 'folder' ? (
                 <CommunityFolderCard key={`folder-${item.id}`} folder={item} />

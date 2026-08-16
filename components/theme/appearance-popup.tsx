@@ -20,7 +20,9 @@ import {
   Sliders,
   Download,
   Upload,
+  Rows,
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
 
 interface AppearancePopupProps {
   isOpen: boolean;
@@ -42,6 +44,8 @@ export function AppearancePopup({
     exportThemeJson,
     importThemeJson,
     activePreset,
+    deckDisplayMode,
+    setDeckDisplayMode,
   } = useCustomTheme();
 
   const [activeTab, setActiveTab] = useState<'presets' | 'tweak'>('presets');
@@ -84,7 +88,7 @@ export function AppearancePopup({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-md p-6 rounded-3xl backdrop-blur-2xl bg-background/95 border-border/80 text-foreground shadow-2xl">
+      <DialogContent className="max-w-md sm:max-w-lg p-6 rounded-3xl backdrop-blur-2xl bg-background/95 border-border/80 text-foreground shadow-2xl">
         {/* Header */}
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
           <div className="p-2 rounded-2xl bg-primary/10 text-primary">
@@ -128,8 +132,8 @@ export function AppearancePopup({
 
         {/* Tab Content: Presets (Nameless Color Palette Cards Grid) */}
         {activeTab === 'presets' && (
-          <div className="space-y-3 mt-1">
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-72 overflow-y-auto overflow-x-hidden p-1.5">
+          <div className="flex flex-col mt-1">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-64 sm:max-h-72 overflow-y-auto overflow-x-hidden p-1.5">
               {presets.map((preset) => {
                 const isSelected = activePreset?.id === preset.id;
                 return (
@@ -171,9 +175,9 @@ export function AppearancePopup({
           </div>
         )}
 
-        {/* Tab Content: Tweak */}
+        {/* Tab Content: Tweak (Customize) */}
         {activeTab === 'tweak' && (
-          <div className="space-y-4 max-h-72 overflow-y-auto overflow-x-hidden p-1.5 mt-1">
+          <div className="space-y-4 p-1 mt-1">
             {/* Border Radius Section */}
             <div className="space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
@@ -226,6 +230,26 @@ export function AppearancePopup({
                   );
                 })}
               </div>
+            </div>
+
+            {/* Deck Display Mode Section */}
+            <div className="flex items-center justify-between gap-3 pt-1 px-1">
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                  <Rows className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span>Compact deck view</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Display decks as horizontal lines instead of cards
+                </p>
+              </div>
+              <Switch
+                id="compact-deck-mode-toggle"
+                checked={deckDisplayMode === 'line'}
+                onCheckedChange={(checked) =>
+                  setDeckDisplayMode(checked ? 'line' : 'grid')
+                }
+              />
             </div>
           </div>
         )}

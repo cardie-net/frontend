@@ -44,6 +44,23 @@ const DECK_COLOR_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
   rose: "border-t-rose-500",
 }
 
+const DECK_LEFT_BORDER_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
+  red: "border-l-red-500",
+  orange: "border-l-orange-500",
+  amber: "border-l-amber-500",
+  green: "border-l-green-500",
+  emerald: "border-l-emerald-500",
+  teal: "border-l-teal-500",
+  cyan: "border-l-cyan-500",
+  blue: "border-l-blue-500",
+  indigo: "border-l-indigo-500",
+  violet: "border-l-violet-500",
+  purple: "border-l-purple-500",
+  fuchsia: "border-l-fuchsia-500",
+  pink: "border-l-pink-500",
+  rose: "border-l-rose-500",
+}
+
 const DECK_BG_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
   red: "bg-red-500",
   orange: "bg-orange-500",
@@ -61,18 +78,26 @@ const DECK_BG_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
   rose: "bg-rose-500",
 }
 
-/** Returns the top-border accent classes for a deck color ('' for default/unknown/hex). */
-export function getDeckColorClass(color?: string | null): string {
+/** Returns the border accent classes for a deck color ('top' or 'left'). */
+export function getDeckColorClass(
+  color?: string | null,
+  side: "top" | "left" = "top"
+): string {
   if (!color || color === "default" || color.startsWith("#")) return ""
-  const colorClass = (DECK_COLOR_CLASSES as Record<string, string | undefined>)[
-    color
-  ]
-  return colorClass ? `border-t-4 ${colorClass}` : ""
+  const classes = side === "left" ? DECK_LEFT_BORDER_CLASSES : DECK_COLOR_CLASSES
+  const colorClass = (classes as Record<string, string | undefined>)[color]
+  return colorClass ? `${side === "left" ? "border-l-4" : "border-t-4"} ${colorClass}` : ""
 }
 
-/** Returns inline style for top-border if color is a hex code */
-export function getDeckColorStyle(color?: string | null): React.CSSProperties | undefined {
+/** Returns inline style for border if color is a hex code */
+export function getDeckColorStyle(
+  color?: string | null,
+  side: "top" | "left" = "top"
+): React.CSSProperties | undefined {
   if (color?.startsWith("#")) {
+    if (side === "left") {
+      return { borderLeftWidth: '4px', borderLeftColor: color }
+    }
     return { borderTopWidth: '4px', borderTopColor: color }
   }
   return undefined

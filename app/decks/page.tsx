@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 import {
   DndContext,
   PointerSensor,
@@ -38,6 +39,8 @@ import {
 
 export default function DecksPage() {
   const { user, loading: authLoading } = useAuth()
+  const { deckDisplayMode } = useCustomTheme()
+  const isLineMode = deckDisplayMode === 'line'
 
   const {
     data: ownedItems = [],
@@ -146,10 +149,10 @@ export default function DecksPage() {
           <Skeleton className="h-11 w-11 rounded-2xl" />
           <Skeleton className="h-9 w-48 rounded-xl" />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Skeleton className="h-[130px] rounded-2xl" />
-          <Skeleton className="h-[130px] rounded-2xl" />
-          <Skeleton className="h-[130px] rounded-2xl" />
+        <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
+          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
+          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
+          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
         </div>
       </div>
     )
@@ -292,7 +295,7 @@ export default function DecksPage() {
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
           <div className="space-y-5">
             {rootFolders.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
+              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2")}>
                 {rootFolders.map((folder) => {
                   const isOwner = folder.user_id === user?.id
                   return (
@@ -316,7 +319,7 @@ export default function DecksPage() {
             )}
 
             {rootDecks.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
                 {rootDecks.map((deck) => {
                   const isOwner = deck.user_id === user?.id
                   return (

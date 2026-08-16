@@ -1,34 +1,78 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
 import {
   ThemeConfig,
   ThemeColors,
+  DeckDisplayMode,
   CustomThemeContextType,
 } from '@/types/theme';
 import { PRESET_THEMES, DEFAULT_PRESET } from '@/lib/theme/presets';
 import { AVAILABLE_FONTS, loadGoogleFont } from '@/lib/theme/font-loader';
 import {
   applyThemeToDom,
-  getSavedThemeConfigFromStorage,
   saveThemeConfigToStorage,
+  THEME_STORAGE_KEY,
 } from '@/lib/theme/theme-engine';
 import { apiFetch } from '@/lib/api';
+
+const THEME_CHANGE_EVENT = 'cardie_theme_change';
+
+function subscribeTheme(callback: () => void) {
+  if (typeof window === 'undefined') return () => {};
+  window.addEventListener('storage', callback);
+  window.addEventListener(THEME_CHANGE_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(THEME_CHANGE_EVENT, callback);
+  };
+}
+
+function getThemeSnapshot(): string {
+  if (typeof window === 'undefined') return '';
+  return localStorage.getItem(THEME_STORAGE_KEY) || '';
+}
+
+function getServerThemeSnapshot(): string {
+  return '';
+}
 
 const CustomThemeContext = createContext<CustomThemeContextType | undefined>(undefined);
 
 export function CustomThemeProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<ThemeConfig>(() => {
-    if (typeof window !== 'undefined') {
-      const saved = getSavedThemeConfigFromStorage();
-      if (saved) return saved;
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+
+  const savedJson = useSyncExternalStore(
+    subscribeTheme,
+    getThemeSnapshot,
+    getServerThemeSnapshot
+  );
+
+  const config = useMemo<ThemeConfig>(() => {
+    if (savedJson) {
+      try {
+        const parsed = JSON.parse(savedJson) as ThemeConfig;
+        if (parsed.colors && typeof parsed.radius === 'number' && parsed.fontFamily) {
+          return {
+            ...parsed,
+            deckDisplayMode: parsed.deckDisplayMode || 'grid',
+          };
+        }
+      } catch {
+        // Fallback to default on parse error
+      }
     }
     return {
       radius: DEFAULT_PRESET.radius,
       fontFamily: DEFAULT_PRESET.fontFamily,
       colors: { ...DEFAULT_PRESET.colors },
+      deckDisplayMode: 'grid',
     };
-  });
+  }, [savedJson]);
 
   // Keep DOM styling & Google Fonts synchronized whenever config updates
   useEffect(() => {
@@ -41,8 +85,10 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
   ) || null;
 
   const updateConfig = (newConfig: ThemeConfig) => {
-    setConfig(newConfig);
     saveThemeConfigToStorage(newConfig);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
+    }
     
     // Send request immediately so if user reloads, it's saved
     apiFetch('/api/v1/users/me', {
@@ -55,6 +101,14 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     });
   };
 
+  const setDeckDisplayMode = (deckDisplayMode: DeckDisplayMode) => {
+    const newConfig: ThemeConfig = {
+      ...config,
+      deckDisplayMode,
+    };
+    updateConfig(newConfig);
+  };
+
   const applyPreset = (presetId: string) => {
     const target = PRESET_THEMES.find((p) => p.id === presetId);
     if (!target) return;
@@ -63,6 +117,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       radius: config.radius,
       fontFamily: config.fontFamily,
       colors: { ...target.colors },
+      deckDisplayMode: config.deckDisplayMode || 'grid',
     };
 
     updateConfig(newConfig);
@@ -72,6 +127,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       radius,
+      deckDisplayMode: config.deckDisplayMode || 'grid',
     };
     updateConfig(newConfig);
   };
@@ -80,6 +136,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       fontFamily,
+      deckDisplayMode: config.deckDisplayMode || 'grid',
     };
     updateConfig(newConfig);
   };
@@ -93,6 +150,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     const newConfig: ThemeConfig = {
       ...config,
       colors: newColors,
+      deckDisplayMode: config.deckDisplayMode || 'grid',
     };
     updateConfig(newConfig);
   };
@@ -102,6 +160,7 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       radius: DEFAULT_PRESET.radius,
       fontFamily: DEFAULT_PRESET.fontFamily,
       colors: { ...DEFAULT_PRESET.colors },
+      deckDisplayMode: 'grid',
     };
     updateConfig(newConfig);
   };
@@ -116,7 +175,11 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
       if (!parsed.colors || typeof parsed.radius !== 'number' || !parsed.fontFamily) {
         return false;
       }
-      updateConfig(parsed);
+      const newConfig: ThemeConfig = {
+        ...parsed,
+        deckDisplayMode: parsed.deckDisplayMode || 'grid',
+      };
+      updateConfig(newConfig);
       return true;
     } catch {
       return false;
@@ -127,6 +190,9 @@ export function CustomThemeProvider({ children }: { children: React.ReactNode })
     <CustomThemeContext.Provider
       value={{
         config,
+        mounted,
+        deckDisplayMode: config.deckDisplayMode || 'grid',
+        setDeckDisplayMode,
         activePreset,
         presets: PRESET_THEMES,
         availableFonts: AVAILABLE_FONTS,

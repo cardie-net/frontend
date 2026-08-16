@@ -43,6 +43,7 @@ import { getDeckColorClass } from "@/lib/decks"
 import { cn } from "@/lib/utils"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 import {
   DndContext,
   PointerSensor,
@@ -59,6 +60,8 @@ interface FolderViewProps {
 export function FolderView({ username, folder }: FolderViewProps) {
   const router = useRouter()
   const { user } = useAuth()
+  const { deckDisplayMode } = useCustomTheme()
+  const isLineMode = deckDisplayMode === 'line'
 
   const { data: parentFolder } = useFolder(folder.parent_id || undefined)
   const {
@@ -392,7 +395,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
           <div className="space-y-5">
             {childFolders.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2">
+              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2")}>
                 {childFolders.map((subFolder) => {
                   return (
                     <FolderCard
@@ -415,7 +418,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
             )}
 
             {childDecks.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
                 {childDecks.map((deck) => (
                   <DeckCard
                     key={deck.id}

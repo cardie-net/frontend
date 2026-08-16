@@ -1,3 +1,5 @@
+export type DeckDisplayMode = 'grid' | 'line';
+
 export interface ThemeColors {
   background: string;
   foreground: string;
@@ -48,10 +50,14 @@ export interface ThemeConfig {
   radius: number;
   fontFamily: string;
   colors: ThemeColors;
+  deckDisplayMode?: DeckDisplayMode;
 }
 
 export interface CustomThemeContextType {
   config: ThemeConfig;
+  mounted: boolean;
+  deckDisplayMode: DeckDisplayMode;
+  setDeckDisplayMode: (mode: DeckDisplayMode) => void;
   activePreset: ThemePreset | null;
   presets: ThemePreset[];
   availableFonts: FontOption[];
@@ -63,3 +69,4 @@ export interface CustomThemeContextType {
   exportThemeJson: () => string;
   importThemeJson: (jsonString: string) => boolean;
 }
+

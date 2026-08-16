@@ -17,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CommunityFolder } from '@/types'
 import { useAuth } from '@/lib/AuthContext'
 import { useStarFolder, useUnstarFolder } from '@/hooks/useCommunity'
+import { useCustomTheme } from '@/components/theme/custom-theme-provider'
 
 interface CommunityFolderCardProps {
   folder: CommunityFolder
@@ -25,6 +26,7 @@ interface CommunityFolderCardProps {
 export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
   const router = useRouter()
   const { user } = useAuth()
+  const { deckDisplayMode } = useCustomTheme()
 
   const starFolder = useStarFolder()
   const unstarFolder = useUnstarFolder()
@@ -79,6 +81,110 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
     } finally {
       setIsPending(false)
     }
+  }
+
+  if (deckDisplayMode === 'line') {
+    return (
+      <div className="relative block group/folder">
+        <Card
+          className={cn(
+            'relative w-full rounded-2xl border border-border/70 px-3.5 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 group-hover/folder:border-primary/50 group-hover/folder:shadow-sm flex !flex-row flex-row items-center justify-between gap-2.5 sm:gap-3 overflow-hidden bg-card min-h-[46px] sm:min-h-[50px]',
+            getDeckColorClass(folder.properties?.color, 'left')
+          )}
+          style={getDeckColorStyle(folder.properties?.color, 'left')}
+        >
+          <Link
+            href={folderHref}
+            className="absolute inset-0 z-10 rounded-2xl"
+          />
+
+          {/* Left section: Badge + Title + Description */}
+          <div className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 pointer-events-none">
+            <Badge
+              variant="secondary"
+              className="shrink-0 text-[11px] px-1.5 py-0 h-5 font-semibold"
+            >
+              <FolderIcon className="w-3 h-3 mr-1" />
+              <span>{folder.decks_count ?? 0}</span>
+            </Badge>
+
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="font-bold text-xs sm:text-sm tracking-tight text-foreground group-hover/folder:text-primary transition-colors line-clamp-2 sm:truncate sm:line-clamp-none break-words [overflow-wrap:anywhere] leading-snug sm:leading-normal">
+                {folder.name}
+              </span>
+              {folder.properties?.description && (
+                <span className="hidden md:inline-block text-xs text-muted-foreground truncate shrink min-w-0">
+                  • {folder.properties.description}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Right section: Author + Star Button */}
+          <div className="relative z-20 flex items-center gap-2 sm:gap-2.5 shrink-0 pointer-events-auto">
+            {folder.owner && (
+              <div className="hidden sm:inline-flex items-center gap-1.5">
+                {folder.owner.is_guest ? (
+                  <div className="inline-flex items-center gap-1 text-xs text-muted-foreground select-none">
+                    <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                      <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
+                        G
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="font-medium text-[11px]">Guest</span>
+                  </div>
+                ) : (
+                  <Link
+                    href={`/${folder.owner.username}`}
+                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group/author hover:underline min-w-0"
+                  >
+                    <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                      <AvatarImage
+                        src={folder.owner.avatar_url}
+                        alt={folder.owner.display_name}
+                      />
+                      <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
+                        {folder.owner.display_name?.slice(0, 2).toUpperCase() || '??'}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="truncate max-w-[100px] text-[11px] font-medium">
+                      {folder.owner.display_name || folder.owner.username}
+                    </span>
+                  </Link>
+                )}
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={isOwner ? undefined : handleToggleStar}
+              disabled={isOwner || isPending}
+              title={isOwner ? 'You cannot star your own folder' : undefined}
+              className={cn(
+                'flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm',
+                isOwner
+                  ? 'cursor-default opacity-80 bg-muted/70 text-muted-foreground border border-border/60'
+                  : 'cursor-pointer',
+                isStarred
+                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
+                  : !isOwner &&
+                      'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
+              )}
+            >
+              <Star
+                className={cn(
+                  'w-3.5 h-3.5 transition-transform duration-200',
+                  isStarred
+                    ? 'fill-current text-amber-500 scale-110'
+                    : 'text-muted-foreground'
+                )}
+              />
+              <span>{starsCount}</span>
+            </button>
+          </div>
+        </Card>
+      </div>
+    )
   }
 
   return (

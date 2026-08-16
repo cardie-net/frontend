@@ -32,10 +32,11 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Folder } from '@/types'
-import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { Badge } from '@/components/ui/badge'
+import { useDraggable, useDroppable } from '@dnd-kit/core'
 import { useAuth } from '@/lib/AuthContext'
 import { useStarFolder, useUnstarFolder } from '@/hooks/useCommunity'
+import { useCustomTheme } from '@/components/theme/custom-theme-provider'
 
 interface FolderCardProps {
   folder: Folder
@@ -58,6 +59,7 @@ export function FolderCard({
 }: FolderCardProps) {
   const router = useRouter()
   const { user } = useAuth()
+  const { deckDisplayMode } = useCustomTheme()
 
   const starFolder = useStarFolder()
   const unstarFolder = useUnstarFolder()
@@ -139,6 +141,171 @@ export function FolderCard({
     } finally {
       setIsStarPending(false)
     }
+  }
+
+  if (deckDisplayMode === 'line') {
+    return (
+      <div ref={setRef} style={style} {...attributes} {...listeners}>
+        <div className="relative block group/folder">
+          <Card
+            className={cn(
+              'relative w-full rounded-2xl border border-border/70 px-3.5 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 group-hover/folder:border-primary/50 group-hover/folder:shadow-sm flex !flex-row flex-row items-center justify-between gap-2.5 sm:gap-3 overflow-hidden bg-card min-h-[46px] sm:min-h-[50px]',
+              getDeckColorClass(folder.properties?.color, 'left'),
+              isOver && 'ring-2 ring-primary ring-offset-2 bg-accent/20',
+              isDragging && 'opacity-50'
+            )}
+            style={getDeckColorStyle(folder.properties?.color, 'left')}
+          >
+            <Link
+              href={folderHref}
+              className={cn(
+                'absolute inset-0 z-10 rounded-2xl',
+                isDragging && 'pointer-events-none'
+              )}
+            />
+
+            {/* Left section: Badge + Title + Description */}
+            <div className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 pointer-events-none">
+              <Badge
+                variant="secondary"
+                className="shrink-0 text-[11px] px-1.5 py-0 h-5 font-semibold"
+              >
+                <FolderIcon className="w-3 h-3 mr-1" />
+                <span>{folder.decks_count ?? 0}</span>
+              </Badge>
+
+              <div className="flex items-center gap-2 min-w-0 flex-1">
+                <span className="font-bold text-xs sm:text-sm tracking-tight text-foreground group-hover/folder:text-primary transition-colors line-clamp-2 sm:truncate sm:line-clamp-none break-words [overflow-wrap:anywhere] leading-snug sm:leading-normal">
+                  {folder.name}
+                </span>
+                {folder.properties?.description && (
+                  <span className="hidden md:inline-block text-xs text-muted-foreground truncate shrink min-w-0">
+                    • {folder.properties.description}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Right section: Author + Privacy + Star / 3-dots Menu */}
+            <div className="relative z-20 flex items-center gap-2 sm:gap-2.5 shrink-0">
+              {/* Non-owner author */}
+              {!isOwner && folder.owner && (
+                <div className="hidden sm:inline-flex items-center gap-1.5 pointer-events-auto">
+                  {folder.owner.is_guest ? (
+                    <div className="inline-flex items-center gap-1 text-xs text-muted-foreground select-none">
+                      <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                        <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
+                          G
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="font-medium text-[11px]">Guest</span>
+                    </div>
+                  ) : (
+                    <Link
+                      href={`/${folder.owner.username}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group/author hover:underline min-w-0"
+                    >
+                      <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                        <AvatarImage
+                          src={folder.owner.avatar_url}
+                          alt={folder.owner.display_name}
+                        />
+                        <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
+                          {folder.owner.display_name?.slice(0, 2).toUpperCase() ||
+                            '??'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="truncate max-w-[100px] text-[11px] font-medium">
+                        {folder.owner.display_name || folder.owner.username}
+                      </span>
+                    </Link>
+                  )}
+                </div>
+              )}
+
+              {/* Privacy Icon for Owner */}
+              {isOwner && (
+                <div className="text-muted-foreground/70 flex items-center pointer-events-none">
+                  {folder.privacy === 'private' && <Lock className="w-3.5 h-3.5" />}
+                  {folder.privacy === 'unlisted' && <EyeOff className="w-3.5 h-3.5" />}
+                  {folder.privacy === 'public' && <Globe className="w-3.5 h-3.5" />}
+                </div>
+              )}
+
+              {/* Star toggle if non-owner, or 3-dots Menu if owner */}
+              {isOwner ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 rounded-lg text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                      />
+                    }
+                  >
+                    <MoreVertical className="h-3.5 h-3.5" />
+                    <span className="sr-only">Open menu</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {onShare && (
+                      <DropdownMenuItem onClick={() => onShare(folder)}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        Share
+                      </DropdownMenuItem>
+                    )}
+                    {onEdit && (
+                      <DropdownMenuItem onClick={() => onEdit(folder)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                    )}
+                    {onMove && (
+                      <DropdownMenuItem onClick={() => onMove(folder)}>
+                        <Move className="mr-2 h-4 w-4" />
+                        Move
+                      </DropdownMenuItem>
+                    )}
+                    {onDelete && (
+                      <DropdownMenuItem
+                        onClick={() => onDelete(folder.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleToggleStar}
+                  disabled={isStarPending}
+                  className={cn(
+                    'flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm',
+                    isStarred
+                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
+                      : 'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
+                  )}
+                >
+                  <Star
+                    className={cn(
+                      'w-3.5 h-3.5 transition-transform duration-200',
+                      isStarred
+                        ? 'fill-current text-amber-500 scale-110'
+                        : 'text-muted-foreground'
+                    )}
+                  />
+                  <span>{starsCount}</span>
+                </button>
+              )}
+            </div>
+          </Card>
+        </div>
+      </div>
+    )
   }
 
   return (
