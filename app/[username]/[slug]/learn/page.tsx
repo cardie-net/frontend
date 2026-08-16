@@ -97,6 +97,7 @@ export default function LearnPage() {
     restartLearning,
     clearProgress,
     stats,
+    sessionStep,
   } = useLearningSession(deck?.id || "")
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
@@ -270,7 +271,7 @@ export default function LearnPage() {
     setMcOptions(shuffle([correctOption, ...wrongOptions]))
     setSelectedOptionId(null)
     setIsAnswering(false)
-  }, [currentCard, cards, isReversed])
+  }, [currentCard, cards, isReversed, sessionStep])
 
   const handleSelectMCOption = useCallback(
     (opt: MCOption) => {
@@ -285,6 +286,8 @@ export default function LearnPage() {
     if (!isAnswering || !selectedOptionId) return
     const opt = mcOptions.find((o) => o.id === selectedOptionId)
     if (opt) {
+      setIsAnswering(false)
+      setSelectedOptionId(null)
       handleAnswerClick(opt.isCorrect)
     }
   }, [isAnswering, selectedOptionId, mcOptions, handleAnswerClick])

@@ -21,6 +21,7 @@ export function useLearningSession(deckId: string) {
   const [sessionCards, setSessionCards] = useState<FlashCard[]>([])
   const [sessionCompleted, setSessionCompleted] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
+  const [sessionStep, setSessionStep] = useState(0)
 
 
   const fetchSessionData = useCallback(async () => {
@@ -62,6 +63,7 @@ export function useLearningSession(deckId: string) {
         const shuffled = shuffle(availableCards)
         setSessionCards(shuffled)
         setCurrentCardIndex(0)
+        setSessionStep((prev) => prev + 1)
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred")
@@ -132,6 +134,8 @@ export function useLearningSession(deckId: string) {
       syncProgress([...updateQueueRef.current], true)
       updateQueueRef.current = []
     }
+
+    setSessionStep((prev) => prev + 1)
 
     // Move to next card
     if (currentCardIndex + 1 < sessionCards.length) {
@@ -209,5 +213,6 @@ export function useLearningSession(deckId: string) {
     restartLearning,
     clearProgress,
     stats,
+    sessionStep,
   }
 }
