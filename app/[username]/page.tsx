@@ -370,7 +370,7 @@ export default function ProfilePage() {
                       {/* Actual folder card */}
                       <Card
                         className={cn(
-                          "absolute inset-0 rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-start z-10 bg-card",
+                          "absolute inset-0 rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-between z-10 bg-card",
                           getDeckColorClass(folder.properties?.color)
                         )}
                       >
@@ -381,27 +381,28 @@ export default function ProfilePage() {
                           />
                         )}
                         <div className={cn(
-                          "relative z-10 flex flex-col h-full",
+                          "relative z-10 flex flex-col h-full min-w-0",
                           folder.properties?.cover_image_url ? "text-white" : ""
                         )}>
                           <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-6">
                             <CardTitle className={cn(
-                              "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
-                              folder.properties?.cover_image_url ? "text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start" : "group-hover/folder:text-primary"
+                              "flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0",
+                              folder.properties?.cover_image_url ? "text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full" : "group-hover/folder:text-primary"
                             )}>
                               <Badge 
                                 variant={folder.properties?.cover_image_url ? "outline" : "secondary"}
                                 className={cn(
-                                  "mr-2 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0.5",
+                                  "mr-1.5 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0 h-5 text-[11px]",
                                   folder.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
                                 )}
                               >
-                                <FolderIcon className="w-3 h-3" />
+                                <FolderIcon className="w-3 h-3 mr-1" />
+                                <span>{folder.decks_count ?? 0}</span>
                               </Badge>
-                              <span className="leading-tight break-all">{folder.name}</span>
+                              <span className="leading-snug break-all line-clamp-2">{folder.name}</span>
                             </CardTitle>
                             {folder.properties?.description && !folder.properties?.cover_image_url && (
-                              <CardDescription className="text-xs leading-relaxed break-all line-clamp-2 text-muted-foreground">
+                              <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
                                 {folder.properties.description}
                               </CardDescription>
                             )}
@@ -409,7 +410,7 @@ export default function ProfilePage() {
                         </div>
                         {isOwnProfile && (
                           <div className={cn(
-                            "absolute bottom-4 right-4 z-20 transition-colors",
+                            "absolute bottom-3.5 right-4 sm:right-5 z-20 transition-colors",
                             folder.properties?.cover_image_url ? "text-white/60 group-hover/folder:text-white/90" : "text-muted-foreground/60 group-hover/folder:text-muted-foreground"
                           )}>
                             {folder.privacy === "private" && <Lock className="w-4 h-4" />}
@@ -438,7 +439,7 @@ export default function ProfilePage() {
                   >
                     <Card
                       className={cn(
-                        "relative w-full h-[130px] rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-start",
+                        "relative w-full h-[130px] rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-between",
                         getDeckColorClass(deck.properties?.color)
                       )}
                     >
@@ -449,29 +450,29 @@ export default function ProfilePage() {
                         />
                       )}
                       <div className={cn(
-                        "relative z-10 flex flex-col h-full",
+                        "relative z-10 flex flex-col h-full min-w-0",
                         deck.properties?.cover_image_url ? "text-white" : ""
                       )}>
                         <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-6">
                           <CardTitle className={cn(
-                            "flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0",
-                            deck.properties?.cover_image_url ? "text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start" : "group-hover:text-primary"
+                            "flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0",
+                            deck.properties?.cover_image_url ? "text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full" : "group-hover:text-primary"
                           )}>
                             {deck.cards_count !== undefined && (
                               <Badge 
                                 variant={deck.properties?.cover_image_url ? "outline" : "secondary"}
                                 className={cn(
-                                  "mr-2 mt-0.5 pointer-events-none shrink-0",
+                                  "mr-1.5 mt-0.5 pointer-events-none shrink-0 text-[11px] px-1.5 py-0 h-5",
                                   deck.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
                                 )}
                               >
                                 {deck.cards_count}
                               </Badge>
                             )}
-                            <span className="leading-tight break-all">{deck.name}</span>
+                            <span className="leading-snug break-all line-clamp-2">{deck.name}</span>
                           </CardTitle>
                           {deck.properties?.description && !deck.properties?.cover_image_url && (
-                            <CardDescription className="text-xs leading-relaxed break-all line-clamp-2 text-muted-foreground">
+                            <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
                               {deck.properties.description}
                             </CardDescription>
                           )}
@@ -479,7 +480,7 @@ export default function ProfilePage() {
                       </div>
                       {isOwnProfile && (
                         <div className={cn(
-                          "absolute bottom-4 right-4 z-20 transition-colors",
+                          "absolute bottom-3.5 right-4 sm:right-5 z-20 transition-colors",
                           deck.properties?.cover_image_url ? "text-white/60 group-hover:text-white/90" : "text-muted-foreground/60 group-hover:text-muted-foreground"
                         )}>
                           {deck.privacy === "private" && <Lock className="w-4 h-4" />}

@@ -185,7 +185,7 @@ export default function CommunityPage() {
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-[140px] rounded-2xl" />
+            <Skeleton key={i} className="h-[130px] rounded-2xl" />
           ))}
         </div>
       ) : isError ? (

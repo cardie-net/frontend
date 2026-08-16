@@ -83,7 +83,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
   return (
     <div className="relative block group/folder">
-      <div className="relative w-full min-h-[140px]">
+      <div className="relative w-full h-[130px]">
         {/* Stacked card 2 (back) */}
         <div className="absolute inset-0 rounded-2xl border border-border/40 bg-card/40 translate-x-2 translate-y-2 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3 z-0" />
         {/* Stacked card 1 (middle) */}
@@ -91,7 +91,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
         <Card
           className={cn(
-            'absolute inset-0 rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-between z-10 bg-card',
+            'absolute inset-0 rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-between z-10 bg-card',
             getDeckColorClass(folder.properties?.color)
           )}
           style={getDeckColorStyle(folder.properties?.color)}
@@ -112,16 +112,16 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
           <div
             className={cn(
-              'relative z-10 flex flex-col h-full pointer-events-none',
+              'relative z-10 flex flex-col h-full pointer-events-none min-w-0',
               folder.properties?.cover_image_url ? 'text-white' : ''
             )}
           >
-            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-16">
+            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-14">
               <CardTitle
                 className={cn(
-                  'flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0',
+                  'flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0',
                   folder.properties?.cover_image_url
-                    ? 'text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-xl self-start'
+                    ? 'text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full'
                     : 'group-hover/folder:text-primary'
                 )}
               >
@@ -130,7 +130,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
                     folder.properties?.cover_image_url ? 'outline' : 'secondary'
                   }
                   className={cn(
-                    'mr-2 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0.5',
+                    'mr-1.5 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0 h-5 text-[11px]',
                     folder.properties?.cover_image_url
                       ? 'border-white/30 text-white/90'
                       : ''
@@ -139,12 +139,12 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
                   <FolderIcon className="w-3 h-3 mr-1" />
                   <span>{folder.decks_count ?? 0}</span>
                 </Badge>
-                <span className="leading-tight break-all">{folder.name}</span>
+                <span className="leading-snug break-all line-clamp-2">{folder.name}</span>
               </CardTitle>
 
               {folder.properties?.description &&
                 !folder.properties?.cover_image_url && (
-                  <CardDescription className="text-xs leading-relaxed break-all line-clamp-2 text-muted-foreground">
+                  <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
                     {folder.properties.description}
                   </CardDescription>
                 )}
@@ -152,14 +152,14 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           </div>
 
           {/* Star Button (Top Right) */}
-          <div className="absolute top-3 right-3 z-20">
+          <div className="absolute top-2.5 right-2.5 z-20">
             <button
               type="button"
               onClick={isOwner ? undefined : handleToggleStar}
               disabled={isOwner || isPending}
               title={isOwner ? 'You cannot star your own folder' : undefined}
               className={cn(
-                'flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all duration-200 shadow-sm',
+                'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 shadow-sm',
                 isOwner
                   ? 'cursor-default opacity-80 bg-muted/70 text-muted-foreground border border-border/60'
                   : 'cursor-pointer',
@@ -185,43 +185,43 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           </div>
 
           {/* Author Chip (Bottom Left) */}
-          <div className="relative z-20 pt-3 mt-auto flex items-center justify-between pointer-events-auto">
+          <div className="relative z-20 pt-2 mt-auto flex items-center justify-between pointer-events-auto max-w-[calc(100%-1rem)]">
             {folder.owner?.is_guest ? (
               <div
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default',
+                  'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default max-w-full',
                   folder.properties?.cover_image_url
-                    ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-1'
+                    ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-0.5'
                     : 'text-muted-foreground'
                 )}
               >
-                <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
                   <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
                     G
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium">Guest</span>
+                <span className="font-medium truncate">Guest</span>
               </div>
             ) : (
               <Link
                 href={`/${folder.owner.username}`}
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline',
+                  'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline max-w-full min-w-0',
                   folder.properties?.cover_image_url
-                    ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-1'
+                    ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-0.5'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
-                <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
                   <AvatarImage
                     src={folder.owner.avatar_url}
                     alt={folder.owner.display_name}
                   />
                   <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
-                    {folder.owner.display_name.slice(0, 2).toUpperCase()}
+                    {folder.owner.display_name?.slice(0, 2).toUpperCase() || '??'}
                   </AvatarFallback>
                 </Avatar>
-                <span className="truncate max-w-[130px] font-medium">
+                <span className="truncate max-w-[120px] sm:max-w-[140px] font-medium">
                   {folder.owner.display_name || folder.owner.username}
                 </span>
               </Link>

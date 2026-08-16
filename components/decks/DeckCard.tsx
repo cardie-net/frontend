@@ -124,7 +124,7 @@ export function DeckCard({
       <div className="relative block group">
         <Card
           className={cn(
-            'relative w-full h-[130px] rounded-2xl border border-border/70 p-5 overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:border-primary/50 flex flex-col justify-start',
+            'relative w-full h-[130px] rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-lg group-hover:border-primary/50 flex flex-col justify-between',
             getDeckColorClass(deck.properties?.color),
             isDragging && 'opacity-50'
           )}
@@ -147,16 +147,16 @@ export function DeckCard({
           )}
           <div
             className={cn(
-              'relative z-10 flex flex-col h-full pointer-events-none',
+              'relative z-10 flex flex-col h-full pointer-events-none min-w-0',
               deck.properties?.cover_image_url ? 'text-white' : ''
             )}
           >
-            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-16">
+            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-14">
               <CardTitle
                 className={cn(
-                  'flex items-start text-lg font-bold tracking-tight mb-2 transition-colors whitespace-pre-wrap break-words shrink-0',
+                  'flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0',
                   deck.properties?.cover_image_url
-                    ? 'text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl self-start'
+                    ? 'text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full'
                     : 'group-hover:text-primary'
                 )}
               >
@@ -166,7 +166,7 @@ export function DeckCard({
                       deck.properties?.cover_image_url ? 'outline' : 'secondary'
                     }
                     className={cn(
-                      'mr-2 mt-0.5 pointer-events-none shrink-0',
+                      'mr-1.5 mt-0.5 pointer-events-none shrink-0 text-[11px] px-1.5 py-0 h-5',
                       deck.properties?.cover_image_url
                         ? 'border-white/30 text-white/90'
                         : ''
@@ -175,11 +175,11 @@ export function DeckCard({
                     {deck.cards_count}
                   </Badge>
                 )}
-                <span className="leading-tight break-all">{deck.name}</span>
+                <span className="leading-snug break-all line-clamp-2">{deck.name}</span>
               </CardTitle>
               {deck.properties?.description &&
                 !deck.properties?.cover_image_url && (
-                  <CardDescription className="text-xs leading-relaxed break-all line-clamp-2 text-muted-foreground">
+                  <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
                     {deck.properties.description}
                   </CardDescription>
                 )}
@@ -187,7 +187,7 @@ export function DeckCard({
           </div>
 
           {/* Top Right: 3-dots menu for owners, or Star Counter for favorited/non-owner items */}
-          <div className="absolute top-2 right-2 z-20">
+          <div className="absolute top-2.5 right-2.5 z-20">
             {isOwner ? (
               <DropdownMenu>
                 <DropdownMenuTrigger
@@ -243,7 +243,7 @@ export function DeckCard({
                 onClick={handleToggleStar}
                 disabled={isStarPending}
                 className={cn(
-                  'flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm',
+                  'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm',
                   deck.properties?.cover_image_url
                     ? isStarred
                       ? 'bg-amber-500/90 text-white border border-amber-400/80 shadow-md backdrop-blur-sm'
@@ -268,35 +268,35 @@ export function DeckCard({
 
           {/* Bottom-left: Creator Info if non-owner */}
           {!isOwner && deck.owner && (
-            <div className="absolute bottom-3 left-4 z-20 pointer-events-auto">
+            <div className="absolute bottom-3 left-4 sm:left-5 z-20 pointer-events-auto max-w-[calc(100%-4rem)]">
               {deck.owner.is_guest ? (
                 <div
                   className={cn(
-                    'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default',
+                    'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default max-w-full',
                     deck.properties?.cover_image_url
-                      ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-1'
+                      ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-0.5'
                       : 'text-muted-foreground'
                   )}
                 >
-                  <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                  <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
                     <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
                       G
                     </AvatarFallback>
                   </Avatar>
-                  <span className="font-medium">Guest</span>
+                  <span className="font-medium truncate">Guest</span>
                 </div>
               ) : (
                 <Link
                   href={`/${deck.owner.username}`}
                   onClick={(e) => e.stopPropagation()}
                   className={cn(
-                    'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline',
+                    'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline max-w-full min-w-0',
                     deck.properties?.cover_image_url
-                      ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-1'
+                      ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-0.5'
                       : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  <Avatar className="w-4 h-4 rounded-full border border-border/50">
+                  <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
                     <AvatarImage
                       src={deck.owner.avatar_url}
                       alt={deck.owner.display_name}
@@ -305,7 +305,7 @@ export function DeckCard({
                       {deck.owner.display_name?.slice(0, 2).toUpperCase() || '??'}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="truncate max-w-[130px] font-medium">
+                  <span className="truncate max-w-[120px] sm:max-w-[140px] font-medium">
                     {deck.owner.display_name || deck.owner.username}
                   </span>
                 </Link>
@@ -317,7 +317,7 @@ export function DeckCard({
           {isOwner && (
             <div
               className={cn(
-                'absolute bottom-4 right-4 z-20 transition-colors flex items-center gap-2 pointer-events-none',
+                'absolute bottom-3.5 right-4 sm:right-5 z-20 transition-colors flex items-center gap-2 pointer-events-none',
                 deck.properties?.cover_image_url
                   ? 'text-white/60 group-hover:text-white/90'
                   : 'text-muted-foreground/60 group-hover:text-muted-foreground'
