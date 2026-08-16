@@ -1,8 +1,10 @@
 import { ThemePreset } from '@/types/theme';
 
 export const PRESET_THEMES: ThemePreset[] = [
+  // 1. Pure Black with Purple (Default)
   {
     id: 'theme-1',
+    name: 'Pure Black & Purple',
     radius: 0.625, // 10px default
     fontFamily: 'Outfit', // Outfit default
     colors: {
@@ -34,8 +36,10 @@ export const PRESET_THEMES: ThemePreset[] = [
       sidebarRing: 'oklch(0.65 0.24 295)',
     },
   },
+  // 2. Dark & Green
   {
     id: 'theme-2',
+    name: 'Dark & Green',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -59,8 +63,10 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.68 0.21 155)',
     },
   },
+  // 3. Dark & Blue
   {
     id: 'theme-3',
+    name: 'Dark & Blue',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -84,8 +90,10 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.62 0.23 250)',
     },
   },
+  // 4. Dark & Red
   {
     id: 'theme-4',
+    name: 'Dark & Red',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -109,33 +117,37 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.62 0.24 25)',
     },
   },
+  // 5. Dark & Purple (Single color)
   {
     id: 'theme-5',
+    name: 'Dark & Purple',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
-      background: 'oklch(0.13 0.04 275)',
-      foreground: 'oklch(0.97 0.02 275)',
-      card: 'oklch(0.18 0.05 275)',
-      cardForeground: 'oklch(0.97 0.02 275)',
-      popover: 'oklch(0.18 0.05 275)',
-      popoverForeground: 'oklch(0.97 0.02 275)',
-      primary: 'oklch(0.75 0.22 220)',
-      primaryForeground: 'oklch(0.12 0.04 275)',
-      secondary: 'oklch(0.26 0.08 275)',
-      secondaryForeground: 'oklch(0.97 0.02 275)',
-      muted: 'oklch(0.24 0.06 275)',
-      mutedForeground: 'oklch(0.72 0.08 275)',
-      accent: 'oklch(0.68 0.24 300)',
+      background: 'oklch(0.14 0.04 285)',
+      foreground: 'oklch(0.98 0.01 285)',
+      card: 'oklch(0.19 0.05 285)',
+      cardForeground: 'oklch(0.98 0.01 285)',
+      popover: 'oklch(0.19 0.05 285)',
+      popoverForeground: 'oklch(0.98 0.01 285)',
+      primary: 'oklch(0.65 0.24 285)',
+      primaryForeground: 'oklch(0.98 0 0)',
+      secondary: 'oklch(0.25 0.06 285)',
+      secondaryForeground: 'oklch(0.98 0.01 285)',
+      muted: 'oklch(0.24 0.05 285)',
+      mutedForeground: 'oklch(0.70 0.07 285)',
+      accent: 'oklch(0.27 0.07 285)',
       accentForeground: 'oklch(0.98 0 0)',
-      destructive: 'oklch(0.68 0.23 20)',
-      border: 'oklch(0.30 0.08 275)',
-      input: 'oklch(0.32 0.08 275)',
-      ring: 'oklch(0.75 0.22 220)',
+      destructive: 'oklch(0.65 0.22 25)',
+      border: 'oklch(0.28 0.06 285)',
+      input: 'oklch(0.30 0.06 285)',
+      ring: 'oklch(0.65 0.24 285)',
     },
   },
+  // 6. Dark & Orange
   {
     id: 'theme-6',
+    name: 'Dark & Orange',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -159,8 +171,10 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.72 0.20 75)',
     },
   },
+  // 7. Black & White (Dark variation)
   {
     id: 'theme-7',
+    name: 'Black & White',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -184,33 +198,45 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.99 0 0)',
     },
   },
+  // 8. Pure Black with Cyan
   {
     id: 'theme-8',
+    name: 'Pure Black & Cyan',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
-      background: 'oklch(0.13 0.03 200)',
-      foreground: 'oklch(0.98 0.01 200)',
-      card: 'oklch(0.18 0.04 200)',
-      cardForeground: 'oklch(0.98 0.01 200)',
-      popover: 'oklch(0.18 0.04 200)',
-      popoverForeground: 'oklch(0.98 0.01 200)',
-      primary: 'oklch(0.70 0.18 190)',
-      primaryForeground: 'oklch(0.12 0.03 200)',
-      secondary: 'oklch(0.24 0.05 200)',
-      secondaryForeground: 'oklch(0.98 0 0)',
-      muted: 'oklch(0.24 0.04 200)',
-      mutedForeground: 'oklch(0.70 0.06 200)',
-      accent: 'oklch(0.26 0.06 200)',
-      accentForeground: 'oklch(0.98 0 0)',
-      destructive: 'oklch(0.65 0.22 25)',
-      border: 'oklch(0.28 0.05 200)',
-      input: 'oklch(0.30 0.05 200)',
-      ring: 'oklch(0.70 0.18 190)',
+      background: 'oklch(0.145 0 0)',
+      foreground: 'oklch(0.985 0 0)',
+      card: 'oklch(0.205 0 0)',
+      cardForeground: 'oklch(0.985 0 0)',
+      popover: 'oklch(0.205 0 0)',
+      popoverForeground: 'oklch(0.985 0 0)',
+      primary: 'oklch(0.72 0.19 200)',
+      primaryForeground: 'oklch(0.12 0 0)',
+      secondary: 'oklch(0.269 0 0)',
+      secondaryForeground: 'oklch(0.985 0 0)',
+      muted: 'oklch(0.269 0 0)',
+      mutedForeground: 'oklch(0.708 0 0)',
+      accent: 'oklch(0.269 0 0)',
+      accentForeground: 'oklch(0.985 0 0)',
+      destructive: 'oklch(0.704 0.191 22.216)',
+      border: 'oklch(1 0 0 / 10%)',
+      input: 'oklch(1 0 0 / 15%)',
+      ring: 'oklch(0.72 0.19 200)',
+      sidebarBackground: 'oklch(0.205 0 0)',
+      sidebarForeground: 'oklch(0.985 0 0)',
+      sidebarPrimary: 'oklch(0.72 0.19 200)',
+      sidebarPrimaryForeground: 'oklch(0.12 0 0)',
+      sidebarAccent: 'oklch(0.269 0 0)',
+      sidebarAccentForeground: 'oklch(0.985 0 0)',
+      sidebarBorder: 'oklch(1 0 0 / 10%)',
+      sidebarRing: 'oklch(0.72 0.19 200)',
     },
   },
+  // 9. Dark & Pink
   {
     id: 'theme-9',
+    name: 'Dark & Pink',
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -234,8 +260,11 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.68 0.22 345)',
     },
   },
+  // 10. White & Black (Light variation)
   {
     id: 'theme-10',
+    name: 'White & Black',
+    isLight: true,
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -259,8 +288,11 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.708 0 0)',
     },
   },
+  // 11. White & Pink
   {
     id: 'theme-11',
+    name: 'White & Pink',
+    isLight: true,
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
@@ -284,12 +316,15 @@ export const PRESET_THEMES: ThemePreset[] = [
       ring: 'oklch(0.58 0.22 15)',
     },
   },
+  // 12. White & Purple
   {
     id: 'theme-12',
+    name: 'White & Purple',
+    isLight: true,
     radius: 0.625,
     fontFamily: 'Outfit',
     colors: {
-      background: 'oklch(0.97 0.02 290)',
+      background: 'oklch(0.98 0.015 290)',
       foreground: 'oklch(0.16 0.04 290)',
       card: 'oklch(1 0 0)',
       cardForeground: 'oklch(0.16 0.04 290)',
@@ -297,18 +332,19 @@ export const PRESET_THEMES: ThemePreset[] = [
       popoverForeground: 'oklch(0.16 0.04 290)',
       primary: 'oklch(0.52 0.24 290)',
       primaryForeground: 'oklch(0.99 0 0)',
-      secondary: 'oklch(0.93 0.03 290)',
+      secondary: 'oklch(0.94 0.025 290)',
       secondaryForeground: 'oklch(0.20 0.05 290)',
-      muted: 'oklch(0.93 0.03 290)',
+      muted: 'oklch(0.94 0.025 290)',
       mutedForeground: 'oklch(0.52 0.05 290)',
-      accent: 'oklch(0.92 0.04 290)',
+      accent: 'oklch(0.93 0.03 290)',
       accentForeground: 'oklch(0.20 0.05 290)',
       destructive: 'oklch(0.60 0.24 25)',
-      border: 'oklch(0.88 0.03 290)',
-      input: 'oklch(0.88 0.03 290)',
+      border: 'oklch(0.89 0.025 290)',
+      input: 'oklch(0.89 0.025 290)',
       ring: 'oklch(0.52 0.24 290)',
     },
   },
 ];
 
 export const DEFAULT_PRESET = PRESET_THEMES[0];
+
