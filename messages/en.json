@@ -439,8 +439,8 @@
     "createFirstDeck": "Create First Deck"
   },
   "DeckView": {
-    "created": "Created {date}",
-    "updated": "Updated {time}",
+    "created": "<prefix>Created </prefix>{date}",
+    "updated": "<prefix>Updated </prefix>{time}",
     "backTo": "Back to {name}",
     "backToDecks": "Back to Decks",
     "shareDeck": "Share deck",

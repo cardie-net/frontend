@@ -439,8 +439,8 @@
     "createFirstDeck": "Створити першу колоду"
   },
   "DeckView": {
-    "created": "Створено {date}",
-    "updated": "Оновлено {time}",
+    "created": "<prefix>Створено </prefix>{date}",
+    "updated": "<prefix>Оновлено </prefix>{time}",
     "backTo": "Назад до {name}",
     "backToDecks": "Назад до колод",
     "shareDeck": "Поділитися колодою",

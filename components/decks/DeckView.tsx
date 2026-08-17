@@ -435,7 +435,10 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                   >
                     <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
                     <span>
-                      {t("created", { date: formatDate(deck.created_at) })}
+                      {t.rich("created", {
+                        date: formatDate(deck.created_at),
+                        prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
+                      })}
                     </span>
                   </span>
                 )}
@@ -445,7 +448,12 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     title={formatDateTime(deck.updated_at)}
                   >
                     <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
-                    <span>{t("updated", { time: formatRelativeTime(deck.updated_at) })}</span>
+                    <span>
+                      {t.rich("updated", {
+                        time: formatRelativeTime(deck.updated_at),
+                        prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
+                      })}
+                    </span>
                   </span>
                 )}
               </div>

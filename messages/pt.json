@@ -439,8 +439,8 @@
     "createFirstDeck": "Criar Primeiro Baralho"
   },
   "DeckView": {
-    "created": "Criado em {date}",
-    "updated": "Atualizado {time}",
+    "created": "<prefix>Criado em </prefix>{date}",
+    "updated": "<prefix>Atualizado </prefix>{time}",
     "backTo": "Voltar para {name}",
     "backToDecks": "Voltar para Baralhos",
     "shareDeck": "Compartilhar baralho",
