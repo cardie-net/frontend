@@ -48,6 +48,10 @@
     "statistics": "Statistics",
     "settings": "Settings",
     "logout": "Log out",
+    "logoutDialog": {
+      "title": "Log Out",
+      "description": "Are you sure you want to log out of your account?"
+    },
     "login": "Log in",
     "signup": "Sign up",
     "menu": "Menu"

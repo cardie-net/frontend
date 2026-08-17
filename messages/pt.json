@@ -48,6 +48,10 @@
     "statistics": "Estatísticas",
     "settings": "Configurações",
     "logout": "Sair",
+    "logoutDialog": {
+      "title": "Sair",
+      "description": "Tem certeza de que deseja sair da sua conta?"
+    },
     "login": "Entrar",
     "signup": "Cadastre-se",
     "menu": "Menu"

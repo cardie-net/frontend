@@ -43,9 +43,13 @@ export function ConfirmDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
-        <DialogFooter className="mt-4 flex sm:justify-end gap-2">
+        {description && (
+          <DialogDescription className="text-sm text-muted-foreground">
+            {description}
+          </DialogDescription>
+        )}
+        <DialogFooter className="flex sm:justify-end gap-2">
           <Button
             type="button"
             variant="outline"

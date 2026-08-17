@@ -23,6 +23,7 @@ import {
   Globe,
 } from 'lucide-react';
 import { AppearancePopup } from '@/components/theme/appearance-popup';
+import { ConfirmDialog } from '@/components/ui/confirm-dialog';
 
 type CornerPosition = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -282,11 +283,24 @@ export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const startPointerRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const offsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const movedFarRef = useRef(false);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to log out:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   // Switch to selected locale
   const handleSelectLocale = async (newLocale: Locale) => {
@@ -420,8 +434,9 @@ export function Navbar() {
   const hasPfp = Boolean(user && !user.is_guest && user.avatar_url);
 
   return (
-    <div
-      ref={containerRef}
+    <>
+      <div
+        ref={containerRef}
       style={
         dragPos
           ? {
@@ -555,7 +570,10 @@ export function Navbar() {
 
               {/* Log Out Button */}
               <NavItem
-                onClick={logout}
+                onClick={() => {
+                  setIsOpen(false);
+                  setShowLogoutConfirm(true);
+                }}
                 icon={<LogOut className="w-4 h-4 text-destructive" />}
                 tooltip={t('logout')}
                 isRightSide={isRightSide}
@@ -585,5 +603,17 @@ export function Navbar() {
         </div>
       </div>
     </div>
+
+    <ConfirmDialog
+      open={showLogoutConfirm}
+      onOpenChange={setShowLogoutConfirm}
+      title={t('logoutDialog.title')}
+      description={t('logoutDialog.description')}
+      onConfirm={handleLogout}
+      isPending={isLoggingOut}
+      confirmText={t('logout')}
+      destructive={true}
+    />
+  </>
   );
 }
