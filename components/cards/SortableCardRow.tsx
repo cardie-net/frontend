@@ -127,7 +127,7 @@ export function SortableCardRow({
   } = useSortable({ id: card.id, disabled: !isOwner });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
   };
 
@@ -175,16 +175,16 @@ export function SortableCardRow({
       }}
       style={style}
       className={cn(
-        'group grid items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-all duration-200',
+        'group grid items-center gap-3 rounded-xl border bg-card px-4 py-3 transition-[background-color,border-color,box-shadow,opacity] duration-200',
         isEditing ? 'grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr_auto]',
-        isDragging && 'z-50 shadow-xl ring-2 ring-primary/30 opacity-90',
+        isDragging && 'relative z-50 shadow-xl ring-2 ring-primary/30 opacity-90',
         !isDragging && 'hover:shadow-sm',
         isEditing && 'ring-2 ring-primary/20 bg-accent/30'
       )}
     >
       <div
         className={cn(
-          'flex items-center gap-1 sm:gap-2',
+          'flex items-center gap-1 sm:gap-2 touch-none select-none',
           isOwner ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
           isEditing && 'row-span-2 sm:row-span-1'
         )}
