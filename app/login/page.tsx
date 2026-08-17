@@ -188,7 +188,7 @@ export default function LoginPage() {
   const tCommon = useTranslations("Common")
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <Suspense
         fallback={
           <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
