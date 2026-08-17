@@ -83,6 +83,31 @@ export function ThemeScript() {
       document.documentElement.classList.remove('light');
       document.documentElement.classList.add('dark');
     }
+
+    var radiusVal = typeof config.radius === 'number' ? config.radius : 0.625;
+    var primaryVal = colors.primary || 'oklch(0.65 0.24 295)';
+    var rx = Math.max(0, Math.min(16, Math.round(radiusVal * 16 * 1.2 * 10) / 10));
+    var faviconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">' +
+      '<rect width="32" height="32" rx="' + rx + '" ry="' + rx + '" fill="' + primaryVal + '" fill-opacity="0.16"/>' +
+      '<g transform="translate(4, 4)" fill="none" stroke="' + primaryVal + '" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/>' +
+      '<path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>' +
+      '<path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>' +
+      '</g>' +
+      '</svg>';
+    var faviconUri = 'data:image/svg+xml,' + encodeURIComponent(faviconSvg);
+    var existingIcons = document.querySelectorAll("link[rel*='icon']");
+    for (var i = 0; i < existingIcons.length; i++) {
+      if (existingIcons[i].parentNode) {
+        existingIcons[i].parentNode.removeChild(existingIcons[i]);
+      }
+    }
+    var faviconLink = document.createElement('link');
+    faviconLink.id = 'cardie-dynamic-favicon';
+    faviconLink.rel = 'icon';
+    faviconLink.type = 'image/svg+xml';
+    faviconLink.href = faviconUri;
+    document.head.appendChild(faviconLink);
   } catch (e) {
     console.error('Error applying theme script:', e);
   }

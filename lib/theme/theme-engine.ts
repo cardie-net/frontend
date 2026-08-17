@@ -1,5 +1,7 @@
 import { ThemeConfig } from '@/types/theme';
+import { updateFavicon } from '@/lib/theme/favicon';
 
+export * from '@/lib/theme/favicon';
 export const THEME_STORAGE_KEY = 'cardie_custom_theme_config';
 export const STYLE_TAG_ID = 'cardie-custom-theme-vars';
 
@@ -93,6 +95,8 @@ export function applyThemeToDom(config: ThemeConfig) {
     root.classList.remove('light');
     root.classList.add('dark');
   }
+
+  updateFavicon(config);
 }
 
 export function saveThemeConfigToStorage(config: ThemeConfig) {
