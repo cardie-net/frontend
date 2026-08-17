@@ -326,6 +326,8 @@
     "accountDesc": "Gerencie as configurações do seu perfil e informações públicas",
     "learningTitle": "Configurações de Aprendizado",
     "learningDesc": "Configure suas preferências padrão de estudo e aprendizado em todos os baralhos",
+    "termsOfService": "Termos de Serviço",
+    "privacyPolicy": "Política de Privacidade",
     "account": {
       "loading": "Carregando detalhes da conta...",
       "notLoggedIn": "Por favor, faça login para gerenciar sua conta.",
@@ -693,5 +695,9 @@
     "copied": "Copiado",
     "copy": "Copiar",
     "downloadTxt": "Baixar .txt"
+  },
+  "Legal": {
+    "termsOfService": "Termos de Serviço",
+    "privacyPolicy": "Política de Privacidade"
   }
 }

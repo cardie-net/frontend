@@ -326,6 +326,8 @@
     "accountDesc": "Manage your profile settings and public information",
     "learningTitle": "Learning Settings",
     "learningDesc": "Configure your default study and learning preferences across all decks",
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
     "account": {
       "loading": "Loading account details...",
       "notLoggedIn": "Please log in to manage your account.",
@@ -693,5 +695,9 @@
     "copied": "Copied",
     "copy": "Copy",
     "downloadTxt": "Download .txt"
+  },
+  "Legal": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy"
   }
 }
