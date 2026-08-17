@@ -37,7 +37,11 @@
     "upload": "Enviar",
     "uploading": "Enviando...",
     "remove": "Remover",
-    "move": "Mover"
+    "move": "Mover",
+    "areYouSure": "Tem certeza?",
+    "settings": "Configurações",
+    "notFound": "Não encontrado",
+    "importing": "Importando..."
   },
   "Navbar": {
     "decks": "Baralhos",
@@ -245,6 +249,8 @@
     "backTo": "Voltar para {name}",
     "backToDecks": "Voltar para Baralhos",
     "loadingItems": "Carregando itens da pasta...",
+    "unstarFolder": "Desfavoritar pasta",
+    "starFolder": "Favoritar pasta",
     "createDialog": {
       "title": "Criar Nova Pasta",
       "description": "Insira os detalhes da sua nova pasta.",
@@ -552,6 +558,9 @@
     "answeredStatus": "{answered} de {total} respondidas",
     "resultsStatus": "{score} de {total} corretas ({percentage}%)",
     "scoreLabel": "{percentage}% de Pontuação",
+    "answeredCount": "{answered} de {total} respondidas",
+    "correctCount": "{score} de {total} corretas ({percent}%)",
+    "scorePercent": "{percent}% de Pontuação",
     "tryAgain": "Tentar Novamente",
     "correctAnswer": "Resposta correta:",
     "submitExam": "Enviar Exame"
@@ -563,6 +572,10 @@
     "sessionCompleteTitle": "Sessão Concluída!",
     "sessionCompleteDesc": "Você revisou todos os cartões agendados para hoje. Ótimo trabalho!",
     "returnToDeck": "Voltar ao Baralho",
+    "new": "Novos",
+    "learning": "Aprendendo",
+    "review": "Revisão",
+    "total": "Total",
     "newBadge": "{count} Novos",
     "learningBadge": "{count} Aprendendo",
     "reviewBadge": "{count} Revisão",

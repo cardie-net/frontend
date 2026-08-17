@@ -37,7 +37,11 @@
     "upload": "Завантажити",
     "uploading": "Завантаження...",
     "remove": "Видалити",
-    "move": "Перемістити"
+    "move": "Перемістити",
+    "areYouSure": "Ви впевнені?",
+    "settings": "Налаштування",
+    "notFound": "Не знайдено",
+    "importing": "Імпортування..."
   },
   "Navbar": {
     "decks": "Колоди",
@@ -245,6 +249,8 @@
     "backTo": "Назад до {name}",
     "backToDecks": "Назад до колод",
     "loadingItems": "Завантаження елементів папки...",
+    "unstarFolder": "Видалити з обраного",
+    "starFolder": "Додати в обране",
     "createDialog": {
       "title": "Створити нову папку",
       "description": "Введіть дані для нової папки.",
@@ -552,6 +558,9 @@
     "answeredStatus": "Відповідей: {answered} з {total}",
     "resultsStatus": "Правильно: {score} з {total} ({percentage}%)",
     "scoreLabel": "{percentage}% Результат",
+    "answeredCount": "{answered} з {total} відповідей",
+    "correctCount": "{score} з {total} правильних ({percent}%)",
+    "scorePercent": "{percent}% Результат",
     "tryAgain": "Спробувати знову",
     "correctAnswer": "Правильна відповідь:",
     "submitExam": "Завершити іспит"
@@ -563,6 +572,10 @@
     "sessionCompleteTitle": "Сесію завершено!",
     "sessionCompleteDesc": "Ви повторили всі картки, заплановані на сьогодні. Чудова робота!",
     "returnToDeck": "Повернутися до колоди",
+    "new": "Нові",
+    "learning": "Навчання",
+    "review": "Повторення",
+    "total": "Усього",
     "newBadge": "{count} Нові",
     "learningBadge": "{count} Навчання",
     "reviewBadge": "{count} Повторення",

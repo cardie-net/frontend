@@ -37,7 +37,11 @@
     "upload": "Upload",
     "uploading": "Uploading...",
     "remove": "Remove",
-    "move": "Move"
+    "move": "Move",
+    "areYouSure": "Are you sure?",
+    "settings": "Settings",
+    "notFound": "Not found",
+    "importing": "Importing..."
   },
   "Navbar": {
     "decks": "Decks",
@@ -245,6 +249,8 @@
     "backTo": "Back to {name}",
     "backToDecks": "Back to Decks",
     "loadingItems": "Loading folder items...",
+    "unstarFolder": "Unstar folder",
+    "starFolder": "Star folder",
     "createDialog": {
       "title": "Create New Folder",
       "description": "Enter details for your new folder.",
@@ -552,6 +558,9 @@
     "answeredStatus": "{answered} of {total} answered",
     "resultsStatus": "{score} of {total} correct ({percentage}%)",
     "scoreLabel": "{percentage}% Score",
+    "answeredCount": "{answered} of {total} answered",
+    "correctCount": "{score} of {total} correct ({percent}%)",
+    "scorePercent": "{percent}% Score",
     "tryAgain": "Try Again",
     "correctAnswer": "Correct answer:",
     "submitExam": "Submit Exam"
@@ -563,6 +572,10 @@
     "sessionCompleteTitle": "Session Complete!",
     "sessionCompleteDesc": "You have reviewed all cards due for today. Great job!",
     "returnToDeck": "Return to Deck",
+    "new": "New",
+    "learning": "Learning",
+    "review": "Review",
+    "total": "Total",
     "newBadge": "{count} New",
     "learningBadge": "{count} Learning",
     "reviewBadge": "{count} Review",
