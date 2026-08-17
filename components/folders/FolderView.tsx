@@ -406,10 +406,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
                       folder={subFolder}
                       username={username}
                       isOwner={isOwner}
-                      onShare={setShareFolderTarget}
-                      onEdit={setEditingFolder}
-                      onDelete={handleDeleteSubFolder}
-                      onMove={handleMoveFolder}
+                      showStar={false}
+                      onShare={isOwner ? setShareFolderTarget : undefined}
+                      onEdit={isOwner ? setEditingFolder : undefined}
+                      onDelete={isOwner ? handleDeleteSubFolder : undefined}
+                      onMove={isOwner ? handleMoveFolder : undefined}
                     />
                   )
                 })}
@@ -427,10 +428,12 @@ export function FolderView({ username, folder }: FolderViewProps) {
                     key={deck.id}
                     deck={deck}
                     username={username}
-                    onShare={setShareDeckTarget}
-                    onEdit={setEditingDeckTarget}
-                    onDelete={handleDeleteDeck}
-                    onMove={handleMoveDeck}
+                    isOwner={isOwner}
+                    showStar={false}
+                    onShare={isOwner ? setShareDeckTarget : undefined}
+                    onEdit={isOwner ? setEditingDeckTarget : undefined}
+                    onDelete={isOwner ? handleDeleteDeck : undefined}
+                    onMove={isOwner ? handleMoveDeck : undefined}
                   />
                 ))}
               </div>

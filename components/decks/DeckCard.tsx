@@ -42,6 +42,7 @@ interface DeckCardProps {
   deck: Deck
   username?: string
   isOwner?: boolean
+  showStar?: boolean
   onShare?: (deck: Deck) => void
   onEdit?: (deck: Deck) => void
   onDelete?: (deckId: string) => void
@@ -52,6 +53,7 @@ export function DeckCard({
   deck,
   username,
   isOwner = true,
+  showStar = true,
   onShare,
   onEdit,
   onDelete,
@@ -257,7 +259,7 @@ export function DeckCard({
                     )}
                   </DropdownMenuContent>
                 </DropdownMenu>
-              ) : (
+              ) : showStar ? (
                 <button
                   type="button"
                   onClick={handleToggleStar}
@@ -279,7 +281,7 @@ export function DeckCard({
                   />
                   <span>{starsCount}</span>
                 </button>
-              )}
+              ) : null}
             </div>
           </Card>
         </div>
@@ -355,84 +357,86 @@ export function DeckCard({
           </div>
 
           {/* Top Right: 3-dots menu for owners, or Star Counter for favorited/non-owner items */}
-          <div className="absolute top-2.5 right-2.5 z-20">
-            {isOwner ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  render={
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className={cn(
-                        'h-8 w-8 rounded-xl',
-                        deck.properties?.cover_image_url
-                          ? 'text-white hover:bg-white/20'
-                          : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
-                      )}
-                    />
-                  }
-                >
-                  <MoreVertical className="h-4 w-4" />
-                  <span className="sr-only">Open menu</span>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {onShare && (
-                    <DropdownMenuItem onClick={() => onShare(deck)}>
-                      <Share2 className="mr-2 h-4 w-4" />
-                      {tCommon('share')}
-                    </DropdownMenuItem>
-                  )}
-                  {onEdit && (
-                    <DropdownMenuItem onClick={() => onEdit(deck)}>
-                      <Pencil className="mr-2 h-4 w-4" />
-                      {tCommon('edit')}
-                    </DropdownMenuItem>
-                  )}
-                  {onMove && (
-                    <DropdownMenuItem onClick={() => onMove(deck)}>
-                      <Move className="mr-2 h-4 w-4" />
-                      {tCommon('move')}
-                    </DropdownMenuItem>
-                  )}
-                  {onDelete && (
-                    <DropdownMenuItem
-                      onClick={() => onDelete(deck.id)}
-                      className="text-destructive focus:text-destructive"
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      {tCommon('delete')}
-                    </DropdownMenuItem>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <button
-                type="button"
-                onClick={handleToggleStar}
-                disabled={isStarPending}
-                className={cn(
-                  'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm',
-                  deck.properties?.cover_image_url
-                    ? isStarred
-                      ? 'bg-amber-500/90 text-white border border-amber-400/80 shadow-md backdrop-blur-sm'
-                      : 'bg-black/50 text-white/90 hover:bg-black/70 border border-white/20 backdrop-blur-sm'
-                    : isStarred
-                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
-                    : 'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
-                )}
-              >
-                <Star
+          {(isOwner || showStar) && (
+            <div className="absolute top-2.5 right-2.5 z-20">
+              {isOwner ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={cn(
+                          'h-8 w-8 rounded-xl',
+                          deck.properties?.cover_image_url
+                            ? 'text-white hover:bg-white/20'
+                            : 'text-muted-foreground hover:bg-primary/10 hover:text-primary'
+                        )}
+                      />
+                    }
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                    <span className="sr-only">Open menu</span>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {onShare && (
+                      <DropdownMenuItem onClick={() => onShare(deck)}>
+                        <Share2 className="mr-2 h-4 w-4" />
+                        {tCommon('share')}
+                      </DropdownMenuItem>
+                    )}
+                    {onEdit && (
+                      <DropdownMenuItem onClick={() => onEdit(deck)}>
+                        <Pencil className="mr-2 h-4 w-4" />
+                        {tCommon('edit')}
+                      </DropdownMenuItem>
+                    )}
+                    {onMove && (
+                      <DropdownMenuItem onClick={() => onMove(deck)}>
+                        <Move className="mr-2 h-4 w-4" />
+                        {tCommon('move')}
+                      </DropdownMenuItem>
+                    )}
+                    {onDelete && (
+                      <DropdownMenuItem
+                        onClick={() => onDelete(deck.id)}
+                        className="text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        {tCommon('delete')}
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleToggleStar}
+                  disabled={isStarPending}
                   className={cn(
-                    'w-3.5 h-3.5 transition-transform duration-200',
-                    isStarred
-                      ? 'fill-current text-amber-500 scale-110'
-                      : 'text-muted-foreground'
+                    'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm',
+                    deck.properties?.cover_image_url
+                      ? isStarred
+                        ? 'bg-amber-500/90 text-white border border-amber-400/80 shadow-md backdrop-blur-sm'
+                        : 'bg-black/50 text-white/90 hover:bg-black/70 border border-white/20 backdrop-blur-sm'
+                      : isStarred
+                      ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
+                      : 'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
                   )}
-                />
-                <span>{starsCount}</span>
-              </button>
-            )}
-          </div>
+                >
+                  <Star
+                    className={cn(
+                      'w-3.5 h-3.5 transition-transform duration-200',
+                      isStarred
+                        ? 'fill-current text-amber-500 scale-110'
+                        : 'text-muted-foreground'
+                    )}
+                  />
+                  <span>{starsCount}</span>
+                </button>
+              )}
+            </div>
+          )}
 
           {/* Bottom-left: Creator Info if non-owner */}
           {!isOwner && deck.owner && (
