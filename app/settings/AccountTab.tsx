@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { apiFetch } from "@/lib/api"
 import { useAuth } from "@/lib/AuthContext"
 import { cn } from "@/lib/utils"
+import { isReservedUsername } from "@/lib/reservedUsernames"
 import {
   AlertCircle,
   CheckCircle2,
@@ -243,6 +244,9 @@ function AccountForm({ user }: { user: UserProfile }) {
     }
     if (!/^[a-zA-Z0-9_-]+$/.test(name)) {
       return t("usernameInvalid")
+    }
+    if (isReservedUsername(name)) {
+      return t("usernameReserved")
     }
     return ""
   }
@@ -490,6 +494,13 @@ function AccountForm({ user }: { user: UserProfile }) {
         ) {
           setError(t("emailExists"))
         } else if (
+          detail === "USERNAME_RESERVED" ||
+          (typeof detail === "string" && detail.includes("USERNAME_RESERVED"))
+        ) {
+          const userErr = t("usernameReserved")
+          setError(userErr)
+          setUsernameError(userErr)
+        } else if (
           detail === "UPDATE_USER_USERNAME_ALREADY_EXISTS" ||
           detail === "USERNAME_ALREADY_EXISTS" ||
           (typeof detail === "string" && detail.includes("USERNAME_ALREADY_EXISTS"))
@@ -497,6 +508,14 @@ function AccountForm({ user }: { user: UserProfile }) {
           const userErr = t("usernameExists")
           setError(userErr)
           setUsernameError(userErr)
+        } else if (Array.isArray(detail)) {
+          const msg = detail.map((d: { msg?: string }) => d.msg || "").join(", ")
+          setError(msg)
+          if (msg.toLowerCase().includes("reserved")) {
+            setUsernameError(t("usernameReserved"))
+          } else if (msg.toLowerCase().includes("username")) {
+            setUsernameError(t("usernameExists"))
+          }
         } else if (typeof detail === "string") {
           setError(detail)
         } else {

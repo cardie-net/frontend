@@ -362,6 +362,7 @@
       "profileUpdated": "Perfil atualizado com sucesso.",
       "emailExists": "Já existe um usuário com esse e-mail.",
       "usernameExists": "Já existe um usuário com esse nome de usuário.",
+      "usernameReserved": "Este nome de usuário é reservado e não pode ser usado.",
       "updateFailed": "Falha ao atualizar o perfil."
     },
     "learning": {
