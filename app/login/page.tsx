@@ -84,7 +84,7 @@ function LoginContent() {
 
       if (response.ok) {
         await refreshUser()
-        window.location.href = "/"
+        window.location.href = "/decks"
       } else {
         const errData = await response.json().catch(() => ({}))
         if (errData.detail === "USER_NOT_VERIFIED") {
