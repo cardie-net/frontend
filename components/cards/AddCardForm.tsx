@@ -33,7 +33,7 @@ export function AddCardForm({
 
   return (
     <Card className="mb-6 border-dashed">
-      <CardContent className="pt-6">
+      <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
           <div>
             <label className="text-sm font-medium text-muted-foreground mb-1.5 block">
@@ -65,11 +65,14 @@ export function AddCardForm({
           <Button
             variant="outline"
             size="sm"
+            className="w-7 px-0 sm:w-auto sm:px-3"
             onClick={onOpenFullEditor}
             disabled={isAddingCard}
+            title={t('fullEditor')}
+            aria-label={t('fullEditor')}
           >
-            <Maximize className="w-4 h-4 mr-1.5" />
-            {t('fullEditor')}
+            <Maximize className="w-4 h-4 sm:mr-1.5" />
+            <span className="hidden sm:inline">{t('fullEditor')}</span>
           </Button>
           <div className="flex gap-2">
             <Button
