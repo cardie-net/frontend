@@ -706,7 +706,11 @@
   },
   "Legal": {
     "termsOfService": "Termos de Serviço",
-    "privacyPolicy": "Política de Privacidade"
+    "privacyPolicy": "Política de Privacidade",
+    "language": "Idioma",
+    "precedenceNoticeTitle": "Aviso de Precedência Legal",
+    "precedenceNoticeDesc": "Esta tradução em ucraniano é fornecida apenas para conveniência. Em caso de discrepâncias ou disputas legais, a versão original em inglês prevalece legalmente.",
+    "viewOriginalEnglish": "Ver a versão original em inglês"
   },
   "ColorPicker": {
     "basicColors": "Cores Básicas",

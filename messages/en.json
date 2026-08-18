@@ -706,7 +706,11 @@
   },
   "Legal": {
     "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy"
+    "privacyPolicy": "Privacy Policy",
+    "language": "Language",
+    "precedenceNoticeTitle": "Legal Precedence Notice",
+    "precedenceNoticeDesc": "This Ukrainian translation is provided for informational convenience only. In the event of any discrepancies or legal disputes, the original English version legally takes precedence.",
+    "viewOriginalEnglish": "View the original English version"
   },
   "ColorPicker": {
     "basicColors": "Basic Colors",
