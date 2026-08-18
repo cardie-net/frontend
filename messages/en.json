@@ -424,7 +424,14 @@
     "reviewBadge": "Review",
     "studyButton": "Study",
     "studyCountButton": "Study ({count})",
-    "viewDeckButton": "View Deck"
+    "viewDeckButton": "View Deck",
+    "activityTypes": {
+      "overview": "Overview",
+      "learn": "Learn",
+      "srs": "SRS",
+      "match": "Match",
+      "exam": "Exam"
+    }
   },
   "Profile": {
     "userNotFound": "User not found",
@@ -652,6 +659,7 @@
     "appendingAlertTitle": "Appending cards",
     "appendingAlertDesc": "The imported cards will be added to the end of this deck. No existing cards will be modified.",
     "textTab": "Text",
+    "soon": "(soon)",
     "quizletSoon": "Quizlet import is coming soon. Use the Text format for now.",
     "ankiSoon": "Anki import is coming soon. Use the Text format for now.",
     "ankiExportSoon": "Anki export is coming soon. Use the Text format for now.",
@@ -699,5 +707,27 @@
   "Legal": {
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy"
+  },
+  "ColorPicker": {
+    "basicColors": "Basic Colors",
+    "customColor": "Custom Color",
+    "defaultColor": "Default (no color)",
+    "colors": {
+      "default": "Default (no color)",
+      "red": "Red",
+      "orange": "Orange",
+      "amber": "Amber",
+      "green": "Green",
+      "emerald": "Emerald",
+      "teal": "Teal",
+      "cyan": "Cyan",
+      "blue": "Blue",
+      "indigo": "Indigo",
+      "violet": "Violet",
+      "purple": "Purple",
+      "fuchsia": "Fuchsia",
+      "pink": "Pink",
+      "rose": "Rose"
+    }
   }
 }

@@ -424,7 +424,14 @@
     "reviewBadge": "Revisar",
     "studyButton": "Estudar",
     "studyCountButton": "Estudar ({count})",
-    "viewDeckButton": "Ver Baralho"
+    "viewDeckButton": "Ver Baralho",
+    "activityTypes": {
+      "overview": "Visão Geral",
+      "learn": "Aprender",
+      "srs": "SRS",
+      "match": "Zigue-Zague",
+      "exam": "Exame"
+    }
   },
   "Profile": {
     "userNotFound": "Usuário não encontrado",
@@ -652,6 +659,7 @@
     "appendingAlertTitle": "Adicionando cartões",
     "appendingAlertDesc": "Os cartões importados serão adicionados ao final deste baralho. Nenhum cartão existente será modificado.",
     "textTab": "Texto",
+    "soon": "(em breve)",
     "quizletSoon": "A importação do Quizlet estará disponível em breve. Use o formato de Texto por enquanto.",
     "ankiSoon": "A importação do Anki estará disponível em breve. Use o formato de Texto por enquanto.",
     "ankiExportSoon": "A exportação para o Anki estará disponível em breve. Use o formato de Texto por enquanto.",
@@ -699,5 +707,27 @@
   "Legal": {
     "termsOfService": "Termos de Serviço",
     "privacyPolicy": "Política de Privacidade"
+  },
+  "ColorPicker": {
+    "basicColors": "Cores Básicas",
+    "customColor": "Cor Personalizada",
+    "defaultColor": "Padrão (sem cor)",
+    "colors": {
+      "default": "Padrão (sem cor)",
+      "red": "Vermelho",
+      "orange": "Laranja",
+      "amber": "Âmbar",
+      "green": "Verde",
+      "emerald": "Esmeralda",
+      "teal": "Azul-petróleo",
+      "cyan": "Ciano",
+      "blue": "Azul",
+      "indigo": "Índigo",
+      "violet": "Violeta",
+      "purple": "Roxo",
+      "fuchsia": "Fúcsia",
+      "pink": "Rosa",
+      "rose": "Rosé"
+    }
   }
 }

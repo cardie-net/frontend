@@ -441,6 +441,11 @@ export default function OverviewPage() {
               <Select
                 value={shuffleOverride}
                 onValueChange={(v) => handleShuffleOverrideChange(v as OverrideValue)}
+                items={{
+                  default: tCommon("default"),
+                  yes: tCommon("yes"),
+                  no: tCommon("no"),
+                }}
               >
                 <SelectTrigger size="sm" className="w-[110px]">
                   <SelectValue />

@@ -18,15 +18,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ColorPicker } from "@/components/ui/color-picker";
 import { ImportExportConfig } from "@/components/decks/ImportExportConfig";
-import { DECK_COLORS } from "@/lib/decks";
 import {
   DelimiterConfig,
   RecordSeparatorConfig,
@@ -230,7 +223,7 @@ export function DeckImportDialog({
             {FORMATS.map((f) => (
               <TabsTrigger key={f.id} value={f.id} disabled={f.comingSoon}>
                 {f.id === "text" ? t("textTab") : f.label}
-                {f.comingSoon ? " (soon)" : ""}
+                {f.comingSoon ? ` ${t("soon")}` : ""}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -251,24 +244,11 @@ export function DeckImportDialog({
                 </div>
                 <div className="grid gap-2">
                   <Label>{t("color")}</Label>
-                  <Select
-                    value={deckColor}
-                    onValueChange={(value) => {
-                      if (value) setDeckColor(value);
-                    }}
+                  <ColorPicker
+                    color={deckColor}
+                    onChange={setDeckColor}
                     disabled={busy}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {DECK_COLORS.map((c) => (
-                        <SelectItem key={c.id} value={c.id}>
-                          {c.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
                 </div>
               </div>
             )}

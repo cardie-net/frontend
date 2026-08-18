@@ -330,11 +330,17 @@ export function ActivityGraph({ summary, isLoading }: ActivityGraphProps) {
             </div>
             {hoveredCell.activity?.details && Object.keys(hoveredCell.activity.details).length > 0 && (
               <div className="mt-1.5 pt-1.5 border-t border-border/50 flex gap-2 text-[10px] font-medium text-muted-foreground">
-                {Object.entries(hoveredCell.activity.details).map(([type, pts]) => (
-                  <span key={type} className="capitalize">
-                    {type}: +{pts}
-                  </span>
-                ))}
+                {Object.entries(hoveredCell.activity.details).map(([type, pts]) => {
+                  const normalizedType = type.toLowerCase()
+                  const label = t.has(`activityTypes.${normalizedType}`)
+                    ? t(`activityTypes.${normalizedType}`)
+                    : type
+                  return (
+                    <span key={type}>
+                      {label}: +{pts}
+                    </span>
+                  )
+                })}
               </div>
             )}
           </div>

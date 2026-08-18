@@ -640,6 +640,11 @@ export default function LearnPage() {
               <Select
                 value={mcOverride}
                 onValueChange={(v) => handleMcOverrideChange(v as OverrideValue)}
+                items={{
+                  default: tCommon("default"),
+                  yes: tCommon("yes"),
+                  no: tCommon("no"),
+                }}
               >
                 <SelectTrigger size="sm" className="w-[110px]">
                   <SelectValue />
@@ -652,8 +657,8 @@ export default function LearnPage() {
               </Select>
             </div>
 
-            <div className="flex items-center justify-end sm:justify-between gap-4 pt-0 sm:pt-2 sm:border-t">
-              <div className="hidden sm:block space-y-0.5">
+            <div className="flex items-center justify-between gap-4 pt-0 sm:pt-2 sm:border-t">
+              <div className="hidden sm:block space-y-0.5 min-w-0 flex-1">
                 <span className="text-sm font-medium leading-none text-destructive">
                   {t("resetProgress")}
                 </span>
@@ -664,7 +669,7 @@ export default function LearnPage() {
               <Button
                 variant="destructive"
                 size="sm"
-                className="w-[140px] rounded-xl gap-2 font-medium shrink-0 justify-center transition-all"
+                className="w-full sm:w-auto min-w-[140px] px-3.5 rounded-xl gap-2 font-medium shrink-0 justify-center whitespace-nowrap transition-all"
                 onClick={() => {
                   if (!confirmClear) {
                     setConfirmClear(true)
@@ -675,8 +680,8 @@ export default function LearnPage() {
                   }
                 }}
               >
-                <RotateCcw className="h-4 w-4" />
-                {confirmClear ? tCommon("areYouSure") : t("clearProgress")}
+                <RotateCcw className="h-4 w-4 shrink-0" />
+                <span>{confirmClear ? tCommon("areYouSure") : t("clearProgress")}</span>
               </Button>
             </div>
           </div>

@@ -46,6 +46,11 @@ export function ImportExportConfig({
               custom: delimiter.custom,
             })
           }
+          items={{
+            tab: t("tab"),
+            comma: t("comma"),
+            custom: t("custom"),
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue />
@@ -78,6 +83,11 @@ export function ImportExportConfig({
               custom: recordSeparator.custom,
             })
           }
+          items={{
+            newline: t("newLine"),
+            semicolon: t("semicolon"),
+            custom: t("custom"),
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue />

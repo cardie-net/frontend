@@ -340,6 +340,11 @@ export function DeckActionButtons({ username, deckSlug }: DeckActionButtonsProps
                       <Select
                         value={examAnswerWith}
                         onValueChange={(v) => setExamAnswerWith(v as "front" | "back" | "both")}
+                        items={{
+                          front: t('examDialog.front'),
+                          back: t('examDialog.back'),
+                          both: t('examDialog.both'),
+                        }}
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue />

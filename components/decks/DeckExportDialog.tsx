@@ -128,7 +128,7 @@ export function DeckExportDialog({
             {FORMATS.map((f) => (
               <TabsTrigger key={f.id} value={f.id} disabled={f.comingSoon}>
                 {f.id === "text" ? t("textTab") : f.label}
-                {f.comingSoon ? " (soon)" : ""}
+                {f.comingSoon ? ` ${t("soon")}` : ""}
               </TabsTrigger>
             ))}
           </TabsList>
