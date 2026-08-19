@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -704,6 +705,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           username={username}
           onClose={() => setShareDeckTarget(null)}
         />
+
+        <LegalLinks />
       </div>
     </div>
   )

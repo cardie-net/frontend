@@ -1,11 +1,12 @@
 import { useTranslations } from "next-intl"
 import { LanguageSwitcher } from "@/components/LanguageSwitcher"
+import { LegalLinks } from "@/components/LegalLinks"
 
 export default function Page() {
   const t = useTranslations("HomePage")
 
   return (
-    <div className="flex min-h-svh p-6">
+    <div className="flex min-h-svh flex-col justify-between p-6">
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
         <div>
           <h1 className="font-medium">{t("title")}</h1>
@@ -19,6 +20,7 @@ export default function Page() {
           {t.rich("darkMode")}
         </div>
       </div>
+      <LegalLinks className="self-center" />
     </div>
   )
 }

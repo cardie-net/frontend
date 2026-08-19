@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
@@ -398,6 +399,8 @@ export default function DecksPage() {
         folderId={deleteFolderTarget}
         onClose={() => setDeleteFolderTarget(null)}
       />
+
+      <LegalLinks />
     </div>
   )
 }

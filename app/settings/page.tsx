@@ -1,7 +1,7 @@
 "use client"
 
-import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { LegalLinks } from "@/components/LegalLinks"
 import {
   Card,
   CardContent,
@@ -75,22 +75,7 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Legal & Policy Links */}
-      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 pt-4 pb-2 text-xs text-muted-foreground">
-        <Link
-          href="/terms-of-service"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("termsOfService")}
-        </Link>
-        <span className="text-border">•</span>
-        <Link
-          href="/privacy-policy"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
-        >
-          {t("privacyPolicy")}
-        </Link>
-      </div>
+      <LegalLinks />
     </div>
   )
 }

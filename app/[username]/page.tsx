@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { cn, formatDate } from "@/lib/utils"
 import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
@@ -581,6 +582,8 @@ export default function ProfilePage() {
             )}
           </>
         )}
+
+        <LegalLinks />
       </div>
     </div>
   )

@@ -4,6 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
@@ -507,6 +508,8 @@ export function FolderView({ username, folder }: FolderViewProps) {
           }
         }}
       />
+
+      <LegalLinks />
       </div>
     </div>
   )
