@@ -199,6 +199,9 @@
     "noMatchesDesc": "Nenhum baralho ou pasta corresponde a \"{query}\".",
     "createFolder": "Criar uma pasta",
     "createFirstDeck": "Criar Primeiro Baralho",
+    "guestWarning": {
+      "warning": "Você não está conectado. Se o cache do navegador for limpo, você perderá seus baralhos criados. Por favor, <link>crie uma conta</link> para que todos os baralhos que você criou sejam transferidos."
+    },
     "createDialog": {
       "title": "Criar Novo Baralho",
       "description": "Insira um nome e escolha uma cor para o seu novo baralho.",

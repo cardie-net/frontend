@@ -199,6 +199,9 @@
     "noMatchesDesc": "No decks or folders matched \"{query}\".",
     "createFolder": "Create a folder",
     "createFirstDeck": "Create First Deck",
+    "guestWarning": {
+      "warning": "You aren't logged in. If your browser cache is cleared, you will lose your created decks. Please <link>create an account</link> so all decks you created are transferred over."
+    },
     "createDialog": {
       "title": "Create New Deck",
       "description": "Enter a name and choose a color for your new deck.",

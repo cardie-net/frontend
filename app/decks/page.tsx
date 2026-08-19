@@ -14,6 +14,7 @@ import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
 import { EditDeckDialog } from "@/components/decks/EditDeckDialog"
 import { DeleteDeckDialog } from "@/components/decks/DeleteDeckDialog"
+import { GuestWarningCard } from "@/components/decks/GuestWarningCard"
 import { DeckCard } from "@/components/decks/DeckCard"
 import { FolderCard } from "@/components/folders/FolderCard"
 import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
@@ -75,6 +76,11 @@ export default function DecksPage() {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
+
+  const isGuest = Boolean(user?.is_guest)
+  const hasCreatedDeck = useMemo(() => {
+    return ownedItems.some((item) => item.type !== "folder")
+  }, [ownedItems])
 
   // Merge owned items with favorited items that were created by others
   const allItems = useMemo(() => {
@@ -252,6 +258,10 @@ export default function DecksPage() {
           </div>
         </div>
       </div>
+
+      {isGuest && hasCreatedDeck && (
+        <GuestWarningCard />
+      )}
 
       {itemsError && (
         <Alert variant="destructive" className="mb-6 rounded-xl">
