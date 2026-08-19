@@ -1,7 +1,6 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { LegalLinks } from "@/components/LegalLinks"
 import {
   Card,
   CardContent,
@@ -9,9 +8,10 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card"
-import { Settings, User, GraduationCap } from "lucide-react"
+import { Settings, User, GraduationCap, Info } from "lucide-react"
 import { AccountTab } from "./AccountTab"
 import { LearningTab } from "./LearningTab"
+import { AboutTab } from "./AboutTab"
 import { useAuth } from "@/lib/AuthContext"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -28,6 +28,7 @@ export default function SettingsPage() {
         </div>
         <Skeleton className="h-[400px] w-full rounded-3xl" />
         <Skeleton className="h-[400px] w-full rounded-3xl" />
+        <Skeleton className="h-[180px] w-full rounded-3xl" />
       </div>
     )
   }
@@ -75,7 +76,17 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <LegalLinks />
+      <Card id="about-settings" className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
+        <CardHeader className="p-0">
+          <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
+            <Info className="h-5 w-5 text-primary" />
+            {t("aboutTitle")}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="relative p-0">
+          <AboutTab />
+        </CardContent>
+      </Card>
     </div>
   )
 }

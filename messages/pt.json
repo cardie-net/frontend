@@ -326,6 +326,7 @@
     "accountDesc": "Gerencie as configurações do seu perfil e informações públicas",
     "learningTitle": "Configurações de Aprendizado",
     "learningDesc": "Configure suas preferências padrão de estudo e aprendizado em todos os baralhos",
+    "aboutTitle": "Sobre o Cardie",
     "termsOfService": "Termos de Serviço",
     "privacyPolicy": "Política de Privacidade",
     "account": {
@@ -384,6 +385,11 @@
       "flipVertical": "Inverter Verticalmente",
       "resetTransform": "Redefinir Transformações",
       "saveAndApply": "Salvar e Aplicar"
+    },
+    "about": {
+      "openSource": "O Cardie é um aplicativo de código aberto para aprendizado com flashcards e repetição espaçada, licenciado sob <apache>Apache 2.0</apache> com código disponível no <github>GitHub</github>.",
+      "legal": "Leia nossos <tos>Termos de Serviço</tos> e a <privacy>Política de Privacidade</privacy>.",
+      "contact": "Envie solicitações de DMCA para <legal>legal@cardie.net</legal>, denúncias de conteúdo para <report>report@cardie.net</report> ou mensagens para <mail>mail@cardie.net</mail>."
     }
   },
   "Stats": {
