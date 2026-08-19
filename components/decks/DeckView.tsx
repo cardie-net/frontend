@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
@@ -75,6 +75,7 @@ interface DeckViewProps {
 
 export function DeckView({ username, slug, deck }: DeckViewProps) {
   const t = useTranslations("DeckView")
+  const locale = useLocale()
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user } = useAuth()
@@ -432,12 +433,12 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 {deck.created_at && (
                   <span
                     className="inline-flex items-center gap-1.5"
-                    title={formatDateTime(deck.created_at)}
+                    title={formatDateTime(deck.created_at, locale)}
                   >
                     <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
                     <span>
                       {t.rich("created", {
-                        date: formatDate(deck.created_at),
+                        date: formatDate(deck.created_at, locale),
                         prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
                       })}
                     </span>
@@ -446,12 +447,12 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 {deck.updated_at && (
                   <span
                     className="inline-flex items-center gap-1.5"
-                    title={formatDateTime(deck.updated_at)}
+                    title={formatDateTime(deck.updated_at, locale)}
                   >
                     <Clock className="h-3.5 w-3.5 text-muted-foreground/70" />
                     <span>
                       {t.rich("updated", {
-                        time: formatRelativeTime(deck.updated_at),
+                        time: formatRelativeTime(deck.updated_at, locale),
                         prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
                       })}
                     </span>

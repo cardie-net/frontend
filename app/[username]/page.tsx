@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
 import { cn, formatDate } from "@/lib/utils"
@@ -40,6 +40,7 @@ import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 export default function ProfilePage() {
   const t = useTranslations("Profile")
+  const locale = useLocale()
   const params = useParams<{ username: string }>()
   const username = params.username
 
@@ -227,7 +228,12 @@ export default function ProfilePage() {
                   {profileUser.created_at && (
                     <span className="inline-flex items-center gap-1.5 text-muted-foreground/90">
                       <Calendar className="h-3.5 w-3.5 text-muted-foreground/70" />
-                      <span>{t("joined", { date: formatDate(profileUser.created_at) })}</span>
+                      <span className="sm:hidden">
+                        {formatDate(profileUser.created_at, locale)}
+                      </span>
+                      <span className="hidden sm:inline">
+                        {t("joined", { date: formatDate(profileUser.created_at, locale) })}
+                      </span>
                     </span>
                   )}
                 </div>

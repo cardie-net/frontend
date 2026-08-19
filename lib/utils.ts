@@ -46,20 +46,26 @@ export function parseDate(dateInput?: string | Date | null): Date | null {
   return isNaN(date.getTime()) ? null : date
 }
 
-export function formatDate(dateString?: string | Date | null): string {
+export function formatDate(
+  dateString?: string | Date | null,
+  locale: string = "en"
+): string {
   const date = parseDate(dateString)
   if (!date) return ""
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
   }).format(date)
 }
 
-export function formatDateTime(dateString?: string | Date | null): string {
+export function formatDateTime(
+  dateString?: string | Date | null,
+  locale: string = "en"
+): string {
   const date = parseDate(dateString)
   if (!date) return ""
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -68,26 +74,38 @@ export function formatDateTime(dateString?: string | Date | null): string {
   }).format(date)
 }
 
-export function formatRelativeTime(dateString?: string | Date | null): string {
+export function formatRelativeTime(
+  dateString?: string | Date | null,
+  locale: string = "en"
+): string {
   const date = parseDate(dateString)
   if (!date) return ""
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 
   if (diffInSeconds < 0 || diffInSeconds < 60) {
-    return "just now"
+    return locale.startsWith("uk") ? "щойно" : locale.startsWith("pt") ? "agora" : "just now"
   }
   const diffInMinutes = Math.floor(diffInSeconds / 60)
   if (diffInMinutes < 60) {
-    return `${diffInMinutes}m ago`
+    return new Intl.RelativeTimeFormat(locale, {
+      numeric: "always",
+      style: "narrow",
+    }).format(-diffInMinutes, "minute")
   }
   const diffInHours = Math.floor(diffInMinutes / 60)
   if (diffInHours < 24) {
-    return `${diffInHours}h ago`
+    return new Intl.RelativeTimeFormat(locale, {
+      numeric: "always",
+      style: "narrow",
+    }).format(-diffInHours, "hour")
   }
   const diffInDays = Math.floor(diffInHours / 24)
   if (diffInDays < 30) {
-    return `${diffInDays}d ago`
+    return new Intl.RelativeTimeFormat(locale, {
+      numeric: "always",
+      style: "narrow",
+    }).format(-diffInDays, "day")
   }
-  return formatDate(date)
+  return formatDate(date, locale)
 }

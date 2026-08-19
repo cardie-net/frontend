@@ -578,14 +578,13 @@ function AccountForm({ user }: { user: UserProfile }) {
             <Button
               type="button"
               variant="secondary"
-              className="flex items-center gap-2"
+              className="flex h-8 w-8 items-center justify-center gap-2 p-0 sm:h-8 sm:w-auto sm:px-3"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploadingAvatar}
+              aria-label={isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
+              title={isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
             >
               <Upload className="h-4 w-4" />
-              <span className="sm:hidden">
-                {isUploadingAvatar ? t("uploading") : t("upload")}
-              </span>
               <span className="hidden sm:inline">
                 {isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
               </span>
@@ -663,7 +662,10 @@ function AccountForm({ user }: { user: UserProfile }) {
             <span className="text-sm font-semibold">{t("bioAndSocial")}</span>
             {filledLinksCount > 0 && (
               <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-semibold text-primary-foreground">
-                {t("linksCount", { count: filledLinksCount })}
+                <span className="sm:hidden">{filledLinksCount}</span>
+                <span className="hidden sm:inline">
+                  {t("linksCount", { count: filledLinksCount })}
+                </span>
               </span>
             )}
           </button>
