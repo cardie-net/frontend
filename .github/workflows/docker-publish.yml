@@ -2,7 +2,7 @@ name: Docker
 
 on:
   schedule:
-    - cron: "50 21 * * *"
+    - cron: "50 21 * * 0"
   push:
     branches: [ "main" ]
     tags: [ "v*.*.*" ]
@@ -94,3 +94,12 @@ jobs:
           TAGS: ${{ steps.meta.outputs.tags }}
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      - name: Dispatch build event to cardie-net/app
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_TOKEN || secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+          repository: cardie-net/app
+          event-type: frontend-image-built
+          client-payload: '{"repository": "${{ github.repository }}", "ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
