@@ -593,7 +593,16 @@ export function Navbar() {
               {/* Sign Up Link */}
               <NavItem
                 href="/signup"
-                icon={<UserPlus className="w-4 h-4 text-primary" />}
+                icon={
+                  <UserPlus
+                    className={cn(
+                      'w-4 h-4',
+                      pathname === '/signup'
+                        ? 'text-primary-foreground'
+                        : 'text-primary'
+                    )}
+                  />
+                }
                 tooltip={t('signup')}
                 isActive={pathname === '/signup'}
                 isRightSide={isRightSide}
