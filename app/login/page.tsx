@@ -87,19 +87,9 @@ function LoginContent() {
         window.location.href = "/decks"
       } else {
         const errData = await response.json().catch(() => ({}))
-        if (errData.detail === "USER_NOT_VERIFIED") {
-          setError(
-            <span>
-              {t("emailNotVerified")}{" "}
-              <Link
-                href={`/verify?email=${encodeURIComponent(email)}`}
-                className="underline"
-              >
-                {t("verifyNow")}
-              </Link>
-            </span>
-          )
-        } else if (errData.detail === "LOGIN_BAD_CREDENTIALS") {
+        // Note: USER_NOT_VERIFIED can no longer occur - unverified accounts
+        // do not exist under deferred promotion.
+        if (errData.detail === "LOGIN_BAD_CREDENTIALS") {
           setError(t("invalidCredentials"))
         } else {
           setError(

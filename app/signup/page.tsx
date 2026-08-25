@@ -42,18 +42,12 @@ export default function SignupPage() {
     try {
       const response = await apiFetch(`/api/v1/auth/register`, {
         method: 'POST',
-        body: JSON.stringify({
-          email,
-          password,
-          is_active: true,
-          is_superuser: false,
-          is_verified: false,
-        }),
+        body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
-        // Redirect to verify page after successful registration
-        router.push('/verify');
+        // Redirect to verify page with the email pre-filled for the resend link
+        router.push(`/verify?email=${encodeURIComponent(email)}`);
       } else {
         const errData = await response.json().catch(() => ({}));
 

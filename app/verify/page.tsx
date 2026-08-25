@@ -2,9 +2,9 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { apiFetch } from '@/lib/api';
+import { useAuth } from '@/lib/AuthContext';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 function VerifyContent() {
   const t = useTranslations('Auth.verify');
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const searchParams = useSearchParams();
   const [token, setToken] = useState(searchParams.get('token') || '');
   const [email, setEmail] = useState(searchParams.get('email') || '');
@@ -85,16 +86,21 @@ function VerifyContent() {
 
       if (response.ok) {
         setSuccess(true);
+        try {
+          await refreshUser();
+        } catch {
+          // Session refresh is best-effort; the redirect still happens.
+        }
         setTimeout(() => {
-          router.push('/login');
+          router.push('/decks');
         }, 3000);
       } else {
         const errData = await response.json().catch(() => ({}));
         if (errData.detail) {
           if (errData.detail === 'VERIFY_USER_BAD_TOKEN') {
             setError(t('badToken'));
-          } else if (errData.detail === 'VERIFY_USER_ALREADY_VERIFIED') {
-            setError(t('alreadyVerified'));
+          } else if (errData.detail === 'VERIFY_USER_EMAIL_TAKEN') {
+            setError(t('emailTaken'));
           } else {
             setError(typeof errData.detail === 'string' ? errData.detail : t('failed'));
           }
@@ -177,12 +183,6 @@ function VerifyContent() {
           </Button>
         </div>
       </div>
-
-      <p className="mt-4 text-center text-sm text-muted-foreground flex gap-1 justify-center">
-        <Link href="/login" className="font-medium hover:underline text-foreground">
-          {t('backToLogin')}
-        </Link>
-      </p>
       </CardContent>
     </Card>
   );
