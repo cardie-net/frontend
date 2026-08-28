@@ -48,6 +48,7 @@ import { DeckActionButtons } from "@/components/decks/DeckActionButtons"
 import { DeckImportDialog } from "@/components/decks/DeckImportDialog"
 import { DeckExportDialog } from "@/components/decks/DeckExportDialog"
 import { ShareDeckDialog } from "@/components/decks/ShareDeckDialog"
+import { GuestShareDialog } from "@/components/shared/GuestShareDialog"
 import { useFolder } from "@/hooks/useFolders"
 import {
   useCards,
@@ -84,6 +85,17 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const { data: parentFolder } = useFolder(deck.folder_id || undefined)
 
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
+  const [guestShareOpen, setGuestShareOpen] = useState(false)
+
+  const isOwner = !!(user && deck && user.id === deck.user_id)
+
+  const handleShareClick = () => {
+    if (user?.is_guest && isOwner) {
+      setGuestShareOpen(true)
+      return
+    }
+    setShareDeckTarget(deck)
+  }
 
   const createCard = useCreateCard()
   const updateCard = useUpdateCard()
@@ -156,8 +168,6 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const [showTransposeDialog, setShowTransposeDialog] = useState(false)
 
   const cardsRef = useRef<HTMLDivElement>(null)
-
-  const isOwner = !!(user && deck && user.id === deck.user_id)
 
   // DnD sensors
   const sensors = useSensors(
@@ -418,7 +428,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 <Button
                   variant="outline"
                   size="icon"
-                  onClick={() => setShareDeckTarget(deck)}
+                  onClick={handleShareClick}
                   className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0"
                   title={t("shareDeck")}
                   aria-label={t("shareDeck")}
@@ -486,7 +496,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             <Button
               variant="outline"
               size="icon"
-              onClick={() => setShareDeckTarget(deck)}
+              onClick={handleShareClick}
               className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0 sm:hidden"
               title={t("shareDeck")}
               aria-label={t("shareDeck")}
@@ -705,6 +715,11 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           deck={shareDeckTarget}
           username={username}
           onClose={() => setShareDeckTarget(null)}
+        />
+
+        <GuestShareDialog
+          open={guestShareOpen}
+          onClose={() => setGuestShareOpen(false)}
         />
 
         <LegalLinks />

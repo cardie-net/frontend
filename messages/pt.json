@@ -739,5 +739,11 @@
       "pink": "Rosa",
       "rose": "Rosé"
     }
+  },
+  "GuestShareDialog": {
+    "title": "Compartilhar exige uma conta",
+    "description": "Baralhos e pastas de convidados permanecem privados. Para compartilhá-los ou publicá-los, <link>crie uma conta gratuita</link> — tudo o que você criou será transferido.",
+    "close": "Fechar",
+    "signUp": "Criar conta"
   }
 }

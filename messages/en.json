@@ -739,5 +739,11 @@
       "pink": "Pink",
       "rose": "Rose"
     }
+  },
+  "GuestShareDialog": {
+    "title": "Sharing requires an account",
+    "description": "Guest decks and folders stay private. To share or publish them, please <link>create a free account</link> — everything you made will be transferred over.",
+    "close": "Close",
+    "signUp": "Sign Up"
   }
 }

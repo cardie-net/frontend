@@ -21,6 +21,7 @@ import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
 import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
 import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
+import { GuestShareDialog } from "@/components/shared/GuestShareDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck, useDeleteDeck } from "@/hooks/useDecks"
 import { useUserItems, useUpdateFolder, useDeleteFolder } from "@/hooks/useFolders"
@@ -64,6 +65,7 @@ export default function DecksPage() {
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
   const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
+  const [guestShareOpen, setGuestShareOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
@@ -106,6 +108,22 @@ export default function DecksPage() {
 
   const handleDeleteFolder = (folderId: string) => {
     setDeleteFolderTarget(folderId)
+  }
+
+  const handleShareDeck = (deck: Deck) => {
+    if (isGuest) {
+      setGuestShareOpen(true)
+      return
+    }
+    setShareDeckTarget(deck)
+  }
+
+  const handleShareFolder = (folder: Folder) => {
+    if (isGuest) {
+      setGuestShareOpen(true)
+      return
+    }
+    setShareFolderTarget(folder)
   }
 
   const handleMoveDeck = (deck: Deck) => {
@@ -317,7 +335,7 @@ export default function DecksPage() {
                       folder={folder}
                       username={user?.username}
                       isOwner={isOwner}
-                      onShare={isOwner ? setShareFolderTarget : undefined}
+                      onShare={isOwner ? () => handleShareFolder(folder) : undefined}
                       onEdit={isOwner ? setEditingFolder : undefined}
                       onDelete={isOwner ? handleDeleteFolder : undefined}
                       onMove={isOwner ? handleMoveFolder : undefined}
@@ -341,7 +359,7 @@ export default function DecksPage() {
                       deck={deck}
                       username={user?.username}
                       isOwner={isOwner}
-                      onShare={isOwner ? setShareDeckTarget : undefined}
+                      onShare={isOwner ? () => handleShareDeck(deck) : undefined}
                       onEdit={isOwner ? setEditingDeckTarget : undefined}
                       onDelete={isOwner ? handleDeleteDeck : undefined}
                       onMove={isOwner ? handleMoveDeck : undefined}
@@ -387,6 +405,11 @@ export default function DecksPage() {
         key={shareFolderTarget?.id ?? "closed-share-folder"}
         folder={shareFolderTarget}
         onClose={() => setShareFolderTarget(null)}
+      />
+
+      <GuestShareDialog
+        open={guestShareOpen}
+        onClose={() => setGuestShareOpen(false)}
       />
 
       <EditDeckDialog

@@ -31,6 +31,7 @@ import { CreateFolderDialog } from "@/components/folders/CreateFolderDialog"
 import { EditFolderDialog } from "@/components/folders/EditFolderDialog"
 import { DeleteFolderDialog } from "@/components/folders/DeleteFolderDialog"
 import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
+import { GuestShareDialog } from "@/components/shared/GuestShareDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck } from "@/hooks/useDecks"
 import {
@@ -119,6 +120,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
   const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
+  const [guestShareOpen, setGuestShareOpen] = useState(false)
   const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
   const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
@@ -136,6 +138,22 @@ export function FolderView({ username, folder }: FolderViewProps) {
     folder &&
     user.id === folder.user_id
   )
+
+  const handleShareDeck = (deck: Deck) => {
+    if (user?.is_guest && isOwner) {
+      setGuestShareOpen(true)
+      return
+    }
+    setShareDeckTarget(deck)
+  }
+
+  const handleShareFolder = (subFolder: Folder) => {
+    if (user?.is_guest && isOwner) {
+      setGuestShareOpen(true)
+      return
+    }
+    setShareFolderTarget(subFolder)
+  }
 
   const itemsToSearch = searchQuery.length > 0 ? allUserItems : folderItems
 
@@ -408,7 +426,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                       username={username}
                       isOwner={isOwner}
                       showStar={false}
-                      onShare={isOwner ? setShareFolderTarget : undefined}
+                      onShare={isOwner ? () => handleShareFolder(subFolder) : undefined}
                       onEdit={isOwner ? setEditingFolder : undefined}
                       onDelete={isOwner ? handleDeleteSubFolder : undefined}
                       onMove={isOwner ? handleMoveFolder : undefined}
@@ -431,7 +449,7 @@ export function FolderView({ username, folder }: FolderViewProps) {
                     username={username}
                     isOwner={isOwner}
                     showStar={false}
-                    onShare={isOwner ? setShareDeckTarget : undefined}
+                    onShare={isOwner ? () => handleShareDeck(deck) : undefined}
                     onEdit={isOwner ? setEditingDeckTarget : undefined}
                     onDelete={isOwner ? handleDeleteDeck : undefined}
                     onMove={isOwner ? handleMoveDeck : undefined}
@@ -479,6 +497,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
         key={shareFolderTarget?.id ?? "closed-share-folder"}
         folder={shareFolderTarget}
         onClose={() => setShareFolderTarget(null)}
+      />
+
+      <GuestShareDialog
+        open={guestShareOpen}
+        onClose={() => setGuestShareOpen(false)}
       />
 
       <EditDeckDialog
