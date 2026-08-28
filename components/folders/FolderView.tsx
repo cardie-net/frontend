@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
+import { matchItemQuery } from "@/lib/search"
 import { Button } from "@/components/ui/button"
 import { Alert } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
@@ -161,9 +162,9 @@ export function FolderView({ username, folder }: FolderViewProps) {
 
   const itemsToSearch = searchQuery.length > 0 ? allUserItems : folderItems
 
-  const filteredItems = itemsToSearch.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredItems = useMemo(() => {
+    return itemsToSearch.filter((item) => matchItemQuery(item, searchQuery))
+  }, [itemsToSearch, searchQuery])
 
   const childFolders = filteredItems.filter(
     (item): item is Folder =>

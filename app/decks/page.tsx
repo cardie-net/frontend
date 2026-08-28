@@ -32,6 +32,7 @@ import {
 import { useUserFavorites } from "@/hooks/useCommunity"
 
 import { cn } from "@/lib/utils"
+import { matchItemQuery } from "@/lib/search"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
@@ -99,9 +100,9 @@ export default function DecksPage() {
     return [...ownedItems, ...externalFavorites]
   }, [ownedItems, favorites])
 
-  const filteredItems = allItems.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredItems = useMemo(() => {
+    return allItems.filter((item) => matchItemQuery(item, searchQuery))
+  }, [allItems, searchQuery])
 
   const rootFolders = filteredItems.filter(
     (item): item is Folder =>

@@ -1,11 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
+import { matchItemQuery } from "@/lib/search"
 import { cn, formatDate } from "@/lib/utils"
 import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -60,9 +61,9 @@ export default function ProfilePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  )
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => matchItemQuery(item, searchQuery))
+  }, [items, searchQuery])
 
   const folders = filteredItems.filter((item) => item.type === "folder")
   const decks = filteredItems.filter((item) => item.type !== "folder")
