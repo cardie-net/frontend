@@ -374,8 +374,8 @@ export default function LearnPage() {
   ])
 
   return (
-    <div className="container mx-auto flex h-[calc(100svh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-4 sm:space-y-8 sm:px-10 sm:py-16">
-      <div className="flex flex-col">
+    <div className="container mx-auto flex h-[calc(100svh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-4 sm:space-y-6 sm:px-10 sm:py-8">
+      <div className="flex shrink-0 flex-col">
         <div className="flex items-center justify-start gap-4 sm:justify-between">
           <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
@@ -422,10 +422,10 @@ export default function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-6">
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
-            <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
+            <Skeleton className="h-full min-h-[200px] w-full max-w-2xl rounded-xl sm:max-h-[500px]" />
           </div>
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -462,7 +462,7 @@ export default function LearnPage() {
             </div>
           </div>
         ) : currentCard ? (
-          <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
+          <div className="flex min-h-0 w-full flex-1 flex-col justify-center">
             {/* Card Component */}
             <FlipCard
               front={isReversed ? currentCard.back : currentCard.front}
@@ -473,7 +473,7 @@ export default function LearnPage() {
               disableFlip={isMultipleChoice}
             />
 
-            <div className="mt-3 px-4 sm:mt-8 sm:px-8">
+            <div className="mt-3 shrink-0 px-4 sm:mt-6 sm:px-8">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   {/* Progress bar container */}
@@ -507,8 +507,8 @@ export default function LearnPage() {
 
             {/* Action Buttons */}
             {isMultipleChoice ? (
-              <div className="w-full">
-                <div className="mt-3 grid w-full grid-cols-2 gap-2 sm:mt-8 sm:gap-3">
+              <div className="w-full shrink-0">
+                <div className="mt-3 grid w-full grid-cols-2 gap-2 sm:mt-6 sm:gap-3">
                   {mcOptions.map((opt, idx) => (
                     <Button
                       key={opt.id}
@@ -574,7 +574,7 @@ export default function LearnPage() {
                 </div>
                 <div
                   className={cn(
-                    "mt-3 flex w-full justify-center transition-opacity duration-300 sm:mt-6 sm:justify-end",
+                    "mt-3 flex w-full justify-center transition-opacity duration-300 sm:mt-4 sm:justify-end",
                     isAnswering
                       ? "opacity-100"
                       : "pointer-events-none opacity-0"
@@ -594,7 +594,7 @@ export default function LearnPage() {
               </div>
             ) : (
               <div
-                className={`mt-4 flex w-full gap-4 transition-opacity duration-300 sm:mt-8 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+                className={`mt-4 flex w-full shrink-0 gap-4 transition-opacity duration-300 sm:mt-6 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
               >
                 <Button
                   size="lg"

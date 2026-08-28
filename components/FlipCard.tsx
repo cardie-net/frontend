@@ -38,7 +38,7 @@ export function FlipCard({
   const t = useTranslations("Cards")
 
   return (
-    <div className="relative flex min-h-[200px] w-full flex-1 flex-col [perspective:1000px] sm:min-h-[500px] sm:flex-none">
+    <div className="relative flex min-h-[200px] w-full flex-1 flex-col [perspective:1000px] sm:max-h-[500px]">
       <div
         className={`flex h-full min-h-0 w-full flex-1 flex-col transition-all duration-500 [transform-style:preserve-3d] ${disableFlip ? "cursor-default" : "cursor-pointer"} ${flipped ? "[transform:rotateY(180deg)]" : ""}`}
         onClick={() => {
@@ -53,7 +53,7 @@ export function FlipCard({
             <CardElements elements={front} />
           </CardContent>
           {!flipped && !disableFlip && (
-            <div className="rounded-b-[min(var(--radius-4xl),24px)] border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground">
+            <div className="shrink-0 rounded-b-[min(var(--radius-4xl),24px)] border-t bg-muted/20 p-4 text-center text-sm text-muted-foreground">
               <span className="sm:hidden">{t("clickToFlipMobile")}</span>
               <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
                 {t.rich("clickToFlipDesktop", {

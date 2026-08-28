@@ -297,8 +297,8 @@ export default function OverviewPage() {
   }
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-8 sm:px-10 sm:py-16">
-      <div className="flex flex-col">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-6 sm:px-10 sm:py-8">
+      <div className="flex shrink-0 flex-col">
         <div className="flex items-center justify-start gap-4 sm:justify-between">
           <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
@@ -345,16 +345,16 @@ export default function OverviewPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
-        <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-6">
+        <div className="flex min-h-0 w-full flex-1 flex-col justify-center">
           <Carousel
             setApi={setApi}
-            className="flex min-h-0 w-full flex-1 flex-col sm:flex-none"
+            className="flex min-h-0 w-full flex-1 flex-col justify-center"
           >
-            <CarouselContent className="min-h-0 flex-1 sm:flex-none">
+            <CarouselContent className="min-h-0 flex-1">
               {displayedCards.map((card, index) => (
                 <CarouselItem key={card.id} className="flex min-h-0 flex-col">
-                  <div className="flex min-h-0 flex-1 flex-col p-1 sm:flex-none">
+                  <div className="flex min-h-0 flex-1 flex-col p-1">
                     <Flashcard
                       card={card}
                       flipped={index === current - 1 ? isFlipped : false}
@@ -368,7 +368,7 @@ export default function OverviewPage() {
             <CarouselNext />
           </Carousel>
 
-          <div className="mt-4 px-8 sm:mt-8">
+          <div className="mt-3 shrink-0 px-8 sm:mt-6">
             <Progress
               value={count > 0 ? (current / count) * 100 : 0}
               className="h-2"
@@ -378,7 +378,7 @@ export default function OverviewPage() {
             </div>
           </div>
 
-          <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
+          <div className="mt-1 shrink-0 text-center text-xs text-muted-foreground sm:mt-2">
             <span className="sm:hidden">{t("flipHintMobile")}</span>
             <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
               {t.rich("flipHintDesktop", {

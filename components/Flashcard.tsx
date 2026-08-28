@@ -24,7 +24,7 @@ export function Flashcard({ card, flipped, onFlip }: FlashcardProps) {
 
   return (
     <div
-      className="mx-auto flex min-h-[250px] w-full flex-1 cursor-pointer flex-col sm:min-h-[500px] sm:flex-none"
+      className="mx-auto flex min-h-[200px] w-full flex-1 cursor-pointer flex-col sm:max-h-[500px]"
       style={{ perspective: "1000px" }}
       onClick={handleClick}
     >

@@ -95,8 +95,8 @@ export default function SpacedRepetitionPage() {
   ])
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-8 sm:px-10 sm:py-16">
-      <div className="flex flex-col">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-6 sm:px-10 sm:py-8">
+      <div className="flex shrink-0 flex-col">
         <div className="flex items-center justify-start gap-4 sm:justify-between">
           <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
@@ -127,10 +127,10 @@ export default function SpacedRepetitionPage() {
         </div>
       </div>
 
-      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-6">
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
-            <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
+            <Skeleton className="h-full min-h-[200px] w-full max-w-2xl rounded-xl sm:max-h-[500px]" />
           </div>
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
@@ -157,7 +157,7 @@ export default function SpacedRepetitionPage() {
             </Link>
           </div>
         ) : currentCard ? (
-          <div className="flex min-h-0 w-full flex-1 flex-col sm:flex-none">
+          <div className="flex min-h-0 w-full flex-1 flex-col justify-center">
             <FlipCard
               front={currentCard.front}
               back={currentCard.back}
@@ -166,7 +166,7 @@ export default function SpacedRepetitionPage() {
               onFlip={toggleFlip}
             />
 
-            <div className="mt-4 px-4 sm:mt-8 sm:px-8">
+            <div className="mt-3 shrink-0 px-4 sm:mt-6 sm:px-8">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-1 gap-2">
                   {counts.newRemaining > 0 && (
@@ -202,7 +202,7 @@ export default function SpacedRepetitionPage() {
             </div>
 
             <div
-              className={`mt-4 grid w-full grid-cols-2 gap-3 transition-opacity duration-300 sm:mt-8 sm:flex sm:flex-row ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              className={`mt-4 grid w-full shrink-0 grid-cols-2 gap-3 transition-opacity duration-300 sm:mt-6 sm:flex sm:flex-row ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
             >
               <Button
                 size="lg"
