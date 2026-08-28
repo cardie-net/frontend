@@ -1,32 +1,32 @@
-'use client'
+"use client"
 
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-import { useTranslations } from 'next-intl'
-import { Star, Folder as FolderIcon } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { getDeckColorClass, getDeckColorStyle } from '@/lib/decks'
+import React, { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { Star, Folder as FolderIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { getDeckColorClass, getDeckColorStyle } from "@/lib/decks"
 import {
   Card,
   CardHeader,
   CardTitle,
   CardDescription,
-} from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { CommunityFolder } from '@/types'
-import { useAuth } from '@/lib/AuthContext'
-import { useStarFolder, useUnstarFolder } from '@/hooks/useCommunity'
-import { useCustomTheme } from '@/components/theme/custom-theme-provider'
+} from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { CommunityFolder } from "@/types"
+import { useAuth } from "@/lib/AuthContext"
+import { useStarFolder, useUnstarFolder } from "@/hooks/useCommunity"
+import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 interface CommunityFolderCardProps {
   folder: CommunityFolder
 }
 
 export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
-  const t = useTranslations('Community')
-  const tCommon = useTranslations('Common')
+  const t = useTranslations("Community")
+  const tCommon = useTranslations("Common")
   const router = useRouter()
   const { user } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
@@ -53,7 +53,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
     if (isOwner) return
 
     if (!user || user.is_guest) {
-      router.push('/login')
+      router.push("/login")
       return
     }
 
@@ -86,15 +86,15 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
     }
   }
 
-  if (deckDisplayMode === 'line') {
+  if (deckDisplayMode === "line") {
     return (
-      <div className="relative block group/folder">
+      <div className="group/folder relative block">
         <Card
           className={cn(
-            'relative w-full rounded-2xl border border-border/70 px-3.5 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 group-hover/folder:border-primary/50 group-hover/folder:shadow-sm flex !flex-row flex-row items-center justify-between gap-2.5 sm:gap-3 overflow-hidden bg-card min-h-[46px] sm:min-h-[50px]',
-            getDeckColorClass(folder.properties?.color, 'left')
+            "relative flex min-h-[46px] w-full !flex-row flex-row items-center justify-between gap-2.5 overflow-hidden rounded-2xl border border-border/70 bg-card px-3.5 py-2 transition-all duration-200 group-hover/folder:border-primary/50 group-hover/folder:shadow-sm sm:min-h-[50px] sm:gap-3 sm:px-4 sm:py-2.5",
+            getDeckColorClass(folder.properties?.color, "left")
           )}
-          style={getDeckColorStyle(folder.properties?.color, 'left')}
+          style={getDeckColorStyle(folder.properties?.color, "left")}
         >
           <Link
             href={folderHref}
@@ -102,21 +102,21 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           />
 
           {/* Left section: Badge + Title + Description */}
-          <div className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 pointer-events-none">
+          <div className="pointer-events-none relative z-10 flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
             <Badge
               variant="secondary"
-              className="shrink-0 text-[11px] px-1.5 py-0 h-5 font-semibold"
+              className="h-5 shrink-0 px-1.5 py-0 text-[11px] font-semibold"
             >
-              <FolderIcon className="w-3 h-3 mr-1" />
+              <FolderIcon className="mr-1 h-3 w-3" />
               <span>{folder.decks_count ?? 0}</span>
             </Badge>
 
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <span className="font-bold text-xs sm:text-sm tracking-tight text-foreground group-hover/folder:text-primary transition-colors line-clamp-2 sm:truncate sm:line-clamp-none break-words [overflow-wrap:anywhere] leading-snug sm:leading-normal">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <span className="line-clamp-2 text-xs leading-snug font-bold tracking-tight [overflow-wrap:anywhere] break-words text-foreground transition-colors group-hover/folder:text-primary sm:line-clamp-none sm:truncate sm:text-sm sm:leading-normal">
                 {folder.name}
               </span>
               {folder.properties?.description && (
-                <span className="hidden md:inline-block text-xs text-muted-foreground truncate shrink min-w-0">
+                <span className="hidden min-w-0 shrink truncate text-xs text-muted-foreground md:inline-block">
                   • {folder.properties.description}
                 </span>
               )}
@@ -124,33 +124,36 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           </div>
 
           {/* Right section: Author + Star Button */}
-          <div className="relative z-20 flex items-center gap-2 sm:gap-2.5 shrink-0 pointer-events-auto">
+          <div className="pointer-events-auto relative z-20 flex shrink-0 items-center gap-2 sm:gap-2.5">
             {folder.owner && (
-              <div className="hidden sm:inline-flex items-center gap-1.5">
+              <div className="hidden items-center gap-1.5 sm:inline-flex">
                 {folder.owner.is_guest ? (
                   <div className="inline-flex items-center gap-1 text-xs text-muted-foreground select-none">
-                    <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
-                      <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
+                    <Avatar className="h-4 w-4 shrink-0 rounded-full border border-border/50">
+                      <AvatarFallback className="bg-muted text-[8px] font-semibold text-muted-foreground">
                         G
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium text-[11px]">{tCommon('guest')}</span>
+                    <span className="text-[11px] font-medium">
+                      {tCommon("guest")}
+                    </span>
                   </div>
                 ) : (
                   <Link
                     href={`/${folder.owner.username}`}
-                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors group/author hover:underline min-w-0"
+                    className="group/author inline-flex min-w-0 items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground hover:underline"
                   >
-                    <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                    <Avatar className="h-4 w-4 shrink-0 rounded-full border border-border/50">
                       <AvatarImage
                         src={folder.owner.avatar_url}
                         alt={folder.owner.display_name}
                       />
-                      <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
-                        {folder.owner.display_name?.slice(0, 2).toUpperCase() || '??'}
+                      <AvatarFallback className="bg-primary/10 text-[8px] text-primary">
+                        {folder.owner.display_name?.slice(0, 2).toUpperCase() ||
+                          "??"}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="truncate max-w-[100px] text-[11px] font-medium">
+                    <span className="max-w-[100px] truncate text-[11px] font-medium">
                       {folder.owner.display_name || folder.owner.username}
                     </span>
                   </Link>
@@ -162,24 +165,24 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
               type="button"
               onClick={isOwner ? undefined : handleToggleStar}
               disabled={isOwner || isPending}
-              title={isOwner ? t('cannotStarOwn') : undefined}
+              title={isOwner ? t("cannotStarOwn") : undefined}
               className={cn(
-                'flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold transition-all duration-200 shadow-sm',
+                "flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs font-semibold shadow-sm transition-all duration-200",
                 isOwner
-                  ? 'cursor-default opacity-80 bg-muted/70 text-muted-foreground border border-border/60'
-                  : 'cursor-pointer',
+                  ? "cursor-default border border-border/60 bg-muted/70 text-muted-foreground opacity-80"
+                  : "cursor-pointer",
                 isStarred
-                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
+                  ? "border border-amber-500/30 bg-amber-500/15 text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
                   : !isOwner &&
-                      'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
+                      "border border-border/60 bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               <Star
                 className={cn(
-                  'w-3.5 h-3.5 transition-transform duration-200',
+                  "h-3.5 w-3.5 transition-transform duration-200",
                   isStarred
-                    ? 'fill-current text-amber-500 scale-110'
-                    : 'text-muted-foreground'
+                    ? "scale-110 fill-current text-amber-500"
+                    : "text-muted-foreground"
                 )}
               />
               <span>{starsCount}</span>
@@ -191,16 +194,16 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
   }
 
   return (
-    <div className="relative block group/folder">
-      <div className="relative w-full h-[130px]">
+    <div className="group/folder relative block">
+      <div className="relative h-[130px] w-full">
         {/* Stacked card 2 (back) */}
-        <div className="absolute inset-0 rounded-2xl border border-border/40 bg-card/40 translate-x-2 translate-y-2 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3 z-0" />
+        <div className="absolute inset-0 z-0 translate-x-2 translate-y-2 rounded-2xl border border-border/40 bg-card/40 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3" />
         {/* Stacked card 1 (middle) */}
-        <div className="absolute inset-0 rounded-2xl border border-border/50 bg-card/60 translate-x-1 translate-y-1 transition-transform duration-300 group-hover/folder:translate-x-1.5 group-hover/folder:translate-y-1.5 z-0" />
+        <div className="absolute inset-0 z-0 translate-x-1 translate-y-1 rounded-2xl border border-border/50 bg-card/60 transition-transform duration-300 group-hover/folder:translate-x-1.5 group-hover/folder:translate-y-1.5" />
 
         <Card
           className={cn(
-            'absolute inset-0 rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-between z-10 bg-card',
+            "absolute inset-0 z-10 flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover/folder:-translate-x-1 group-hover/folder:-translate-y-1 group-hover/folder:border-primary/50 group-hover/folder:shadow-lg sm:p-5",
             getDeckColorClass(folder.properties?.color)
           )}
           style={getDeckColorStyle(folder.properties?.color)}
@@ -212,7 +215,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
           {folder.properties?.cover_image_url && (
             <div
-              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105 pointer-events-none"
+              className="pointer-events-none absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105"
               style={{
                 backgroundImage: `url(${folder.properties.cover_image_url})`,
               }}
@@ -221,39 +224,41 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
           <div
             className={cn(
-              'relative z-10 flex flex-col h-full pointer-events-none min-w-0',
-              folder.properties?.cover_image_url ? 'text-white' : ''
+              "pointer-events-none relative z-10 flex h-full min-w-0 flex-col",
+              folder.properties?.cover_image_url ? "text-white" : ""
             )}
           >
-            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-14">
+            <CardHeader className="relative flex min-h-0 min-w-0 flex-1 flex-col p-0 pr-14">
               <CardTitle
                 className={cn(
-                  'flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0',
+                  "mb-1.5 flex min-w-0 items-start text-base font-bold tracking-tight break-words transition-colors",
                   folder.properties?.cover_image_url
-                    ? 'text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full'
-                    : 'group-hover/folder:text-primary'
+                    ? "max-w-full self-start rounded-xl bg-black/40 px-2.5 py-1 text-white backdrop-blur-md group-hover/folder:text-white/90"
+                    : "group-hover/folder:text-primary"
                 )}
               >
                 <Badge
                   variant={
-                    folder.properties?.cover_image_url ? 'outline' : 'secondary'
+                    folder.properties?.cover_image_url ? "outline" : "secondary"
                   }
                   className={cn(
-                    'mr-1.5 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0 h-5 text-[11px]',
+                    "pointer-events-none mt-0.5 mr-1.5 h-5 shrink-0 px-1.5 py-0 text-[11px]",
                     folder.properties?.cover_image_url
-                      ? 'border-white/30 text-white/90'
-                      : ''
+                      ? "border-white/30 text-white/90"
+                      : ""
                   )}
                 >
-                  <FolderIcon className="w-3 h-3 mr-1" />
+                  <FolderIcon className="mr-1 h-3 w-3" />
                   <span>{folder.decks_count ?? 0}</span>
                 </Badge>
-                <span className="leading-snug break-all line-clamp-2">{folder.name}</span>
+                <span className="line-clamp-2 leading-snug break-all">
+                  {folder.name}
+                </span>
               </CardTitle>
 
               {folder.properties?.description &&
                 !folder.properties?.cover_image_url && (
-                  <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
+                  <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
                     {folder.properties.description}
                   </CardDescription>
                 )}
@@ -266,27 +271,28 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
               type="button"
               onClick={isOwner ? undefined : handleToggleStar}
               disabled={isOwner || isPending}
-              title={isOwner ? t('cannotStarOwn') : undefined}
+              title={isOwner ? t("cannotStarOwn") : undefined}
               className={cn(
-                'flex items-center gap-1.5 px-2 py-0.5 rounded-xl text-xs font-semibold transition-all duration-200 shadow-sm',
+                "flex items-center gap-1.5 rounded-xl px-2 py-0.5 text-xs font-semibold shadow-sm transition-all duration-200",
                 isOwner
-                  ? 'cursor-default opacity-80 bg-muted/70 text-muted-foreground border border-border/60'
-                  : 'cursor-pointer',
+                  ? "cursor-default border border-border/60 bg-muted/70 text-muted-foreground opacity-80"
+                  : "cursor-pointer",
                 folder.properties?.cover_image_url
                   ? isStarred
-                    ? 'bg-amber-500/90 text-white border border-amber-400/80 shadow-md backdrop-blur-sm'
-                    : 'bg-black/50 text-white/90 hover:bg-black/70 border border-white/20 backdrop-blur-sm'
+                    ? "border border-amber-400/80 bg-amber-500/90 text-white shadow-md backdrop-blur-sm"
+                    : "border border-white/20 bg-black/50 text-white/90 backdrop-blur-sm hover:bg-black/70"
                   : isStarred
-                  ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25'
-                  : !isOwner && 'bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60'
+                    ? "border border-amber-500/30 bg-amber-500/15 text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
+                    : !isOwner &&
+                      "border border-border/60 bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               <Star
                 className={cn(
-                  'w-3.5 h-3.5 transition-transform duration-200',
+                  "h-3.5 w-3.5 transition-transform duration-200",
                   isStarred
-                    ? 'fill-current text-amber-500 scale-110'
-                    : 'text-muted-foreground'
+                    ? "scale-110 fill-current text-amber-500"
+                    : "text-muted-foreground"
                 )}
               />
               <span>{starsCount}</span>
@@ -294,43 +300,44 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           </div>
 
           {/* Author Chip (Bottom Left) */}
-          <div className="relative z-20 pt-2 mt-auto flex items-center justify-between pointer-events-auto max-w-[calc(100%-1rem)]">
+          <div className="pointer-events-auto relative z-20 mt-auto flex max-w-[calc(100%-1rem)] items-center justify-between pt-2">
             {folder.owner?.is_guest ? (
               <div
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-xs rounded-lg py-0.5 px-1 -ml-1 select-none cursor-default max-w-full',
+                  "-ml-1 inline-flex max-w-full cursor-default items-center gap-1.5 rounded-lg px-1 py-0.5 text-xs select-none",
                   folder.properties?.cover_image_url
-                    ? 'text-white/80 bg-black/40 backdrop-blur-sm px-2 py-0.5'
-                    : 'text-muted-foreground'
+                    ? "bg-black/40 px-2 py-0.5 text-white/80 backdrop-blur-sm"
+                    : "text-muted-foreground"
                 )}
               >
-                <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
-                  <AvatarFallback className="text-[8px] bg-muted text-muted-foreground font-semibold">
+                <Avatar className="h-4 w-4 shrink-0 rounded-full border border-border/50">
+                  <AvatarFallback className="bg-muted text-[8px] font-semibold text-muted-foreground">
                     G
                   </AvatarFallback>
                 </Avatar>
-                <span className="font-medium truncate">{tCommon('guest')}</span>
+                <span className="truncate font-medium">{tCommon("guest")}</span>
               </div>
             ) : (
               <Link
                 href={`/${folder.owner.username}`}
                 className={cn(
-                  'inline-flex items-center gap-1.5 text-xs transition-colors rounded-lg py-0.5 px-1 -ml-1 group/author hover:underline max-w-full min-w-0',
+                  "group/author -ml-1 inline-flex max-w-full min-w-0 items-center gap-1.5 rounded-lg px-1 py-0.5 text-xs transition-colors hover:underline",
                   folder.properties?.cover_image_url
-                    ? 'text-white/90 bg-black/40 backdrop-blur-sm px-2 py-0.5'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? "bg-black/40 px-2 py-0.5 text-white/90 backdrop-blur-sm"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <Avatar className="w-4 h-4 rounded-full border border-border/50 shrink-0">
+                <Avatar className="h-4 w-4 shrink-0 rounded-full border border-border/50">
                   <AvatarImage
                     src={folder.owner.avatar_url}
                     alt={folder.owner.display_name}
                   />
-                  <AvatarFallback className="text-[8px] bg-primary/10 text-primary">
-                    {folder.owner.display_name?.slice(0, 2).toUpperCase() || '??'}
+                  <AvatarFallback className="bg-primary/10 text-[8px] text-primary">
+                    {folder.owner.display_name?.slice(0, 2).toUpperCase() ||
+                      "??"}
                   </AvatarFallback>
                 </Avatar>
-                <span className="truncate max-w-[120px] sm:max-w-[140px] font-medium">
+                <span className="max-w-[120px] truncate font-medium sm:max-w-[140px]">
                   {folder.owner.display_name || folder.owner.username}
                 </span>
               </Link>

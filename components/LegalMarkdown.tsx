@@ -21,7 +21,7 @@ export function LegalMarkdown({
         </h1>
       ),
     h2: ({ children }) => (
-      <h2 className="mt-8 mb-3 pb-2 text-lg font-bold tracking-tight text-foreground border-b border-border/60 first:mt-0 sm:text-xl">
+      <h2 className="mt-8 mb-3 border-b border-border/60 pb-2 text-lg font-bold tracking-tight text-foreground first:mt-0 sm:text-xl">
         {children}
       </h2>
     ),
@@ -39,27 +39,29 @@ export function LegalMarkdown({
       <strong className="font-semibold text-foreground">{children}</strong>
     ),
     em: ({ children }) => (
-      <em className="italic text-foreground/90">{children}</em>
+      <em className="text-foreground/90 italic">{children}</em>
     ),
     a: ({ children, href }) => {
       const isExternal = href?.startsWith("http")
       return (
         <a
           href={href}
-          className="font-medium text-primary underline underline-offset-4 hover:opacity-80 transition-opacity break-all sm:break-normal"
-          {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+          className="font-medium break-all text-primary underline underline-offset-4 transition-opacity hover:opacity-80 sm:break-normal"
+          {...(isExternal
+            ? { target: "_blank", rel: "noopener noreferrer" }
+            : {})}
         >
           {children}
         </a>
       )
     },
     ul: ({ children }) => (
-      <ul className="my-3.5 space-y-2 list-disc pl-5 sm:pl-6 text-sm leading-relaxed text-foreground/90 sm:text-base">
+      <ul className="my-3.5 list-disc space-y-2 pl-5 text-sm leading-relaxed text-foreground/90 sm:pl-6 sm:text-base">
         {children}
       </ul>
     ),
     ol: ({ children }) => (
-      <ol className="my-3.5 space-y-2 list-decimal pl-5 sm:pl-6 text-sm leading-relaxed text-foreground/90 sm:text-base">
+      <ol className="my-3.5 list-decimal space-y-2 pl-5 text-sm leading-relaxed text-foreground/90 sm:pl-6 sm:text-base">
         {children}
       </ol>
     ),
@@ -67,7 +69,7 @@ export function LegalMarkdown({
       <li className="leading-relaxed marker:text-primary/70">{children}</li>
     ),
     blockquote: ({ children }) => (
-      <blockquote className="my-4 rounded-2xl border-l-4 border-primary/50 bg-primary/5 px-4 py-3 text-sm italic text-muted-foreground">
+      <blockquote className="my-4 rounded-2xl border-l-4 border-primary/50 bg-primary/5 px-4 py-3 text-sm text-muted-foreground italic">
         {children}
       </blockquote>
     ),

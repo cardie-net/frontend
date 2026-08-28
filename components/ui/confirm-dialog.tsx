@@ -49,7 +49,7 @@ export function ConfirmDialog({
             {description}
           </DialogDescription>
         )}
-        <DialogFooter className="flex sm:justify-end gap-2">
+        <DialogFooter className="flex gap-2 sm:justify-end">
           <Button
             type="button"
             variant="outline"

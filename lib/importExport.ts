@@ -1,5 +1,5 @@
-import type { FlashCard } from "@/types";
-import { getCardText } from "./cards";
+import type { FlashCard } from "@/types"
+import { getCardText } from "./cards"
 
 /**
  * Text import/export for decks.
@@ -13,52 +13,52 @@ import { getCardText } from "./cards";
  * ever produces text elements.
  */
 
-export type DelimiterKind = "tab" | "comma" | "custom";
-export type RecordSeparatorKind = "newline" | "semicolon" | "custom";
+export type DelimiterKind = "tab" | "comma" | "custom"
+export type RecordSeparatorKind = "newline" | "semicolon" | "custom"
 
 export interface DelimiterConfig {
-  kind: DelimiterKind;
+  kind: DelimiterKind
   /** Required (and must be non-empty) when kind === "custom". */
-  custom?: string;
+  custom?: string
 }
 
 export interface RecordSeparatorConfig {
-  kind: RecordSeparatorKind;
+  kind: RecordSeparatorKind
   /** Required (and must be non-empty) when kind === "custom". */
-  custom?: string;
+  custom?: string
 }
 
 export interface ParsedCard {
-  front: string;
-  back: string;
+  front: string
+  back: string
 }
 
 export interface TextImportResult {
-  cards: ParsedCard[];
+  cards: ParsedCard[]
   /** Number of records that were dropped (empty or missing a delimiter). */
-  skipped: number;
+  skipped: number
 }
 
 export interface ParsedImportPreview extends TextImportResult {
   /** Number of non-empty lines/records found in the input. */
-  total: number;
+  total: number
 }
 
 /** Resolves a delimiter config to the literal string used for splitting. */
 export function resolveDelimiter(config: DelimiterConfig): string {
-  if (config.kind === "custom") return config.custom ?? "";
-  return config.kind === "tab" ? "\t" : ",";
+  if (config.kind === "custom") return config.custom ?? ""
+  return config.kind === "tab" ? "\t" : ","
 }
 
 /** Resolves a record-separator config to the literal string used for splitting. */
 export function resolveRecordSeparator(config: RecordSeparatorConfig): string {
-  if (config.kind === "custom") return config.custom ?? "";
-  return config.kind === "newline" ? "\n" : ";";
+  if (config.kind === "custom") return config.custom ?? ""
+  return config.kind === "newline" ? "\n" : ";"
 }
 
 /** A custom separator is usable as long as it is non-empty (a single space is a valid separator). */
 export function isCustomSeparatorValid(value: string | undefined): boolean {
-  return !!value && value.length > 0;
+  return !!value && value.length > 0
 }
 
 /** True when the given config resolves to a usable (non-empty) separator. */
@@ -66,9 +66,9 @@ export function isSeparatorConfigValid(
   config: DelimiterConfig | RecordSeparatorConfig
 ): boolean {
   if ("kind" in config && config.kind === "custom") {
-    return isCustomSeparatorValid(config.custom);
+    return isCustomSeparatorValid(config.custom)
   }
-  return true;
+  return true
 }
 
 /**
@@ -88,61 +88,61 @@ export function isSeparatorConfigValid(
  * boundary.
  */
 function tokenizeText(text: string, delim: string, sep: string): string[][] {
-  const records: string[][] = [];
-  let fields: string[] = [];
-  let field = "";
-  let inQuotes = false;
-  let i = 0;
-  const n = text.length;
+  const records: string[][] = []
+  let fields: string[] = []
+  let field = ""
+  let inQuotes = false
+  let i = 0
+  const n = text.length
 
   const endField = () => {
-    fields.push(field);
-    field = "";
-  };
+    fields.push(field)
+    field = ""
+  }
   const endRecord = () => {
-    endField();
-    records.push(fields);
-    fields = [];
-  };
+    endField()
+    records.push(fields)
+    fields = []
+  }
 
   while (i < n) {
     if (inQuotes) {
       if (text[i] === '"') {
         if (text[i + 1] === '"') {
-          field += '"';
-          i += 2;
-          continue;
+          field += '"'
+          i += 2
+          continue
         }
-        inQuotes = false;
-        i += 1;
-        continue;
+        inQuotes = false
+        i += 1
+        continue
       }
-      field += text[i];
-      i += 1;
-      continue;
+      field += text[i]
+      i += 1
+      continue
     }
 
     if (text.startsWith(sep, i)) {
-      endRecord();
-      i += sep.length;
-      continue;
+      endRecord()
+      i += sep.length
+      continue
     }
     if (field === "" && text[i] === '"') {
-      inQuotes = true;
-      i += 1;
-      continue;
+      inQuotes = true
+      i += 1
+      continue
     }
     if (text.startsWith(delim, i)) {
-      endField();
-      i += delim.length;
-      continue;
+      endField()
+      i += delim.length
+      continue
     }
-    field += text[i];
-    i += 1;
+    field += text[i]
+    i += 1
   }
 
-  endRecord();
-  return records;
+  endRecord()
+  return records
 }
 
 /**
@@ -163,40 +163,40 @@ export function parseTextImport(
   delimiter: DelimiterConfig,
   recordSeparator: RecordSeparatorConfig
 ): ParsedImportPreview {
-  const delim = resolveDelimiter(delimiter);
-  const sep = resolveRecordSeparator(recordSeparator);
+  const delim = resolveDelimiter(delimiter)
+  const sep = resolveRecordSeparator(recordSeparator)
   if (!delim || !sep) {
-    return { cards: [], skipped: 0, total: 0 };
+    return { cards: [], skipped: 0, total: 0 }
   }
 
   // Only normalize CRLF for the built-in newline separator. A custom separator
   // may legitimately contain \r (e.g. "\r\n") and must match the raw text.
   const normalized =
-    sep === "\n" ? text.replace(/\r\n/g, "\n").replace(/\r/g, "\n") : text;
-  const records = tokenizeText(normalized, delim, sep);
+    sep === "\n" ? text.replace(/\r\n/g, "\n").replace(/\r/g, "\n") : text
+  const records = tokenizeText(normalized, delim, sep)
 
-  const cards: ParsedCard[] = [];
-  let skipped = 0;
-  let total = 0;
+  const cards: ParsedCard[] = []
+  let skipped = 0
+  let total = 0
 
   for (const rawFields of records) {
     // Skip blank records (empty or whitespace-only single field).
-    if (rawFields.length <= 1 && !rawFields[0]?.trim()) continue;
-    total += 1;
+    if (rawFields.length <= 1 && !rawFields[0]?.trim()) continue
+    total += 1
 
-    const front = (rawFields[0] ?? "").trim();
+    const front = (rawFields[0] ?? "").trim()
     if (rawFields.length < 2 || !front) {
-      skipped += 1;
-      continue;
+      skipped += 1
+      continue
     }
 
     cards.push({
       front,
       back: rawFields.slice(1).join(delim).trim(),
-    });
+    })
   }
 
-  return { cards, skipped, total };
+  return { cards, skipped, total }
 }
 
 /**
@@ -208,7 +208,7 @@ export function parseTextImport(
  * format is one line per card.
  */
 function collapseWhitespace(value: string): string {
-  return value.replace(/\s+/g, " ").trim();
+  return value.replace(/\s+/g, " ").trim()
 }
 
 /**
@@ -220,9 +220,9 @@ function collapseWhitespace(value: string): string {
  */
 function escapeField(value: string, delim: string, sep: string): string {
   if (!value.includes(delim) && !value.includes(sep) && !value.includes('"')) {
-    return value;
+    return value
   }
-  return `"${value.replace(/"/g, '""')}"`;
+  return `"${value.replace(/"/g, '""')}"`
 }
 
 /**
@@ -240,60 +240,60 @@ export function serializeTextExport(
   delimiter: DelimiterConfig,
   recordSeparator: RecordSeparatorConfig
 ): string {
-  const delim = resolveDelimiter(delimiter);
-  const sep = resolveRecordSeparator(recordSeparator);
-  if (!delim || !sep) return "";
+  const delim = resolveDelimiter(delimiter)
+  const sep = resolveRecordSeparator(recordSeparator)
+  if (!delim || !sep) return ""
 
-  const rows: string[] = [];
+  const rows: string[] = []
   for (const card of cards) {
-    const front = collapseWhitespace(getCardText(card.front));
-    const back = collapseWhitespace(getCardText(card.back));
-    if (!front) continue;
+    const front = collapseWhitespace(getCardText(card.front))
+    const back = collapseWhitespace(getCardText(card.back))
+    if (!front) continue
     rows.push(
       `${escapeField(front, delim, sep)}${delim}${escapeField(back, delim, sep)}`
-    );
+    )
   }
 
-  return rows.join(sep);
+  return rows.join(sep)
 }
 
 /** Number of cards that will appear in a text export (front text non-empty). */
 export function countExportableCards(cards: FlashCard[]): number {
   return cards.filter((card) => getCardText(card.front).trim().length > 0)
-    .length;
+    .length
 }
 
 /** Downloads a string as a UTF-8 text file. Client-side only. */
 export function downloadTextFile(filename: string, content: string): void {
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  document.body.appendChild(anchor);
-  anchor.click();
-  document.body.removeChild(anchor);
-  URL.revokeObjectURL(url);
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" })
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement("a")
+  anchor.href = url
+  anchor.download = filename
+  document.body.appendChild(anchor)
+  anchor.click()
+  document.body.removeChild(anchor)
+  URL.revokeObjectURL(url)
 }
 
 /** Copies text to the clipboard, falling back to execCommand in non-secure contexts. */
 export async function copyTextToClipboard(text: string): Promise<boolean> {
   try {
-    await navigator.clipboard.writeText(text);
-    return true;
+    await navigator.clipboard.writeText(text)
+    return true
   } catch {
     try {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.opacity = "0";
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
-      return true;
+      const textarea = document.createElement("textarea")
+      textarea.value = text
+      textarea.style.position = "fixed"
+      textarea.style.opacity = "0"
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand("copy")
+      document.body.removeChild(textarea)
+      return true
     } catch {
-      return false;
+      return false
     }
   }
 }

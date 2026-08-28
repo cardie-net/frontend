@@ -29,21 +29,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const { importThemeJson } = useCustomTheme()
 
-  const syncPreferences = useCallback((userData: UserProfile) => {
-    if (userData.preferences) {
-      if (userData.preferences.themeConfig) {
-        // Prevent infinite loop if updateConfig triggers a patch
-        // But our debounce logic in updateConfig will fire a PATCH, which is harmless (just resaves the same config).
-        // Actually, to be safe, we could check if it's different, but for now we just apply it.
-        importThemeJson(JSON.stringify(userData.preferences.themeConfig))
-      }
-      if (userData.preferences.language) {
-        if (!document.cookie.includes(`NEXT_LOCALE=${userData.preferences.language}`)) {
-          void setLocale(userData.preferences.language).then(() => {})
+  const syncPreferences = useCallback(
+    (userData: UserProfile) => {
+      if (userData.preferences) {
+        if (userData.preferences.themeConfig) {
+          // Prevent infinite loop if updateConfig triggers a patch
+          // But our debounce logic in updateConfig will fire a PATCH, which is harmless (just resaves the same config).
+          // Actually, to be safe, we could check if it's different, but for now we just apply it.
+          importThemeJson(JSON.stringify(userData.preferences.themeConfig))
+        }
+        if (userData.preferences.language) {
+          if (
+            !document.cookie.includes(
+              `NEXT_LOCALE=${userData.preferences.language}`
+            )
+          ) {
+            void setLocale(userData.preferences.language).then(() => {})
+          }
         }
       }
-    }
-  }, [importThemeJson])
+    },
+    [importThemeJson]
+  )
 
   const fetchUser = useCallback(async () => {
     const response = await apiFetch(`/api/v1/users/me`)

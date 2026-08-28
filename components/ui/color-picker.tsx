@@ -2,7 +2,11 @@
 
 import * as React from "react"
 import { useTranslations } from "next-intl"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -26,7 +30,12 @@ interface ColorPickerProps {
   disabled?: boolean
 }
 
-export function ColorPicker({ color, onChange, className, disabled }: ColorPickerProps) {
+export function ColorPicker({
+  color,
+  onChange,
+  className,
+  disabled,
+}: ColorPickerProps) {
   const t = useTranslations("ColorPicker")
   const [customHex, setCustomHex] = React.useState(
     color?.startsWith("#") ? color : "#000000"
@@ -47,21 +56,36 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
     if (!c || c === "default") return t("defaultColor")
     if (c.startsWith("#")) return c
     switch (c) {
-      case "red": return t("colors.red")
-      case "orange": return t("colors.orange")
-      case "amber": return t("colors.amber")
-      case "green": return t("colors.green")
-      case "emerald": return t("colors.emerald")
-      case "teal": return t("colors.teal")
-      case "cyan": return t("colors.cyan")
-      case "blue": return t("colors.blue")
-      case "indigo": return t("colors.indigo")
-      case "violet": return t("colors.violet")
-      case "purple": return t("colors.purple")
-      case "fuchsia": return t("colors.fuchsia")
-      case "pink": return t("colors.pink")
-      case "rose": return t("colors.rose")
-      default: return DECK_COLORS.find((dc) => dc.id === c)?.label || c
+      case "red":
+        return t("colors.red")
+      case "orange":
+        return t("colors.orange")
+      case "amber":
+        return t("colors.amber")
+      case "green":
+        return t("colors.green")
+      case "emerald":
+        return t("colors.emerald")
+      case "teal":
+        return t("colors.teal")
+      case "cyan":
+        return t("colors.cyan")
+      case "blue":
+        return t("colors.blue")
+      case "indigo":
+        return t("colors.indigo")
+      case "violet":
+        return t("colors.violet")
+      case "purple":
+        return t("colors.purple")
+      case "fuchsia":
+        return t("colors.fuchsia")
+      case "pink":
+        return t("colors.pink")
+      case "rose":
+        return t("colors.rose")
+      default:
+        return DECK_COLORS.find((dc) => dc.id === c)?.label || c
     }
   }
 
@@ -75,13 +99,13 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
             variant="outline"
             disabled={disabled}
             className={cn(
-              "w-full justify-start text-left font-normal px-3",
+              "w-full justify-start px-3 text-left font-normal",
               !color && "text-muted-foreground",
               className
             )}
           >
-            <div className="w-full flex items-center gap-2">
-              <div 
+            <div className="flex w-full items-center gap-2">
+              <div
                 className={cn(
                   "h-4 w-4 rounded-full border border-border/50",
                   displayColorClass
@@ -96,14 +120,15 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
       <PopoverContent className="w-[var(--anchor-width)] p-3" align="start">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">{t("basicColors")}</h4>
+            <h4 className="text-sm font-medium">{t("basicColors")}</h4>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 disabled={disabled}
                 className={cn(
-                  "h-6 w-6 rounded-full border border-border/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                  (!color || color === "default") && "ring-2 ring-primary ring-offset-1",
+                  "h-6 w-6 rounded-full border border-border/50 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none",
+                  (!color || color === "default") &&
+                    "ring-2 ring-primary ring-offset-1",
                   "bg-muted"
                 )}
                 onClick={() => onChange("default")}
@@ -115,7 +140,7 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
                   type="button"
                   disabled={disabled}
                   className={cn(
-                    "h-6 w-6 rounded-full border border-border/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                    "h-6 w-6 rounded-full border border-border/50 focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:outline-none",
                     color === c && "ring-2 ring-primary ring-offset-1",
                     getDeckBgColorClass(c)
                   )}
@@ -126,7 +151,7 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
             </div>
           </div>
           <div className="space-y-2">
-            <h4 className="font-medium text-sm">{t("customColor")}</h4>
+            <h4 className="text-sm font-medium">{t("customColor")}</h4>
             <div className="flex items-center gap-2">
               <Input
                 type="color"
@@ -136,7 +161,7 @@ export function ColorPicker({ color, onChange, className, disabled }: ColorPicke
                   setCustomHex(e.target.value)
                   onChange(e.target.value)
                 }}
-                className="h-8 w-12 p-1 cursor-pointer"
+                className="h-8 w-12 cursor-pointer p-1"
               />
               <Input
                 type="text"

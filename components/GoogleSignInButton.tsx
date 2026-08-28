@@ -1,19 +1,19 @@
-'use client';
+"use client"
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { useState } from "react"
+import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { Loader2 } from "lucide-react"
 
 export default function GoogleSignInButton() {
-  const t = useTranslations('Auth');
-  const [isLoading, setIsLoading] = useState(false);
+  const t = useTranslations("Auth")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleSignIn = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     // Navigate to the backend's Google OAuth authorize endpoint.
-    window.location.href = '/api/v1/auth/google/authorize';
-  };
+    window.location.href = "/api/v1/auth/google/authorize"
+  }
 
   return (
     <Button
@@ -21,16 +21,16 @@ export default function GoogleSignInButton() {
       variant="outline"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-2"
+      className="flex w-full items-center justify-center gap-2"
     >
       {isLoading ? (
-        <Loader2 className="w-5 h-5 animate-spin" />
+        <Loader2 className="h-5 w-5 animate-spin" />
       ) : (
         <GoogleIcon />
       )}
-      {isLoading ? t('redirecting') : t('continueWithGoogle')}
+      {isLoading ? t("redirecting") : t("continueWithGoogle")}
     </Button>
-  );
+  )
 }
 
 function GoogleIcon() {
@@ -53,5 +53,5 @@ function GoogleIcon() {
         fill="#EA4335"
       />
     </svg>
-  );
+  )
 }

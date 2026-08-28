@@ -65,7 +65,11 @@ import {
   uploadCardImage,
 } from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
-import { useStarDeck, useUnstarDeck, useUserStarred } from "@/hooks/useCommunity"
+import {
+  useStarDeck,
+  useUnstarDeck,
+  useUserStarred,
+} from "@/hooks/useCommunity"
 import { cn, formatDate, formatDateTime, formatRelativeTime } from "@/lib/utils"
 
 interface DeckViewProps {
@@ -374,13 +378,13 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
         )}
       >
         {/* Header & Navigation */}
-        <div className="flex flex-col min-w-0">
-          <div className="flex w-full flex-col min-w-0">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center min-w-0">
-              <div className="flex items-start sm:items-center gap-3 min-w-0 flex-1">
+        <div className="flex min-w-0 flex-col">
+          <div className="flex w-full min-w-0 flex-col">
+            <div className="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
                 <div
                   className={cn(
-                    "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm mt-0.5 sm:mt-0",
+                    "mt-0.5 flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm sm:mt-0",
                     deck.properties?.color
                       ? getDeckColorClass(deck.properties.color)
                       : "bg-primary/10 text-primary"
@@ -388,12 +392,12 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 >
                   <Layers className="h-6 w-6" />
                 </div>
-                <h1 className="line-clamp-2 sm:truncate text-2xl font-bold tracking-tight sm:text-3xl min-w-0 break-words flex-1">
+                <h1 className="line-clamp-2 min-w-0 flex-1 text-2xl font-bold tracking-tight break-words sm:truncate sm:text-3xl">
                   <span>{deck.name}</span>{" "}
                   {isOwner ? (
                     <Badge
                       variant="secondary"
-                      className="inline-flex align-middle shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold ml-2.5 -translate-y-0.5"
+                      className="ml-2.5 inline-flex shrink-0 -translate-y-0.5 rounded-full px-2.5 py-0.5 align-middle text-xs font-semibold"
                     >
                       {cards.length}
                     </Badge>
@@ -404,17 +408,17 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                       disabled={isStarPending}
                       aria-label={isStarred ? t("unstarDeck") : t("starDeck")}
                       className={cn(
-                        "inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer shadow-sm shrink-0 ml-2.5 align-middle -translate-y-0.5",
+                        "ml-2.5 inline-flex shrink-0 -translate-y-0.5 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 align-middle text-xs font-semibold shadow-sm transition-all duration-200",
                         isStarred
-                          ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30 hover:bg-amber-500/25"
-                          : "bg-muted/80 text-muted-foreground hover:text-foreground hover:bg-muted border border-border/60"
+                          ? "border border-amber-500/30 bg-amber-500/15 text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
+                          : "border border-border/60 bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
                     >
                       <Star
                         className={cn(
-                          "w-3.5 h-3.5 transition-transform duration-200",
+                          "h-3.5 w-3.5 transition-transform duration-200",
                           isStarred
-                            ? "fill-current text-amber-500 scale-110"
+                            ? "scale-110 fill-current text-amber-500"
                             : "text-muted-foreground"
                         )}
                       />
@@ -424,12 +428,12 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 </h1>
               </div>
 
-              <div className="hidden sm:flex items-center shrink-0">
+              <div className="hidden shrink-0 items-center sm:flex">
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleShareClick}
-                  className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0"
+                  className="h-9 w-9 shrink-0 rounded-xl border-border/80 text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground"
                   title={t("shareDeck")}
                   aria-label={t("shareDeck")}
                 >
@@ -439,7 +443,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             </div>
 
             {(deck.created_at || deck.updated_at) && (
-              <div className="mt-2.5 flex items-center gap-x-5 gap-y-1.5 flex-wrap text-xs text-muted-foreground">
+              <div className="mt-2.5 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs text-muted-foreground">
                 {deck.created_at && (
                   <span
                     className="inline-flex items-center gap-1.5"
@@ -449,7 +453,9 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     <span>
                       {t.rich("created", {
                         date: formatDate(deck.created_at, locale),
-                        prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
+                        prefix: (chunks) => (
+                          <span className="hidden sm:inline">{chunks}</span>
+                        ),
                       })}
                     </span>
                   </span>
@@ -463,7 +469,9 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     <span>
                       {t.rich("updated", {
                         time: formatRelativeTime(deck.updated_at, locale),
-                        prefix: (chunks) => <span className="hidden sm:inline">{chunks}</span>,
+                        prefix: (chunks) => (
+                          <span className="hidden sm:inline">{chunks}</span>
+                        ),
                       })}
                     </span>
                   </span>
@@ -473,7 +481,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
 
             {deck.properties?.description && (
               <div className="mt-4 min-w-0">
-                <p className="text-sm whitespace-pre-wrap break-all text-foreground/90">
+                <p className="text-sm break-all whitespace-pre-wrap text-foreground/90">
                   {deck.properties.description}
                 </p>
               </div>
@@ -490,14 +498,16 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
               className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              {parentFolder ? t("backTo", { name: parentFolder.name }) : t("backToDecks")}
+              {parentFolder
+                ? t("backTo", { name: parentFolder.name })
+                : t("backToDecks")}
             </Link>
 
             <Button
               variant="outline"
               size="icon"
               onClick={handleShareClick}
-              className="h-9 w-9 rounded-xl border-border/80 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors shrink-0 sm:hidden"
+              className="h-9 w-9 shrink-0 rounded-xl border-border/80 text-muted-foreground transition-colors hover:bg-muted/80 hover:text-foreground sm:hidden"
               title={t("shareDeck")}
               aria-label={t("shareDeck")}
             >
@@ -593,11 +603,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed p-12 text-center text-muted-foreground">
               <Layers className="mb-3 h-10 w-10 opacity-40" />
               <p className="mb-1 text-lg font-medium">{t("noCardsTitle")}</p>
-              {isOwner && (
-                <p className="text-sm">
-                  {t("noCardsOwner")}
-                </p>
-              )}
+              {isOwner && <p className="text-sm">{t("noCardsOwner")}</p>}
             </div>
           ) : (
             <DndContext

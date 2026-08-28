@@ -11,7 +11,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { RotateCw,
+import {
+  RotateCw,
   RotateCcw,
   FlipHorizontal,
   FlipVertical,
@@ -19,7 +20,9 @@ import { RotateCw,
   ZoomOut,
   RefreshCw,
   Check,
-  Upload, Image as ImageIcon } from "lucide-react"
+  Upload,
+  Image as ImageIcon,
+} from "lucide-react"
 
 interface AvatarEditorDialogProps {
   isOpen: boolean
@@ -285,12 +288,14 @@ export function AvatarEditorDialog({
     >
       <DialogContent className="w-[calc(100vw-1.5rem)] gap-4 p-4 sm:w-full sm:max-w-md sm:gap-6 sm:p-6">
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-          <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-            <ImageIcon className="w-5 h-5" />
+          <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+            <ImageIcon className="h-5 w-5" />
           </div>
           <div>
-            <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+            <DialogTitle className="text-base font-semibold">
+              {t("title")}
+            </DialogTitle>
+            <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
               {t("description")}
             </DialogDescription>
           </div>

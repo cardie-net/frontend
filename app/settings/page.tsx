@@ -61,7 +61,10 @@ export default function SettingsPage() {
         </Card>
       )}
 
-      <Card id="learning-settings" className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
+      <Card
+        id="learning-settings"
+        className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6"
+      >
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
             <GraduationCap className="h-5 w-5 text-primary" />
@@ -76,7 +79,10 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card id="about-settings" className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6">
+      <Card
+        id="about-settings"
+        className="flex flex-col gap-5 overflow-hidden rounded-3xl border-border/80 bg-card p-5 shadow-sm sm:gap-6 sm:p-6"
+      >
         <CardHeader className="p-0">
           <CardTitle className="flex items-center gap-2.5 text-xl font-bold tracking-tight">
             <Info className="h-5 w-5 text-primary" />

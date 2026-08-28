@@ -142,7 +142,7 @@ function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden h-full flex-1"
+      className="h-full flex-1 overflow-hidden"
       data-slot="carousel-content"
     >
       <div
@@ -189,9 +189,9 @@ function CarouselPrevious({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-2xl z-10",
+        "absolute z-10 touch-manipulation rounded-2xl",
         orientation === "horizontal"
-          ? "inset-y-0 left-2 sm:-left-12 my-auto"
+          ? "inset-y-0 left-2 my-auto sm:-left-12"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
@@ -219,9 +219,9 @@ function CarouselNext({
       variant={variant}
       size={size}
       className={cn(
-        "absolute touch-manipulation rounded-2xl z-10",
+        "absolute z-10 touch-manipulation rounded-2xl",
         orientation === "horizontal"
-          ? "inset-y-0 right-2 sm:-right-12 my-auto"
+          ? "inset-y-0 right-2 my-auto sm:-right-12"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}

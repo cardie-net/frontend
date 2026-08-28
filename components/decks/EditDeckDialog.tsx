@@ -32,9 +32,15 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
   const uploadDeckCover = useUploadDeckCover()
 
   const [editName, setEditName] = useState(deck?.name || "")
-  const [editDescription, setEditDescription] = useState(deck?.properties?.description || "")
-  const [editColor, setEditColor] = useState(deck?.properties?.color || "default")
-  const [coverUrl, setCoverUrl] = useState(deck?.properties?.cover_image_url || "")
+  const [editDescription, setEditDescription] = useState(
+    deck?.properties?.description || ""
+  )
+  const [editColor, setEditColor] = useState(
+    deck?.properties?.color || "default"
+  )
+  const [coverUrl, setCoverUrl] = useState(
+    deck?.properties?.cover_image_url || ""
+  )
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [editError, setEditError] = useState("")
 
@@ -67,22 +73,20 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
         await uploadDeckCover.mutateAsync({ deckId: deck.id, file: coverFile })
       }
 
-      const finalCoverUrl = coverFile ? undefined : (coverUrl || null)
+      const finalCoverUrl = coverFile ? undefined : coverUrl || null
 
       updateDeck.mutate(
-        { 
-          deckId: deck.id, 
-          name: editName.trim(), 
+        {
+          deckId: deck.id,
+          name: editName.trim(),
           description: editDescription.trim() || null,
           color: editColor,
-          coverImageUrl: finalCoverUrl
+          coverImageUrl: finalCoverUrl,
         },
         {
           onSuccess: () => onClose(),
           onError: (err) =>
-            setEditError(
-              err instanceof Error ? err.message : tCommon("error")
-            ),
+            setEditError(err instanceof Error ? err.message : tCommon("error")),
         }
       )
     } catch (err) {
@@ -98,17 +102,19 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
       <DialogContent>
         <form onSubmit={handleSaveEdit}>
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Pencil className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Pencil className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogTitle className="text-base font-semibold">
+                {t("title")}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
                 {t("description")}
               </DialogDescription>
             </div>
           </DialogHeader>
-          <div className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto px-1">
+          <div className="grid max-h-[70vh] gap-4 overflow-y-auto px-1 py-4">
             {editError && <Alert variant="destructive">{editError}</Alert>}
 
             <div className="grid gap-2">
@@ -132,13 +138,17 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
                 placeholder={t("descriptionPlaceholder")}
               />
             </div>
-            
+
             <div className="grid gap-2">
               <Label>{t("colorLabel")}</Label>
               <ColorPicker
                 color={editColor}
                 onChange={setEditColor}
-                className={updateDeck.isPending || uploadDeckCover.isPending ? "opacity-50 pointer-events-none" : ""}
+                className={
+                  updateDeck.isPending || uploadDeckCover.isPending
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               />
             </div>
 
@@ -153,7 +163,9 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
                 }}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
               />
-              <div className="text-xs text-muted-foreground text-center">{t("or")}</div>
+              <div className="text-center text-xs text-muted-foreground">
+                {t("or")}
+              </div>
               <Input
                 type="url"
                 placeholder={t("coverUrlPlaceholder")}
@@ -162,7 +174,11 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
                   setCoverUrl(e.target.value)
                   if (e.target.value) setCoverFile(null)
                 }}
-                disabled={updateDeck.isPending || uploadDeckCover.isPending || !!coverFile}
+                disabled={
+                  updateDeck.isPending ||
+                  uploadDeckCover.isPending ||
+                  !!coverFile
+                }
               />
             </div>
           </div>
@@ -175,8 +191,13 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
             >
               {tCommon("cancel")}
             </Button>
-            <Button type="submit" disabled={updateDeck.isPending || uploadDeckCover.isPending}>
-              {updateDeck.isPending || uploadDeckCover.isPending ? tCommon("saving") : tCommon("saveChanges")}
+            <Button
+              type="submit"
+              disabled={updateDeck.isPending || uploadDeckCover.isPending}
+            >
+              {updateDeck.isPending || uploadDeckCover.isPending
+                ? tCommon("saving")
+                : tCommon("saveChanges")}
             </Button>
           </DialogFooter>
         </form>
@@ -184,4 +205,3 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
     </Dialog>
   )
 }
-

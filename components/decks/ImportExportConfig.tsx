@@ -1,25 +1,22 @@
-"use client";
+"use client"
 
-import { useTranslations } from "next-intl";
-import {
-  DelimiterConfig,
-  RecordSeparatorConfig,
-} from "@/lib/importExport";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl"
+import { DelimiterConfig, RecordSeparatorConfig } from "@/lib/importExport"
+import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/components/ui/select"
 
 interface ImportExportConfigProps {
-  delimiter: DelimiterConfig;
-  onDelimiterChange: (delimiter: DelimiterConfig) => void;
-  recordSeparator: RecordSeparatorConfig;
-  onRecordSeparatorChange: (recordSeparator: RecordSeparatorConfig) => void;
+  delimiter: DelimiterConfig
+  onDelimiterChange: (delimiter: DelimiterConfig) => void
+  recordSeparator: RecordSeparatorConfig
+  onRecordSeparatorChange: (recordSeparator: RecordSeparatorConfig) => void
 }
 
 /**
@@ -32,10 +29,10 @@ export function ImportExportConfig({
   recordSeparator,
   onRecordSeparatorChange,
 }: ImportExportConfigProps) {
-  const t = useTranslations("ImportExport");
+  const t = useTranslations("ImportExport")
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 items-start">
+    <div className="grid items-start gap-4 sm:grid-cols-2">
       <div className="grid gap-2">
         <Label>{t("fieldDelimiter")}</Label>
         <Select
@@ -113,5 +110,5 @@ export function ImportExportConfig({
         )}
       </div>
     </div>
-  );
+  )
 }

@@ -18,7 +18,13 @@ interface UseCommunityParams {
 }
 
 export function useCommunityItems(params: UseCommunityParams = {}) {
-  const { item_type = "all", sort = "popular", q, page = 1, limit = 20 } = params
+  const {
+    item_type = "all",
+    sort = "popular",
+    q,
+    page = 1,
+    limit = 20,
+  } = params
 
   return useQuery<CommunityResponse>({
     queryKey: queryKeys.community({ item_type, sort, q, page, limit }),

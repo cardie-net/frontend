@@ -270,9 +270,7 @@ export function MarkdownEditor({
         const url = await uploadCardImage(deckId, file)
         onImageUrlChange(url)
       } catch (e) {
-        setUploadError(
-          e instanceof Error ? e.message : t("uploadFailed")
-        )
+        setUploadError(e instanceof Error ? e.message : t("uploadFailed"))
       } finally {
         setUploading(false)
       }
@@ -349,16 +347,10 @@ export function MarkdownEditor({
 
         {mode === "write" && (
           <div className="flex w-full min-w-0 flex-wrap items-center gap-0.5 rounded-xl border bg-muted/40 p-1">
-            <ToolButton
-              onClick={() => applyWrap("**", "**")}
-              title={t("bold")}
-            >
+            <ToolButton onClick={() => applyWrap("**", "**")} title={t("bold")}>
               <Bold />
             </ToolButton>
-            <ToolButton
-              onClick={() => applyWrap("*", "*")}
-              title={t("italic")}
-            >
+            <ToolButton onClick={() => applyWrap("*", "*")} title={t("italic")}>
               <Italic />
             </ToolButton>
             <span className="mx-0.5 h-5 w-px bg-border" />
@@ -388,11 +380,7 @@ export function MarkdownEditor({
             <DropdownMenu>
               <DropdownMenuTrigger
                 disabled={imageUrl !== null || uploading}
-                title={
-                  imageUrl
-                    ? t("oneImageLimit")
-                    : t("addImage")
-                }
+                title={imageUrl ? t("oneImageLimit") : t("addImage")}
                 render={
                   <Button variant="ghost" size="icon-sm" className="h-7 w-7" />
                 }

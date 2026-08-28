@@ -108,7 +108,8 @@ export interface UserStarredResponse {
   folder_ids: string[]
 }
 
-export type UserItem = (Folder & { type: "folder" }) | (Deck & { type?: "deck" })
+export type UserItem =
+  (Folder & { type: "folder" }) | (Deck & { type?: "deck" })
 
 export interface SocialLinks {
   instagram?: string
@@ -192,4 +193,3 @@ export interface UserActivitySummary {
   longest_streak: number
   total_active_days: number
 }
-

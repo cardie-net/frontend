@@ -44,7 +44,10 @@ const DECK_COLOR_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
   rose: "border-t-rose-500",
 }
 
-const DECK_LEFT_BORDER_CLASSES: Record<Exclude<DeckColor, "default">, string> = {
+const DECK_LEFT_BORDER_CLASSES: Record<
+  Exclude<DeckColor, "default">,
+  string
+> = {
   red: "border-l-red-500",
   orange: "border-l-orange-500",
   amber: "border-l-amber-500",
@@ -84,9 +87,12 @@ export function getDeckColorClass(
   side: "top" | "left" = "top"
 ): string {
   if (!color || color === "default" || color.startsWith("#")) return ""
-  const classes = side === "left" ? DECK_LEFT_BORDER_CLASSES : DECK_COLOR_CLASSES
+  const classes =
+    side === "left" ? DECK_LEFT_BORDER_CLASSES : DECK_COLOR_CLASSES
   const colorClass = (classes as Record<string, string | undefined>)[color]
-  return colorClass ? `${side === "left" ? "border-l-4" : "border-t-4"} ${colorClass}` : ""
+  return colorClass
+    ? `${side === "left" ? "border-l-4" : "border-t-4"} ${colorClass}`
+    : ""
 }
 
 /** Returns inline style for border if color is a hex code */
@@ -96,9 +102,9 @@ export function getDeckColorStyle(
 ): React.CSSProperties | undefined {
   if (color?.startsWith("#")) {
     if (side === "left") {
-      return { borderLeftWidth: '4px', borderLeftColor: color }
+      return { borderLeftWidth: "4px", borderLeftColor: color }
     }
-    return { borderTopWidth: '4px', borderTopColor: color }
+    return { borderTopWidth: "4px", borderTopColor: color }
   }
   return undefined
 }

@@ -5,10 +5,10 @@ export const DEFAULT_LOCALE: Locale = "en"
 
 export const LOCALE_LABELS: Record<
   Locale,
-  { name: string; nativeName: string; flag: string }
+  { name: string; nativeName: string }
 > = {
-  en: { name: "English", nativeName: "English", flag: "🇬🇧" },
-  uk: { name: "Ukrainian", nativeName: "Українська", flag: "🇺🇦" },
+  en: { name: "English", nativeName: "English" },
+  uk: { name: "Ukrainian", nativeName: "Українська" },
 }
 
 export function isSupportedLocale(value: string): value is Locale {

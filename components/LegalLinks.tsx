@@ -14,20 +14,20 @@ export function LegalLinks({ className }: LegalLinksProps) {
   return (
     <footer
       className={cn(
-        "flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-x-6 sm:gap-y-0 pt-4 pb-2 text-xs text-muted-foreground",
+        "flex flex-col items-center justify-center gap-2 pt-4 pb-2 text-xs text-muted-foreground sm:flex-row sm:gap-x-6 sm:gap-y-0",
         className
       )}
     >
       <Link
         href="/terms-of-service"
-        className="transition-colors hover:text-foreground hover:underline underline-offset-4 text-center"
+        className="text-center underline-offset-4 transition-colors hover:text-foreground hover:underline"
       >
         {t("termsOfService")}
       </Link>
-      <span className="hidden sm:inline text-border select-none">•</span>
+      <span className="hidden text-border select-none sm:inline">•</span>
       <Link
         href="/privacy-policy"
-        className="transition-colors hover:text-foreground hover:underline underline-offset-4 text-center"
+        className="text-center underline-offset-4 transition-colors hover:text-foreground hover:underline"
       >
         {t("privacyPolicy")}
       </Link>

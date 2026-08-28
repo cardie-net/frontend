@@ -4,7 +4,15 @@ import { useState, useEffect, useCallback } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowLeft, Check, X, RotateCcw, GraduationCap, Settings, Maximize } from "lucide-react"
+import {
+  ArrowLeft,
+  Check,
+  X,
+  RotateCcw,
+  GraduationCap,
+  Settings,
+  Maximize,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Kbd } from "@/components/ui/kbd"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -55,7 +63,7 @@ function MCOptionThumbnail({ url }: { url: string }) {
   return (
     <>
       <div
-        className="group/image relative h-8 w-8 shrink-0 flex-shrink-0 cursor-pointer overflow-hidden rounded-md border"
+        className="group/image relative h-8 w-8 flex-shrink-0 shrink-0 cursor-pointer overflow-hidden rounded-md border"
         onClick={handleOpen}
       >
         <img
@@ -148,7 +156,8 @@ export default function LearnPage() {
   })
 
   const globalMcDefault = user?.preferences?.learning_multiple_choice ?? false
-  const isMultipleChoice = mcOverride === "yes" ? true : mcOverride === "no" ? false : globalMcDefault
+  const isMultipleChoice =
+    mcOverride === "yes" ? true : mcOverride === "no" ? false : globalMcDefault
 
   useEffect(() => {
     if (!username || !slug) return
@@ -226,10 +235,13 @@ export default function LearnPage() {
   const box2Percent = stats.total > 0 ? (stats.box2 / stats.total) * 100 : 0
   const box3Percent = stats.total > 0 ? (stats.box3 / stats.total) * 100 : 0
 
-  const handleAnswerClick = useCallback((knewIt: boolean) => {
-    setIsFlipped(false)
-    handleAnswer(knewIt)
-  }, [setIsFlipped, handleAnswer])
+  const handleAnswerClick = useCallback(
+    (knewIt: boolean) => {
+      setIsFlipped(false)
+      handleAnswer(knewIt)
+    },
+    [setIsFlipped, handleAnswer]
+  )
 
   const toggleFlip = useCallback(() => {
     if (!currentCard) return
@@ -263,13 +275,15 @@ export default function LearnPage() {
     const otherCards = cards.filter((c) => c.id !== currentCard.id)
     const shuffledOther = shuffle([...otherCards])
 
-    const wrongOptions: MCOption[] = shuffledOther.slice(0, 3).map((c, idx) => ({
-      id: `${c.id}-wrong-${idx}`,
-      cardId: c.id,
-      text: getCardText(c[qSide]) || "",
-      imageUrl: getCardImage(c[qSide])?.url || null,
-      isCorrect: false,
-    }))
+    const wrongOptions: MCOption[] = shuffledOther
+      .slice(0, 3)
+      .map((c, idx) => ({
+        id: `${c.id}-wrong-${idx}`,
+        cardId: c.id,
+        text: getCardText(c[qSide]) || "",
+        imageUrl: getCardImage(c[qSide])?.url || null,
+        isCorrect: false,
+      }))
 
     setMcOptions(shuffle([correctOption, ...wrongOptions]))
     setSelectedOptionId(null)
@@ -332,7 +346,11 @@ export default function LearnPage() {
         if (e.key === "1" || e.code === "Digit1" || e.code === "Numpad1") {
           e.preventDefault()
           handleAnswerClick(false)
-        } else if (e.key === "2" || e.code === "Digit2" || e.code === "Numpad2") {
+        } else if (
+          e.key === "2" ||
+          e.code === "Digit2" ||
+          e.code === "Numpad2"
+        ) {
           e.preventDefault()
           handleAnswerClick(true)
         }
@@ -356,10 +374,10 @@ export default function LearnPage() {
   ])
 
   return (
-    <div className="container mx-auto flex h-[calc(100svh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-4 sm:px-10 sm:py-16">
+    <div className="container mx-auto flex h-[calc(100svh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-4 sm:space-y-8 sm:px-10 sm:py-16">
       <div className="flex flex-col">
-        <div className="flex justify-start sm:justify-between gap-4 items-center">
-          <div className="hidden sm:flex items-center gap-3">
+        <div className="flex items-center justify-start gap-4 sm:justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
               <GraduationCap className="h-6 w-6" />
             </div>
@@ -370,14 +388,21 @@ export default function LearnPage() {
 
           <div className="flex items-center gap-2">
             <Link href={`/${username}/${slug}`} className="sm:hidden">
-              <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 rounded-xl font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 {t("back")}
               </Button>
             </Link>
 
             <Link href={`/${username}/${slug}`} className="hidden sm:block">
-              <Button variant="outline" className="rounded-xl gap-2 font-medium">
+              <Button
+                variant="outline"
+                className="gap-2 rounded-xl font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 {t("backToDeck")}
               </Button>
@@ -397,7 +422,7 @@ export default function LearnPage() {
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-8 flex min-h-0 flex-1 flex-col items-center justify-center">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
             <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
@@ -405,14 +430,18 @@ export default function LearnPage() {
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <p className="mb-4 text-destructive">{error}</p>
-            <Button onClick={() => window.location.reload()}>{tCommon("tryAgain")}</Button>
+            <Button onClick={() => window.location.reload()}>
+              {tCommon("tryAgain")}
+            </Button>
           </div>
         ) : sessionCompleted ? (
           <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center text-center">
             <div className="mb-6 rounded-full bg-primary/10 p-6">
               <Check className="h-12 w-12 text-primary" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold">{t("sessionCompleteTitle")}</h2>
+            <h2 className="mb-2 text-2xl font-bold">
+              {t("sessionCompleteTitle")}
+            </h2>
             <p className="mb-8 text-muted-foreground">
               {t("sessionCompleteDesc")}
             </p>
@@ -422,7 +451,11 @@ export default function LearnPage() {
                   {t("returnToDeck")}
                 </Button>
               </Link>
-              <Button size="lg" className="w-full sm:flex-1" onClick={restartLearning}>
+              <Button
+                size="lg"
+                className="w-full sm:flex-1"
+                onClick={restartLearning}
+              >
                 <RotateCcw className="mr-2 h-4 w-4" />
                 {t("restartLearning")}
               </Button>
@@ -440,7 +473,7 @@ export default function LearnPage() {
               disableFlip={isMultipleChoice}
             />
 
-            <div className="mt-3 sm:mt-8 px-4 sm:px-8">
+            <div className="mt-3 px-4 sm:mt-8 sm:px-8">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   {/* Progress bar container */}
@@ -465,8 +498,9 @@ export default function LearnPage() {
                     />
                   </div>
                 </div>
-                <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {stats.box3} / {stats.total} <span className="hidden sm:inline">{t("mastered")}</span>
+                <div className="min-w-[40px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground sm:min-w-[80px]">
+                  {stats.box3} / {stats.total}{" "}
+                  <span className="hidden sm:inline">{t("mastered")}</span>
                 </div>
               </div>
             </div>
@@ -474,37 +508,37 @@ export default function LearnPage() {
             {/* Action Buttons */}
             {isMultipleChoice ? (
               <div className="w-full">
-                <div className="mt-3 sm:mt-8 grid grid-cols-2 gap-2 sm:gap-3 w-full">
+                <div className="mt-3 grid w-full grid-cols-2 gap-2 sm:mt-8 sm:gap-3">
                   {mcOptions.map((opt, idx) => (
                     <Button
                       key={opt.id}
                       variant="outline"
                       className={cn(
-                        "h-12 sm:h-14 flex items-center justify-between px-2 sm:px-4 text-left font-medium rounded-xl border border-border transition-all shadow-sm",
+                        "flex h-12 items-center justify-between rounded-xl border border-border px-2 text-left font-medium shadow-sm transition-all sm:h-14 sm:px-4",
                         selectedOptionId !== null &&
                           opt.id === selectedOptionId &&
                           opt.isCorrect &&
-                          "bg-green-600 text-white border-green-600 hover:bg-green-600 dark:bg-green-700",
+                          "border-green-600 bg-green-600 text-white hover:bg-green-600 dark:bg-green-700",
                         selectedOptionId !== null &&
                           opt.id === selectedOptionId &&
                           !opt.isCorrect &&
-                          "bg-destructive text-destructive-foreground border-destructive hover:bg-destructive",
+                          "text-destructive-foreground border-destructive bg-destructive hover:bg-destructive",
                         selectedOptionId !== null &&
                           opt.id !== selectedOptionId &&
                           opt.isCorrect &&
-                          "bg-green-600/80 text-white border-green-600",
+                          "border-green-600 bg-green-600/80 text-white",
                         selectedOptionId !== null &&
                           opt.id !== selectedOptionId &&
                           !opt.isCorrect &&
-                          "opacity-40 pointer-events-none"
+                          "pointer-events-none opacity-40"
                       )}
                       onClick={() => handleSelectMCOption(opt)}
                       disabled={isAnswering}
                     >
-                      <div className="flex items-center gap-2 sm:gap-3 min-w-0 pr-1 sm:pr-2">
+                      <div className="flex min-w-0 items-center gap-2 pr-1 sm:gap-3 sm:pr-2">
                         <span
                           className={cn(
-                            "hidden sm:flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold text-muted-foreground transition-colors",
+                            "hidden h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-muted text-xs font-bold text-muted-foreground transition-colors sm:flex",
                             selectedOptionId !== null &&
                               (opt.id === selectedOptionId || opt.isCorrect) &&
                               "bg-white/20 text-white"
@@ -512,17 +546,25 @@ export default function LearnPage() {
                         >
                           {LETTERS[idx] || idx + 1}
                         </span>
-                        {opt.imageUrl && <MCOptionThumbnail url={opt.imageUrl} />}
-                        <span className="truncate text-sm sm:text-base font-normal">
-                          {opt.text ? opt.text : (!opt.imageUrl && <span className="italic text-muted-foreground">{tCommon("empty")}</span>)}
+                        {opt.imageUrl && (
+                          <MCOptionThumbnail url={opt.imageUrl} />
+                        )}
+                        <span className="truncate text-sm font-normal sm:text-base">
+                          {opt.text
+                            ? opt.text
+                            : !opt.imageUrl && (
+                                <span className="text-muted-foreground italic">
+                                  {tCommon("empty")}
+                                </span>
+                              )}
                         </span>
                       </div>
                       <Kbd
                         className={cn(
-                          "hidden sm:inline-flex shrink-0 ml-2",
+                          "ml-2 hidden shrink-0 sm:inline-flex",
                           selectedOptionId !== null &&
                             (opt.id === selectedOptionId || opt.isCorrect) &&
-                            "bg-white/20 text-white border-transparent"
+                            "border-transparent bg-white/20 text-white"
                         )}
                       >
                         {idx + 1}
@@ -532,17 +574,19 @@ export default function LearnPage() {
                 </div>
                 <div
                   className={cn(
-                    "mt-3 sm:mt-6 flex justify-center sm:justify-end w-full transition-opacity duration-300",
-                    isAnswering ? "opacity-100" : "opacity-0 pointer-events-none"
+                    "mt-3 flex w-full justify-center transition-opacity duration-300 sm:mt-6 sm:justify-end",
+                    isAnswering
+                      ? "opacity-100"
+                      : "pointer-events-none opacity-0"
                   )}
                 >
                   <Button
                     size="lg"
-                    className="w-full sm:w-1/2 md:w-1/3 h-12 sm:h-14 font-semibold shadow-sm"
+                    className="h-12 w-full font-semibold shadow-sm sm:h-14 sm:w-1/2 md:w-1/3"
                     onClick={handleNextMC}
                   >
                     {t("next")}
-                    <Kbd className="hidden sm:inline-flex ml-2 bg-primary-foreground/20 text-primary-foreground border-transparent">
+                    <Kbd className="ml-2 hidden border-transparent bg-primary-foreground/20 text-primary-foreground sm:inline-flex">
                       Enter
                     </Kbd>
                   </Button>
@@ -550,7 +594,7 @@ export default function LearnPage() {
               </div>
             ) : (
               <div
-                className={`mt-4 sm:mt-8 flex w-full gap-4 transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+                className={`mt-4 flex w-full gap-4 transition-opacity duration-300 sm:mt-8 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
               >
                 <Button
                   size="lg"
@@ -560,19 +604,19 @@ export default function LearnPage() {
                 >
                   <X className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                   <span>{t("didntKnow")}</span>
-                  <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-destructive-foreground">
+                  <Kbd className="text-destructive-foreground ml-2 hidden bg-background/20 sm:inline-flex">
                     1
                   </Kbd>
                 </Button>
 
                 <Button
                   size="lg"
-                  className="group h-14 flex-1 bg-green-700 text-white hover:bg-green-800 font-semibold"
+                  className="group h-14 flex-1 bg-green-700 font-semibold text-white hover:bg-green-800"
                   onClick={() => handleAnswerClick(true)}
                 >
                   <Check className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                   <span>{t("knewIt")}</span>
-                  <Kbd className="hidden sm:inline-flex ml-2 bg-background/20 text-white">
+                  <Kbd className="ml-2 hidden bg-background/20 text-white sm:inline-flex">
                     2
                   </Kbd>
                 </Button>
@@ -591,12 +635,14 @@ export default function LearnPage() {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Settings className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Settings className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{t("settingsTitle")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogTitle className="text-base font-semibold">
+                {t("settingsTitle")}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
                 {t.rich("settingsDefaults", {
                   link: (chunks) => (
                     <Link
@@ -614,7 +660,10 @@ export default function LearnPage() {
           <div className="space-y-6 py-2">
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
-                <Label htmlFor="reverse-cards" className="text-sm font-medium leading-none cursor-pointer">
+                <Label
+                  htmlFor="reverse-cards"
+                  className="cursor-pointer text-sm leading-none font-medium"
+                >
                   {t("reverseCards")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
@@ -630,7 +679,10 @@ export default function LearnPage() {
 
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-0.5">
-                <Label htmlFor="multiple-choice" className="text-sm font-medium leading-none cursor-pointer">
+                <Label
+                  htmlFor="multiple-choice"
+                  className="cursor-pointer text-sm leading-none font-medium"
+                >
                   {t("multipleChoice")}
                 </Label>
                 <p className="text-xs text-muted-foreground">
@@ -639,7 +691,9 @@ export default function LearnPage() {
               </div>
               <Select
                 value={mcOverride}
-                onValueChange={(v) => handleMcOverrideChange(v as OverrideValue)}
+                onValueChange={(v) =>
+                  handleMcOverrideChange(v as OverrideValue)
+                }
                 items={{
                   default: tCommon("default"),
                   yes: tCommon("yes"),
@@ -657,9 +711,9 @@ export default function LearnPage() {
               </Select>
             </div>
 
-            <div className="flex items-center justify-between gap-4 pt-0 sm:pt-2 sm:border-t">
-              <div className="hidden sm:block space-y-0.5 min-w-0 flex-1">
-                <span className="text-sm font-medium leading-none text-destructive">
+            <div className="flex items-center justify-between gap-4 pt-0 sm:border-t sm:pt-2">
+              <div className="hidden min-w-0 flex-1 space-y-0.5 sm:block">
+                <span className="text-sm leading-none font-medium text-destructive">
                   {t("resetProgress")}
                 </span>
                 <p className="text-xs text-muted-foreground">
@@ -669,7 +723,7 @@ export default function LearnPage() {
               <Button
                 variant="destructive"
                 size="sm"
-                className="w-full sm:w-auto min-w-[140px] px-3.5 rounded-xl gap-2 font-medium shrink-0 justify-center whitespace-nowrap transition-all"
+                className="w-full min-w-[140px] shrink-0 justify-center gap-2 rounded-xl px-3.5 font-medium whitespace-nowrap transition-all sm:w-auto"
                 onClick={() => {
                   if (!confirmClear) {
                     setConfirmClear(true)
@@ -681,7 +735,9 @@ export default function LearnPage() {
                 }}
               >
                 <RotateCcw className="h-4 w-4 shrink-0" />
-                <span>{confirmClear ? tCommon("areYouSure") : t("clearProgress")}</span>
+                <span>
+                  {confirmClear ? tCommon("areYouSure") : t("clearProgress")}
+                </span>
               </Button>
             </div>
           </div>

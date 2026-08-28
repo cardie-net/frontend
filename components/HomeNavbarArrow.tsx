@@ -1,37 +1,37 @@
-'use client';
+"use client"
 
-import React from 'react';
-import { useTranslations } from 'next-intl';
-import { Sparkles } from 'lucide-react';
-import { useNavbar, CornerPosition } from '@/lib/NavbarContext';
-import { cn } from '@/lib/utils';
+import React from "react"
+import { useTranslations } from "next-intl"
+import { Sparkles } from "lucide-react"
+import { useNavbar, CornerPosition } from "@/lib/NavbarContext"
+import { cn } from "@/lib/utils"
 
 export function HomeNavbarArrow() {
-  const t = useTranslations('HomePage');
-  const { corner, isOpen, toggleOpen } = useNavbar();
+  const t = useTranslations("HomePage")
+  const { corner, isOpen, toggleOpen } = useNavbar()
 
   // Position configs for each corner
   const cornerConfigs: Record<
     CornerPosition,
     {
-      wrapper: string;
-      flexDirection: string;
-      animation: string;
-      svg: React.ReactNode;
-      labelRotation: string;
+      wrapper: string
+      flexDirection: string
+      animation: string
+      svg: React.ReactNode
+      labelRotation: string
     }
   > = {
-    'top-right': {
-      wrapper: 'top-6 right-20 sm:top-7 sm:right-24 md:top-8 md:right-24',
-      flexDirection: 'flex-row items-center',
-      animation: 'animate-float-top-right',
-      labelRotation: '-rotate-2',
+    "top-right": {
+      wrapper: "top-6 right-20 sm:top-7 sm:right-24 md:top-8 md:right-24",
+      flexDirection: "flex-row items-center",
+      animation: "animate-float-top-right",
+      labelRotation: "-rotate-2",
       svg: (
         <svg
           viewBox="0 0 70 45"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-12 h-8 sm:w-14 sm:h-9 text-primary filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] flex-shrink-0"
+          className="h-8 w-12 flex-shrink-0 text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] filter sm:h-9 sm:w-14"
         >
           {/* Hand-drawn styled curved arrow path */}
           <path
@@ -53,17 +53,17 @@ export function HomeNavbarArrow() {
         </svg>
       ),
     },
-    'top-left': {
-      wrapper: 'top-6 left-20 sm:top-7 sm:left-24 md:top-8 md:left-24',
-      flexDirection: 'flex-row-reverse items-center',
-      animation: 'animate-float-top-left',
-      labelRotation: 'rotate-2',
+    "top-left": {
+      wrapper: "top-6 left-20 sm:top-7 sm:left-24 md:top-8 md:left-24",
+      flexDirection: "flex-row-reverse items-center",
+      animation: "animate-float-top-left",
+      labelRotation: "rotate-2",
       svg: (
         <svg
           viewBox="0 0 70 45"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-12 h-8 sm:w-14 sm:h-9 text-primary filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] flex-shrink-0"
+          className="h-8 w-12 flex-shrink-0 text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] filter sm:h-9 sm:w-14"
         >
           <path
             d="M 62 38 C 46 38, 26 32, 12 10"
@@ -81,17 +81,18 @@ export function HomeNavbarArrow() {
         </svg>
       ),
     },
-    'bottom-right': {
-      wrapper: 'bottom-6 right-20 sm:bottom-7 sm:right-24 md:bottom-8 md:right-24',
-      flexDirection: 'flex-row items-center',
-      animation: 'animate-float-bottom-right',
-      labelRotation: 'rotate-2',
+    "bottom-right": {
+      wrapper:
+        "bottom-6 right-20 sm:bottom-7 sm:right-24 md:bottom-8 md:right-24",
+      flexDirection: "flex-row items-center",
+      animation: "animate-float-bottom-right",
+      labelRotation: "rotate-2",
       svg: (
         <svg
           viewBox="0 0 70 45"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-12 h-8 sm:w-14 sm:h-9 text-primary filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] flex-shrink-0"
+          className="h-8 w-12 flex-shrink-0 text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] filter sm:h-9 sm:w-14"
         >
           <path
             d="M 8 7 C 24 7, 44 13, 58 35"
@@ -109,17 +110,17 @@ export function HomeNavbarArrow() {
         </svg>
       ),
     },
-    'bottom-left': {
-      wrapper: 'bottom-6 left-20 sm:bottom-7 sm:left-24 md:bottom-8 md:left-24',
-      flexDirection: 'flex-row-reverse items-center',
-      animation: 'animate-float-bottom-left',
-      labelRotation: '-rotate-2',
+    "bottom-left": {
+      wrapper: "bottom-6 left-20 sm:bottom-7 sm:left-24 md:bottom-8 md:left-24",
+      flexDirection: "flex-row-reverse items-center",
+      animation: "animate-float-bottom-left",
+      labelRotation: "-rotate-2",
       svg: (
         <svg
           viewBox="0 0 70 45"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-12 h-8 sm:w-14 sm:h-9 text-primary filter drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] flex-shrink-0"
+          className="h-8 w-12 flex-shrink-0 text-primary drop-shadow-[0_2px_8px_rgba(0,0,0,0.15)] filter sm:h-9 sm:w-14"
         >
           <path
             d="M 62 7 C 46 7, 26 13, 12 35"
@@ -137,9 +138,9 @@ export function HomeNavbarArrow() {
         </svg>
       ),
     },
-  };
+  }
 
-  const currentConfig = cornerConfigs[corner] || cornerConfigs['top-right'];
+  const currentConfig = cornerConfigs[corner] || cornerConfigs["top-right"]
 
   return (
     <div
@@ -147,49 +148,49 @@ export function HomeNavbarArrow() {
       role="button"
       tabIndex={0}
       onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          toggleOpen();
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          toggleOpen()
         }
       }}
       aria-label="Open navigation menu"
       className={cn(
-        'fixed z-40 select-none cursor-pointer group',
-        'transition-all duration-300 ease-out transform-gpu',
+        "group fixed z-40 cursor-pointer select-none",
+        "transform-gpu transition-all duration-300 ease-out",
         currentConfig.wrapper,
         isOpen
-          ? 'opacity-0 scale-90 pointer-events-none translate-y-1'
-          : 'opacity-100 scale-100 pointer-events-auto'
+          ? "pointer-events-none translate-y-1 scale-90 opacity-0"
+          : "pointer-events-auto scale-100 opacity-100"
       )}
     >
       <div
         className={cn(
-          'flex gap-1.5 sm:gap-2 items-center',
+          "flex items-center gap-1.5 sm:gap-2",
           currentConfig.flexDirection,
           currentConfig.animation,
-          'group-hover:scale-105 active:scale-95 transition-transform duration-200'
+          "transition-transform duration-200 group-hover:scale-105 active:scale-95"
         )}
       >
         {/* Playful Pill Label */}
         <div
           className={cn(
-            'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg shadow-black/10',
-            'bg-background/90 text-foreground border border-primary/30 backdrop-blur-md',
-            'group-hover:border-primary/60 group-hover:shadow-primary/10 group-hover:bg-accent/80 transition-all duration-200',
+            "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold shadow-lg shadow-black/10",
+            "border border-primary/30 bg-background/90 text-foreground backdrop-blur-md",
+            "transition-all duration-200 group-hover:border-primary/60 group-hover:bg-accent/80 group-hover:shadow-primary/10",
             currentConfig.labelRotation
           )}
         >
-          <Sparkles className="w-3.5 h-3.5 text-primary animate-pulse flex-shrink-0" />
-          <span className="whitespace-nowrap font-medium tracking-tight">
-            {t('openMenuHint')}
+          <Sparkles className="h-3.5 w-3.5 flex-shrink-0 animate-pulse text-primary" />
+          <span className="font-medium tracking-tight whitespace-nowrap">
+            {t("openMenuHint")}
           </span>
         </div>
 
         {/* Fun Curved SVG Arrow */}
-        <div className="relative transform-gpu group-hover:scale-110 transition-transform duration-200">
+        <div className="relative transform-gpu transition-transform duration-200 group-hover:scale-110">
           {currentConfig.svg}
         </div>
       </div>
     </div>
-  );
+  )
 }

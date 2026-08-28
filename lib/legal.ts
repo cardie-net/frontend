@@ -5,7 +5,8 @@ import type { Locale } from "@/i18n/config"
 export type LegalDocSlug = "terms-of-service" | "privacy-policy"
 
 export function getLegalDocument(
-  docOrFile: LegalDocSlug | "terms-of-service.md" | "privacy-policy.md" | string,
+  docOrFile:
+    LegalDocSlug | "terms-of-service.md" | "privacy-policy.md" | string,
   locale: string = "en"
 ): string {
   try {
@@ -24,7 +25,10 @@ export function getLegalDocument(
       }
     }
   } catch (error) {
-    console.error(`Failed to read legal document: ${docOrFile} (locale: ${locale})`, error)
+    console.error(
+      `Failed to read legal document: ${docOrFile} (locale: ${locale})`,
+      error
+    )
   }
 
   return ""

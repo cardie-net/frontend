@@ -107,68 +107,68 @@ function LoginContent() {
   }
 
   return (
-    <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
+    <Card className="w-full max-w-md overflow-hidden rounded-3xl border-border/80 bg-card shadow-md">
       <CardContent className="p-6 sm:p-8">
-      <h1 className="mb-2 text-2xl font-bold sm:text-3xl">{t("title")}</h1>
-      <p className="mb-6 text-muted-foreground">{t("subtitle")}</p>
+        <h1 className="mb-2 text-2xl font-bold sm:text-3xl">{t("title")}</h1>
+        <p className="mb-6 text-muted-foreground">{t("subtitle")}</p>
 
-      {error && (
-        <Alert variant="destructive" className="mb-6">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
 
-      <GoogleSignInButton />
+        <GoogleSignInButton />
 
-      <AuthDivider />
+        <AuthDivider />
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">{t("emailLabel")}</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder={t("emailPlaceholder")}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="password">{t("passwordLabel")}</Label>
-            <Link
-              href="/forgot-password"
-              className="text-sm font-medium text-muted-foreground hover:underline"
-            >
-              {t("forgotPassword")}
-            </Link>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="email">{t("emailLabel")}</Label>
+            <Input
+              id="email"
+              type="email"
+              placeholder={t("emailPlaceholder")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
           </div>
-          <Input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
 
-        <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? t("signingIn") : t("signIn")}
-        </Button>
-      </form>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">{t("passwordLabel")}</Label>
+              <Link
+                href="/forgot-password"
+                className="text-sm font-medium text-muted-foreground hover:underline"
+              >
+                {t("forgotPassword")}
+              </Link>
+            </div>
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-      <p className="mt-6 flex justify-center gap-1 text-center text-sm text-muted-foreground">
-        {t("noAccount")}
-        <Link
-          href="/signup"
-          className="font-medium text-foreground hover:underline"
-        >
-          {t("signUp")}
-        </Link>
-      </p>
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? t("signingIn") : t("signIn")}
+          </Button>
+        </form>
+
+        <p className="mt-6 flex justify-center gap-1 text-center text-sm text-muted-foreground">
+          {t("noAccount")}
+          <Link
+            href="/signup"
+            className="font-medium text-foreground hover:underline"
+          >
+            {t("signUp")}
+          </Link>
+        </p>
       </CardContent>
     </Card>
   )
@@ -181,8 +181,8 @@ export default function LoginPage() {
     <div className="flex min-h-dvh items-center justify-center p-4">
       <Suspense
         fallback={
-          <Card className="w-full max-w-md rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
-            <CardContent className="p-6 sm:p-8 text-center text-muted-foreground">
+          <Card className="w-full max-w-md overflow-hidden rounded-3xl border-border/80 bg-card shadow-md">
+            <CardContent className="p-6 text-center text-muted-foreground sm:p-8">
               {tCommon("loading")}
             </CardContent>
           </Card>

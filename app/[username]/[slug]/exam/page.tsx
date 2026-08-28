@@ -49,7 +49,6 @@ export default function ExamPage() {
   const [initError, setInitError] = useState(false)
   const firstUnansweredRef = useRef<HTMLDivElement | null>(null)
 
-
   const initializeQuestions = useCallback(() => {
     if (!cards || cards.length === 0) return
 
@@ -142,12 +141,17 @@ export default function ExamPage() {
     })
   }
 
-  const answeredCount = questions.filter((q) => q.selectedOptionId !== null).length
+  const answeredCount = questions.filter(
+    (q) => q.selectedOptionId !== null
+  ).length
   const allAnswered = answeredCount === questions.length
 
   const handleSubmit = () => {
     if (!allAnswered) {
-      firstUnansweredRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      firstUnansweredRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      })
       return
     }
     setIsSubmitted(true)
@@ -162,7 +166,6 @@ export default function ExamPage() {
     window.scrollTo({ top: 0, behavior: "smooth" })
   }
 
-
   const score = questions.filter(
     (q) => q.options.find((o) => o.id === q.selectedOptionId)?.isCorrect
   ).length
@@ -175,19 +178,19 @@ export default function ExamPage() {
 
   if (isLoading || (questions.length === 0 && !initError)) {
     return (
-      <div className="container mx-auto flex max-w-4xl flex-col space-y-6 sm:space-y-8 px-4 pt-8 pb-24 sm:px-10 sm:py-16">
-        <div className="flex justify-between items-center">
-          <div className="hidden sm:flex items-center gap-3">
+      <div className="container mx-auto flex max-w-4xl flex-col space-y-6 px-4 pt-8 pb-24 sm:space-y-8 sm:px-10 sm:py-16">
+        <div className="flex items-center justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
             <Skeleton className="h-11 w-11 rounded-2xl" />
             <Skeleton className="h-8 w-32" />
           </div>
           <Skeleton className="h-9 w-24 rounded-xl sm:hidden" />
-          <Skeleton className="h-9 w-32 rounded-xl hidden sm:block" />
+          <Skeleton className="hidden h-9 w-32 rounded-xl sm:block" />
         </div>
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="space-y-4">
             <Skeleton className="h-16 w-full rounded-2xl" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <Skeleton className="h-14 w-full rounded-xl" />
               <Skeleton className="h-14 w-full rounded-xl" />
               <Skeleton className="h-14 w-full rounded-xl" />
@@ -199,19 +202,22 @@ export default function ExamPage() {
     )
   }
 
-  const firstUnansweredIndex = questions.findIndex((q) => q.selectedOptionId === null)
+  const firstUnansweredIndex = questions.findIndex(
+    (q) => q.selectedOptionId === null
+  )
 
-  const percentage = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0
+  const percentage =
+    questions.length > 0 ? Math.round((score / questions.length) * 100) : 0
   let resultColor = "bg-green-500"
   if (percentage < 60) resultColor = "bg-red-500"
   else if (percentage < 80) resultColor = "bg-amber-500"
 
   return (
-    <div className="container mx-auto flex max-w-4xl flex-col space-y-6 sm:space-y-8 px-4 pt-8 pb-24 sm:px-10 sm:py-16 sm:pb-24">
+    <div className="container mx-auto flex max-w-4xl flex-col space-y-6 px-4 pt-8 pb-24 sm:space-y-8 sm:px-10 sm:py-16 sm:pb-24">
       {/* Header */}
       <div className="flex flex-col">
-        <div className="flex justify-start sm:justify-between gap-4 items-center">
-          <div className="hidden sm:flex items-center gap-3">
+        <div className="flex items-center justify-start gap-4 sm:justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
               <FileCheck className="h-6 w-6" />
             </div>
@@ -221,7 +227,11 @@ export default function ExamPage() {
           </div>
 
           <Link href={`/${username}/${slug}`} className="sm:hidden">
-            <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-xl font-medium"
+            >
               <ArrowLeft className="h-4 w-4" />
               {t("back")}
             </Button>
@@ -230,15 +240,25 @@ export default function ExamPage() {
           <div className="hidden items-center justify-end gap-3 sm:flex">
             {!isSubmitted ? (
               <div className="text-sm font-medium text-muted-foreground">
-                {t("answeredCount", { answered: answeredCount, total: questions.length })}
+                {t("answeredCount", {
+                  answered: answeredCount,
+                  total: questions.length,
+                })}
               </div>
             ) : (
               <div className="text-sm font-medium text-primary">
-                {t("correctCount", { score, total: questions.length, percent: percentage })}
+                {t("correctCount", {
+                  score,
+                  total: questions.length,
+                  percent: percentage,
+                })}
               </div>
             )}
             <Link href={`/${username}/${slug}`}>
-              <Button variant="outline" className="gap-2 rounded-xl font-medium">
+              <Button
+                variant="outline"
+                className="gap-2 rounded-xl font-medium"
+              >
                 <ArrowLeft className="h-4 w-4" />
                 {t("backToDeck")}
               </Button>
@@ -250,25 +270,44 @@ export default function ExamPage() {
       {/* Results summary banner — only shown after submit */}
       {isSubmitted && (
         <Card className="rounded-2xl">
-          <CardContent className="flex flex-col items-center gap-4 py-8 sm:flex-row sm:gap-8 sm:py-6 sm:px-10">
+          <CardContent className="flex flex-col items-center gap-4 py-8 sm:flex-row sm:gap-8 sm:px-10 sm:py-6">
             <div>
               <div className="text-4xl font-bold">
                 {score}
-                <span className="text-2xl text-muted-foreground">/{questions.length}</span>
+                <span className="text-2xl text-muted-foreground">
+                  /{questions.length}
+                </span>
               </div>
-              <div className="text-sm text-muted-foreground">{t("scorePercent", { percent: percentage })}</div>
+              <div className="text-sm text-muted-foreground">
+                {t("scorePercent", { percent: percentage })}
+              </div>
             </div>
             <div className="flex w-full flex-1 flex-col gap-3 sm:gap-3">
-              <ProgressPrimitive.Root value={percentage} className="flex w-full">
+              <ProgressPrimitive.Root
+                value={percentage}
+                className="flex w-full"
+              >
                 <ProgressTrack className="h-3">
                   <ProgressIndicator className={resultColor} />
                 </ProgressTrack>
               </ProgressPrimitive.Root>
               <div className="flex justify-end gap-3">
-                <Button onClick={handleTryAgain} variant="outline" size="sm" className="rounded-xl flex-1 sm:flex-none">
+                <Button
+                  onClick={handleTryAgain}
+                  variant="outline"
+                  size="sm"
+                  className="flex-1 rounded-xl sm:flex-none"
+                >
                   <RotateCcw className="mr-2 h-3.5 w-3.5" /> {t("tryAgain")}
                 </Button>
-                <Link href={`/${username}/${slug}`} className={buttonVariants({ variant: "outline", size: "sm", className: "rounded-xl flex-1 sm:flex-none justify-center" })}>
+                <Link
+                  href={`/${username}/${slug}`}
+                  className={buttonVariants({
+                    variant: "outline",
+                    size: "sm",
+                    className: "flex-1 justify-center rounded-xl sm:flex-none",
+                  })}
+                >
                   {t("backToDeck")}
                 </Link>
               </div>
@@ -291,7 +330,11 @@ export default function ExamPage() {
           return (
             <div
               key={question.cardId}
-              ref={isFirstUnanswered && !isSubmitted ? firstUnansweredRef : undefined}
+              ref={
+                isFirstUnanswered && !isSubmitted
+                  ? firstUnansweredRef
+                  : undefined
+              }
               className="space-y-4"
             >
               {/* Question header + prompt */}
@@ -318,7 +361,9 @@ export default function ExamPage() {
                     qIndex + 1
                   )}
                 </div>
-                <p className="pt-1 text-base font-medium sm:text-lg">{question.prompt}</p>
+                <p className="pt-1 text-base font-medium sm:text-lg">
+                  {question.prompt}
+                </p>
               </div>
 
               {/* Answer options */}
@@ -378,15 +423,17 @@ export default function ExamPage() {
                       >
                         {LETTERS[oIndex]}
                       </span>
-                      <span className="flex-1 break-words pr-6">{option.text}</span>
+                      <span className="flex-1 pr-6 break-words">
+                        {option.text}
+                      </span>
                       {isSubmitted && isCorrect && (
-                        <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-green-500" />
+                        <Check className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-green-500" />
                       )}
                       {isSubmitted && isSelected && !isCorrect && (
-                        <X className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-red-500" />
+                        <X className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-red-500" />
                       )}
                       {!isSubmitted && isSelected && (
-                        <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
+                        <Check className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-primary" />
                       )}
                     </Button>
                   )
@@ -396,7 +443,10 @@ export default function ExamPage() {
               {/* Show correct answer text after submit if user was wrong */}
               {isSubmitted && !isCorrectAnswer && (
                 <p className="pl-11 text-sm text-muted-foreground">
-                  {t("correctAnswer", { answer: question.options.find((o) => o.isCorrect)?.text || "" })}
+                  {t("correctAnswer", {
+                    answer:
+                      question.options.find((o) => o.isCorrect)?.text || "",
+                  })}
                 </p>
               )}
             </div>
@@ -410,14 +460,18 @@ export default function ExamPage() {
           <div className="container mx-auto flex max-w-4xl items-center justify-between px-4 py-3 sm:px-10">
             <div className="flex items-center gap-3">
               <ProgressPrimitive.Root
-                value={questions.length > 0 ? (answeredCount / questions.length) * 100 : 0}
+                value={
+                  questions.length > 0
+                    ? (answeredCount / questions.length) * 100
+                    : 0
+                }
                 className="flex w-20 sm:w-28"
               >
                 <ProgressTrack>
                   <ProgressIndicator className="bg-primary" />
                 </ProgressTrack>
               </ProgressPrimitive.Root>
-              <span className="text-sm text-muted-foreground font-medium">
+              <span className="text-sm font-medium text-muted-foreground">
                 {answeredCount}/{questions.length}
               </span>
             </div>

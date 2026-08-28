@@ -28,34 +28,37 @@ export function LearningTab() {
     setOverviewShuffle(user?.preferences?.overview_shuffle ?? false)
   }, [user?.preferences])
 
-  const savePreference = useCallback(async (prefs: Record<string, boolean>) => {
-    setIsSaving(true)
-    setError("")
+  const savePreference = useCallback(
+    async (prefs: Record<string, boolean>) => {
+      setIsSaving(true)
+      setError("")
 
-    try {
-      const response = await apiFetch("/api/v1/users/me", {
-        method: "PATCH",
-        body: JSON.stringify({
-          preferences: prefs,
-        }),
-      })
+      try {
+        const response = await apiFetch("/api/v1/users/me", {
+          method: "PATCH",
+          body: JSON.stringify({
+            preferences: prefs,
+          }),
+        })
 
-      if (response.ok) {
-        await refreshUser()
-      } else {
-        const errData = await response.json().catch(() => ({}))
-        setError(
-          typeof errData.detail === "string"
-            ? errData.detail
-            : t("updateFailed")
-        )
+        if (response.ok) {
+          await refreshUser()
+        } else {
+          const errData = await response.json().catch(() => ({}))
+          setError(
+            typeof errData.detail === "string"
+              ? errData.detail
+              : t("updateFailed")
+          )
+        }
+      } catch {
+        setError(t("saveError"))
+      } finally {
+        setIsSaving(false)
       }
-    } catch {
-      setError(t("saveError"))
-    } finally {
-      setIsSaving(false)
-    }
-  }, [refreshUser, t])
+    },
+    [refreshUser, t]
+  )
 
   const handleToggleMultipleChoice = (checked: boolean) => {
     setMultipleChoice(checked)
@@ -83,12 +86,12 @@ export function LearningTab() {
             <ListTodo className="h-4 w-4 text-muted-foreground" />
             <Label
               htmlFor="learning-multiple-choice"
-              className="text-sm sm:text-base font-medium cursor-pointer"
+              className="cursor-pointer text-sm font-medium sm:text-base"
             >
               {t("multipleChoice")}
             </Label>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground sm:text-sm">
             {t("multipleChoiceDesc")}
           </p>
         </div>
@@ -106,12 +109,12 @@ export function LearningTab() {
             <Shuffle className="h-4 w-4 text-muted-foreground" />
             <Label
               htmlFor="overview-shuffle"
-              className="text-sm sm:text-base font-medium cursor-pointer"
+              className="cursor-pointer text-sm font-medium sm:text-base"
             >
               {t("overviewShuffle")}
             </Label>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground sm:text-sm">
             {t("overviewShuffleDesc")}
           </p>
         </div>

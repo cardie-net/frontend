@@ -182,9 +182,12 @@ export function useUpdateDeck() {
       if (name !== undefined) body.name = name
 
       const properties: Record<string, unknown> = {}
-      if (description !== undefined) properties.description = description?.trim() || null
-      if (color !== undefined) properties.color = color === "default" ? null : color
-      if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
+      if (description !== undefined)
+        properties.description = description?.trim() || null
+      if (color !== undefined)
+        properties.color = color === "default" ? null : color
+      if (coverImageUrl !== undefined)
+        properties.cover_image_url = coverImageUrl
       if (Object.keys(properties).length > 0) body.properties = properties
 
       const res = await apiFetch(`/api/v1/decks/${deckId}`, {
@@ -297,7 +300,13 @@ export function useDeckMatchTime(deckId?: string) {
 export function useUpdateDeckMatchTime() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ deckId, timeMs }: { deckId: string; timeMs: number }) => {
+    mutationFn: async ({
+      deckId,
+      timeMs,
+    }: {
+      deckId: string
+      timeMs: number
+    }) => {
       const res = await apiFetch(`/api/v1/decks/${deckId}/match-time`, {
         method: "POST",
         body: JSON.stringify({ time_ms: timeMs }),
@@ -306,7 +315,9 @@ export function useUpdateDeckMatchTime() {
       return res.json()
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["deck-match-time", variables.deckId] })
+      queryClient.invalidateQueries({
+        queryKey: ["deck-match-time", variables.deckId],
+      })
     },
   })
 }
@@ -342,7 +353,13 @@ export function useDeckExamScore(deckId?: string) {
 export function useUpdateDeckExamScore() {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ deckId, scorePercentage }: { deckId: string; scorePercentage: number }) => {
+    mutationFn: async ({
+      deckId,
+      scorePercentage,
+    }: {
+      deckId: string
+      scorePercentage: number
+    }) => {
       const res = await apiFetch(`/api/v1/decks/${deckId}/exam-score`, {
         method: "POST",
         body: JSON.stringify({ score_percentage: scorePercentage }),
@@ -351,7 +368,9 @@ export function useUpdateDeckExamScore() {
       return res.json()
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["deck-exam-score", variables.deckId] })
+      queryClient.invalidateQueries({
+        queryKey: ["deck-exam-score", variables.deckId],
+      })
     },
   })
 }
@@ -370,5 +389,3 @@ export function useClearDeckExamScore() {
     },
   })
 }
-
-

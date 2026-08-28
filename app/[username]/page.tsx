@@ -46,7 +46,7 @@ export default function ProfilePage() {
 
   const { user: currentUser } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
-  const isLineMode = deckDisplayMode === 'line'
+  const isLineMode = deckDisplayMode === "line"
 
   const {
     data: profileUser,
@@ -71,13 +71,13 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
+        <div className="mb-8 flex items-center gap-3">
           <Skeleton className="h-11 w-11 rounded-2xl" />
           <Skeleton className="h-9 w-48 rounded-xl" />
         </div>
-        <Card className="rounded-3xl border-border/80 p-6 sm:p-8 space-y-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <Card className="space-y-6 rounded-3xl border-border/80 p-6 sm:p-8">
+          <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
             <div className="flex items-center space-x-4">
               <Skeleton className="h-24 w-24 rounded-[calc(var(--radius)*2.2)]" />
               <div className="space-y-2">
@@ -95,7 +95,7 @@ export default function ProfilePage() {
   if (error || !profileUser || profileUser.is_guest) {
     return (
       <div className="container mx-auto max-w-xl px-4 py-16 text-center">
-        <Card className="rounded-3xl border-border/80 p-8 sm:p-12 shadow-sm">
+        <Card className="rounded-3xl border-border/80 p-8 shadow-sm sm:p-12">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
             <AlertCircle className="h-7 w-7" />
           </div>
@@ -169,27 +169,31 @@ export default function ProfilePage() {
   }
 
   const socialEntries = profileUser.social_links
-    ? Object.entries(profileUser.social_links).filter(([, url]) => url && url.trim())
+    ? Object.entries(profileUser.social_links).filter(
+        ([, url]) => url && url.trim()
+      )
     : []
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+    <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
       {/* Top Header */}
-      <div className="flex items-center justify-between gap-3 min-w-0">
-        <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
-            <User className="w-6 h-6" />
+      <div className="flex min-w-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
+            <User className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate min-w-0">{profileUser.username}</h1>
+          <h1 className="min-w-0 truncate text-2xl font-bold tracking-tight sm:text-3xl">
+            {profileUser.username}
+          </h1>
         </div>
 
         {isOwnProfile && (
-          <Link href="/settings" className="hidden sm:block shrink-0">
+          <Link href="/settings" className="hidden shrink-0 sm:block">
             <Button
               variant="outline"
-              className="rounded-xl gap-2 font-medium border-border/80 hover:bg-accent hover:text-accent-foreground transition-all shadow-sm"
+              className="gap-2 rounded-xl border-border/80 font-medium shadow-sm transition-all hover:bg-accent hover:text-accent-foreground"
             >
-              <Settings className="w-4 h-4 text-primary" />
+              <Settings className="h-4 w-4 text-primary" />
               {t("editProfile")}
             </Button>
           </Link>
@@ -197,11 +201,11 @@ export default function ProfilePage() {
       </div>
 
       {/* Main Profile Info Card (Banner-less) */}
-      <Card className="rounded-3xl border-border/80 shadow-md bg-card overflow-hidden">
+      <Card className="overflow-hidden rounded-3xl border-border/80 bg-card shadow-md">
         <CardContent className="p-6 sm:p-8">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 min-w-0">
-            <div className="flex flex-row items-center gap-4 sm:gap-5 min-w-0 flex-1">
-              <Avatar className="h-20 w-20 sm:h-28 sm:w-28 rounded-[calc(var(--radius)*2.2)] border-2 border-primary/20 bg-muted shadow-sm shrink-0">
+          <div className="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center sm:gap-6">
+            <div className="flex min-w-0 flex-1 flex-row items-center gap-4 sm:gap-5">
+              <Avatar className="h-20 w-20 shrink-0 rounded-[calc(var(--radius)*2.2)] border-2 border-primary/20 bg-muted shadow-sm sm:h-28 sm:w-28">
                 {profileUser.avatar_url ? (
                   <AvatarImage
                     src={profileUser.avatar_url}
@@ -209,20 +213,20 @@ export default function ProfilePage() {
                     className="object-cover"
                   />
                 ) : (
-                  <AvatarFallback className="text-2xl sm:text-4xl font-bold bg-primary/10 text-primary rounded-[calc(var(--radius)*2.2)]">
+                  <AvatarFallback className="rounded-[calc(var(--radius)*2.2)] bg-primary/10 text-2xl font-bold text-primary sm:text-4xl">
                     {profileUser.display_name.substring(0, 2).toUpperCase()}
                   </AvatarFallback>
                 )}
               </Avatar>
 
-              <div className="space-y-1 min-w-0 flex-1">
-                <div className="flex items-center gap-2 sm:gap-3 flex-wrap min-w-0">
-                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight truncate max-w-full">
+              <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex min-w-0 flex-wrap items-center gap-2 sm:gap-3">
+                  <h2 className="max-w-full truncate text-2xl font-bold tracking-tight sm:text-3xl">
                     {profileUser.display_name}
                   </h2>
                 </div>
-                <div className="flex items-center gap-x-5 gap-y-1.5 flex-wrap text-xs text-muted-foreground pt-0.5">
-                  <span className="font-mono text-xs sm:text-sm text-muted-foreground truncate max-w-full">
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 pt-0.5 text-xs text-muted-foreground">
+                  <span className="max-w-full truncate font-mono text-xs text-muted-foreground sm:text-sm">
                     @{profileUser.username}
                   </span>
                   {profileUser.created_at && (
@@ -232,7 +236,9 @@ export default function ProfilePage() {
                         {formatDate(profileUser.created_at, locale)}
                       </span>
                       <span className="hidden sm:inline">
-                        {t("joined", { date: formatDate(profileUser.created_at, locale) })}
+                        {t("joined", {
+                          date: formatDate(profileUser.created_at, locale),
+                        })}
                       </span>
                     </span>
                   )}
@@ -244,10 +250,10 @@ export default function ProfilePage() {
             {socialEntries.length > 0 && (
               <div
                 className={cn(
-                  "w-full sm:w-auto shrink-0 flex flex-wrap items-center gap-2",
+                  "flex w-full shrink-0 flex-wrap items-center gap-2 sm:w-auto",
                   socialEntries.length > 4
-                    ? "sm:grid sm:grid-rows-2 sm:grid-flow-col"
-                    : "sm:flex sm:flex-nowrap sm:flex-row"
+                    ? "sm:grid sm:grid-flow-col sm:grid-rows-2"
+                    : "sm:flex sm:flex-row sm:flex-nowrap"
                 )}
               >
                 {socialEntries.map(([key, url]) => (
@@ -261,9 +267,11 @@ export default function ProfilePage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="rounded-xl gap-2 h-9 px-3 border-border/70 hover:bg-accent hover:text-primary hover:border-primary/40 transition-all font-medium text-xs flex items-center justify-center"
+                      className="flex h-9 items-center justify-center gap-2 rounded-xl border-border/70 px-3 text-xs font-medium transition-all hover:border-primary/40 hover:bg-accent hover:text-primary"
                     >
-                      <span className="text-primary shrink-0">{renderSocialIcon(key)}</span>
+                      <span className="shrink-0 text-primary">
+                        {renderSocialIcon(key)}
+                      </span>
                       <span className="capitalize">
                         {key === "twitter" ? "X" : key}
                       </span>
@@ -276,8 +284,8 @@ export default function ProfilePage() {
 
           {/* Bio Section below horizontal line */}
           {profileUser.bio && (
-            <div className="mt-6 pt-6 border-t border-border/60 min-w-0">
-              <p className="text-base text-foreground/90 leading-relaxed font-normal whitespace-pre-wrap break-words [overflow-wrap:anywhere] min-w-0">
+            <div className="mt-6 min-w-0 border-t border-border/60 pt-6">
+              <p className="min-w-0 text-base leading-relaxed font-normal [overflow-wrap:anywhere] break-words whitespace-pre-wrap text-foreground/90">
                 {profileUser.bio}
               </p>
             </div>
@@ -289,15 +297,18 @@ export default function ProfilePage() {
       <div className="space-y-5">
         <div className="relative flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm">
-              <Layers className="w-5 h-5" />
+            <div className="flex items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
+              <Layers className="h-5 w-5" />
             </div>
             <h2 className="text-2xl font-bold tracking-tight">{t("decks")}</h2>
-            <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold">
+            <Badge
+              variant="secondary"
+              className="rounded-full px-2.5 py-0.5 text-xs font-semibold"
+            >
               {decks.length}
             </Badge>
           </div>
-          
+
           <div className="flex items-center gap-2">
             <Button
               variant={isSearchOpen ? "secondary" : "ghost"}
@@ -307,26 +318,28 @@ export default function ProfilePage() {
                 setIsSearchOpen(!isSearchOpen)
               }}
               className={cn(
-                "h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors",
-                isSearchOpen ? "text-primary sm:hidden" : "text-muted-foreground"
+                "h-10 w-10 rounded-xl transition-colors hover:bg-primary/10 hover:text-primary",
+                isSearchOpen
+                  ? "text-primary sm:hidden"
+                  : "text-muted-foreground"
               )}
             >
               <Search className="h-5 w-5" />
             </Button>
-            
+
             {isSearchOpen && (
-              <div className="absolute right-0 top-12 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
+              <div className="absolute top-12 right-0 z-20 flex items-center sm:static sm:top-auto sm:z-auto">
                 <Input
                   autoFocus
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-[240px] sm:w-48 md:w-64 pr-8 rounded-xl h-10 border-border bg-card/95 backdrop-blur-md shadow-lg sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none"
+                  className="h-10 w-[240px] rounded-xl border-border bg-card/95 pr-8 shadow-lg backdrop-blur-md sm:w-48 sm:bg-card/50 sm:shadow-sm sm:backdrop-blur-none md:w-64"
                 />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
+                  className="absolute right-0 h-10 w-10 rounded-xl text-muted-foreground hover:bg-transparent hover:text-foreground"
                   onClick={() => {
                     setSearchQuery("")
                     setIsSearchOpen(false)
@@ -340,24 +353,24 @@ export default function ProfilePage() {
         </div>
 
         {filteredItems.length === 0 ? (
-          <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
-            <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-              <Layers className="w-6 h-6" />
+          <Card className="rounded-3xl border-2 border-dashed border-border/80 bg-card/40 p-8 text-center sm:p-12">
+            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <Layers className="h-6 w-6" />
             </div>
-            <p className="text-lg font-semibold text-foreground mb-1">
+            <p className="mb-1 text-lg font-semibold text-foreground">
               {searchQuery ? t("noMatchesTitle") : t("noDecksTitle")}
             </p>
-            <p className="text-sm text-muted-foreground mb-6">
+            <p className="mb-6 text-sm text-muted-foreground">
               {searchQuery
                 ? t("noMatchesDesc", { query: searchQuery })
                 : isOwnProfile
-                ? t("noDecksOwn")
-                : t("noDecksOther")}
+                  ? t("noDecksOwn")
+                  : t("noDecksOther")}
             </p>
             {isOwnProfile && !searchQuery && (
               <Link href="/decks?new=true">
-                <Button className="rounded-xl gap-2 font-medium">
-                  <Plus className="w-4 h-4" />
+                <Button className="gap-2 rounded-xl font-medium">
+                  <Plus className="h-4 w-4" />
                   {t("createFirstDeck")}
                 </Button>
               </Link>
@@ -366,37 +379,49 @@ export default function ProfilePage() {
         ) : (
           <>
             {folders.length > 0 && (
-              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2")}>
+              <div
+                className={cn(
+                  isLineMode
+                    ? "flex flex-col gap-2"
+                    : "grid grid-cols-1 gap-4 pr-2 pb-2 sm:grid-cols-2 lg:grid-cols-3"
+                )}
+              >
                 {folders.map((folder) => (
                   <Link
                     href={`/${profileUser.username}/${folder.slug}`}
                     key={folder.id}
-                    className={cn("block", isLineMode ? "group" : "group/folder")}
+                    className={cn(
+                      "block",
+                      isLineMode ? "group" : "group/folder"
+                    )}
                   >
                     {isLineMode ? (
                       <Card
                         className={cn(
-                          "relative w-full rounded-2xl border border-border/70 px-3.5 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-sm flex !flex-row flex-row items-center justify-between gap-2.5 sm:gap-3 overflow-hidden bg-card min-h-[46px] sm:min-h-[50px]",
-                          getDeckColorClass(folder.properties?.color, 'left')
+                          "relative flex min-h-[46px] w-full !flex-row flex-row items-center justify-between gap-2.5 overflow-hidden rounded-2xl border border-border/70 bg-card px-3.5 py-2 transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-sm sm:min-h-[50px] sm:gap-3 sm:px-4 sm:py-2.5",
+                          getDeckColorClass(folder.properties?.color, "left")
                         )}
-                        style={getDeckColorStyle(folder.properties?.color, 'left')}
+                        style={getDeckColorStyle(
+                          folder.properties?.color,
+                          "left"
+                        )}
                       >
                         {/* Left section: Badge + Title + Description */}
-                        <div className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 pointer-events-none">
+                        <div className="pointer-events-none relative z-10 flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
                           <Badge
                             variant="secondary"
-                            className="shrink-0 text-[11px] px-1.5 py-0 h-5 font-semibold"
+                            className="h-5 shrink-0 px-1.5 py-0 text-[11px] font-semibold"
                           >
-                            <FolderIcon className="w-3 h-3 mr-1" />
+                            <FolderIcon className="mr-1 h-3 w-3" />
                             <span>{folder.decks_count ?? 0}</span>
                           </Badge>
 
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <span className="font-bold text-xs sm:text-sm tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:truncate sm:line-clamp-none break-words [overflow-wrap:anywhere] leading-snug sm:leading-normal">
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <span className="line-clamp-2 text-xs leading-snug font-bold tracking-tight [overflow-wrap:anywhere] break-words text-foreground transition-colors group-hover:text-primary sm:line-clamp-none sm:truncate sm:text-sm sm:leading-normal">
                               {folder.name}
                             </span>
                             {folder.properties?.description && (
-                              <span className="hidden md:inline-block text-xs text-muted-foreground truncate shrink min-w-0">
+                              <span className="hidden min-w-0 shrink truncate text-xs text-muted-foreground md:inline-block">
                                 • {folder.properties.description}
                               </span>
                             )}
@@ -404,69 +429,104 @@ export default function ProfilePage() {
                         </div>
 
                         {isOwnProfile && (
-                          <div className="relative z-20 flex items-center text-muted-foreground/70 shrink-0 pointer-events-none">
-                            {folder.privacy === "private" && <Lock className="w-3.5 h-3.5" />}
-                            {folder.privacy === "unlisted" && <EyeOff className="w-3.5 h-3.5" />}
-                            {folder.privacy === "public" && <Globe className="w-3.5 h-3.5" />}
+                          <div className="pointer-events-none relative z-20 flex shrink-0 items-center text-muted-foreground/70">
+                            {folder.privacy === "private" && (
+                              <Lock className="h-3.5 w-3.5" />
+                            )}
+                            {folder.privacy === "unlisted" && (
+                              <EyeOff className="h-3.5 w-3.5" />
+                            )}
+                            {folder.privacy === "public" && (
+                              <Globe className="h-3.5 w-3.5" />
+                            )}
                           </div>
                         )}
                       </Card>
                     ) : (
-                      <div className="relative w-full h-[130px]">
+                      <div className="relative h-[130px] w-full">
                         {/* Stacked card 2 (back) */}
-                        <div className="absolute inset-0 rounded-2xl border border-border/40 bg-card/40 translate-x-2 translate-y-2 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3 z-0" />
+                        <div className="absolute inset-0 z-0 translate-x-2 translate-y-2 rounded-2xl border border-border/40 bg-card/40 transition-transform duration-300 group-hover/folder:translate-x-3 group-hover/folder:translate-y-3" />
                         {/* Stacked card 1 (middle) */}
-                        <div className="absolute inset-0 rounded-2xl border border-border/50 bg-card/60 translate-x-1 translate-y-1 transition-transform duration-300 group-hover/folder:translate-x-1.5 group-hover/folder:translate-y-1.5 z-0" />
-                        
+                        <div className="absolute inset-0 z-0 translate-x-1 translate-y-1 rounded-2xl border border-border/50 bg-card/60 transition-transform duration-300 group-hover/folder:translate-x-1.5 group-hover/folder:translate-y-1.5" />
+
                         {/* Actual folder card */}
                         <Card
                           className={cn(
-                            "absolute inset-0 rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 group-hover/folder:-translate-y-1 group-hover/folder:-translate-x-1 group-hover/folder:shadow-lg group-hover/folder:border-primary/50 flex flex-col justify-between z-10 bg-card",
+                            "absolute inset-0 z-10 flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover/folder:-translate-x-1 group-hover/folder:-translate-y-1 group-hover/folder:border-primary/50 group-hover/folder:shadow-lg sm:p-5",
                             getDeckColorClass(folder.properties?.color)
                           )}
                         >
                           {folder.properties?.cover_image_url && (
-                            <div 
-                              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105" 
-                              style={{ backgroundImage: `url(${folder.properties.cover_image_url})` }}
+                            <div
+                              className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover/folder:scale-105"
+                              style={{
+                                backgroundImage: `url(${folder.properties.cover_image_url})`,
+                              }}
                             />
                           )}
-                          <div className={cn(
-                            "relative z-10 flex flex-col h-full min-w-0",
-                            folder.properties?.cover_image_url ? "text-white" : ""
-                          )}>
-                            <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-6">
-                              <CardTitle className={cn(
-                                "flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0",
-                                folder.properties?.cover_image_url ? "text-white group-hover/folder:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full" : "group-hover/folder:text-primary"
-                              )}>
-                                <Badge 
-                                  variant={folder.properties?.cover_image_url ? "outline" : "secondary"}
+                          <div
+                            className={cn(
+                              "relative z-10 flex h-full min-w-0 flex-col",
+                              folder.properties?.cover_image_url
+                                ? "text-white"
+                                : ""
+                            )}
+                          >
+                            <CardHeader className="relative flex min-h-0 min-w-0 flex-1 flex-col p-0 pr-6">
+                              <CardTitle
+                                className={cn(
+                                  "mb-1.5 flex min-w-0 items-start text-base font-bold tracking-tight break-words transition-colors",
+                                  folder.properties?.cover_image_url
+                                    ? "max-w-full self-start rounded-xl bg-black/40 px-2.5 py-1 text-white backdrop-blur-md group-hover/folder:text-white/90"
+                                    : "group-hover/folder:text-primary"
+                                )}
+                              >
+                                <Badge
+                                  variant={
+                                    folder.properties?.cover_image_url
+                                      ? "outline"
+                                      : "secondary"
+                                  }
                                   className={cn(
-                                    "mr-1.5 mt-0.5 pointer-events-none shrink-0 px-1.5 py-0 h-5 text-[11px]",
-                                    folder.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
+                                    "pointer-events-none mt-0.5 mr-1.5 h-5 shrink-0 px-1.5 py-0 text-[11px]",
+                                    folder.properties?.cover_image_url
+                                      ? "border-white/30 text-white/90"
+                                      : ""
                                   )}
                                 >
-                                  <FolderIcon className="w-3 h-3 mr-1" />
+                                  <FolderIcon className="mr-1 h-3 w-3" />
                                   <span>{folder.decks_count ?? 0}</span>
                                 </Badge>
-                                <span className="leading-snug break-all line-clamp-2">{folder.name}</span>
+                                <span className="line-clamp-2 leading-snug break-all">
+                                  {folder.name}
+                                </span>
                               </CardTitle>
-                              {folder.properties?.description && !folder.properties?.cover_image_url && (
-                                <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
-                                  {folder.properties.description}
-                                </CardDescription>
-                              )}
+                              {folder.properties?.description &&
+                                !folder.properties?.cover_image_url && (
+                                  <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
+                                    {folder.properties.description}
+                                  </CardDescription>
+                                )}
                             </CardHeader>
                           </div>
                           {isOwnProfile && (
-                            <div className={cn(
-                              "absolute bottom-3.5 right-4 sm:right-5 z-20 transition-colors",
-                              folder.properties?.cover_image_url ? "text-white/60 group-hover/folder:text-white/90" : "text-muted-foreground/60 group-hover/folder:text-muted-foreground"
-                            )}>
-                              {folder.privacy === "private" && <Lock className="w-4 h-4" />}
-                              {folder.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
-                              {folder.privacy === "public" && <Globe className="w-4 h-4" />}
+                            <div
+                              className={cn(
+                                "absolute right-4 bottom-3.5 z-20 transition-colors sm:right-5",
+                                folder.properties?.cover_image_url
+                                  ? "text-white/60 group-hover/folder:text-white/90"
+                                  : "text-muted-foreground/60 group-hover/folder:text-muted-foreground"
+                              )}
+                            >
+                              {folder.privacy === "private" && (
+                                <Lock className="h-4 w-4" />
+                              )}
+                              {folder.privacy === "unlisted" && (
+                                <EyeOff className="h-4 w-4" />
+                              )}
+                              {folder.privacy === "public" && (
+                                <Globe className="h-4 w-4" />
+                              )}
                             </div>
                           )}
                         </Card>
@@ -479,41 +539,50 @@ export default function ProfilePage() {
 
             {/* Separator if both folders and decks exist */}
             {folders.length > 0 && decks.length > 0 && (
-              <hr className="border-border/60 my-6" />
+              <hr className="my-6 border-border/60" />
             )}
             {decks.length > 0 && (
-              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
+              <div
+                className={cn(
+                  isLineMode
+                    ? "flex flex-col gap-2"
+                    : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                )}
+              >
                 {decks.map((deck) => (
                   <Link
                     href={`/${profileUser.username}/${deck.slug}`}
                     key={deck.id}
-                    className="block group"
+                    className="group block"
                   >
                     {isLineMode ? (
                       <Card
                         className={cn(
-                          "relative w-full rounded-2xl border border-border/70 px-3.5 py-2 sm:px-4 sm:py-2.5 transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-sm flex !flex-row flex-row items-center justify-between gap-2.5 sm:gap-3 overflow-hidden bg-card min-h-[46px] sm:min-h-[50px]",
-                          getDeckColorClass(deck.properties?.color, 'left')
+                          "relative flex min-h-[46px] w-full !flex-row flex-row items-center justify-between gap-2.5 overflow-hidden rounded-2xl border border-border/70 bg-card px-3.5 py-2 transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-sm sm:min-h-[50px] sm:gap-3 sm:px-4 sm:py-2.5",
+                          getDeckColorClass(deck.properties?.color, "left")
                         )}
-                        style={getDeckColorStyle(deck.properties?.color, 'left')}
+                        style={getDeckColorStyle(
+                          deck.properties?.color,
+                          "left"
+                        )}
                       >
                         {/* Left section: Badge + Title + Description */}
-                        <div className="relative z-10 flex items-center gap-2 sm:gap-2.5 min-w-0 flex-1 pointer-events-none">
+                        <div className="pointer-events-none relative z-10 flex min-w-0 flex-1 items-center gap-2 sm:gap-2.5">
                           {deck.cards_count !== undefined && (
                             <Badge
                               variant="secondary"
-                              className="shrink-0 text-[11px] px-1.5 py-0 h-5 font-semibold"
+                              className="h-5 shrink-0 px-1.5 py-0 text-[11px] font-semibold"
                             >
                               {deck.cards_count}
                             </Badge>
                           )}
 
-                          <div className="flex items-center gap-2 min-w-0 flex-1">
-                            <span className="font-bold text-xs sm:text-sm tracking-tight text-foreground group-hover:text-primary transition-colors line-clamp-2 sm:truncate sm:line-clamp-none break-words [overflow-wrap:anywhere] leading-snug sm:leading-normal">
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <span className="line-clamp-2 text-xs leading-snug font-bold tracking-tight [overflow-wrap:anywhere] break-words text-foreground transition-colors group-hover:text-primary sm:line-clamp-none sm:truncate sm:text-sm sm:leading-normal">
                               {deck.name}
                             </span>
                             {deck.properties?.description && (
-                              <span className="hidden md:inline-block text-xs text-muted-foreground truncate shrink min-w-0">
+                              <span className="hidden min-w-0 shrink truncate text-xs text-muted-foreground md:inline-block">
                                 • {deck.properties.description}
                               </span>
                             )}
@@ -521,63 +590,96 @@ export default function ProfilePage() {
                         </div>
 
                         {isOwnProfile && (
-                          <div className="relative z-20 flex items-center text-muted-foreground/70 shrink-0 pointer-events-none">
-                            {deck.privacy === "private" && <Lock className="w-3.5 h-3.5" />}
-                            {deck.privacy === "unlisted" && <EyeOff className="w-3.5 h-3.5" />}
-                            {deck.privacy === "public" && <Globe className="w-3.5 h-3.5" />}
+                          <div className="pointer-events-none relative z-20 flex shrink-0 items-center text-muted-foreground/70">
+                            {deck.privacy === "private" && (
+                              <Lock className="h-3.5 w-3.5" />
+                            )}
+                            {deck.privacy === "unlisted" && (
+                              <EyeOff className="h-3.5 w-3.5" />
+                            )}
+                            {deck.privacy === "public" && (
+                              <Globe className="h-3.5 w-3.5" />
+                            )}
                           </div>
                         )}
                       </Card>
                     ) : (
                       <Card
                         className={cn(
-                          "relative w-full h-[130px] rounded-2xl border border-border/70 p-4 sm:p-5 overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/50 flex flex-col justify-between",
+                          "relative flex h-[130px] w-full flex-col justify-between overflow-hidden rounded-2xl border border-border/70 p-4 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg sm:p-5",
                           getDeckColorClass(deck.properties?.color)
                         )}
                       >
                         {deck.properties?.cover_image_url && (
-                          <div 
-                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" 
-                            style={{ backgroundImage: `url(${deck.properties.cover_image_url})` }}
+                          <div
+                            className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
+                            style={{
+                              backgroundImage: `url(${deck.properties.cover_image_url})`,
+                            }}
                           />
                         )}
-                        <div className={cn(
-                          "relative z-10 flex flex-col h-full min-w-0",
-                          deck.properties?.cover_image_url ? "text-white" : ""
-                        )}>
-                          <CardHeader className="p-0 flex-1 flex flex-col min-h-0 min-w-0 relative pr-6">
-                            <CardTitle className={cn(
-                              "flex items-start text-base font-bold tracking-tight mb-1.5 transition-colors break-words min-w-0",
-                              deck.properties?.cover_image_url ? "text-white group-hover:text-white/90 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-xl self-start max-w-full" : "group-hover:text-primary"
-                            )}>
+                        <div
+                          className={cn(
+                            "relative z-10 flex h-full min-w-0 flex-col",
+                            deck.properties?.cover_image_url ? "text-white" : ""
+                          )}
+                        >
+                          <CardHeader className="relative flex min-h-0 min-w-0 flex-1 flex-col p-0 pr-6">
+                            <CardTitle
+                              className={cn(
+                                "mb-1.5 flex min-w-0 items-start text-base font-bold tracking-tight break-words transition-colors",
+                                deck.properties?.cover_image_url
+                                  ? "max-w-full self-start rounded-xl bg-black/40 px-2.5 py-1 text-white backdrop-blur-md group-hover:text-white/90"
+                                  : "group-hover:text-primary"
+                              )}
+                            >
                               {deck.cards_count !== undefined && (
-                                <Badge 
-                                  variant={deck.properties?.cover_image_url ? "outline" : "secondary"}
+                                <Badge
+                                  variant={
+                                    deck.properties?.cover_image_url
+                                      ? "outline"
+                                      : "secondary"
+                                  }
                                   className={cn(
-                                    "mr-1.5 mt-0.5 pointer-events-none shrink-0 text-[11px] px-1.5 py-0 h-5",
-                                    deck.properties?.cover_image_url ? "border-white/30 text-white/90" : ""
+                                    "pointer-events-none mt-0.5 mr-1.5 h-5 shrink-0 px-1.5 py-0 text-[11px]",
+                                    deck.properties?.cover_image_url
+                                      ? "border-white/30 text-white/90"
+                                      : ""
                                   )}
                                 >
                                   {deck.cards_count}
                                 </Badge>
                               )}
-                              <span className="leading-snug break-all line-clamp-2">{deck.name}</span>
+                              <span className="line-clamp-2 leading-snug break-all">
+                                {deck.name}
+                              </span>
                             </CardTitle>
-                            {deck.properties?.description && !deck.properties?.cover_image_url && (
-                              <CardDescription className="text-xs leading-snug break-all line-clamp-1 text-muted-foreground">
-                                {deck.properties.description}
-                              </CardDescription>
-                            )}
+                            {deck.properties?.description &&
+                              !deck.properties?.cover_image_url && (
+                                <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
+                                  {deck.properties.description}
+                                </CardDescription>
+                              )}
                           </CardHeader>
                         </div>
                         {isOwnProfile && (
-                          <div className={cn(
-                            "absolute bottom-3.5 right-4 sm:right-5 z-20 transition-colors",
-                            deck.properties?.cover_image_url ? "text-white/60 group-hover:text-white/90" : "text-muted-foreground/60 group-hover:text-muted-foreground"
-                          )}>
-                            {deck.privacy === "private" && <Lock className="w-4 h-4" />}
-                            {deck.privacy === "unlisted" && <EyeOff className="w-4 h-4" />}
-                            {deck.privacy === "public" && <Globe className="w-4 h-4" />}
+                          <div
+                            className={cn(
+                              "absolute right-4 bottom-3.5 z-20 transition-colors sm:right-5",
+                              deck.properties?.cover_image_url
+                                ? "text-white/60 group-hover:text-white/90"
+                                : "text-muted-foreground/60 group-hover:text-muted-foreground"
+                            )}
+                          >
+                            {deck.privacy === "private" && (
+                              <Lock className="h-4 w-4" />
+                            )}
+                            {deck.privacy === "unlisted" && (
+                              <EyeOff className="h-4 w-4" />
+                            )}
+                            {deck.privacy === "public" && (
+                              <Globe className="h-4 w-4" />
+                            )}
                           </div>
                         )}
                       </Card>

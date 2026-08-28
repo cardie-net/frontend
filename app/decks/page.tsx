@@ -24,7 +24,11 @@ import { ShareFolderDialog } from "@/components/folders/ShareFolderDialog"
 import { GuestShareDialog } from "@/components/shared/GuestShareDialog"
 import { MoveItemDialog, MoveTarget } from "@/components/shared/MoveItemDialog"
 import { useUpdateDeck, useDeleteDeck } from "@/hooks/useDecks"
-import { useUserItems, useUpdateFolder, useDeleteFolder } from "@/hooks/useFolders"
+import {
+  useUserItems,
+  useUpdateFolder,
+  useDeleteFolder,
+} from "@/hooks/useFolders"
 import { useUserFavorites } from "@/hooks/useCommunity"
 
 import { cn } from "@/lib/utils"
@@ -45,7 +49,7 @@ export default function DecksPage() {
   const t = useTranslations("Decks")
   const { user, loading: authLoading } = useAuth()
   const { deckDisplayMode } = useCustomTheme()
-  const isLineMode = deckDisplayMode === 'line'
+  const isLineMode = deckDisplayMode === "line"
 
   const {
     data: ownedItems = [],
@@ -64,13 +68,17 @@ export default function DecksPage() {
   const [isCreateFolderOpen, setIsCreateFolderOpen] = useState(false)
   const [isImportDialogOpen, setIsImportDialogOpen] = useState(false)
   const [shareDeckTarget, setShareDeckTarget] = useState<Deck | null>(null)
-  const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(null)
+  const [shareFolderTarget, setShareFolderTarget] = useState<Folder | null>(
+    null
+  )
   const [guestShareOpen, setGuestShareOpen] = useState(false)
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null)
   const [editingDeckTarget, setEditingDeckTarget] = useState<Deck | null>(null)
   const [moveTarget, setMoveTarget] = useState<MoveTarget | null>(null)
   const [deleteDeckTarget, setDeleteDeckTarget] = useState<string | null>(null)
-  const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(null)
+  const [deleteFolderTarget, setDeleteFolderTarget] = useState<string | null>(
+    null
+  )
 
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -96,10 +104,12 @@ export default function DecksPage() {
   )
 
   const rootFolders = filteredItems.filter(
-    (item): item is Folder => item.type === "folder" && (!item.parent_id || searchQuery.length > 0)
+    (item): item is Folder =>
+      item.type === "folder" && (!item.parent_id || searchQuery.length > 0)
   )
   const rootDecks = filteredItems.filter(
-    (item): item is Deck => item.type === "deck" && (!item.folder_id || searchQuery.length > 0)
+    (item): item is Deck =>
+      item.type === "deck" && (!item.folder_id || searchQuery.length > 0)
   )
 
   const handleDeleteDeck = (deckId: string) => {
@@ -127,11 +137,21 @@ export default function DecksPage() {
   }
 
   const handleMoveDeck = (deck: Deck) => {
-    setMoveTarget({ id: deck.id, type: "deck", name: deck.name, currentParentId: deck.folder_id || null })
+    setMoveTarget({
+      id: deck.id,
+      type: "deck",
+      name: deck.name,
+      currentParentId: deck.folder_id || null,
+    })
   }
 
   const handleMoveFolder = (folder: Folder) => {
-    setMoveTarget({ id: folder.id, type: "folder", name: folder.name, currentParentId: folder.parent_id || null })
+    setMoveTarget({
+      id: folder.id,
+      type: "folder",
+      name: folder.name,
+      currentParentId: folder.parent_id || null,
+    })
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -171,15 +191,33 @@ export default function DecksPage() {
 
   if (authLoading || itemsLoading) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
-        <div className="flex items-center gap-3 mb-8">
+      <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
+        <div className="mb-8 flex items-center gap-3">
           <Skeleton className="h-11 w-11 rounded-2xl" />
           <Skeleton className="h-9 w-48 rounded-xl" />
         </div>
-        <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
-          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
-          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
-          <Skeleton className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")} />
+        <div
+          className={cn(
+            isLineMode
+              ? "flex flex-col gap-2"
+              : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          )}
+        >
+          <Skeleton
+            className={cn(
+              isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl"
+            )}
+          />
+          <Skeleton
+            className={cn(
+              isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl"
+            )}
+          />
+          <Skeleton
+            className={cn(
+              isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl"
+            )}
+          />
         </div>
       </div>
     )
@@ -199,39 +237,47 @@ export default function DecksPage() {
   const totalRootItems = rootFolders.length + rootDecks.length
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
-            <Layers className="w-6 h-6" />
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
+            <Layers className="h-6 w-6" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight truncate">{t("title")}</h1>
-          <Badge variant="secondary" className="rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0">
-            {filteredItems.filter(item => item.type === 'deck').length}
+          <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
+            {t("title")}
+          </h1>
+          <Badge
+            variant="secondary"
+            className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
+          >
+            {filteredItems.filter((item) => item.type === "deck").length}
           </Badge>
         </div>
-        
-        <div className="flex items-center justify-end w-full sm:w-auto gap-2 flex-wrap sm:flex-nowrap">
+
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap">
           <Button
             variant="outline"
-            className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+            className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
             size="sm"
             onClick={() => setIsImportDialogOpen(true)}
           >
-            <Upload className="h-4 w-4" /> <span className="hidden sm:inline">{t("import")}</span>
+            <Upload className="h-4 w-4" />{" "}
+            <span className="hidden sm:inline">{t("import")}</span>
           </Button>
           <Button
             variant="outline"
-            className="rounded-xl gap-2 font-medium border-border/80 w-9 px-0 sm:w-auto sm:px-3"
+            className="w-9 gap-2 rounded-xl border-border/80 px-0 font-medium sm:w-auto sm:px-3"
             size="sm"
             onClick={() => setIsCreateFolderOpen(true)}
           >
-            <FolderPlus className="h-4 w-4" /> <span className="hidden sm:inline">{t("folder")}</span>
+            <FolderPlus className="h-4 w-4" />{" "}
+            <span className="hidden sm:inline">{t("folder")}</span>
           </Button>
-          <Button 
-            className="rounded-xl gap-2 font-medium"
+          <Button
+            className="gap-2 rounded-xl font-medium"
             size="sm"
-            onClick={() => setIsCreateDeckOpen(true)}>
+            onClick={() => setIsCreateDeckOpen(true)}
+          >
             <Plus className="h-4 w-4" /> <span>{t("deck")}</span>
           </Button>
 
@@ -244,26 +290,26 @@ export default function DecksPage() {
                 setIsSearchOpen(!isSearchOpen)
               }}
               className={cn(
-                "h-9 w-9 sm:h-10 sm:w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-colors",
+                "h-9 w-9 rounded-xl transition-colors hover:bg-primary/10 hover:text-primary sm:h-10 sm:w-10",
                 isSearchOpen ? "text-primary" : "text-muted-foreground"
               )}
             >
               <Search className="h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            
+
             {isSearchOpen && (
-              <div className="absolute right-0 top-12 z-20 flex items-center">
+              <div className="absolute top-12 right-0 z-20 flex items-center">
                 <Input
                   autoFocus
                   placeholder={t("searchPlaceholder")}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-[200px] sm:w-48 md:w-64 pr-8 rounded-xl h-9 sm:h-10 border-border bg-card/95 backdrop-blur-md shadow-lg text-sm"
+                  className="h-9 w-[200px] rounded-xl border-border bg-card/95 pr-8 text-sm shadow-lg backdrop-blur-md sm:h-10 sm:w-48 md:w-64"
                 />
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="absolute right-0 h-9 w-9 sm:h-10 sm:w-10 text-muted-foreground hover:text-foreground hover:bg-transparent rounded-xl"
+                  className="absolute right-0 h-9 w-9 rounded-xl text-muted-foreground hover:bg-transparent hover:text-foreground sm:h-10 sm:w-10"
                   onClick={() => {
                     setSearchQuery("")
                     setIsSearchOpen(false)
@@ -277,9 +323,7 @@ export default function DecksPage() {
         </div>
       </div>
 
-      {isGuest && hasCreatedDeck && (
-        <GuestWarningCard />
-      )}
+      {isGuest && hasCreatedDeck && <GuestWarningCard />}
 
       {itemsError && (
         <Alert variant="destructive" className="mb-6 rounded-xl">
@@ -298,25 +342,32 @@ export default function DecksPage() {
       )}
 
       {totalRootItems === 0 ? (
-        <Card className="rounded-3xl border-2 border-dashed border-border/80 p-8 sm:p-12 text-center bg-card/40">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-            <Layers className="w-6 h-6" />
+        <Card className="rounded-3xl border-2 border-dashed border-border/80 bg-card/40 p-8 text-center sm:p-12">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            <Layers className="h-6 w-6" />
           </div>
-          <p className="text-lg font-semibold text-foreground mb-1">
+          <p className="mb-1 text-lg font-semibold text-foreground">
             {searchQuery ? t("noMatchesTitle") : t("noDecksTitle")}
           </p>
-          <p className="text-sm text-muted-foreground mb-6">
+          <p className="mb-6 text-sm text-muted-foreground">
             {searchQuery
               ? t("noMatchesDesc", { query: searchQuery })
               : t("noDecksDesc")}
           </p>
           {!searchQuery && (
-            <div className="flex justify-center gap-3 flex-wrap">
-              <Button onClick={() => setIsCreateFolderOpen(true)} variant="outline" className="rounded-xl">
+            <div className="flex flex-wrap justify-center gap-3">
+              <Button
+                onClick={() => setIsCreateFolderOpen(true)}
+                variant="outline"
+                className="rounded-xl"
+              >
                 {t("createFolder")}
               </Button>
-              <Button onClick={() => setIsCreateDeckOpen(true)} className="rounded-xl gap-2 font-medium">
-                <Plus className="w-4 h-4" />
+              <Button
+                onClick={() => setIsCreateDeckOpen(true)}
+                className="gap-2 rounded-xl font-medium"
+              >
+                <Plus className="h-4 w-4" />
                 {t("createFirstDeck")}
               </Button>
             </div>
@@ -326,7 +377,13 @@ export default function DecksPage() {
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
           <div className="space-y-5">
             {rootFolders.length > 0 && (
-              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 pr-2 pb-2")}>
+              <div
+                className={cn(
+                  isLineMode
+                    ? "flex flex-col gap-2"
+                    : "grid grid-cols-1 gap-4 pr-2 pb-2 sm:grid-cols-2 lg:grid-cols-3"
+                )}
+              >
                 {rootFolders.map((folder) => {
                   const isOwner = folder.user_id === user?.id
                   return (
@@ -335,7 +392,9 @@ export default function DecksPage() {
                       folder={folder}
                       username={user?.username}
                       isOwner={isOwner}
-                      onShare={isOwner ? () => handleShareFolder(folder) : undefined}
+                      onShare={
+                        isOwner ? () => handleShareFolder(folder) : undefined
+                      }
                       onEdit={isOwner ? setEditingFolder : undefined}
                       onDelete={isOwner ? handleDeleteFolder : undefined}
                       onMove={isOwner ? handleMoveFolder : undefined}
@@ -346,11 +405,17 @@ export default function DecksPage() {
             )}
 
             {rootFolders.length > 0 && rootDecks.length > 0 && (
-              <hr className="border-border/60 my-6" />
+              <hr className="my-6 border-border/60" />
             )}
 
             {rootDecks.length > 0 && (
-              <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
+              <div
+                className={cn(
+                  isLineMode
+                    ? "flex flex-col gap-2"
+                    : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                )}
+              >
                 {rootDecks.map((deck) => {
                   const isOwner = deck.user_id === user?.id
                   return (
@@ -359,7 +424,9 @@ export default function DecksPage() {
                       deck={deck}
                       username={user?.username}
                       isOwner={isOwner}
-                      onShare={isOwner ? () => handleShareDeck(deck) : undefined}
+                      onShare={
+                        isOwner ? () => handleShareDeck(deck) : undefined
+                      }
                       onEdit={isOwner ? setEditingDeckTarget : undefined}
                       onDelete={isOwner ? handleDeleteDeck : undefined}
                       onMove={isOwner ? handleMoveDeck : undefined}
@@ -418,10 +485,7 @@ export default function DecksPage() {
         onClose={() => setEditingDeckTarget(null)}
       />
 
-      <MoveItemDialog
-        item={moveTarget}
-        onClose={() => setMoveTarget(null)}
-      />
+      <MoveItemDialog item={moveTarget} onClose={() => setMoveTarget(null)} />
 
       <DeleteDeckDialog
         deckId={deleteDeckTarget}

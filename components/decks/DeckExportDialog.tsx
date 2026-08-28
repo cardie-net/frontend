@@ -1,12 +1,12 @@
-"use client";
+"use client"
 
-import { useEffect, useMemo, useState } from "react";
-import { useTranslations } from "next-intl";
-import { Check, Copy, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { useEffect, useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
+import { Check, Copy, Download } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import {
   Dialog,
   DialogContent,
@@ -14,9 +14,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ImportExportConfig } from "@/components/decks/ImportExportConfig";
+} from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ImportExportConfig } from "@/components/decks/ImportExportConfig"
 import {
   DelimiterConfig,
   RecordSeparatorConfig,
@@ -25,86 +25,90 @@ import {
   downloadTextFile,
   isSeparatorConfigValid,
   serializeTextExport,
-} from "@/lib/importExport";
-import { FlashCard } from "@/types";
+} from "@/lib/importExport"
+import { FlashCard } from "@/types"
 
 interface DeckExportDialogProps {
-  cards: FlashCard[];
+  cards: FlashCard[]
   /** Used for the downloaded file name (e.g. `my-deck.txt`). */
-  deckSlug: string;
-  onClose: () => void;
+  deckSlug: string
+  onClose: () => void
 }
 
 const FORMATS: ReadonlyArray<{
-  id: "text" | "anki";
-  label: string;
-  comingSoon?: boolean;
+  id: "text" | "anki"
+  label: string
+  comingSoon?: boolean
 }> = [
   { id: "text", label: "Text" },
   { id: "anki", label: "Anki", comingSoon: true },
-];
+]
 
-type Format = (typeof FORMATS)[number]["id"];
+type Format = (typeof FORMATS)[number]["id"]
 
 export function DeckExportDialog({
   cards,
   deckSlug,
   onClose,
 }: DeckExportDialogProps) {
-  const t = useTranslations("ImportExport");
-  const tCommon = useTranslations("Common");
-  const [format, setFormat] = useState<Format>("text");
-  const [delimiter, setDelimiter] = useState<DelimiterConfig>({ kind: "tab" });
-  const [recordSeparator, setRecordSeparator] = useState<RecordSeparatorConfig>({
-    kind: "newline",
-  });
-  const [copied, setCopied] = useState(false);
+  const t = useTranslations("ImportExport")
+  const tCommon = useTranslations("Common")
+  const [format, setFormat] = useState<Format>("text")
+  const [delimiter, setDelimiter] = useState<DelimiterConfig>({ kind: "tab" })
+  const [recordSeparator, setRecordSeparator] = useState<RecordSeparatorConfig>(
+    {
+      kind: "newline",
+    }
+  )
+  const [copied, setCopied] = useState(false)
 
   // Auto-revert the "Copied" state; cleanup clears the timer on unmount.
   useEffect(() => {
-    if (!copied) return;
-    const id = setTimeout(() => setCopied(false), 2000);
-    return () => clearTimeout(id);
-  }, [copied]);
+    if (!copied) return
+    const id = setTimeout(() => setCopied(false), 2000)
+    return () => clearTimeout(id)
+  }, [copied])
 
   const text = useMemo(() => {
-    if (format !== "text") return "";
-    return serializeTextExport(cards, delimiter, recordSeparator);
-  }, [format, cards, delimiter, recordSeparator]);
+    if (format !== "text") return ""
+    return serializeTextExport(cards, delimiter, recordSeparator)
+  }, [format, cards, delimiter, recordSeparator])
 
   const configValid =
-    isSeparatorConfigValid(delimiter) && isSeparatorConfigValid(recordSeparator);
+    isSeparatorConfigValid(delimiter) && isSeparatorConfigValid(recordSeparator)
 
   const handleCopy = async () => {
-    if (!text) return;
-    const ok = await copyTextToClipboard(text);
-    if (ok) setCopied(true);
-  };
+    if (!text) return
+    const ok = await copyTextToClipboard(text)
+    if (ok) setCopied(true)
+  }
 
   const handleDownload = () => {
-    if (!text) return;
-    downloadTextFile(`${deckSlug}.txt`, text);
-  };
+    if (!text) return
+    downloadTextFile(`${deckSlug}.txt`, text)
+  }
 
   return (
     <Dialog
       open
       onOpenChange={(isOpen) => {
-        if (!isOpen) onClose();
+        if (!isOpen) onClose()
       }}
     >
       <DialogContent className="sm:max-w-[min(90vw,42rem)]">
         <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Download className="w-5 h-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-base font-semibold">{t("exportTitle")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                {t("exportDesc")}
-              </DialogDescription>
-            </div>
-          </DialogHeader>
+          <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+            <Download className="h-5 w-5" />
+          </div>
+          <div>
+            <DialogTitle className="text-base font-semibold">
+              {t("exportTitle")}
+            </DialogTitle>
+            <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
+              {t("exportDesc")}
+            </DialogDescription>
+          </div>
+        </DialogHeader>
 
         {/* <Alert>
           <ImageOff className="h-4 w-4" />
@@ -169,9 +173,7 @@ export function DeckExportDialog({
 
           <TabsContent value="anki" className="mt-4">
             <Alert>
-              <AlertDescription>
-                {t("ankiExportSoon")}
-              </AlertDescription>
+              <AlertDescription>{t("ankiExportSoon")}</AlertDescription>
             </Alert>
           </TabsContent>
         </Tabs>
@@ -197,5 +199,5 @@ export function DeckExportDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  );
+  )
 }

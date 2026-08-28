@@ -56,7 +56,10 @@ export function useActivityTracker() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             points: pts,
-            count: Math.max(1, Math.round((pts / (POINT_WEIGHTS[type as ActivityType] || 1)))),
+            count: Math.max(
+              1,
+              Math.round(pts / (POINT_WEIGHTS[type as ActivityType] || 1))
+            ),
             activity_type: type,
           }),
         })

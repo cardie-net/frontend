@@ -8,7 +8,11 @@ interface DeleteDeckDialogProps {
   onDeleted?: () => void
 }
 
-export function DeleteDeckDialog({ deckId, onClose, onDeleted }: DeleteDeckDialogProps) {
+export function DeleteDeckDialog({
+  deckId,
+  onClose,
+  onDeleted,
+}: DeleteDeckDialogProps) {
   const t = useTranslations("Decks.deleteDialog")
   const tCommon = useTranslations("Common")
   const deleteDeck = useDeleteDeck()
@@ -19,7 +23,7 @@ export function DeleteDeckDialog({ deckId, onClose, onDeleted }: DeleteDeckDialo
       onSuccess: () => {
         onClose()
         onDeleted?.()
-      }
+      },
     })
   }
 

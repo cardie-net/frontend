@@ -49,7 +49,10 @@ function shuffleList<T>(list: T[]): T[] {
   return array
 }
 
-function resolveOverride(override: OverrideValue, globalDefault: boolean): boolean {
+function resolveOverride(
+  override: OverrideValue,
+  globalDefault: boolean
+): boolean {
   if (override === "yes") return true
   if (override === "no") return false
   return globalDefault
@@ -100,7 +103,10 @@ export default function OverviewPage() {
       )
       if (saved) {
         const parsed = JSON.parse(saved)
-        if (parsed.shuffleOverride === "yes" || parsed.shuffleOverride === "no") {
+        if (
+          parsed.shuffleOverride === "yes" ||
+          parsed.shuffleOverride === "no"
+        ) {
           return parsed.shuffleOverride
         }
         // Migrate old boolean format
@@ -127,7 +133,10 @@ export default function OverviewPage() {
         const timerId = window.setTimeout(() => {
           if (typeof parsed.isReversed === "boolean")
             setIsReversed(parsed.isReversed)
-          if (parsed.shuffleOverride === "yes" || parsed.shuffleOverride === "no") {
+          if (
+            parsed.shuffleOverride === "yes" ||
+            parsed.shuffleOverride === "no"
+          ) {
             setShuffleOverride(parsed.shuffleOverride)
           } else if (typeof parsed.isShuffled === "boolean") {
             // Migrate old boolean format
@@ -370,9 +379,7 @@ export default function OverviewPage() {
           </div>
 
           <div className="mt-1 text-center text-xs text-muted-foreground sm:mt-2">
-            <span className="sm:hidden">
-              {t("flipHintMobile")}
-            </span>
+            <span className="sm:hidden">{t("flipHintMobile")}</span>
             <span className="hidden items-center justify-center gap-1.5 sm:inline-flex">
               {t.rich("flipHintDesktop", {
                 space: (chunks) => <Kbd className="text-[10px]">{chunks}</Kbd>,
@@ -386,12 +393,14 @@ export default function OverviewPage() {
       <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Settings className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Settings className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{t("settingsTitle")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogTitle className="text-base font-semibold">
+                {t("settingsTitle")}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
                 {t.rich("settingsDefaults", {
                   link: (chunks) => (
                     <Link
@@ -440,7 +449,9 @@ export default function OverviewPage() {
               </div>
               <Select
                 value={shuffleOverride}
-                onValueChange={(v) => handleShuffleOverrideChange(v as OverrideValue)}
+                onValueChange={(v) =>
+                  handleShuffleOverrideChange(v as OverrideValue)
+                }
                 items={{
                   default: tCommon("default"),
                   yes: tCommon("yes"),

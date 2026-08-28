@@ -53,7 +53,12 @@ export function CreateDeckDialog({
     }
 
     createDeck.mutate(
-      { name: newDeckName, color: newDeckColor, description: newDeckDescription, folderId },
+      {
+        name: newDeckName,
+        color: newDeckColor,
+        description: newDeckDescription,
+        folderId,
+      },
       {
         onSuccess: (newDeck) => {
           onOpenChange(false)
@@ -63,9 +68,7 @@ export function CreateDeckDialog({
           router.push(`/${user?.username || ""}/${newDeck.slug || newDeck.id}`)
         },
         onError: (err) =>
-          setCreateError(
-            err instanceof Error ? err.message : tCommon("error")
-          ),
+          setCreateError(err instanceof Error ? err.message : tCommon("error")),
       }
     )
   }
@@ -75,12 +78,14 @@ export function CreateDeckDialog({
       <DialogContent>
         <form onSubmit={handleCreateDeck}>
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Plus className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Plus className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogTitle className="text-base font-semibold">
+                {t("title")}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
                 {t("description")}
               </DialogDescription>
             </div>
@@ -103,7 +108,9 @@ export function CreateDeckDialog({
               <ColorPicker
                 color={newDeckColor}
                 onChange={setNewDeckColor}
-                className={createDeck.isPending ? "opacity-50 pointer-events-none" : ""}
+                className={
+                  createDeck.isPending ? "pointer-events-none opacity-50" : ""
+                }
               />
             </div>
             <div className="grid gap-2">
@@ -115,7 +122,7 @@ export function CreateDeckDialog({
                 placeholder={t("descriptionPlaceholder")}
                 maxLength={500}
                 disabled={createDeck.isPending}
-                className="resize-none h-20"
+                className="h-20 resize-none"
               />
             </div>
           </div>

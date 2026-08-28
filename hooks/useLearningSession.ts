@@ -5,7 +5,6 @@ import { shuffle } from "@/lib/utils"
 import { useFlushOnUnload } from "@/hooks/useFlushOnUnload"
 import { useActivityTracker } from "@/hooks/useActivityTracker"
 
-
 const BATCH_SIZE = 5
 
 export function useLearningSession(deckId: string) {
@@ -22,7 +21,6 @@ export function useLearningSession(deckId: string) {
   const [sessionCompleted, setSessionCompleted] = useState(false)
   const [isFlipped, setIsFlipped] = useState(false)
   const [sessionStep, setSessionStep] = useState(0)
-
 
   const fetchSessionData = useCallback(async () => {
     if (!deckId) return

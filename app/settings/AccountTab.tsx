@@ -135,19 +135,35 @@ function extractUsernameFromUrl(key: keyof SocialLinks, url: string): string {
   const clean = url.trim()
   switch (key) {
     case "github":
-      return clean.replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?github\.com\//i, "")
+        .replace(/\/$/, "")
     case "twitter":
-      return clean.replace(/^https?:\/\/(www\.)?(twitter\.com|x\.com)\//i, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?(twitter\.com|x\.com)\//i, "")
+        .replace(/\/$/, "")
     case "instagram":
-      return clean.replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+        .replace(/\/$/, "")
     case "youtube":
-      return clean.replace(/^https?:\/\/(www\.)?youtube\.com\/@?/i, "").replace(/^@/, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?youtube\.com\/@?/i, "")
+        .replace(/^@/, "")
+        .replace(/\/$/, "")
     case "linkedin":
-      return clean.replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?linkedin\.com\/in\//i, "")
+        .replace(/\/$/, "")
     case "tiktok":
-      return clean.replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, "").replace(/^@/, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?tiktok\.com\/@?/i, "")
+        .replace(/^@/, "")
+        .replace(/\/$/, "")
     case "facebook":
-      return clean.replace(/^https?:\/\/(www\.)?facebook\.com\//i, "").replace(/\/$/, "")
+      return clean
+        .replace(/^https?:\/\/(www\.)?facebook\.com\//i, "")
+        .replace(/\/$/, "")
     default:
       return clean
   }
@@ -190,9 +206,7 @@ export function AccountTab() {
 
   if (loading) {
     return (
-      <div className="font-medium text-muted-foreground">
-        {t("loading")}
-      </div>
+      <div className="font-medium text-muted-foreground">{t("loading")}</div>
     )
   }
 
@@ -252,17 +266,36 @@ function AccountForm({ user }: { user: UserProfile }) {
   }
 
   const initialSocialInputs: Record<keyof SocialLinks, string> = {
-    website: extractUsernameFromUrl("website", user.social_links?.website || ""),
+    website: extractUsernameFromUrl(
+      "website",
+      user.social_links?.website || ""
+    ),
     github: extractUsernameFromUrl("github", user.social_links?.github || ""),
-    twitter: extractUsernameFromUrl("twitter", user.social_links?.twitter || ""),
-    instagram: extractUsernameFromUrl("instagram", user.social_links?.instagram || ""),
-    youtube: extractUsernameFromUrl("youtube", user.social_links?.youtube || ""),
-    linkedin: extractUsernameFromUrl("linkedin", user.social_links?.linkedin || ""),
+    twitter: extractUsernameFromUrl(
+      "twitter",
+      user.social_links?.twitter || ""
+    ),
+    instagram: extractUsernameFromUrl(
+      "instagram",
+      user.social_links?.instagram || ""
+    ),
+    youtube: extractUsernameFromUrl(
+      "youtube",
+      user.social_links?.youtube || ""
+    ),
+    linkedin: extractUsernameFromUrl(
+      "linkedin",
+      user.social_links?.linkedin || ""
+    ),
     tiktok: extractUsernameFromUrl("tiktok", user.social_links?.tiktok || ""),
-    facebook: extractUsernameFromUrl("facebook", user.social_links?.facebook || ""),
+    facebook: extractUsernameFromUrl(
+      "facebook",
+      user.social_links?.facebook || ""
+    ),
   }
 
-  const [socialInputs, setSocialInputs] = useState<Record<keyof SocialLinks, string>>(initialSocialInputs)
+  const [socialInputs, setSocialInputs] =
+    useState<Record<keyof SocialLinks, string>>(initialSocialInputs)
   const [bioAndSocialExpanded, setBioAndSocialExpanded] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
@@ -383,7 +416,10 @@ function AccountForm({ user }: { user: UserProfile }) {
     setUsernameError(validateUsername(val))
   }
 
-  const handleSocialInputChange = (key: keyof SocialLinks, rawValue: string) => {
+  const handleSocialInputChange = (
+    key: keyof SocialLinks,
+    rawValue: string
+  ) => {
     const extracted = extractUsernameFromUrl(key, rawValue)
     setSocialInputs((prev) => ({
       ...prev,
@@ -503,13 +539,16 @@ function AccountForm({ user }: { user: UserProfile }) {
         } else if (
           detail === "UPDATE_USER_USERNAME_ALREADY_EXISTS" ||
           detail === "USERNAME_ALREADY_EXISTS" ||
-          (typeof detail === "string" && detail.includes("USERNAME_ALREADY_EXISTS"))
+          (typeof detail === "string" &&
+            detail.includes("USERNAME_ALREADY_EXISTS"))
         ) {
           const userErr = t("usernameExists")
           setError(userErr)
           setUsernameError(userErr)
         } else if (Array.isArray(detail)) {
-          const msg = detail.map((d: { msg?: string }) => d.msg || "").join(", ")
+          const msg = detail
+            .map((d: { msg?: string }) => d.msg || "")
+            .join(", ")
           setError(msg)
           if (msg.toLowerCase().includes("reserved")) {
             setUsernameError(t("usernameReserved"))
@@ -581,7 +620,9 @@ function AccountForm({ user }: { user: UserProfile }) {
               className="flex h-8 w-8 items-center justify-center gap-2 p-0 sm:h-8 sm:w-auto sm:px-3"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploadingAvatar}
-              aria-label={isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
+              aria-label={
+                isUploadingAvatar ? t("uploading") : t("uploadAvatar")
+              }
               title={isUploadingAvatar ? t("uploading") : t("uploadAvatar")}
             >
               <Upload className="h-4 w-4" />
@@ -650,7 +691,7 @@ function AccountForm({ user }: { user: UserProfile }) {
           <button
             type="button"
             onClick={() => setBioAndSocialExpanded(!bioAndSocialExpanded)}
-            className="group flex items-center gap-2 cursor-pointer text-left font-medium transition-colors hover:text-primary py-1"
+            className="group flex cursor-pointer items-center gap-2 py-1 text-left font-medium transition-colors hover:text-primary"
           >
             <span className="text-muted-foreground transition-colors group-hover:text-primary">
               {bioAndSocialExpanded ? (
@@ -681,14 +722,14 @@ function AccountForm({ user }: { user: UserProfile }) {
                   maxLength={BIO_MAX_LENGTH}
                   rows={3}
                   placeholder={t("bioPlaceholder")}
-                  className="min-h-[90px] pb-6 resize-y"
+                  className="min-h-[90px] resize-y pb-6"
                 />
                 <span
-                  className={`absolute bottom-2.5 right-3 text-xs select-none pointer-events-none ${
+                  className={`pointer-events-none absolute right-3 bottom-2.5 text-xs select-none ${
                     bio.length > BIO_MAX_LENGTH * 0.9
                       ? bio.length >= BIO_MAX_LENGTH
-                        ? "text-destructive font-semibold"
-                        : "text-amber-500 font-semibold"
+                        ? "font-semibold text-destructive"
+                        : "font-semibold text-amber-500"
                       : "text-muted-foreground"
                   }`}
                 >
@@ -704,10 +745,13 @@ function AccountForm({ user }: { user: UserProfile }) {
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                   {PLATFORM_CONFIGS.map((platform) => (
                     <div key={platform.key} className="flex flex-col gap-1.5">
-                      <Label htmlFor={`social-${platform.key}`} className="text-xs font-medium">
+                      <Label
+                        htmlFor={`social-${platform.key}`}
+                        className="text-xs font-medium"
+                      >
                         {platform.label}
                       </Label>
-                      <div className="flex items-center rounded-2xl border border-transparent bg-input/50 transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 overflow-hidden h-9 px-1">
+                      <div className="flex h-9 items-center overflow-hidden rounded-2xl border border-transparent bg-input/50 px-1 transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30">
                         <div
                           className="flex h-full w-8 shrink-0 items-center justify-center text-muted-foreground"
                           title={platform.label}
@@ -715,7 +759,7 @@ function AccountForm({ user }: { user: UserProfile }) {
                           {platform.icon}
                         </div>
                         {platform.prefixDisplay && (
-                          <span className="text-xs text-muted-foreground select-none whitespace-nowrap font-mono pr-1">
+                          <span className="pr-1 font-mono text-xs whitespace-nowrap text-muted-foreground select-none">
                             {platform.prefixDisplay}
                           </span>
                         )}
@@ -724,11 +768,14 @@ function AccountForm({ user }: { user: UserProfile }) {
                           type={platform.isFullUrlRequired ? "url" : "text"}
                           value={socialInputs[platform.key] || ""}
                           onChange={(e) =>
-                            handleSocialInputChange(platform.key, e.target.value)
+                            handleSocialInputChange(
+                              platform.key,
+                              e.target.value
+                            )
                           }
                           onBlur={() => handleSocialInputBlur(platform.key)}
                           placeholder={platform.placeholder}
-                          className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 h-full text-sm px-1.5 shadow-none"
+                          className="h-full border-0 bg-transparent px-1.5 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
                         />
                       </div>
                     </div>
@@ -739,7 +786,7 @@ function AccountForm({ user }: { user: UserProfile }) {
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
           <Button
             type="submit"
             disabled={isSaving || !!displayNameError || !!usernameError}
@@ -749,10 +796,10 @@ function AccountForm({ user }: { user: UserProfile }) {
           </Button>
 
           <Link
-            href={`/${user.username || 'profile'}`}
+            href={`/${user.username || "profile"}`}
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "w-full sm:w-auto flex items-center justify-center gap-2 font-medium"
+              "flex w-full items-center justify-center gap-2 font-medium sm:w-auto"
             )}
           >
             <User className="h-4 w-4" />

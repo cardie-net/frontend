@@ -26,7 +26,11 @@ interface ShareFolderDialogProps {
   onClose: () => void
 }
 
-export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDialogProps) {
+export function ShareFolderDialog({
+  folder,
+  username,
+  onClose,
+}: ShareFolderDialogProps) {
   const t = useTranslations("Folders.shareDialog")
   const tCommon = useTranslations("Common")
   const { user } = useAuth()
@@ -37,7 +41,11 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
   const [shareError, setShareError] = useState("")
   const [isLinkCopied, setIsLinkCopied] = useState(false)
 
-  const isOwner = !!(user && folder && (!folder.user_id || user.id === folder.user_id))
+  const isOwner = !!(
+    user &&
+    folder &&
+    (!folder.user_id || user.id === folder.user_id)
+  )
   const ownerUsername = folder?.owner?.username || username || user?.username
 
   const handleSaveShare = async (e: React.FormEvent) => {
@@ -57,23 +65,22 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
     if (!folder) return
 
     updateFolder.mutate(
-      { 
-        folderId: folder.id, 
-        privacy: sharePrivacy, 
+      {
+        folderId: folder.id,
+        privacy: sharePrivacy,
         slug: shareSlug,
       },
       {
         onSuccess: () => onClose(),
         onError: (err) =>
-          setShareError(
-            err instanceof Error ? err.message : tCommon("error")
-          ),
+          setShareError(err instanceof Error ? err.message : tCommon("error")),
       }
     )
   }
 
   const handleCopyLink = () => {
-    const ownerName = folder?.owner?.username || username || user?.username || ""
+    const ownerName =
+      folder?.owner?.username || username || user?.username || ""
     navigator.clipboard.writeText(
       `${window.location.origin}/${ownerName}/${shareSlug || folder?.slug || folder?.id}`
     )
@@ -94,28 +101,26 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
       <DialogContent>
         <form onSubmit={handleSaveShare}>
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Share2 className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Share2 className="h-5 w-5" />
             </div>
             <div>
               <DialogTitle className="text-base font-semibold">
                 {isOwner ? t("titleOwner") : t("titleViewer")}
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                {isOwner
-                  ? t("descOwner")
-                  : t("descViewer")}
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
+                {isOwner ? t("descOwner") : t("descViewer")}
               </DialogDescription>
             </div>
           </DialogHeader>
-          <div className="grid gap-4 py-4 px-1">
+          <div className="grid gap-4 px-1 py-4">
             {shareError && <Alert variant="destructive">{shareError}</Alert>}
 
             {isOwner && (
               <>
                 <div className="grid gap-2">
                   <Label>{t("privacyLabel")}</Label>
-                  <div className="grid grid-cols-3 gap-1 p-1 bg-muted/60 rounded-2xl text-xs font-medium mt-1">
+                  <div className="mt-1 grid grid-cols-3 gap-1 rounded-2xl bg-muted/60 p-1 text-xs font-medium">
                     {(
                       [
                         {
@@ -141,11 +146,12 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
                         onClick={() => setSharePrivacy(opt.id)}
                         disabled={updateFolder.isPending}
                         className={cn(
-                          "flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all",
+                          "flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all",
                           sharePrivacy === opt.id
-                            ? "bg-background text-foreground shadow-sm font-semibold"
+                            ? "bg-background font-semibold text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground",
-                          updateFolder.isPending && "opacity-50 cursor-not-allowed"
+                          updateFolder.isPending &&
+                            "cursor-not-allowed opacity-50"
                         )}
                       >
                         {opt.icon}
@@ -211,4 +217,3 @@ export function ShareFolderDialog({ folder, username, onClose }: ShareFolderDial
     </Dialog>
   )
 }
-

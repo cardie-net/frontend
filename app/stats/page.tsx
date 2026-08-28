@@ -137,9 +137,7 @@ export default function StatisticsPage() {
     const srs = srsCountsData[deck.id]
     if (!srs?.activated) return false
     const pendingCount =
-      (srs.new_count || 0) +
-      (srs.learning_count || 0) +
-      (srs.review_count || 0)
+      (srs.new_count || 0) + (srs.learning_count || 0) + (srs.review_count || 0)
     return pendingCount > 0
   })
 
@@ -201,7 +199,10 @@ export default function StatisticsPage() {
           <div>
             <div className="text-3xl font-bold tracking-tight">{totalDue}</div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {t("dueForReviewDesc", { learning: totalLearningCards, review: totalReviewCards })}
+              {t("dueForReviewDesc", {
+                learning: totalLearningCards,
+                review: totalReviewCards,
+              })}
             </p>
           </div>
         </Card>
@@ -304,7 +305,7 @@ export default function StatisticsPage() {
                 return (
                   <div
                     key={deck.id}
-                    className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5 sm:gap-4"
+                    className="flex flex-col gap-3 rounded-2xl border border-border/70 bg-card p-4 transition-all hover:border-primary/50 hover:shadow-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:p-5"
                   >
                     <div className="min-w-0 flex-1 space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
@@ -322,7 +323,7 @@ export default function StatisticsPage() {
                         </Badge>
                       </div>
                       {deck.properties?.description && (
-                        <p className="hidden line-clamp-2 break-all text-xs text-muted-foreground sm:block">
+                        <p className="line-clamp-2 hidden text-xs break-all text-muted-foreground sm:block">
                           {deck.properties.description}
                         </p>
                       )}
@@ -330,17 +331,26 @@ export default function StatisticsPage() {
 
                     <div className="flex shrink-0 items-center justify-end gap-3 sm:flex-nowrap">
                       <div className="flex items-center gap-2 text-xs font-medium sm:gap-1.5">
-                        <span className="font-bold text-blue-600 dark:text-blue-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-blue-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                        <span className="font-bold text-blue-600 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-blue-500/10 sm:px-2.5 sm:py-1 sm:font-semibold dark:text-blue-400">
                           {srs.new_count || 0}
-                          <span className="hidden sm:inline"> {t("newBadge")}</span>
+                          <span className="hidden sm:inline">
+                            {" "}
+                            {t("newBadge")}
+                          </span>
                         </span>
-                        <span className="font-bold text-amber-600 dark:text-amber-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-amber-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                        <span className="font-bold text-amber-600 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-amber-500/10 sm:px-2.5 sm:py-1 sm:font-semibold dark:text-amber-400">
                           {srs.learning_count || 0}
-                          <span className="hidden sm:inline"> {t("learnBadge")}</span>
+                          <span className="hidden sm:inline">
+                            {" "}
+                            {t("learnBadge")}
+                          </span>
                         </span>
-                        <span className="font-bold text-emerald-600 dark:text-emerald-400 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-emerald-500/10 sm:px-2.5 sm:py-1 sm:font-semibold">
+                        <span className="font-bold text-emerald-600 sm:inline-flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-emerald-500/10 sm:px-2.5 sm:py-1 sm:font-semibold dark:text-emerald-400">
                           {srs.review_count || 0}
-                          <span className="hidden sm:inline"> {t("reviewBadge")}</span>
+                          <span className="hidden sm:inline">
+                            {" "}
+                            {t("reviewBadge")}
+                          </span>
                         </span>
                       </div>
 
@@ -352,7 +362,9 @@ export default function StatisticsPage() {
                         >
                           <span className="sm:hidden">{t("studyButton")}</span>
                           <span className="hidden sm:inline">
-                            {deckDue > 0 ? t("studyCountButton", { count: deckDue }) : t("viewDeckButton")}
+                            {deckDue > 0
+                              ? t("studyCountButton", { count: deckDue })
+                              : t("viewDeckButton")}
                           </span>
                         </Button>
                       </Link>

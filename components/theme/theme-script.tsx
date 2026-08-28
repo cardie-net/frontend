@@ -1,6 +1,6 @@
-import React from 'react';
-import { THEME_STORAGE_KEY, STYLE_TAG_ID } from '@/lib/theme/theme-engine';
-import { DEFAULT_PRESET } from '@/lib/theme/presets';
+import React from "react"
+import { THEME_STORAGE_KEY, STYLE_TAG_ID } from "@/lib/theme/theme-engine"
+import { DEFAULT_PRESET } from "@/lib/theme/presets"
 
 export function ThemeScript() {
   const code = `
@@ -112,6 +112,11 @@ export function ThemeScript() {
     console.error('Error applying theme script:', e);
   }
 })();
-  `;
-  return <script dangerouslySetInnerHTML={{ __html: code }} suppressHydrationWarning />;
+  `
+  return (
+    <script
+      dangerouslySetInnerHTML={{ __html: code }}
+      suppressHydrationWarning
+    />
+  )
 }

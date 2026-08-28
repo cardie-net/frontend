@@ -45,7 +45,7 @@ function SlugPageContent() {
     isLoading: deckLoading,
     error: deckError,
   } = useDeck(username, slug)
-  
+
   const {
     data: folder,
     isLoading: folderLoading,

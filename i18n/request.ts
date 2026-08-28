@@ -10,9 +10,7 @@ export default getRequestConfig(async () => {
   const locale =
     rawLocale && isSupportedLocale(rawLocale)
       ? rawLocale
-      : detectLocaleFromAcceptLanguage(
-          (await headers()).get("accept-language")
-        )
+      : detectLocaleFromAcceptLanguage((await headers()).get("accept-language"))
 
   return {
     locale,

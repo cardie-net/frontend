@@ -95,10 +95,10 @@ export default function SpacedRepetitionPage() {
   ])
 
   return (
-    <div className="container mx-auto flex h-[calc(100dvh-64px)] overflow-hidden max-w-4xl flex-col space-y-4 sm:space-y-8 px-4 pt-8 pb-2 sm:px-10 sm:py-16">
+    <div className="container mx-auto flex h-[calc(100dvh-64px)] max-w-4xl flex-col space-y-4 overflow-hidden px-4 pt-8 pb-2 sm:space-y-8 sm:px-10 sm:py-16">
       <div className="flex flex-col">
-        <div className="flex justify-start sm:justify-between gap-4 items-center">
-          <div className="hidden sm:flex items-center gap-3">
+        <div className="flex items-center justify-start gap-4 sm:justify-between">
+          <div className="hidden items-center gap-3 sm:flex">
             <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
               <Clock className="h-6 w-6" />
             </div>
@@ -108,7 +108,11 @@ export default function SpacedRepetitionPage() {
           </div>
 
           <Link href={`/${username}/${slug}`} className="sm:hidden">
-            <Button variant="outline" size="sm" className="rounded-xl gap-2 font-medium">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-xl font-medium"
+            >
               <ArrowLeft className="h-4 w-4" />
               {t("back")}
             </Button>
@@ -123,7 +127,7 @@ export default function SpacedRepetitionPage() {
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-8 flex min-h-0 flex-1 flex-col items-center justify-center">
+      <div className="mt-4 flex min-h-0 flex-1 flex-col items-center justify-center sm:mt-8">
         {isLoading ? (
           <div className="flex w-full flex-1 flex-col items-center justify-center space-y-4">
             <Skeleton className="h-[400px] w-full max-w-2xl rounded-xl" />
@@ -131,14 +135,18 @@ export default function SpacedRepetitionPage() {
         ) : error ? (
           <div className="flex flex-1 flex-col items-center justify-center text-center">
             <p className="mb-4 text-destructive">{error}</p>
-            <Button onClick={() => window.location.reload()}>{tCommon("tryAgain")}</Button>
+            <Button onClick={() => window.location.reload()}>
+              {tCommon("tryAgain")}
+            </Button>
           </div>
         ) : sessionCompleted ? (
           <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center text-center">
             <div className="mb-6 rounded-full bg-primary/10 p-6">
               <Check className="h-12 w-12 text-primary" />
             </div>
-            <h2 className="mb-2 text-2xl font-bold">{t("sessionCompleteTitle")}</h2>
+            <h2 className="mb-2 text-2xl font-bold">
+              {t("sessionCompleteTitle")}
+            </h2>
             <p className="mb-8 text-muted-foreground">
               {t("sessionCompleteDesc")}
             </p>
@@ -158,95 +166,105 @@ export default function SpacedRepetitionPage() {
               onFlip={toggleFlip}
             />
 
-            <div className="mt-4 sm:mt-8 px-4 sm:px-8">
+            <div className="mt-4 px-4 sm:mt-8 sm:px-8">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex flex-1 gap-2">
                   {counts.newRemaining > 0 && (
-                    <Badge variant="outline" className="border-blue-300 bg-blue-100 px-3 py-1 font-semibold text-blue-950 dark:border-blue-800 dark:bg-blue-950/80 dark:text-blue-200">
+                    <Badge
+                      variant="outline"
+                      className="border-blue-300 bg-blue-100 px-3 py-1 font-semibold text-blue-950 dark:border-blue-800 dark:bg-blue-950/80 dark:text-blue-200"
+                    >
                       {counts.newRemaining} {t("new")}
                     </Badge>
                   )}
                   {counts.learningRemaining > 0 && (
-                    <Badge variant="outline" className="border-orange-300 bg-orange-100 px-3 py-1 font-semibold text-orange-950 dark:border-orange-800 dark:bg-orange-950/80 dark:text-orange-200">
+                    <Badge
+                      variant="outline"
+                      className="border-orange-300 bg-orange-100 px-3 py-1 font-semibold text-orange-950 dark:border-orange-800 dark:bg-orange-950/80 dark:text-orange-200"
+                    >
                       {counts.learningRemaining} {t("learning")}
                     </Badge>
                   )}
                   {counts.reviewRemaining > 0 && (
-                    <Badge variant="outline" className="border-green-300 bg-green-100 px-3 py-1 font-semibold text-green-950 dark:border-green-800 dark:bg-green-950/80 dark:text-green-200">
+                    <Badge
+                      variant="outline"
+                      className="border-green-300 bg-green-100 px-3 py-1 font-semibold text-green-950 dark:border-green-800 dark:bg-green-950/80 dark:text-green-200"
+                    >
                       {counts.reviewRemaining} {t("review")}
                     </Badge>
                   )}
                 </div>
-                <div className="min-w-[40px] sm:min-w-[80px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground">
-                  {totalRemaining} <span className="hidden sm:inline">{t("total")}</span>
+                <div className="min-w-[40px] text-right text-sm font-medium whitespace-nowrap text-muted-foreground sm:min-w-[80px]">
+                  {totalRemaining}{" "}
+                  <span className="hidden sm:inline">{t("total")}</span>
                 </div>
               </div>
             </div>
 
             <div
-              className={`mt-4 sm:mt-8 grid w-full grid-cols-2 gap-3 sm:flex sm:flex-row transition-opacity duration-300 ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
+              className={`mt-4 grid w-full grid-cols-2 gap-3 transition-opacity duration-300 sm:mt-8 sm:flex sm:flex-row ${isFlipped ? "opacity-100" : "pointer-events-none opacity-0"}`}
             >
               <Button
                 size="lg"
                 variant="destructive"
-                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 py-3"
+                className="h-auto w-full flex-row items-center justify-center gap-2 py-3 sm:flex-1"
                 onClick={() => handleRating(0)}
               >
-                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-sm font-semibold sm:text-base">
                   {t("again")}
-                  <Kbd className="hidden sm:inline-flex bg-background/20 text-destructive-foreground">
+                  <Kbd className="text-destructive-foreground hidden bg-background/20 sm:inline-flex">
                     1
                   </Kbd>
                 </span>
-                <span className="text-xs opacity-90 font-normal">
+                <span className="text-xs font-normal opacity-90">
                   {previewIntervals.again}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-orange-500 py-3 text-white hover:bg-orange-600"
+                className="h-auto w-full flex-row items-center justify-center gap-2 bg-orange-500 py-3 text-white hover:bg-orange-600 sm:flex-1"
                 onClick={() => handleRating(1)}
               >
-                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-sm font-semibold sm:text-base">
                   {t("hard")}
-                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                  <Kbd className="hidden bg-background/20 text-white sm:inline-flex">
                     2
                   </Kbd>
                 </span>
-                <span className="text-xs opacity-90 font-normal">
+                <span className="text-xs font-normal opacity-90">
                   {previewIntervals.hard}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-blue-500 py-3 text-white hover:bg-blue-600"
+                className="h-auto w-full flex-row items-center justify-center gap-2 bg-blue-500 py-3 text-white hover:bg-blue-600 sm:flex-1"
                 onClick={() => handleRating(2)}
               >
-                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-sm font-semibold sm:text-base">
                   {t("good")}
-                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                  <Kbd className="hidden bg-background/20 text-white sm:inline-flex">
                     3
                   </Kbd>
                 </span>
-                <span className="text-xs opacity-90 font-normal">
+                <span className="text-xs font-normal opacity-90">
                   {previewIntervals.good}
                 </span>
               </Button>
 
               <Button
                 size="lg"
-                className="h-auto w-full sm:flex-1 flex-row items-center justify-center gap-2 bg-green-700 py-3 text-white hover:bg-green-800"
+                className="h-auto w-full flex-row items-center justify-center gap-2 bg-green-700 py-3 text-white hover:bg-green-800 sm:flex-1"
                 onClick={() => handleRating(3)}
               >
-                <span className="text-sm sm:text-base font-semibold flex items-center gap-1.5">
+                <span className="flex items-center gap-1.5 text-sm font-semibold sm:text-base">
                   {t("easy")}
-                  <Kbd className="hidden sm:inline-flex bg-background/20 text-white">
+                  <Kbd className="hidden bg-background/20 text-white sm:inline-flex">
                     4
                   </Kbd>
                 </span>
-                <span className="text-xs opacity-90 font-normal">
+                <span className="text-xs font-normal opacity-90">
                   {previewIntervals.easy}
                 </span>
               </Button>

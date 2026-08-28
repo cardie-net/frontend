@@ -1,7 +1,7 @@
-'use client'
+"use client"
 
-import React, { useState } from 'react'
-import { useTranslations } from 'next-intl'
+import React, { useState } from "react"
+import { useTranslations } from "next-intl"
 import {
   Globe,
   Search,
@@ -10,44 +10,44 @@ import {
   ChevronRight,
   Layers,
   Folder as FolderIcon,
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Badge } from '@/components/ui/badge'
-import { Card } from '@/components/ui/card'
-import { Skeleton } from '@/components/ui/skeleton'
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   CommunityModeButtons,
   CommunitySortMode,
-} from '@/components/community/CommunityModeButtons'
-import { CommunityDeckCard } from '@/components/community/CommunityDeckCard'
-import { CommunityFolderCard } from '@/components/community/CommunityFolderCard'
-import { useCommunityItems } from '@/hooks/useCommunity'
-import { useCustomTheme } from '@/components/theme/custom-theme-provider'
+} from "@/components/community/CommunityModeButtons"
+import { CommunityDeckCard } from "@/components/community/CommunityDeckCard"
+import { CommunityFolderCard } from "@/components/community/CommunityFolderCard"
+import { useCommunityItems } from "@/hooks/useCommunity"
+import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 export default function CommunityPage() {
-  const t = useTranslations('Community')
-  const tCommon = useTranslations('Common')
+  const t = useTranslations("Community")
+  const tCommon = useTranslations("Common")
   const { deckDisplayMode } = useCustomTheme()
-  const isLineMode = deckDisplayMode === 'line'
-  const [mode, setMode] = useState<CommunitySortMode>('popular')
-  const [itemType, setItemType] = useState<'all' | 'deck' | 'folder'>('all')
-  const [searchInput, setSearchInput] = useState('')
-  const [submittedQuery, setSubmittedQuery] = useState('')
+  const isLineMode = deckDisplayMode === "line"
+  const [mode, setMode] = useState<CommunitySortMode>("popular")
+  const [itemType, setItemType] = useState<"all" | "deck" | "folder">("all")
+  const [searchInput, setSearchInput] = useState("")
+  const [submittedQuery, setSubmittedQuery] = useState("")
   const [page, setPage] = useState(1)
   const pageSize = 18
 
   const handleSelectMode = (newMode: CommunitySortMode) => {
     setMode(newMode)
     setPage(1)
-    if (newMode !== 'search') {
-      setSearchInput('')
-      setSubmittedQuery('')
+    if (newMode !== "search") {
+      setSearchInput("")
+      setSubmittedQuery("")
     }
   }
 
-  const handleItemTypeChange = (newType: 'all' | 'deck' | 'folder') => {
+  const handleItemTypeChange = (newType: "all" | "deck" | "folder") => {
     setItemType(newType)
     setPage(1)
   }
@@ -59,15 +59,15 @@ export default function CommunityPage() {
   }
 
   const handleClearSearch = () => {
-    setSearchInput('')
-    setSubmittedQuery('')
+    setSearchInput("")
+    setSubmittedQuery("")
     setPage(1)
   }
 
   const { data, isLoading, isError, error } = useCommunityItems({
-    item_type: mode === 'search' ? 'all' : itemType,
+    item_type: mode === "search" ? "all" : itemType,
     sort: mode,
-    q: mode === 'search' ? submittedQuery : undefined,
+    q: mode === "search" ? submittedQuery : undefined,
     page,
     limit: pageSize,
   })
@@ -77,16 +77,16 @@ export default function CommunityPage() {
   const totalPages = data?.total_pages ?? 1
 
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-8 sm:px-10 sm:py-16 space-y-8">
+    <div className="container mx-auto max-w-4xl space-y-8 px-4 py-8 sm:px-10 sm:py-16">
       {/* Page Title Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shadow-sm shrink-0">
-            <Globe className="w-6 h-6" />
+          <div className="flex shrink-0 items-center justify-center rounded-2xl bg-primary/10 p-2.5 text-primary shadow-sm">
+            <Globe className="h-6 w-6" />
           </div>
           <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
-              {t('title')}
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {t("title")}
             </h1>
             {!isLoading && (
               <Badge
@@ -107,81 +107,81 @@ export default function CommunityPage() {
       />
 
       {/* Search / Filter Row */}
-      {mode === 'search' ? (
+      {mode === "search" ? (
         /* Search Form with explicit Search button */
         <form
           onSubmit={handleSearchSubmit}
-          className="flex items-center gap-2 p-2 rounded-2xl bg-card border border-border/70 shadow-sm"
+          className="flex items-center gap-2 rounded-2xl border border-border/70 bg-card p-2 shadow-sm"
         >
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder={t('searchPlaceholder')}
-              className="pl-9 pr-8 h-10 rounded-xl border-border bg-background/80 text-sm focus-visible:ring-primary/40"
+              placeholder={t("searchPlaceholder")}
+              className="h-10 rounded-xl border-border bg-background/80 pr-8 pl-9 text-sm focus-visible:ring-primary/40"
               autoFocus
             />
             {searchInput && (
               <button
                 type="button"
                 onClick={handleClearSearch}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded-md focus:outline-none"
+                className="absolute top-1/2 right-2.5 -translate-y-1/2 rounded-md p-0.5 text-muted-foreground hover:text-foreground focus:outline-none"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="h-3.5 w-3.5" />
               </button>
             )}
           </div>
           <Button
             type="submit"
-            className="h-10 px-3 sm:px-5 rounded-xl font-semibold gap-1.5 shrink-0"
-            aria-label={t('searchButton')}
+            className="h-10 shrink-0 gap-1.5 rounded-xl px-3 font-semibold sm:px-5"
+            aria-label={t("searchButton")}
           >
-            <Search className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('searchButton')}</span>
+            <Search className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("searchButton")}</span>
           </Button>
         </form>
       ) : (
         /* Item Type Filter Tabs */
-        <div className="flex items-center justify-between p-2 rounded-2xl bg-card border border-border/70 shadow-sm">
-          <div className="flex items-center gap-1 bg-muted/60 p-1 rounded-xl">
+        <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-card p-2 shadow-sm">
+          <div className="flex items-center gap-1 rounded-xl bg-muted/60 p-1">
             <button
               type="button"
-              onClick={() => handleItemTypeChange('all')}
+              onClick={() => handleItemTypeChange("all")}
               className={cn(
-                'px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer',
-                itemType === 'all'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                "cursor-pointer rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                itemType === "all"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
-              {t('allItems')}
+              {t("allItems")}
             </button>
             <button
               type="button"
-              onClick={() => handleItemTypeChange('deck')}
+              onClick={() => handleItemTypeChange("deck")}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer',
-                itemType === 'deck'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                itemType === "deck"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <Layers className="w-3.5 h-3.5" />
-              <span>{t('decks')}</span>
+              <Layers className="h-3.5 w-3.5" />
+              <span>{t("decks")}</span>
             </button>
             <button
               type="button"
-              onClick={() => handleItemTypeChange('folder')}
+              onClick={() => handleItemTypeChange("folder")}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer',
-                itemType === 'folder'
-                  ? 'bg-background text-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
+                "flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-all duration-150",
+                itemType === "folder"
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <FolderIcon className="w-3.5 h-3.5" />
-              <span>{t('folders')}</span>
+              <FolderIcon className="h-3.5 w-3.5" />
+              <span>{t("folders")}</span>
             </button>
           </div>
         </div>
@@ -189,60 +189,74 @@ export default function CommunityPage() {
 
       {/* Content Area */}
       {isLoading ? (
-        <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
+        <div
+          className={cn(
+            isLineMode
+              ? "flex flex-col gap-2"
+              : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          )}
+        >
           {Array.from({ length: 9 }).map((_, i) => (
             <Skeleton
               key={i}
-              className={cn(isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl")}
+              className={cn(
+                isLineMode ? "h-12 rounded-2xl" : "h-[130px] rounded-2xl"
+              )}
             />
           ))}
         </div>
       ) : isError ? (
-        <Card className="rounded-3xl border-border/80 p-8 text-center bg-card/60">
+        <Card className="rounded-3xl border-border/80 bg-card/60 p-8 text-center">
           <p className="text-sm text-destructive">
-            {error?.message || t('failed')}
+            {error?.message || t("failed")}
           </p>
         </Card>
       ) : items.length === 0 ? (
-        <Card className="rounded-3xl border-2 border-dashed border-border/80 p-10 sm:p-14 text-center bg-card/40">
-          <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-4">
-            {mode === 'search' ? (
-              <Search className="w-6 h-6" />
+        <Card className="rounded-3xl border-2 border-dashed border-border/80 bg-card/40 p-10 text-center sm:p-14">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+            {mode === "search" ? (
+              <Search className="h-6 w-6" />
             ) : (
-              <Globe className="w-6 h-6" />
+              <Globe className="h-6 w-6" />
             )}
           </div>
-          <p className="text-lg font-semibold text-foreground mb-1">
-            {mode === 'search' && submittedQuery
-              ? t('noMatchesTitle')
-              : mode === 'search'
-              ? t('startSearchingTitle')
-              : t('noItemsTitle')}
+          <p className="mb-1 text-lg font-semibold text-foreground">
+            {mode === "search" && submittedQuery
+              ? t("noMatchesTitle")
+              : mode === "search"
+                ? t("startSearchingTitle")
+                : t("noItemsTitle")}
           </p>
-          <p className="text-sm text-muted-foreground max-w-md mx-auto">
-            {mode === 'search' && submittedQuery
-              ? t('noMatchesDesc', { query: submittedQuery })
-              : mode === 'search'
-              ? t('startSearchingDesc')
-              : t('noItemsDesc')}
+          <p className="mx-auto max-w-md text-sm text-muted-foreground">
+            {mode === "search" && submittedQuery
+              ? t("noMatchesDesc", { query: submittedQuery })
+              : mode === "search"
+                ? t("startSearchingDesc")
+                : t("noItemsDesc")}
           </p>
-          {mode === 'search' && submittedQuery && (
+          {mode === "search" && submittedQuery && (
             <Button
               variant="outline"
               size="sm"
               onClick={handleClearSearch}
               className="mt-5 rounded-xl"
             >
-              {t('clearSearch')}
+              {t("clearSearch")}
             </Button>
           )}
         </Card>
       ) : (
         <div className="space-y-6">
           {/* Mixed items grid */}
-          <div className={cn(isLineMode ? "flex flex-col gap-2" : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4")}>
+          <div
+            className={cn(
+              isLineMode
+                ? "flex flex-col gap-2"
+                : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            )}
+          >
             {items.map((item) =>
-              item.type === 'folder' ? (
+              item.type === "folder" ? (
                 <CommunityFolderCard key={`folder-${item.id}`} folder={item} />
               ) : (
                 <CommunityDeckCard key={`deck-${item.id}`} deck={item} />
@@ -252,13 +266,17 @@ export default function CommunityPage() {
 
           {/* Pagination Navigation Bar */}
           {totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border/60">
+            <div className="flex flex-col items-center justify-between gap-4 border-t border-border/60 pt-6 sm:flex-row">
               <span className="text-xs text-muted-foreground">
-                {t.rich('showingPage', {
+                {t.rich("showingPage", {
                   page,
                   totalPages,
                   items: total,
-                  bold: (chunks) => <span className="font-semibold text-foreground">{chunks}</span>,
+                  bold: (chunks) => (
+                    <span className="font-semibold text-foreground">
+                      {chunks}
+                    </span>
+                  ),
                 })}
               </span>
 
@@ -268,10 +286,12 @@ export default function CommunityPage() {
                   size="sm"
                   onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                   disabled={page <= 1}
-                  className="rounded-xl h-8 px-2.5 gap-1 font-medium text-xs"
+                  className="h-8 gap-1 rounded-xl px-2.5 text-xs font-medium"
                 >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                  <span className="hidden sm:inline">{tCommon('previous')}</span>
+                  <ChevronLeft className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">
+                    {tCommon("previous")}
+                  </span>
                 </Button>
 
                 {/* Page Number Buttons */}
@@ -280,9 +300,7 @@ export default function CommunityPage() {
                     .filter((p) => {
                       if (totalPages <= 7) return true
                       return (
-                        p === 1 ||
-                        p === totalPages ||
-                        Math.abs(p - page) <= 1
+                        p === 1 || p === totalPages || Math.abs(p - page) <= 1
                       )
                     })
                     .map((p, idx, arr) => {
@@ -297,14 +315,14 @@ export default function CommunityPage() {
                             </span>
                           )}
                           <Button
-                            variant={page === p ? 'default' : 'ghost'}
+                            variant={page === p ? "default" : "ghost"}
                             size="sm"
                             onClick={() => setPage(p)}
                             className={cn(
-                              'h-8 w-8 p-0 rounded-xl text-xs font-semibold',
+                              "h-8 w-8 rounded-xl p-0 text-xs font-semibold",
                               page === p
-                                ? 'bg-primary text-primary-foreground shadow-sm'
-                                : 'text-muted-foreground hover:text-foreground'
+                                ? "bg-primary text-primary-foreground shadow-sm"
+                                : "text-muted-foreground hover:text-foreground"
                             )}
                           >
                             {p}
@@ -317,12 +335,14 @@ export default function CommunityPage() {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => setPage((prev) => Math.min(totalPages, prev + 1))}
+                  onClick={() =>
+                    setPage((prev) => Math.min(totalPages, prev + 1))
+                  }
                   disabled={page >= totalPages}
-                  className="rounded-xl h-8 px-2.5 gap-1 font-medium text-xs"
+                  className="h-8 gap-1 rounded-xl px-2.5 text-xs font-medium"
                 >
-                  <span className="hidden sm:inline">{tCommon('next')}</span>
-                  <ChevronRight className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{tCommon("next")}</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>

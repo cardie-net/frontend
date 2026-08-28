@@ -1,29 +1,29 @@
-import { ThemeConfig } from '@/types/theme';
-import { updateFavicon } from '@/lib/theme/favicon';
+import { ThemeConfig } from "@/types/theme"
+import { updateFavicon } from "@/lib/theme/favicon"
 
-export * from '@/lib/theme/favicon';
-export const THEME_STORAGE_KEY = 'cardie_custom_theme_config';
-export const STYLE_TAG_ID = 'cardie-custom-theme-vars';
+export * from "@/lib/theme/favicon"
+export const THEME_STORAGE_KEY = "cardie_custom_theme_config"
+export const STYLE_TAG_ID = "cardie-custom-theme-vars"
 
 export function getFontFamilyCssValue(fontFamily: string): string {
-  const normalized = (fontFamily || '').toLowerCase().replace(/\s+/g, '-');
+  const normalized = (fontFamily || "").toLowerCase().replace(/\s+/g, "-")
   switch (normalized) {
-    case 'onest':
-      return `var(--font-onest), 'Onest', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-    case 'space-grotesk':
-      return `var(--font-space-grotesk), 'Space Grotesk', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
-    case 'lora':
-      return `var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif`;
-    case 'inter':
+    case "onest":
+      return `var(--font-onest), 'Onest', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
+    case "space-grotesk":
+      return `var(--font-space-grotesk), 'Space Grotesk', var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
+    case "lora":
+      return `var(--font-lora), 'Lora', Georgia, 'Times New Roman', serif`
+    case "inter":
     default:
-      return `var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`;
+      return `var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
   }
 }
 
 export function generateCssVariablesString(config: ThemeConfig): string {
-  const { radius, fontFamily, colors } = config;
+  const { radius, fontFamily, colors } = config
 
-  const fontValue = getFontFamilyCssValue(fontFamily);
+  const fontValue = getFontFamilyCssValue(fontFamily)
 
   const vars: string[] = [
     `--radius: ${radius}rem;`,
@@ -47,18 +47,27 @@ export function generateCssVariablesString(config: ThemeConfig): string {
     `--border: ${colors.border};`,
     `--input: ${colors.input};`,
     `--ring: ${colors.ring};`,
-  ];
+  ]
 
-  if (colors.sidebarBackground) vars.push(`--sidebar: ${colors.sidebarBackground};`);
-  if (colors.sidebarForeground) vars.push(`--sidebar-foreground: ${colors.sidebarForeground};`);
-  if (colors.sidebarPrimary) vars.push(`--sidebar-primary: ${colors.sidebarPrimary};`);
-  if (colors.sidebarPrimaryForeground) vars.push(`--sidebar-primary-foreground: ${colors.sidebarPrimaryForeground};`);
-  if (colors.sidebarAccent) vars.push(`--sidebar-accent: ${colors.sidebarAccent};`);
-  if (colors.sidebarAccentForeground) vars.push(`--sidebar-accent-foreground: ${colors.sidebarAccentForeground};`);
-  if (colors.sidebarBorder) vars.push(`--sidebar-border: ${colors.sidebarBorder};`);
-  if (colors.sidebarRing) vars.push(`--sidebar-ring: ${colors.sidebarRing};`);
+  if (colors.sidebarBackground)
+    vars.push(`--sidebar: ${colors.sidebarBackground};`)
+  if (colors.sidebarForeground)
+    vars.push(`--sidebar-foreground: ${colors.sidebarForeground};`)
+  if (colors.sidebarPrimary)
+    vars.push(`--sidebar-primary: ${colors.sidebarPrimary};`)
+  if (colors.sidebarPrimaryForeground)
+    vars.push(
+      `--sidebar-primary-foreground: ${colors.sidebarPrimaryForeground};`
+    )
+  if (colors.sidebarAccent)
+    vars.push(`--sidebar-accent: ${colors.sidebarAccent};`)
+  if (colors.sidebarAccentForeground)
+    vars.push(`--sidebar-accent-foreground: ${colors.sidebarAccentForeground};`)
+  if (colors.sidebarBorder)
+    vars.push(`--sidebar-border: ${colors.sidebarBorder};`)
+  if (colors.sidebarRing) vars.push(`--sidebar-ring: ${colors.sidebarRing};`)
 
-  const varsBlock = vars.join('\n  ');
+  const varsBlock = vars.join("\n  ")
 
   return `
 :root, .dark {
@@ -67,55 +76,60 @@ export function generateCssVariablesString(config: ThemeConfig): string {
   text-size-adjust: 100%;
   ${varsBlock}
 }
-`;
+`
 }
 
 export function applyThemeToDom(config: ThemeConfig) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return
 
-  const cssString = generateCssVariablesString(config);
+  const cssString = generateCssVariablesString(config)
 
-  let styleTag = document.getElementById(STYLE_TAG_ID) as HTMLStyleElement | null;
+  let styleTag = document.getElementById(
+    STYLE_TAG_ID
+  ) as HTMLStyleElement | null
   if (!styleTag) {
-    styleTag = document.createElement('style');
-    styleTag.id = STYLE_TAG_ID;
-    document.head.appendChild(styleTag);
+    styleTag = document.createElement("style")
+    styleTag.id = STYLE_TAG_ID
+    document.head.appendChild(styleTag)
   }
-  styleTag.textContent = cssString;
+  styleTag.textContent = cssString
 
   // Set class on <html>: if preset is explicit light, remove dark; otherwise always force .dark
-  const root = document.documentElement;
+  const root = document.documentElement
   // We check if colors indicate light mode or explicit flag
-  const isLight = config.colors.background.includes('0.98') || config.colors.background.includes('0.99') || config.colors.background.includes('1 0 0');
-  
+  const isLight =
+    config.colors.background.includes("0.98") ||
+    config.colors.background.includes("0.99") ||
+    config.colors.background.includes("1 0 0")
+
   if (isLight) {
-    root.classList.remove('dark');
-    root.classList.add('light');
+    root.classList.remove("dark")
+    root.classList.add("light")
   } else {
-    root.classList.remove('light');
-    root.classList.add('dark');
+    root.classList.remove("light")
+    root.classList.add("dark")
   }
 
-  updateFavicon(config);
+  updateFavicon(config)
 }
 
 export function saveThemeConfigToStorage(config: ThemeConfig) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(config));
+    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(config))
   } catch (err) {
-    console.error('Failed to save theme to localStorage:', err);
+    console.error("Failed to save theme to localStorage:", err)
   }
 }
 
 export function getSavedThemeConfigFromStorage(): ThemeConfig | null {
-  if (typeof window === 'undefined') return null;
+  if (typeof window === "undefined") return null
   try {
-    const raw = localStorage.getItem(THEME_STORAGE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw) as ThemeConfig;
+    const raw = localStorage.getItem(THEME_STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as ThemeConfig
   } catch (err) {
-    console.error('Failed to parse saved theme from localStorage:', err);
-    return null;
+    console.error("Failed to parse saved theme from localStorage:", err)
+    return null
   }
 }

@@ -26,4 +26,3 @@ export const queryKeys = {
   userStarred: () => ["user-starred"] as const,
   userFavorites: () => ["user-favorites"] as const,
 }
-

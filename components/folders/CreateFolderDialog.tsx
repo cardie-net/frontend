@@ -62,9 +62,7 @@ export function CreateFolderDialog({
           setDescription("")
         },
         onError: (err) =>
-          setCreateError(
-            err instanceof Error ? err.message : tCommon("error")
-          ),
+          setCreateError(err instanceof Error ? err.message : tCommon("error")),
       }
     )
   }
@@ -74,12 +72,14 @@ export function CreateFolderDialog({
       <DialogContent>
         <form onSubmit={handleCreateFolder}>
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <FolderPlus className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <FolderPlus className="h-5 w-5" />
             </div>
             <div>
-              <DialogTitle className="text-base font-semibold">{t("title")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
+              <DialogTitle className="text-base font-semibold">
+                {t("title")}
+              </DialogTitle>
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
                 {t("description")}
               </DialogDescription>
             </div>
@@ -105,12 +105,16 @@ export function CreateFolderDialog({
               <ColorPicker
                 color={color}
                 onChange={setColor}
-                className={createFolder.isPending ? "opacity-50 pointer-events-none" : ""}
+                className={
+                  createFolder.isPending ? "pointer-events-none opacity-50" : ""
+                }
               />
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="folder-description">{t("descriptionLabel")}</Label>
+              <Label htmlFor="folder-description">
+                {t("descriptionLabel")}
+              </Label>
               <Textarea
                 id="folder-description"
                 value={description}
@@ -118,7 +122,7 @@ export function CreateFolderDialog({
                 placeholder={t("descriptionPlaceholder")}
                 maxLength={500}
                 disabled={createFolder.isPending}
-                className="resize-none h-20"
+                className="h-20 resize-none"
               />
             </div>
           </div>

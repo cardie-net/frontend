@@ -101,9 +101,10 @@ export function useCreateFolder() {
       if (slug && slug.trim()) {
         body.slug = slug.trim()
       }
-      
+
       const properties: Record<string, unknown> = {}
-      if (color !== undefined) properties.color = color === "default" ? null : color
+      if (color !== undefined)
+        properties.color = color === "default" ? null : color
       if (description) properties.description = description
       if (coverImageUrl) properties.cover_image_url = coverImageUrl
       if (Object.keys(properties).length > 0) body.properties = properties
@@ -159,11 +160,14 @@ export function useUpdateFolder() {
       if (slug !== undefined) body.slug = slug
       if (privacy !== undefined) body.privacy = privacy
       if (parentId !== undefined) body.parent_id = parentId
-      
+
       const properties: Record<string, unknown> = {}
-      if (color !== undefined) properties.color = color === "default" ? null : color
-      if (description !== undefined) properties.description = description?.trim() || null
-      if (coverImageUrl !== undefined) properties.cover_image_url = coverImageUrl
+      if (color !== undefined)
+        properties.color = color === "default" ? null : color
+      if (description !== undefined)
+        properties.description = description?.trim() || null
+      if (coverImageUrl !== undefined)
+        properties.cover_image_url = coverImageUrl
       if (Object.keys(properties).length > 0) body.properties = properties
 
       const res = await apiFetch(`/api/v1/folders/${folderId}`, {

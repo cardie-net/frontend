@@ -1,6 +1,6 @@
-import { ThemeConfig } from '@/types/theme';
+import { ThemeConfig } from "@/types/theme"
 
-export const FAVICON_LINK_ID = 'cardie-dynamic-favicon';
+export const FAVICON_LINK_ID = "cardie-dynamic-favicon"
 
 /**
  * Calculates the corner radius in pixels for the 32x32 favicon box
@@ -11,9 +11,9 @@ export const FAVICON_LINK_ID = 'cardie-dynamic-favicon';
  * - >= 0.875rem (14px/20px) -> 16px (full circle)
  */
 export function calculateFaviconRadius(radiusRem?: number): number {
-  const rem = typeof radiusRem === 'number' ? radiusRem : 0.625;
-  const rx = rem * 16 * 1.2;
-  return Math.max(0, Math.min(16, Math.round(rx * 10) / 10));
+  const rem = typeof radiusRem === "number" ? radiusRem : 0.625
+  const rx = rem * 16 * 1.2
+  return Math.max(0, Math.min(16, Math.round(rx * 10) / 10))
 }
 
 /**
@@ -24,12 +24,12 @@ export function calculateFaviconRadius(radiusRem?: number): number {
  * - Lucide Layers icon with primary stroke color
  */
 export function generateFaviconSvg(config?: {
-  radius?: number;
-  colors?: { primary?: string };
+  radius?: number
+  colors?: { primary?: string }
 }): string {
-  const radiusRem = config?.radius ?? 0.625;
-  const primary = config?.colors?.primary ?? 'oklch(0.65 0.24 295)';
-  const rx = calculateFaviconRadius(radiusRem);
+  const radiusRem = config?.radius ?? 0.625
+  const primary = config?.colors?.primary ?? "oklch(0.65 0.24 295)"
+  const rx = calculateFaviconRadius(radiusRem)
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <rect width="32" height="32" rx="${rx}" ry="${rx}" fill="${primary}" fill-opacity="0.16"/>
@@ -38,40 +38,42 @@ export function generateFaviconSvg(config?: {
     <path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/>
     <path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>
   </g>
-</svg>`;
+</svg>`
 }
 
 /**
  * Returns a URL-encoded SVG data URI suitable for <link rel="icon" href="...">.
  */
 export function generateFaviconDataUri(config?: {
-  radius?: number;
-  colors?: { primary?: string };
+  radius?: number
+  colors?: { primary?: string }
 }): string {
-  const svg = generateFaviconSvg(config);
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  const svg = generateFaviconSvg(config)
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }
 
 /**
  * Updates or creates the dynamic favicon link element in document.head.
  */
 export function updateFavicon(config: ThemeConfig) {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return
 
-  const dataUri = generateFaviconDataUri(config);
-  const existingIcons = Array.from(document.querySelectorAll<HTMLLinkElement>("link[rel*='icon']"));
+  const dataUri = generateFaviconDataUri(config)
+  const existingIcons = Array.from(
+    document.querySelectorAll<HTMLLinkElement>("link[rel*='icon']")
+  )
 
   if (existingIcons.length === 0) {
-    const link = document.createElement('link');
-    link.id = FAVICON_LINK_ID;
-    link.rel = 'icon';
-    link.type = 'image/svg+xml';
-    link.href = dataUri;
-    document.head.appendChild(link);
+    const link = document.createElement("link")
+    link.id = FAVICON_LINK_ID
+    link.rel = "icon"
+    link.type = "image/svg+xml"
+    link.href = dataUri
+    document.head.appendChild(link)
   } else {
     existingIcons.forEach((link) => {
-      link.type = 'image/svg+xml';
-      link.href = dataUri;
-    });
+      link.type = "image/svg+xml"
+      link.href = dataUri
+    })
   }
 }

@@ -7,6 +7,7 @@ import { ScrollText, ShieldCheck, Scale } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { LegalMarkdown } from "@/components/LegalMarkdown"
 import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale } from "@/i18n/config"
+import { FlagIcon } from "@/components/FlagIcon"
 import { cn } from "@/lib/utils"
 
 export type LegalDocType = "terms-of-service" | "privacy-policy"
@@ -71,13 +72,13 @@ export function LegalDocumentViewer({
                   onClick={() => setSelectedLocale(loc)}
                   aria-pressed={isSelected}
                   className={cn(
-                    "flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all cursor-pointer select-none",
+                    "flex cursor-pointer items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all select-none",
                     isSelected
                       ? "bg-background text-foreground shadow-xs"
                       : "text-muted-foreground hover:bg-background/40 hover:text-foreground"
                   )}
                 >
-                  <span className="text-sm leading-none">{info.flag}</span>
+                  <FlagIcon locale={loc} className="h-3.5 w-4.5" />
                   <span>{info.nativeName}</span>
                 </button>
               )
@@ -88,16 +89,16 @@ export function LegalDocumentViewer({
 
       {/* Warning Card for Non-English Versions (Ukrainian) */}
       {selectedLocale === "uk" && (
-        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 sm:p-5 text-card-foreground shadow-xs dark:border-amber-500/20 dark:bg-amber-950/20">
+        <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-card-foreground shadow-xs sm:p-5 dark:border-amber-500/20 dark:bg-amber-950/20">
           <div className="mt-0.5 flex shrink-0 items-center justify-center rounded-xl bg-amber-500/20 p-2 text-amber-600 dark:text-amber-400">
             <Scale className="h-5 w-5" />
           </div>
-          <p className="text-xs sm:text-sm leading-relaxed text-foreground/90">
+          <p className="text-xs leading-relaxed text-foreground/90 sm:text-sm">
             {t("precedenceNoticeDesc")}{" "}
             <button
               type="button"
               onClick={() => setSelectedLocale("en")}
-              className="inline font-medium text-amber-700 underline underline-offset-4 transition-colors hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100 cursor-pointer"
+              className="inline cursor-pointer font-medium text-amber-700 underline underline-offset-4 transition-colors hover:text-amber-900 dark:text-amber-300 dark:hover:text-amber-100"
             >
               {t("viewOriginalEnglish")}.
             </button>
@@ -111,17 +112,17 @@ export function LegalDocumentViewer({
       </Card>
 
       {/* Bottom Navigation */}
-      <div className="flex items-center justify-between border-t border-border/60 pt-4 text-xs sm:text-sm text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground sm:text-sm">
         <Link
           href={otherDocument.href}
-          className="inline-flex items-center gap-2 transition-colors hover:text-foreground hover:underline underline-offset-4"
+          className="inline-flex items-center gap-2 underline-offset-4 transition-colors hover:text-foreground hover:underline"
         >
           <OtherIconComponent className="h-4 w-4 text-primary" />
           <span>{otherDocument.label}</span>
         </Link>
         <Link
           href="/settings"
-          className="transition-colors hover:text-foreground hover:underline underline-offset-4"
+          className="underline-offset-4 transition-colors hover:text-foreground hover:underline"
         >
           Cardie
         </Link>

@@ -69,7 +69,6 @@ export function useSRSSession(deckId: string) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-
   const [queue, setQueue] = useState<SessionQueueItem[]>([])
   const [relearnQueue, setRelearnQueue] = useState<SessionQueueItem[]>([])
 

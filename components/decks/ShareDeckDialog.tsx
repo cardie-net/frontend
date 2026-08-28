@@ -26,7 +26,11 @@ interface ShareDeckDialogProps {
   onClose: () => void
 }
 
-export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProps) {
+export function ShareDeckDialog({
+  deck,
+  username,
+  onClose,
+}: ShareDeckDialogProps) {
   const t = useTranslations("Decks.shareDialog")
   const tCommon = useTranslations("Common")
   const { user } = useAuth()
@@ -37,7 +41,11 @@ export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProp
   const [shareError, setShareError] = useState("")
   const [isLinkCopied, setIsLinkCopied] = useState(false)
 
-  const isOwner = !!(user && deck && (!deck.user_id || user.id === deck.user_id))
+  const isOwner = !!(
+    user &&
+    deck &&
+    (!deck.user_id || user.id === deck.user_id)
+  )
   const ownerUsername = deck?.owner?.username || username || user?.username
 
   const handleSaveShare = async (e: React.FormEvent) => {
@@ -57,17 +65,15 @@ export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProp
     if (!deck) return
 
     updateDeck.mutate(
-      { 
-        deckId: deck.id, 
-        privacy: sharePrivacy, 
+      {
+        deckId: deck.id,
+        privacy: sharePrivacy,
         slug: shareSlug,
       },
       {
         onSuccess: () => onClose(),
         onError: (err) =>
-          setShareError(
-            err instanceof Error ? err.message : tCommon("error")
-          ),
+          setShareError(err instanceof Error ? err.message : tCommon("error")),
       }
     )
   }
@@ -94,28 +100,26 @@ export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProp
       <DialogContent>
         <form onSubmit={handleSaveShare}>
           <DialogHeader className="flex flex-row items-center gap-3 space-y-0 text-left">
-            <div className="p-2 rounded-2xl bg-primary/10 text-primary">
-              <Share2 className="w-5 h-5" />
+            <div className="rounded-2xl bg-primary/10 p-2 text-primary">
+              <Share2 className="h-5 w-5" />
             </div>
             <div>
               <DialogTitle className="text-base font-semibold">
                 {isOwner ? t("titleOwner") : t("titleViewer")}
               </DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-0.5">
-                {isOwner
-                  ? t("descOwner")
-                  : t("descViewer")}
+              <DialogDescription className="mt-0.5 text-xs text-muted-foreground">
+                {isOwner ? t("descOwner") : t("descViewer")}
               </DialogDescription>
             </div>
           </DialogHeader>
-          <div className="grid gap-4 py-4 px-1">
+          <div className="grid gap-4 px-1 py-4">
             {shareError && <Alert variant="destructive">{shareError}</Alert>}
 
             {isOwner && (
               <>
                 <div className="grid gap-2">
                   <Label>{t("privacyLabel")}</Label>
-                  <div className="grid grid-cols-3 gap-1 p-1 bg-muted/60 rounded-2xl text-xs font-medium mt-1">
+                  <div className="mt-1 grid grid-cols-3 gap-1 rounded-2xl bg-muted/60 p-1 text-xs font-medium">
                     {(
                       [
                         {
@@ -141,11 +145,12 @@ export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProp
                         onClick={() => setSharePrivacy(opt.id)}
                         disabled={updateDeck.isPending}
                         className={cn(
-                          "flex items-center justify-center gap-1.5 py-2 rounded-xl transition-all",
+                          "flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all",
                           sharePrivacy === opt.id
-                            ? "bg-background text-foreground shadow-sm font-semibold"
+                            ? "bg-background font-semibold text-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground",
-                          updateDeck.isPending && "opacity-50 cursor-not-allowed"
+                          updateDeck.isPending &&
+                            "cursor-not-allowed opacity-50"
                         )}
                       >
                         {opt.icon}
@@ -211,4 +216,3 @@ export function ShareDeckDialog({ deck, username, onClose }: ShareDeckDialogProp
     </Dialog>
   )
 }
-
