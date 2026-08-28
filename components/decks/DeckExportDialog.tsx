@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Copy, Download, ImageOff } from "lucide-react";
+import { Check, Copy, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Label } from "@/components/ui/label";
@@ -106,7 +106,7 @@ export function DeckExportDialog({
             </div>
           </DialogHeader>
 
-        <Alert>
+        {/* <Alert>
           <ImageOff className="h-4 w-4" />
           <AlertTitle>{t("imagesExcludedTitle")}</AlertTitle>
           <AlertDescription>
@@ -118,7 +118,7 @@ export function DeckExportDialog({
           <AlertDescription>
             {t("oneLineDesc")}
           </AlertDescription>
-        </Alert>
+        </Alert> */}
 
         <Tabs
           value={format}
