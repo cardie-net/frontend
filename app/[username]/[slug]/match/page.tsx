@@ -11,7 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { useDeck, useUpdateDeckMatchTime } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
 import { getCardText } from "@/lib/cards"
-import { shuffle } from "@/lib/utils"
+import { shuffle, cn } from "@/lib/utils"
 import { useActivityTracker } from "@/hooks/useActivityTracker"
 
 type GridItem = {
@@ -20,6 +20,94 @@ type GridItem = {
   type: "front" | "back"
   content: string
   matched: boolean
+}
+
+interface GridLayoutConfig {
+  gridColsClass: string
+  maxWidthClass: string
+  mobileCols: number
+  mobileScroll: boolean
+}
+
+function getMatchGridLayout(count: number): GridLayoutConfig {
+  if (count <= 2) {
+    return {
+      gridColsClass: "grid-cols-2 sm:grid-cols-2",
+      maxWidthClass: "max-w-md",
+      mobileCols: 2,
+      mobileScroll: false,
+    }
+  }
+  if (count <= 4) {
+    return {
+      gridColsClass: "grid-cols-2 sm:grid-cols-2",
+      maxWidthClass: "max-w-md",
+      mobileCols: 2,
+      mobileScroll: false,
+    }
+  }
+  if (count <= 6) {
+    return {
+      gridColsClass: "grid-cols-2 sm:grid-cols-3",
+      maxWidthClass: "max-w-sm sm:max-w-2xl",
+      mobileCols: 2,
+      mobileScroll: false,
+    }
+  }
+  if (count <= 8) {
+    return {
+      gridColsClass: "grid-cols-2 sm:grid-cols-4",
+      maxWidthClass: "max-w-md sm:max-w-3xl",
+      mobileCols: 2,
+      mobileScroll: false,
+    }
+  }
+  if (count <= 10) {
+    return {
+      gridColsClass: "grid-cols-4 sm:grid-cols-5",
+      maxWidthClass: "max-w-4xl",
+      mobileCols: 4,
+      mobileScroll: true,
+    }
+  }
+  if (count <= 12) {
+    return {
+      gridColsClass: "grid-cols-4 sm:grid-cols-4",
+      maxWidthClass: "max-w-3xl",
+      mobileCols: 4,
+      mobileScroll: true,
+    }
+  }
+  if (count <= 14) {
+    return {
+      gridColsClass: "grid-cols-4 sm:grid-cols-4 md:grid-cols-5",
+      maxWidthClass: "max-w-4xl",
+      mobileCols: 4,
+      mobileScroll: true,
+    }
+  }
+  if (count <= 16) {
+    return {
+      gridColsClass: "grid-cols-4 sm:grid-cols-4",
+      maxWidthClass: "max-w-3xl md:max-w-4xl",
+      mobileCols: 4,
+      mobileScroll: true,
+    }
+  }
+  if (count <= 18) {
+    return {
+      gridColsClass: "grid-cols-4 sm:grid-cols-6",
+      maxWidthClass: "max-w-5xl",
+      mobileCols: 4,
+      mobileScroll: true,
+    }
+  }
+  return {
+    gridColsClass: "grid-cols-4 sm:grid-cols-4 md:grid-cols-5",
+    maxWidthClass: "max-w-5xl",
+    mobileCols: 4,
+    mobileScroll: true,
+  }
 }
 
 export default function MatchPage() {
@@ -187,6 +275,21 @@ export default function MatchPage() {
   }
 
   const isLoading = deckLoading || cardsLoading
+  const layout = getMatchGridLayout(gridItems.length)
+  const mobileRows = Math.max(
+    1,
+    Math.ceil(gridItems.length / layout.mobileCols)
+  )
+  const mobileMaxHeight =
+    mobileRows === 1
+      ? 140
+      : mobileRows === 2
+        ? 280
+        : mobileRows === 3
+          ? 410
+          : mobileRows === 4
+            ? 520
+            : 580
 
   return (
     <div className="container mx-auto flex h-[100dvh] max-h-[100dvh] max-w-6xl flex-col overflow-hidden px-4 pt-6 pb-16 sm:h-[calc(100dvh-64px)] sm:max-h-none sm:px-10 sm:py-12 sm:pb-8">
@@ -256,16 +359,25 @@ export default function MatchPage() {
             {gameState === "playing" && (
               <div
                 ref={scrollContainerRef}
-                className="flex h-full min-h-0 w-full max-w-full items-center justify-start overflow-x-auto overflow-y-hidden scroll-smooth px-1 pb-1 sm:justify-center"
+                className={cn(
+                  "flex h-full min-h-0 w-full max-w-full items-center px-1 pb-1 scroll-smooth",
+                  layout.mobileScroll
+                    ? "justify-start overflow-x-auto overflow-y-hidden sm:justify-center"
+                    : "justify-center overflow-hidden"
+                )}
               >
                 <div
-                  className="grid h-full max-h-[580px] w-full min-w-[560px] grid-cols-4 grid-rows-[repeat(var(--mobile-rows),minmax(0,1fr))] gap-2.5 sm:h-auto sm:max-h-none sm:min-w-0 sm:grid-cols-3 sm:grid-rows-none sm:gap-4 md:grid-cols-4 lg:grid-cols-5"
+                  className={cn(
+                    "grid h-full w-full gap-2.5 sm:h-auto sm:max-h-none sm:min-w-0 sm:grid-rows-none sm:gap-4",
+                    layout.gridColsClass,
+                    layout.maxWidthClass,
+                    layout.mobileScroll ? "min-w-[560px]" : "min-w-0",
+                    "max-h-[var(--mobile-max-h)] grid-rows-[repeat(var(--mobile-rows),minmax(0,1fr))]"
+                  )}
                   style={
                     {
-                      "--mobile-rows": Math.max(
-                        1,
-                        Math.ceil(gridItems.length / 4)
-                      ),
+                      "--mobile-rows": mobileRows,
+                      "--mobile-max-h": `${mobileMaxHeight}px`,
                     } as React.CSSProperties
                   }
                 >
