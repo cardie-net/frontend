@@ -4,22 +4,68 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowLeft, LayoutGrid, Timer, RotateCcw } from "lucide-react"
+import {
+  ArrowLeft,
+  LayoutGrid,
+  Timer,
+  RotateCcw,
+  Maximize2,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useDeck, useUpdateDeckMatchTime } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
-import { getCardText } from "@/lib/cards"
+import { getCardText, getCardImage } from "@/lib/cards"
 import { shuffle, cn } from "@/lib/utils"
 import { useActivityTracker } from "@/hooks/useActivityTracker"
+import { FullscreenImageViewer } from "@/components/shared/FullscreenImageViewer"
 
 type GridItem = {
   id: string
   cardId: string
   type: "front" | "back"
   content: string
+  imageUrl?: string | null
   matched: boolean
+}
+
+function MatchCardImage({ src }: { src: string }) {
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsFullscreen(true)
+  }
+
+  return (
+    <>
+      <div className="group/img relative flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+        <img
+          src={src}
+          alt=""
+          className="max-h-full max-w-full rounded-md object-contain"
+        />
+        {/* Fullscreen button */}
+        <div
+          className="absolute top-1 right-1 z-10 flex opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover/img:opacity-100"
+          onClick={handleOpen}
+          title="Maximize image"
+        >
+          <div className="cursor-pointer rounded-full bg-background/80 p-1 text-foreground shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-background/90 active:scale-95 sm:p-1.5">
+            <Maximize2 className="h-3 w-3 opacity-80 sm:h-3.5 sm:w-3.5" />
+          </div>
+        </div>
+      </div>
+
+      <FullscreenImageViewer
+        src={src}
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+      />
+    </>
+  )
 }
 
 interface GridLayoutConfig {
@@ -112,6 +158,7 @@ function getMatchGridLayout(count: number): GridLayoutConfig {
 
 export default function MatchPage() {
   const t = useTranslations("Match")
+  const tCommon = useTranslations("Common")
   const params = useParams<{ username: string; slug: string }>()
   const username = params.username
   const slug = params.slug
@@ -149,6 +196,7 @@ export default function MatchPage() {
         cardId: card.id,
         type: "front",
         content: getCardText(card.front),
+        imageUrl: getCardImage(card.front)?.url || null,
         matched: false,
       })
       items.push({
@@ -156,6 +204,7 @@ export default function MatchPage() {
         cardId: card.id,
         type: "back",
         content: getCardText(card.back),
+        imageUrl: getCardImage(card.back)?.url || null,
         matched: false,
       })
     })
@@ -381,17 +430,50 @@ export default function MatchPage() {
                     } as React.CSSProperties
                   }
                 >
-                  {gridItems.map((item) => (
-                    <div
-                      key={item.id}
-                      onClick={() => handleItemClick(item)}
-                      className={`flex h-full min-h-0 cursor-pointer items-center justify-center rounded-xl border-2 p-2.5 text-center transition-all duration-200 select-none sm:aspect-[4/3] sm:h-auto sm:p-4 ${item.matched ? "invisible opacity-0" : "visible opacity-100"} ${selectedItemId === item.id ? "scale-[1.02] border-primary bg-primary/10" : "border-border bg-card hover:border-primary/50"} ${mismatchedIds?.includes(item.id) ? "border-destructive bg-destructive/10" : ""} `}
-                    >
-                      <div className="line-clamp-3 w-full text-xs font-medium break-words sm:line-clamp-4 sm:text-base">
-                        {item.content}
+                  {gridItems.map((item) => {
+                    const hasImage = Boolean(item.imageUrl)
+                    const hasText = Boolean(item.content && item.content.trim())
+
+                    return (
+                      <div
+                        key={item.id}
+                        onClick={() => handleItemClick(item)}
+                        className={cn(
+                          "group/card relative flex h-full min-h-0 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 p-2 text-center transition-all duration-200 select-none sm:aspect-[4/3] sm:h-auto sm:p-3",
+                          item.matched
+                            ? "invisible pointer-events-none opacity-0"
+                            : "visible opacity-100",
+                          selectedItemId === item.id
+                            ? "scale-[1.02] border-primary bg-primary/10"
+                            : "border-border bg-card hover:border-primary/50",
+                          mismatchedIds?.includes(item.id)
+                            ? "border-destructive bg-destructive/10"
+                            : ""
+                        )}
+                      >
+                        {hasImage && hasText ? (
+                          <div className="flex h-full min-h-0 w-full flex-1 flex-col items-center justify-center gap-1 overflow-hidden sm:gap-1.5">
+                            <MatchCardImage src={item.imageUrl!} />
+                            <div className="line-clamp-2 w-full shrink-0 text-center text-xs font-medium break-words sm:line-clamp-2 sm:text-sm">
+                              {item.content}
+                            </div>
+                          </div>
+                        ) : hasImage ? (
+                          <div className="flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+                            <MatchCardImage src={item.imageUrl!} />
+                          </div>
+                        ) : hasText ? (
+                          <div className="line-clamp-3 w-full text-xs font-medium break-words sm:line-clamp-4 sm:text-base">
+                            {item.content}
+                          </div>
+                        ) : (
+                          <div className="text-xs italic text-muted-foreground sm:text-sm">
+                            {tCommon("empty")}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             )}

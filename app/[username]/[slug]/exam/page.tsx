@@ -4,7 +4,15 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import Link from "next/link"
 import { useParams, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { ArrowLeft, FileCheck, Check, X, RotateCcw, Send } from "lucide-react"
+import {
+  ArrowLeft,
+  FileCheck,
+  Check,
+  X,
+  RotateCcw,
+  Send,
+  Maximize2,
+} from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -12,28 +20,103 @@ import { Progress as ProgressPrimitive } from "@base-ui/react/progress"
 import { ProgressTrack, ProgressIndicator } from "@/components/ui/progress"
 import { useDeck, useUpdateDeckExamScore } from "@/hooks/useDecks"
 import { useCards } from "@/hooks/useCards"
-import { getCardText } from "@/lib/cards"
+import { getCardText, getCardImage } from "@/lib/cards"
 import { shuffle, cn } from "@/lib/utils"
+import { useActivityTracker } from "@/hooks/useActivityTracker"
+import { FullscreenImageViewer } from "@/components/shared/FullscreenImageViewer"
 
 type AnswerOption = {
   id: string
   text: string
+  imageUrl?: string | null
   isCorrect: boolean
 }
 
 type Question = {
   cardId: string
   prompt: string
+  promptImageUrl?: string | null
   options: AnswerOption[]
   selectedOptionId: string | null
 }
 
 const LETTERS = ["A", "B", "C", "D"]
 
-import { useActivityTracker } from "@/hooks/useActivityTracker"
+function ExamPromptImage({ src }: { src: string }) {
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsFullscreen(true)
+  }
+
+  return (
+    <>
+      <div className="group relative my-2 flex max-h-48 min-h-0 w-fit max-w-full shrink flex-col items-center justify-center overflow-hidden rounded-xl border bg-muted/30 sm:max-h-56">
+        <img
+          src={src}
+          alt=""
+          className="max-h-48 w-auto max-w-full rounded-xl object-contain sm:max-h-56"
+        />
+        <div
+          className="absolute top-2 right-2 z-10 flex opacity-100 transition-opacity duration-300 md:opacity-0 md:group-hover:opacity-100"
+          onClick={handleOpen}
+          title="Maximize image"
+        >
+          <div className="cursor-pointer rounded-full bg-background/80 p-1.5 text-foreground shadow-sm backdrop-blur-md transition-all hover:scale-105 hover:bg-background/90 active:scale-95">
+            <Maximize2 className="h-4 w-4 opacity-80" />
+          </div>
+        </div>
+      </div>
+      <FullscreenImageViewer
+        src={src}
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+      />
+    </>
+  )
+}
+
+function ExamOptionImage({ src }: { src: string }) {
+  const [isFullscreen, setIsFullscreen] = useState(false)
+
+  const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setIsFullscreen(true)
+  }
+
+  return (
+    <>
+      <div className="group/optimg relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-muted/40 sm:h-18 sm:w-18">
+        <img
+          src={src}
+          alt=""
+          className="h-full w-full object-contain p-0.5"
+        />
+        <div
+          className="absolute top-1 right-1 z-10 flex opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover/optimg:opacity-100"
+          onClick={handleOpen}
+          title="Maximize image"
+        >
+          <div className="cursor-pointer rounded-full bg-background/80 p-1 text-foreground shadow-sm backdrop-blur-md transition-all hover:scale-110 hover:bg-background/90 active:scale-95">
+            <Maximize2 className="h-3 w-3 opacity-80" />
+          </div>
+        </div>
+      </div>
+      <FullscreenImageViewer
+        src={src}
+        isOpen={isFullscreen}
+        onClose={() => setIsFullscreen(false)}
+      />
+    </>
+  )
+}
 
 export default function ExamPage() {
   const t = useTranslations("Exam")
+  const tCommon = useTranslations("Common")
   const { username, slug } = useParams() as { username: string; slug: string }
   const searchParams = useSearchParams()
   const countParam = searchParams.get("count")
@@ -83,11 +166,14 @@ export default function ExamPage() {
       }
 
       const prompt = getCardText(card[qSide])
+      const promptImageUrl = getCardImage(card[qSide])?.url || null
       const correctAnswerText = getCardText(card[aSide])
+      const correctAnswerImageUrl = getCardImage(card[aSide])?.url || null
 
       const correctOption: AnswerOption = {
         id: `${card.id}-correct`,
         text: correctAnswerText,
+        imageUrl: correctAnswerImageUrl,
         isCorrect: true,
       }
 
@@ -97,12 +183,14 @@ export default function ExamPage() {
       const wrongOptions = shuffledOtherCards.slice(0, 3).map((c, i) => ({
         id: `${card.id}-wrong-${i}`,
         text: getCardText(c[aSide]),
+        imageUrl: getCardImage(c[aSide])?.url || null,
         isCorrect: false,
       }))
 
       return {
         cardId: card.id,
         prompt,
+        promptImageUrl,
         options: shuffle([correctOption, ...wrongOptions]),
         selectedOptionId: null,
       }
@@ -361,9 +449,22 @@ export default function ExamPage() {
                     qIndex + 1
                   )}
                 </div>
-                <p className="pt-1 text-base font-medium sm:text-lg">
-                  {question.prompt}
-                </p>
+                <div className="flex min-w-0 flex-1 flex-col gap-2 pt-0.5">
+                  {question.promptImageUrl && (
+                    <ExamPromptImage src={question.promptImageUrl} />
+                  )}
+                  {question.prompt ? (
+                    <p className="text-base font-medium break-words sm:text-lg">
+                      {question.prompt}
+                    </p>
+                  ) : (
+                    !question.promptImageUrl && (
+                      <p className="text-base font-medium italic text-muted-foreground sm:text-lg">
+                        {tCommon("empty")}
+                      </p>
+                    )
+                  )}
+                </div>
               </div>
 
               {/* Answer options */}
@@ -373,7 +474,7 @@ export default function ExamPage() {
                   const isCorrect = option.isCorrect
 
                   let optionClass =
-                    "h-auto min-h-[3rem] py-3 px-4 justify-start text-left text-sm sm:text-base relative whitespace-normal rounded-xl"
+                    "h-auto min-h-[3.25rem] py-3 px-4 justify-start text-left text-sm sm:text-base relative whitespace-normal rounded-xl"
 
                   if (isSubmitted) {
                     if (isCorrect) {
@@ -409,23 +510,34 @@ export default function ExamPage() {
                       onClick={() => handleSelectOption(qIndex, option.id)}
                       disabled={isSubmitted}
                     >
-                      <span
-                        className={cn(
-                          "mr-3 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
-                          isSubmitted && isCorrect
-                            ? "bg-green-500/20"
-                            : isSubmitted && isSelected && !isCorrect
-                              ? "bg-red-500/20"
-                              : isSelected
-                                ? "bg-primary/20"
-                                : "bg-muted"
+                      <div className="flex min-w-0 flex-1 items-center gap-3 pr-6">
+                        <span
+                          className={cn(
+                            "inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-semibold",
+                            isSubmitted && isCorrect
+                              ? "bg-green-500/20"
+                              : isSubmitted && isSelected && !isCorrect
+                                ? "bg-red-500/20"
+                                : isSelected
+                                  ? "bg-primary/20"
+                                  : "bg-muted"
+                          )}
+                        >
+                          {LETTERS[oIndex]}
+                        </span>
+                        {option.imageUrl && (
+                          <ExamOptionImage src={option.imageUrl} />
                         )}
-                      >
-                        {LETTERS[oIndex]}
-                      </span>
-                      <span className="flex-1 pr-6 break-words">
-                        {option.text}
-                      </span>
+                        <span className="flex-1 break-words">
+                          {option.text
+                            ? option.text
+                            : !option.imageUrl && (
+                                <span className="italic text-muted-foreground">
+                                  {tCommon("empty")}
+                                </span>
+                              )}
+                        </span>
+                      </div>
                       {isSubmitted && isCorrect && (
                         <Check className="absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-green-500" />
                       )}
@@ -442,12 +554,24 @@ export default function ExamPage() {
 
               {/* Show correct answer text after submit if user was wrong */}
               {isSubmitted && !isCorrectAnswer && (
-                <p className="pl-11 text-sm text-muted-foreground">
-                  {t("correctAnswer", {
-                    answer:
-                      question.options.find((o) => o.isCorrect)?.text || "",
-                  })}
-                </p>
+                <div className="flex flex-wrap items-center gap-2 pl-11 text-sm text-muted-foreground">
+                  <span>
+                    {t("correctAnswer", {
+                      answer:
+                        question.options.find((o) => o.isCorrect)?.text ||
+                        (question.options.find((o) => o.isCorrect)?.imageUrl
+                          ? ""
+                          : tCommon("empty")),
+                    })}
+                  </span>
+                  {(() => {
+                    const correctOpt = question.options.find((o) => o.isCorrect)
+                    if (correctOpt?.imageUrl) {
+                      return <ExamOptionImage src={correctOpt.imageUrl} />
+                    }
+                    return null
+                  })()}
+                </div>
               )}
             </div>
           )
