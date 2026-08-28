@@ -716,7 +716,9 @@
     "language": "Language",
     "precedenceNoticeTitle": "Legal Precedence Notice",
     "precedenceNoticeDesc": "This Ukrainian translation is provided for informational convenience only. In the event of any discrepancies or legal disputes, the original English version legally takes precedence.",
-    "viewOriginalEnglish": "View the original English version"
+    "viewOriginalEnglish": "View the original English version",
+    "notConfiguredTitle": "Document Not Configured",
+    "notConfiguredDesc": "No {document} has been configured for this instance."
   },
   "ColorPicker": {
     "basicColors": "Basic Colors",

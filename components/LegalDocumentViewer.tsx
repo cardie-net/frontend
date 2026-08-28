@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { ScrollText, ShieldCheck, Scale } from "lucide-react"
+import { ScrollText, ShieldCheck, Scale, FileQuestion } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { LegalMarkdown } from "@/components/LegalMarkdown"
 import { SUPPORTED_LOCALES, LOCALE_LABELS, type Locale } from "@/i18n/config"
@@ -39,7 +39,11 @@ export function LegalDocumentViewer({
   const OtherIconComponent =
     otherDocument.type === "terms-of-service" ? ScrollText : ShieldCheck
 
-  const activeContent = content[selectedLocale] || content.en
+  const activeContent = content[selectedLocale] || content.en || ""
+  const hasContent = Boolean(activeContent && activeContent.trim().length > 0)
+  const hasUkTranslation = Boolean(
+    content.uk && content.uk.trim().length > 0 && content.uk !== content.en
+  )
 
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8 sm:space-y-8 sm:px-10 sm:py-16">
@@ -88,7 +92,7 @@ export function LegalDocumentViewer({
       </div>
 
       {/* Warning Card for Non-English Versions (Ukrainian) */}
-      {selectedLocale === "uk" && (
+      {selectedLocale === "uk" && hasUkTranslation && (
         <div className="flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-card-foreground shadow-xs sm:p-5 dark:border-amber-500/20 dark:bg-amber-950/20">
           <div className="mt-0.5 flex shrink-0 items-center justify-center rounded-xl bg-amber-500/20 p-2 text-amber-600 dark:text-amber-400">
             <Scale className="h-5 w-5" />
@@ -106,10 +110,24 @@ export function LegalDocumentViewer({
         </div>
       )}
 
-      {/* Main Content Card */}
-      <Card className="flex flex-col gap-6 overflow-hidden rounded-3xl border-border/80 bg-card p-6 shadow-sm sm:p-10">
-        <LegalMarkdown content={activeContent} />
-      </Card>
+      {/* Main Content Card or Empty State */}
+      {!hasContent ? (
+        <Card className="flex flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-border/80 bg-card p-8 text-center shadow-xs sm:p-12">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-muted text-muted-foreground">
+            <FileQuestion className="h-6 w-6" />
+          </div>
+          <h2 className="text-lg font-semibold text-foreground">
+            {t("notConfiguredTitle")}
+          </h2>
+          <p className="max-w-md text-sm text-muted-foreground">
+            {t("notConfiguredDesc", { document: title })}
+          </p>
+        </Card>
+      ) : (
+        <Card className="flex flex-col gap-6 overflow-hidden rounded-3xl border-border/80 bg-card p-6 shadow-sm sm:p-10">
+          <LegalMarkdown content={activeContent} />
+        </Card>
+      )}
 
       {/* Bottom Navigation */}
       <div className="flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground sm:text-sm">

@@ -4,6 +4,8 @@ import { LegalDocumentViewer } from "@/components/LegalDocumentViewer"
 import { getAllLegalDocumentVersions } from "@/lib/legal"
 import type { Locale } from "@/i18n/config"
 
+export const dynamic = "force-dynamic"
+
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Legal")
   return {

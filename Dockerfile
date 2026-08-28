@@ -39,10 +39,16 @@ COPY --from=builder /app/public ./public
 RUN mkdir .next
 RUN chown nextjs:nodejs .next
 
+# Create legal documents directory for volume mounts
+RUN mkdir -p /app/legal
+RUN chown nextjs:nodejs /app/legal
+
 # Copy the build output and node_modules
 COPY --from=builder --chown=nextjs:nodejs /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+
+ENV LEGAL_DOCS_DIR=/app/legal
 
 USER nextjs
 
