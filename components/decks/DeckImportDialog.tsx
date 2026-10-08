@@ -35,6 +35,12 @@ import {
 import { useBatchCreateCards } from "@/hooks/useCards"
 import { useImportDeck } from "@/hooks/useDecks"
 import { Deck } from "@/types"
+import {
+  MAX_CARDS_PER_DECK,
+  MAX_NAME_LENGTH,
+  LIMIT_COUNTER_THRESHOLD,
+} from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 type Phase = "idle" | "creating" | "importing" | "done" | "failed"
 
@@ -52,6 +58,8 @@ interface DeckImportDialogProps {
   username?: string
   /** Optional in create mode: create the deck in a specific folder. */
   folderId?: string
+  /** Current number of cards in the deck (append mode). */
+  currentCardsCount?: number
 }
 
 const FORMATS: ReadonlyArray<{
@@ -72,6 +80,7 @@ export function DeckImportDialog({
   deckId,
   username,
   folderId,
+  currentCardsCount,
 }: DeckImportDialogProps) {
   const t = useTranslations("ImportExport")
   const tCommon = useTranslations("Common")
@@ -109,6 +118,15 @@ export function DeckImportDialog({
     return parseTextImport(text, delimiter, recordSeparator)
   }, [format, text, delimiter, recordSeparator])
 
+  const currentCount = currentCardsCount ?? 0
+  const remainingCapacity =
+    mode === "append"
+      ? Math.max(0, MAX_CARDS_PER_DECK - currentCount)
+      : MAX_CARDS_PER_DECK
+  const isDeckFull = mode === "append" && remainingCapacity === 0
+  const exceedsCapacity =
+    !!preview && preview.cards.length > remainingCapacity
+
   const busy = phase === "creating" || phase === "importing"
   const configValid =
     isSeparatorConfigValid(delimiter) && isSeparatorConfigValid(recordSeparator)
@@ -117,6 +135,8 @@ export function DeckImportDialog({
     configValid &&
     !!preview &&
     preview.cards.length > 0 &&
+    !exceedsCapacity &&
+    !isDeckFull &&
     (mode === "append" || !!deckName.trim())
 
   const handleFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -214,11 +234,35 @@ export function DeckImportDialog({
           </div>
         </DialogHeader>
 
-        {mode === "append" && (
+        {mode === "append" && !isDeckFull && !exceedsCapacity && (
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>{t("appendingAlertTitle")}</AlertTitle>
             <AlertDescription>{t("appendingAlertDesc")}</AlertDescription>
+          </Alert>
+        )}
+
+        {isDeckFull && (
+          <Alert className="border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
+            <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+            <AlertTitle>{t("importDeckFull")}</AlertTitle>
+          </Alert>
+        )}
+
+        {exceedsCapacity && !isDeckFull && (
+          <Alert className="border-destructive/30 bg-destructive/10 text-destructive dark:text-destructive">
+            <AlertCircle className="h-4 w-4 text-destructive" />
+            <AlertTitle>
+              {mode === "append"
+                ? t("importCapacityExceeded", {
+                    count: preview?.cards.length ?? 0,
+                    current: currentCount,
+                    remaining: remainingCapacity,
+                  })
+                : t("importMaxCardsExceeded", {
+                    count: preview?.cards.length ?? 0,
+                  })}
+            </AlertTitle>
           </Alert>
         )}
 
@@ -243,13 +287,28 @@ export function DeckImportDialog({
             {mode === "create" && (
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="import-deck-name">{t("deckName")}</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="import-deck-name">{t("deckName")}</Label>
+                    {deckName.length >=
+                      Math.ceil(MAX_NAME_LENGTH * LIMIT_COUNTER_THRESHOLD) && (
+                      <span
+                        className={cn(
+                          "font-mono text-xs tabular-nums",
+                          deckName.length >= MAX_NAME_LENGTH
+                            ? "font-semibold text-destructive"
+                            : "text-muted-foreground"
+                        )}
+                      >
+                        {deckName.length}/{MAX_NAME_LENGTH}
+                      </span>
+                    )}
+                  </div>
                   <Input
                     id="import-deck-name"
                     value={deckName}
                     onChange={(e) => setDeckName(e.target.value)}
                     placeholder={t("deckNamePlaceholder")}
-                    maxLength={80}
+                    maxLength={MAX_NAME_LENGTH}
                     disabled={busy}
                   />
                 </div>

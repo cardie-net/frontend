@@ -19,6 +19,12 @@ import { Folder } from "@/types"
 import { useUpdateFolder, useUploadFolderCover } from "@/hooks/useFolders"
 import { Pencil } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  MAX_NAME_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  LIMIT_COUNTER_THRESHOLD,
+} from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 interface EditFolderDialogProps {
   folder: Folder | null
@@ -41,6 +47,11 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
   )
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [error, setError] = useState("")
+
+  const nameThreshold = Math.ceil(MAX_NAME_LENGTH * LIMIT_COUNTER_THRESHOLD)
+  const descThreshold = Math.ceil(
+    MAX_DESCRIPTION_LENGTH * LIMIT_COUNTER_THRESHOLD
+  )
 
   useEffect(() => {
     if (folder) {
@@ -119,22 +130,50 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
             {error && <Alert variant="destructive">{error}</Alert>}
 
             <div className="grid gap-2">
-              <Label>{t("nameLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label>{t("nameLabel")}</Label>
+                {name.length >= nameThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      name.length >= MAX_NAME_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {name.length}/{MAX_NAME_LENGTH}
+                  </span>
+                )}
+              </div>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                maxLength={80}
+                maxLength={MAX_NAME_LENGTH}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label>{t("descriptionLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label>{t("descriptionLabel")}</Label>
+                {description.length >= descThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      description.length >= MAX_DESCRIPTION_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {description.length}/{MAX_DESCRIPTION_LENGTH}
+                  </span>
+                )}
+              </div>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                maxLength={500}
+                maxLength={MAX_DESCRIPTION_LENGTH}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
                 placeholder={t("descriptionPlaceholder")}
               />

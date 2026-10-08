@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Plus, Loader2, Maximize } from "lucide-react"
+import { MAX_CARD_TEXT_LENGTH, LIMIT_COUNTER_THRESHOLD } from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 interface AddCardFormProps {
   newFront: string
@@ -31,29 +33,62 @@ export function AddCardForm({
   const t = useTranslations("Cards")
   const tCommon = useTranslations("Common")
 
+  const frontThreshold = Math.ceil(MAX_CARD_TEXT_LENGTH * LIMIT_COUNTER_THRESHOLD)
+  const backThreshold = Math.ceil(MAX_CARD_TEXT_LENGTH * LIMIT_COUNTER_THRESHOLD)
+
   return (
     <Card className="mb-6 border-dashed">
       <CardContent>
         <div className="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-              {t("front")}
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="block text-sm font-medium text-muted-foreground">
+                {t("front")}
+              </label>
+              {newFront.length >= frontThreshold && (
+                <span
+                  className={cn(
+                    "font-mono text-xs tabular-nums",
+                    newFront.length >= MAX_CARD_TEXT_LENGTH
+                      ? "font-semibold text-destructive"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {newFront.length}/{MAX_CARD_TEXT_LENGTH}
+                </span>
+              )}
+            </div>
             <Input
               value={newFront}
               onChange={(e) => setNewFront(e.target.value)}
               placeholder={t("questionPlaceholder")}
+              maxLength={MAX_CARD_TEXT_LENGTH}
               disabled={isAddingCard}
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-muted-foreground">
-              {t("back")}
-            </label>
+            <div className="mb-1.5 flex items-center justify-between">
+              <label className="block text-sm font-medium text-muted-foreground">
+                {t("back")}
+              </label>
+              {newBack.length >= backThreshold && (
+                <span
+                  className={cn(
+                    "font-mono text-xs tabular-nums",
+                    newBack.length >= MAX_CARD_TEXT_LENGTH
+                      ? "font-semibold text-destructive"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  {newBack.length}/{MAX_CARD_TEXT_LENGTH}
+                </span>
+              )}
+            </div>
             <Input
               value={newBack}
               onChange={(e) => setNewBack(e.target.value)}
               placeholder={t("answerPlaceholder")}
+              maxLength={MAX_CARD_TEXT_LENGTH}
               disabled={isAddingCard}
               onKeyDown={(e) => {
                 if (e.key === "Enter") onAddCard()

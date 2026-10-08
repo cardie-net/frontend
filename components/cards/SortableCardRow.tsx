@@ -17,6 +17,7 @@ import {
 } from "lucide-react"
 import { CardElement, FlashCard, TextElement } from "@/types"
 import { getCardImage } from "@/lib/cards"
+import { MAX_CARD_TEXT_LENGTH } from "@/lib/constants"
 import { CardElements } from "@/components/cards/CardElements"
 import { FullscreenImageViewer } from "@/components/shared/FullscreenImageViewer"
 
@@ -233,6 +234,7 @@ export function SortableCardRow({
               onChange={(e) => onEditFrontChange(e.target.value)}
               className="text-sm"
               placeholder={t("frontPlaceholder")}
+              maxLength={MAX_CARD_TEXT_LENGTH}
               disabled={isSavingCard}
               autoFocus
               onBlur={handleInputBlur}
@@ -272,6 +274,7 @@ export function SortableCardRow({
               onChange={(e) => onEditBackChange(e.target.value)}
               className="text-sm"
               placeholder={t("backPlaceholder")}
+              maxLength={MAX_CARD_TEXT_LENGTH}
               disabled={isSavingCard}
               onBlur={handleInputBlur}
               onKeyDown={(e) => {

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, extractApiErrorMessage } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
 import { FlashCard, CardElement } from "@/types"
 
@@ -33,7 +33,12 @@ export function useCreateCard() {
         method: "POST",
         body: JSON.stringify({ front, back }),
       })
-      if (!res.ok) throw new Error("Failed to create card")
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to create card")
+        )
+      }
       return res.json() as Promise<FlashCard>
     },
     onSuccess: (newCard, { deckId }) => {
@@ -62,7 +67,9 @@ export function useBatchCreateCards() {
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to batch create cards")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to batch create cards")
+        )
       }
       return res.json() as Promise<FlashCard[]>
     },
@@ -95,7 +102,12 @@ export function useUpdateCard() {
         method: "PATCH",
         body: JSON.stringify({ front, back }),
       })
-      if (!res.ok) throw new Error("Failed to update card")
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to update card")
+        )
+      }
       return res.json() as Promise<FlashCard>
     },
     onSuccess: (updatedCard, { deckId }) => {

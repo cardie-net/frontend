@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, extractApiErrorMessage } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
 import { Folder, UserItem } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
@@ -116,7 +116,9 @@ export function useCreateFolder() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to create folder")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to create folder")
+        )
       }
       return res.json()
     },
@@ -177,7 +179,9 @@ export function useUpdateFolder() {
 
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to update folder")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to update folder")
+        )
       }
       return res.json()
     },

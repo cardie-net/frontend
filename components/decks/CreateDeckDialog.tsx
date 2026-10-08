@@ -21,6 +21,12 @@ import { useAuth } from "@/lib/AuthContext"
 import { useCreateDeck } from "@/hooks/useDecks"
 import { Plus } from "lucide-react"
 import { ColorPicker } from "@/components/ui/color-picker"
+import {
+  MAX_NAME_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  LIMIT_COUNTER_THRESHOLD,
+} from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 interface CreateDeckDialogProps {
   open: boolean
@@ -43,6 +49,11 @@ export function CreateDeckDialog({
   const [newDeckColor, setNewDeckColor] = useState("default")
   const [newDeckDescription, setNewDeckDescription] = useState("")
   const [createError, setCreateError] = useState("")
+
+  const nameThreshold = Math.ceil(MAX_NAME_LENGTH * LIMIT_COUNTER_THRESHOLD)
+  const descThreshold = Math.ceil(
+    MAX_DESCRIPTION_LENGTH * LIMIT_COUNTER_THRESHOLD
+  )
 
   const handleCreateDeck = (e: React.FormEvent) => {
     e.preventDefault()
@@ -93,13 +104,27 @@ export function CreateDeckDialog({
           <div className="grid gap-4 py-4">
             {createError && <Alert variant="destructive">{createError}</Alert>}
             <div className="grid gap-2">
-              <Label htmlFor="name">{t("nameLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="name">{t("nameLabel")}</Label>
+                {newDeckName.length >= nameThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      newDeckName.length >= MAX_NAME_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {newDeckName.length}/{MAX_NAME_LENGTH}
+                  </span>
+                )}
+              </div>
               <Input
                 id="name"
                 value={newDeckName}
                 onChange={(e) => setNewDeckName(e.target.value)}
                 placeholder={t("namePlaceholder")}
-                maxLength={80}
+                maxLength={MAX_NAME_LENGTH}
                 disabled={createDeck.isPending}
               />
             </div>
@@ -114,13 +139,27 @@ export function CreateDeckDialog({
               />
             </div>
             <div className="grid gap-2">
-              <Label htmlFor="description">{t("descriptionLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="description">{t("descriptionLabel")}</Label>
+                {newDeckDescription.length >= descThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      newDeckDescription.length >= MAX_DESCRIPTION_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {newDeckDescription.length}/{MAX_DESCRIPTION_LENGTH}
+                  </span>
+                )}
+              </div>
               <Textarea
                 id="description"
                 value={newDeckDescription}
                 onChange={(e) => setNewDeckDescription(e.target.value)}
                 placeholder={t("descriptionPlaceholder")}
-                maxLength={500}
+                maxLength={MAX_DESCRIPTION_LENGTH}
                 disabled={createDeck.isPending}
                 className="h-20 resize-none"
               />

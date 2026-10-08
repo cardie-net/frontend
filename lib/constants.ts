@@ -1,0 +1,5 @@
+export const MAX_CARDS_PER_DECK = 500
+export const MAX_CARD_TEXT_LENGTH = 1000
+export const MAX_NAME_LENGTH = 80
+export const MAX_DESCRIPTION_LENGTH = 500
+export const LIMIT_COUNTER_THRESHOLD = 0.7

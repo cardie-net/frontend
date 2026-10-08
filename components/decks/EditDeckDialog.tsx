@@ -19,6 +19,12 @@ import { Deck } from "@/types"
 import { useUpdateDeck, useUploadDeckCover } from "@/hooks/useDecks"
 import { Textarea } from "@/components/ui/textarea"
 import { ColorPicker } from "@/components/ui/color-picker"
+import {
+  MAX_NAME_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  LIMIT_COUNTER_THRESHOLD,
+} from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 interface EditDeckDialogProps {
   deck: Deck | null
@@ -43,6 +49,11 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
   )
   const [coverFile, setCoverFile] = useState<File | null>(null)
   const [editError, setEditError] = useState("")
+
+  const nameThreshold = Math.ceil(MAX_NAME_LENGTH * LIMIT_COUNTER_THRESHOLD)
+  const descThreshold = Math.ceil(
+    MAX_DESCRIPTION_LENGTH * LIMIT_COUNTER_THRESHOLD
+  )
 
   useEffect(() => {
     if (deck) {
@@ -118,22 +129,50 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
             {editError && <Alert variant="destructive">{editError}</Alert>}
 
             <div className="grid gap-2">
-              <Label>{t("nameLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label>{t("nameLabel")}</Label>
+                {editName.length >= nameThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      editName.length >= MAX_NAME_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {editName.length}/{MAX_NAME_LENGTH}
+                  </span>
+                )}
+              </div>
               <Input
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                maxLength={80}
+                maxLength={MAX_NAME_LENGTH}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
                 required
               />
             </div>
 
             <div className="grid gap-2">
-              <Label>{t("descriptionLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label>{t("descriptionLabel")}</Label>
+                {editDescription.length >= descThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      editDescription.length >= MAX_DESCRIPTION_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {editDescription.length}/{MAX_DESCRIPTION_LENGTH}
+                  </span>
+                )}
+              </div>
               <Textarea
                 value={editDescription}
                 onChange={(e) => setEditDescription(e.target.value)}
-                maxLength={500}
+                maxLength={MAX_DESCRIPTION_LENGTH}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
                 placeholder={t("descriptionPlaceholder")}
               />

@@ -46,6 +46,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { CardElements } from "@/components/cards/CardElements"
 import { buildElements, uploadCardImage } from "@/lib/cards"
+import { MAX_CARD_TEXT_LENGTH, LIMIT_COUNTER_THRESHOLD } from "@/lib/constants"
 import { cn } from "@/lib/utils"
 
 interface MarkdownEditorProps {
@@ -330,9 +331,23 @@ export function MarkdownEditor({
         className="w-full min-w-0 gap-1.5"
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="text-sm font-medium text-muted-foreground">
-            {label}
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              {label}
+            </span>
+            {value.length >= Math.ceil(MAX_CARD_TEXT_LENGTH * LIMIT_COUNTER_THRESHOLD) && (
+              <span
+                className={cn(
+                  "font-mono text-xs tabular-nums",
+                  value.length >= MAX_CARD_TEXT_LENGTH
+                    ? "font-semibold text-destructive"
+                    : "text-muted-foreground"
+                )}
+              >
+                {value.length}/{MAX_CARD_TEXT_LENGTH}
+              </span>
+            )}
+          </div>
           <TabsList className="h-7">
             <TabsTrigger value="write">
               <PenLine />
@@ -413,6 +428,7 @@ export function MarkdownEditor({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
             placeholder={placeholder}
+            maxLength={MAX_CARD_TEXT_LENGTH}
             className="h-[160px] w-full resize-none overflow-y-auto sm:h-[240px] md:text-base"
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             style={{ fieldSizing: "fixed" } as any}

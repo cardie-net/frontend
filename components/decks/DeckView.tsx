@@ -9,6 +9,7 @@ import { useAuth } from "@/lib/AuthContext"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   ArrowLeft,
   Plus,
@@ -20,6 +21,7 @@ import {
   Clock,
   Star,
   Share2,
+  AlertCircle,
 } from "lucide-react"
 import {
   DndContext,
@@ -65,6 +67,7 @@ import {
   uploadCardImage,
 } from "@/lib/cards"
 import { getDeckColorClass } from "@/lib/decks"
+import { MAX_CARDS_PER_DECK } from "@/lib/constants"
 import {
   useStarDeck,
   useUnstarDeck,
@@ -92,6 +95,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
   const [guestShareOpen, setGuestShareOpen] = useState(false)
 
   const isOwner = !!(user && deck && user.id === deck.user_id)
+  const isDeckFull = isOwner && cards.length >= MAX_CARDS_PER_DECK
 
   const handleShareClick = () => {
     if (user?.is_guest && isOwner) {
@@ -559,6 +563,8 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                     className="gap-2 rounded-xl font-medium"
                     size="sm"
                     onClick={() => setShowAddForm(!showAddForm)}
+                    disabled={isDeckFull}
+                    title={isDeckFull ? t("deckLimitAddDisabled") : undefined}
                   >
                     <Plus className="h-4 w-4" /> <span>{t("addCard")}</span>
                   </Button>
@@ -567,7 +573,15 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             </div>
           </div>
 
-          {isOwner && showAddForm && (
+          {isDeckFull && (
+            <Alert className="mb-6 border-amber-500/30 bg-amber-500/10 text-amber-900 dark:text-amber-200">
+              <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertTitle>{t("deckLimitReached")}</AlertTitle>
+              <AlertDescription>{t("deckLimitDesc")}</AlertDescription>
+            </Alert>
+          )}
+
+          {isOwner && !isDeckFull && showAddForm && (
             <AddCardForm
               newFront={newFront}
               setNewFront={setNewFront}
@@ -675,12 +689,16 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
                 { onSuccess: () => setShowNewCardDialog(false) }
               )
             }}
-            onSaveAnother={(front, back) => {
-              createCard.mutate(
-                { deckId: deck.id, front, back },
-                { onSuccess: () => setNewCardDialogKey((k) => k + 1) }
-              )
-            }}
+            onSaveAnother={
+              cards.length + 1 < MAX_CARDS_PER_DECK
+                ? (front, back) => {
+                    createCard.mutate(
+                      { deckId: deck.id, front, back },
+                      { onSuccess: () => setNewCardDialogKey((k) => k + 1) }
+                    )
+                  }
+                : undefined
+            }
             isSaving={createCard.isPending}
           />
         )}
@@ -689,6 +707,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
           <DeckImportDialog
             mode="append"
             deckId={deck.id}
+            currentCardsCount={cards.length}
             onClose={() => setShowImportDialog(false)}
           />
         )}

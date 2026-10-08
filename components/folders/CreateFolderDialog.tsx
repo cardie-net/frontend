@@ -18,6 +18,12 @@ import {
 import { ColorPicker } from "@/components/ui/color-picker"
 import { useCreateFolder } from "@/hooks/useFolders"
 import { FolderPlus } from "lucide-react"
+import {
+  MAX_NAME_LENGTH,
+  MAX_DESCRIPTION_LENGTH,
+  LIMIT_COUNTER_THRESHOLD,
+} from "@/lib/constants"
+import { cn } from "@/lib/utils"
 
 interface CreateFolderDialogProps {
   open: boolean
@@ -38,6 +44,11 @@ export function CreateFolderDialog({
   const [color, setColor] = useState("default")
   const [description, setDescription] = useState("")
   const [createError, setCreateError] = useState("")
+
+  const nameThreshold = Math.ceil(MAX_NAME_LENGTH * LIMIT_COUNTER_THRESHOLD)
+  const descThreshold = Math.ceil(
+    MAX_DESCRIPTION_LENGTH * LIMIT_COUNTER_THRESHOLD
+  )
 
   const handleCreateFolder = (e: React.FormEvent) => {
     e.preventDefault()
@@ -88,13 +99,27 @@ export function CreateFolderDialog({
             {createError && <Alert variant="destructive">{createError}</Alert>}
 
             <div className="grid gap-2">
-              <Label htmlFor="folder-name">{t("nameLabel")}</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="folder-name">{t("nameLabel")}</Label>
+                {name.length >= nameThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      name.length >= MAX_NAME_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {name.length}/{MAX_NAME_LENGTH}
+                  </span>
+                )}
+              </div>
               <Input
                 id="folder-name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t("namePlaceholder")}
-                maxLength={80}
+                maxLength={MAX_NAME_LENGTH}
                 disabled={createFolder.isPending}
                 required
               />
@@ -112,15 +137,29 @@ export function CreateFolderDialog({
             </div>
 
             <div className="grid gap-2">
-              <Label htmlFor="folder-description">
-                {t("descriptionLabel")}
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="folder-description">
+                  {t("descriptionLabel")}
+                </Label>
+                {description.length >= descThreshold && (
+                  <span
+                    className={cn(
+                      "font-mono text-xs tabular-nums",
+                      description.length >= MAX_DESCRIPTION_LENGTH
+                        ? "font-semibold text-destructive"
+                        : "text-muted-foreground"
+                    )}
+                  >
+                    {description.length}/{MAX_DESCRIPTION_LENGTH}
+                  </span>
+                )}
+              </div>
               <Textarea
                 id="folder-description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder={t("descriptionPlaceholder")}
-                maxLength={500}
+                maxLength={MAX_DESCRIPTION_LENGTH}
                 disabled={createFolder.isPending}
                 className="h-20 resize-none"
               />

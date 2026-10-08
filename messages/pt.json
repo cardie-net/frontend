@@ -473,7 +473,10 @@
     "noCardsOwner": "Clique em \"Cartão\" para criar seu primeiro flashcard.",
     "swapDialogTitle": "Inverter Cartões",
     "swapDialogDesc": "Tem certeza de que deseja inverter todos os cartões deste baralho? O conteúdo da frente e do verso será trocado.",
-    "swapDialogConfirm": "Inverter"
+    "swapDialogConfirm": "Inverter",
+    "deckLimitReached": "Limite do baralho atingido",
+    "deckLimitDesc": "Este baralho atingiu o limite máximo de 500 cartões. Para adicionar mais cartões, remova cartões existentes.",
+    "deckLimitAddDisabled": "Limite de cartões atingido (máx. 500)"
   },
   "DeckActions": {
     "overview": "Visão Geral",
@@ -689,6 +692,9 @@
     "customSeparatorNeededDesc": "Insira um valor não vazio para o delimitador personalizado e/ou separador de registros.",
     "fileTooLarge": "Arquivo muito grande (máx. 2 MB). Por favor, cole o conteúdo no campo de texto.",
     "fileReadError": "Não foi possível ler o arquivo selecionado.",
+    "importCapacityExceeded": "Não é possível importar {count} cartões. Este baralho já possui {current} cartões e só pode aceitar mais {remaining} (máx. 500).",
+    "importDeckFull": "Este baralho atingiu o limite máximo de 500 cartões.",
+    "importMaxCardsExceeded": "A importação excede o limite de 500 cartões por baralho ({count} cartões encontrados).",
     "creatingProgress": "Criando baralho com {count} cartões…",
     "importingProgress": "Importando {count} cartões…",
     "importComplete": "Importação concluída",

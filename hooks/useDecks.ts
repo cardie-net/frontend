@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { apiFetch } from "@/lib/api"
+import { apiFetch, extractApiErrorMessage } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
 import { Deck, CardElement } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
@@ -77,7 +77,9 @@ export function useCreateDeck() {
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to create deck")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to create deck")
+        )
       }
       return res.json()
     },
@@ -132,7 +134,9 @@ export function useImportDeck() {
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to import deck")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to import deck")
+        )
       }
       return res.json()
     },
@@ -196,7 +200,9 @@ export function useUpdateDeck() {
       })
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to update deck")
+        throw new Error(
+          extractApiErrorMessage(errData, "Failed to update deck")
+        )
       }
       return res.json()
     },

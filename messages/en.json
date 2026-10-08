@@ -473,7 +473,10 @@
     "noCardsOwner": "Click \"Add Card\" to create your first flashcard.",
     "swapDialogTitle": "Swap Cards",
     "swapDialogDesc": "Are you sure you want to swap all the cards this deck? They will have their front and back contents exchanged.",
-    "swapDialogConfirm": "Swap"
+    "swapDialogConfirm": "Swap",
+    "deckLimitReached": "Deck limit reached",
+    "deckLimitDesc": "This deck has reached the maximum limit of 500 cards. To add more cards, please remove existing cards.",
+    "deckLimitAddDisabled": "Deck card limit reached (500 cards max)"
   },
   "DeckActions": {
     "overview": "Overview",
@@ -689,6 +692,9 @@
     "customSeparatorNeededDesc": "Enter a non-empty value for the custom delimiter and/or record separator.",
     "fileTooLarge": "File is too large (max 2 MB). Please paste the content into the text field instead.",
     "fileReadError": "Could not read the selected file.",
+    "importCapacityExceeded": "Cannot import {count} cards. This deck already has {current} cards and can only accept {remaining} more (500 max).",
+    "importDeckFull": "This deck has reached the maximum capacity of 500 cards.",
+    "importMaxCardsExceeded": "Import exceeds the 500-card deck limit ({count} cards found).",
     "creatingProgress": "Creating deck with {count} cards…",
     "importingProgress": "Importing {count} cards…",
     "importComplete": "Import complete",
