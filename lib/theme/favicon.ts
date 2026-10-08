@@ -7,8 +7,9 @@ export const FAVICON_LINK_ID = "cardie-dynamic-favicon"
  * based on the theme's radius in rem. Matches the proportional rounded look:
  * - 0rem -> 0px (sharp square)
  * - 0.375rem (6px) -> 7.2px
+ * - 0.5rem (8px) -> 9.6px
  * - 0.625rem (10px, default) -> 12px (rounded square)
- * - >= 0.875rem (14px/20px) -> 16px (full circle)
+ * - >= 0.875rem (14px) -> 16px (full circle)
  */
 export function calculateFaviconRadius(radiusRem?: number): number {
   const rem = typeof radiusRem === "number" ? radiusRem : 0.625

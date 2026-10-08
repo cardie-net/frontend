@@ -62,9 +62,9 @@ export function AppearancePopup({ isOpen, onClose }: AppearancePopupProps) {
   const radiusOptions = [
     { label: "0px", value: 0 },
     { label: "6px", value: 0.375 },
+    { label: "8px", value: 0.5 },
     { label: "10px", value: 0.625 },
     { label: "14px", value: 0.875 },
-    { label: "20px", value: 1.25 },
   ]
 
   const handleExport = () => {
