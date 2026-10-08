@@ -263,13 +263,13 @@ export function FolderView({ username, folder }: FolderViewProps) {
         )}
       >
         {/* Header & Navigation */}
-        <div className="flex flex-col">
-          <div className="flex w-full flex-col">
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-              <div className="flex items-center gap-3">
+        <div className="flex min-w-0 flex-col">
+          <div className="flex w-full min-w-0 flex-col">
+            <div className="flex min-w-0 flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="flex min-w-0 flex-1 items-start gap-3 sm:items-center">
                 <div
                   className={cn(
-                    "flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm",
+                    "mt-0.5 flex shrink-0 items-center justify-center rounded-2xl p-2.5 shadow-sm sm:mt-0",
                     folder.properties?.color
                       ? getDeckColorClass(folder.properties.color)
                       : "bg-primary/10 text-primary"
@@ -277,43 +277,43 @@ export function FolderView({ username, folder }: FolderViewProps) {
                 >
                   <FolderIcon className="h-6 w-6" />
                 </div>
-                <h1 className="truncate text-2xl font-bold tracking-tight sm:text-3xl">
-                  {folder.name}
-                </h1>
-                {isOwner ? (
-                  <Badge
-                    variant="secondary"
-                    className="shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold"
-                  >
-                    {totalItems}
-                  </Badge>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={handleToggleStar}
-                    disabled={isStarPending}
-                    aria-label={isStarred ? t("unstarFolder") : t("starFolder")}
-                    className={cn(
-                      "flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold shadow-sm transition-all duration-200",
-                      isStarred
-                        ? "border border-amber-500/30 bg-amber-500/15 text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
-                        : "border border-border/60 bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <Star
+                <h1 className="line-clamp-2 min-w-0 flex-1 text-2xl font-bold tracking-tight break-words sm:truncate sm:text-3xl">
+                  <span>{folder.name}</span>{" "}
+                  {isOwner ? (
+                    <Badge
+                      variant="secondary"
+                      className="ml-2.5 inline-flex shrink-0 -translate-y-0.5 rounded-full px-2.5 py-0.5 align-middle text-xs font-semibold"
+                    >
+                      {totalItems}
+                    </Badge>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleToggleStar}
+                      disabled={isStarPending}
+                      aria-label={isStarred ? t("unstarFolder") : t("starFolder")}
                       className={cn(
-                        "h-3.5 w-3.5 transition-transform duration-200",
+                        "ml-2.5 inline-flex shrink-0 -translate-y-0.5 cursor-pointer items-center gap-1.5 rounded-full px-3 py-1 align-middle text-xs font-semibold shadow-sm transition-all duration-200",
                         isStarred
-                          ? "scale-110 fill-current text-amber-500"
-                          : "text-muted-foreground"
+                          ? "border border-amber-500/30 bg-amber-500/15 text-amber-600 hover:bg-amber-500/25 dark:text-amber-400"
+                          : "border border-border/60 bg-muted/80 text-muted-foreground hover:bg-muted hover:text-foreground"
                       )}
-                    />
-                    <span>{starsCount}</span>
-                  </button>
-                )}
+                    >
+                      <Star
+                        className={cn(
+                          "h-3.5 w-3.5 transition-transform duration-200",
+                          isStarred
+                            ? "scale-110 fill-current text-amber-500"
+                            : "text-muted-foreground"
+                        )}
+                      />
+                      <span>{starsCount}</span>
+                    </button>
+                  )}
+                </h1>
               </div>
 
-              <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap">
+              <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:flex-nowrap sm:shrink-0">
                 {isOwner && (
                   <>
                     <Button
