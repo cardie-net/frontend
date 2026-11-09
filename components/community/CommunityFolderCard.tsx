@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CommunityFolder } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
 import { useStarFolder, useUnstarFolder } from "@/hooks/useCommunity"
+import { useLineCount } from "@/hooks/useLineCount"
 import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 interface CommunityFolderCardProps {
@@ -37,6 +38,15 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
   const [isStarred, setIsStarred] = useState(folder.is_starred ?? false)
   const [starsCount, setStarsCount] = useState(folder.stars_count ?? 0)
   const [isPending, setIsPending] = useState(false)
+
+  const titleRef = useRef<HTMLSpanElement>(null)
+  const titleLines = useLineCount(titleRef)
+  // The card has a fixed height: when the name wraps to two lines the
+  // description no longer fits, so it gives way to the author chip.
+  const showDescription =
+    !!folder.properties?.description &&
+    !folder.properties.cover_image_url &&
+    titleLines < 2
 
   const folderHref = `/${folder.owner.username}/${folder.slug}`
 
@@ -203,7 +213,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
         <Card
           className={cn(
-            "absolute inset-0 z-10 flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover/folder:-translate-x-1 group-hover/folder:-translate-y-1 group-hover/folder:border-primary/50 group-hover/folder:shadow-lg sm:p-5",
+            "absolute inset-0 z-10 flex flex-col justify-between gap-0 overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover/folder:-translate-x-1 group-hover/folder:-translate-y-1 group-hover/folder:border-primary/50 group-hover/folder:shadow-lg sm:p-5",
             getDeckColorClass(folder.properties?.color)
           )}
           style={getDeckColorStyle(folder.properties?.color)}
@@ -224,7 +234,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
 
           <div
             className={cn(
-              "pointer-events-none relative z-10 flex h-full min-w-0 flex-col",
+              "pointer-events-none relative z-10 flex min-h-0 min-w-0 flex-1 flex-col",
               folder.properties?.cover_image_url ? "text-white" : ""
             )}
           >
@@ -251,17 +261,19 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
                   <FolderIcon className="mr-1 h-3 w-3" />
                   <span>{folder.decks_count ?? 0}</span>
                 </Badge>
-                <span className="line-clamp-2 leading-snug break-all">
+                <span
+                  ref={titleRef}
+                  className="line-clamp-2 leading-snug break-all"
+                >
                   {folder.name}
                 </span>
               </CardTitle>
 
-              {folder.properties?.description &&
-                !folder.properties?.cover_image_url && (
-                  <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
-                    {folder.properties.description}
-                  </CardDescription>
-                )}
+              {showDescription && (
+                <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
+                  {folder.properties?.description}
+                </CardDescription>
+              )}
             </CardHeader>
           </div>
 
@@ -300,7 +312,7 @@ export function CommunityFolderCard({ folder }: CommunityFolderCardProps) {
           </div>
 
           {/* Author Chip (Bottom Left) */}
-          <div className="pointer-events-auto relative z-20 mt-auto flex max-w-[calc(100%-1rem)] items-center justify-between pt-2">
+          <div className="pointer-events-auto relative z-20 mt-auto flex max-w-[calc(100%-1rem)] shrink-0 items-center justify-between pt-2">
             {folder.owner?.is_guest ? (
               <div
                 className={cn(

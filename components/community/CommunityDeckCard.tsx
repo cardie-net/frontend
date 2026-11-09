@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useRef, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { CommunityDeck } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
 import { useStarDeck, useUnstarDeck } from "@/hooks/useCommunity"
+import { useLineCount } from "@/hooks/useLineCount"
 import { useCustomTheme } from "@/components/theme/custom-theme-provider"
 
 interface CommunityDeckCardProps {
@@ -37,6 +38,15 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
   const [isStarred, setIsStarred] = useState(deck.is_starred ?? false)
   const [starsCount, setStarsCount] = useState(deck.stars_count ?? 0)
   const [isPending, setIsPending] = useState(false)
+
+  const titleRef = useRef<HTMLSpanElement>(null)
+  const titleLines = useLineCount(titleRef)
+  // The card has a fixed height: when the name wraps to two lines the
+  // description no longer fits, so it gives way to the author chip.
+  const showDescription =
+    !!deck.properties?.description &&
+    !deck.properties.cover_image_url &&
+    titleLines < 2
 
   const deckHref = `/${deck.owner.username}/${deck.slug}`
 
@@ -195,7 +205,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
     <div className="group relative block">
       <Card
         className={cn(
-          "relative flex h-[130px] w-full flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50 group-hover:shadow-lg sm:p-5",
+          "relative flex h-[130px] w-full flex-col justify-between gap-0 overflow-hidden rounded-2xl border border-border/70 bg-card p-4 transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/50 group-hover:shadow-lg sm:p-5",
           getDeckColorClass(deck.properties?.color)
         )}
         style={getDeckColorStyle(deck.properties?.color)}
@@ -213,7 +223,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
 
         <div
           className={cn(
-            "pointer-events-none relative z-10 flex h-full min-w-0 flex-col",
+            "pointer-events-none relative z-10 flex min-h-0 min-w-0 flex-1 flex-col",
             deck.properties?.cover_image_url ? "text-white" : ""
           )}
         >
@@ -241,17 +251,19 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
                   {deck.cards_count}
                 </Badge>
               )}
-              <span className="line-clamp-2 leading-snug break-all">
+              <span
+                ref={titleRef}
+                className="line-clamp-2 leading-snug break-all"
+              >
                 {deck.name}
               </span>
             </CardTitle>
 
-            {deck.properties?.description &&
-              !deck.properties?.cover_image_url && (
-                <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
-                  {deck.properties.description}
-                </CardDescription>
-              )}
+            {showDescription && (
+              <CardDescription className="line-clamp-1 text-xs leading-snug break-all text-muted-foreground">
+                {deck.properties?.description}
+              </CardDescription>
+            )}
           </CardHeader>
         </div>
 
@@ -290,7 +302,7 @@ export function CommunityDeckCard({ deck }: CommunityDeckCardProps) {
         </div>
 
         {/* Author Chip (Bottom Left) */}
-        <div className="pointer-events-auto relative z-20 mt-auto flex max-w-[calc(100%-1rem)] items-center justify-between pt-2">
+        <div className="pointer-events-auto relative z-20 mt-auto flex max-w-[calc(100%-1rem)] shrink-0 items-center justify-between pt-2">
           {deck.owner?.is_guest ? (
             <div
               className={cn(
