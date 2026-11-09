@@ -38,6 +38,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable"
+import { restrictToViewport } from "@/lib/dnd"
 
 import { FlashCard, Deck } from "@/types"
 import { SortableCardRow } from "@/components/cards/SortableCardRow"
@@ -631,6 +632,7 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
+              modifiers={[restrictToViewport]}
               onDragEnd={handleDragEnd}
             >
               <SortableContext

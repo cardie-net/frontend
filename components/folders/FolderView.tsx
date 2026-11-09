@@ -59,6 +59,7 @@ import {
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core"
+import { restrictToViewport } from "@/lib/dnd"
 
 interface FolderViewProps {
   username: string
@@ -452,7 +453,11 @@ export function FolderView({ username, folder }: FolderViewProps) {
             )}
           </Card>
         ) : (
-          <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            modifiers={[restrictToViewport]}
+            onDragEnd={handleDragEnd}
+          >
             <div className="space-y-5">
               {childFolders.length > 0 && (
                 <div

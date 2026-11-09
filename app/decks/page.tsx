@@ -45,6 +45,7 @@ import {
   useSensors,
   DragEndEvent,
 } from "@dnd-kit/core"
+import { restrictToViewport } from "@/lib/dnd"
 
 export default function DecksPage() {
   const t = useTranslations("Decks")
@@ -375,7 +376,11 @@ export default function DecksPage() {
           )}
         </Card>
       ) : (
-        <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          modifiers={[restrictToViewport]}
+          onDragEnd={handleDragEnd}
+        >
           <div className="space-y-5">
             {rootFolders.length > 0 && (
               <div
