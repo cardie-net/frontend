@@ -349,7 +349,10 @@ export default function OverviewPage() {
         <div className="flex min-h-0 w-full flex-1 flex-col justify-center">
           <Carousel
             setApi={setApi}
-            className="flex min-h-0 w-full flex-1 flex-col justify-center"
+            // Cap the carousel at the flashcard's own max height (500px plus the
+            // p-1 gutter below) so it stops absorbing the free space that would
+            // otherwise push the progress bar to the bottom of the screen.
+            className="flex min-h-0 w-full flex-1 flex-col justify-center sm:max-h-[calc(500px+0.5rem)]"
           >
             <CarouselContent className="min-h-0 flex-1">
               {displayedCards.map((card, index) => (
