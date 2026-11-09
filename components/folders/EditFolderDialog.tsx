@@ -25,6 +25,11 @@ import {
   LIMIT_COUNTER_THRESHOLD,
 } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import {
+  MAX_UPLOAD_SIZE_BYTES,
+  formatUploadSize,
+  isUploadTooLargeError,
+} from "@/lib/upload"
 
 interface EditFolderDialogProps {
   folder: Folder | null
@@ -36,6 +41,9 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
   const tCommon = useTranslations("Common")
   const updateFolder = useUpdateFolder()
   const uploadFolderCover = useUploadFolderCover()
+  const tooLargeMessage = tCommon("imageTooLarge", {
+    max: formatUploadSize(MAX_UPLOAD_SIZE_BYTES),
+  })
 
   const [name, setName] = useState(folder?.name || "")
   const [description, setDescription] = useState(
@@ -77,6 +85,11 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
       return
     }
 
+    if (coverFile && coverFile.size > MAX_UPLOAD_SIZE_BYTES) {
+      setError(tooLargeMessage)
+      return
+    }
+
     try {
       if (coverFile) {
         await uploadFolderCover.mutateAsync({
@@ -102,7 +115,15 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
         }
       )
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("coverUploadError"))
+      setError(
+        isUploadTooLargeError(err)
+          ? tCommon("imageTooLarge", {
+              max: formatUploadSize(err.maxBytes),
+            })
+          : err instanceof Error
+            ? err.message
+            : t("coverUploadError")
+      )
     }
   }
 
@@ -198,8 +219,16 @@ export function EditFolderDialog({ folder, onClose }: EditFolderDialogProps) {
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  setCoverFile(e.target.files?.[0] || null)
-                  if (e.target.files?.[0]) setCoverUrl("")
+                  const file = e.target.files?.[0] || null
+                  if (file && file.size > MAX_UPLOAD_SIZE_BYTES) {
+                    setError(tooLargeMessage)
+                    setCoverFile(null)
+                    e.target.value = ""
+                    return
+                  }
+                  setError("")
+                  setCoverFile(file)
+                  if (file) setCoverUrl("")
                 }}
                 disabled={updateFolder.isPending || uploadFolderCover.isPending}
               />

@@ -13,6 +13,11 @@ import {
 import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
 import {
+  MAX_UPLOAD_SIZE_BYTES,
+  formatUploadSize,
+  isUploadTooLargeError,
+} from "@/lib/upload"
+import {
   Bold,
   Eye,
   Heading1,
@@ -265,18 +270,34 @@ export function MarkdownEditor({
         setUploadError(t("oneImageLimit"))
         return
       }
+      if (file.size > MAX_UPLOAD_SIZE_BYTES) {
+        setUploadError(
+          tCommon("imageTooLarge", {
+            max: formatUploadSize(MAX_UPLOAD_SIZE_BYTES),
+          })
+        )
+        return
+      }
       setUploading(true)
       setUploadError(null)
       try {
         const url = await uploadCardImage(deckId, file)
         onImageUrlChange(url)
       } catch (e) {
-        setUploadError(e instanceof Error ? e.message : t("uploadFailed"))
+        setUploadError(
+          isUploadTooLargeError(e)
+            ? tCommon("imageTooLarge", {
+                max: formatUploadSize(e.maxBytes),
+              })
+            : e instanceof Error
+              ? e.message
+              : t("uploadFailed")
+        )
       } finally {
         setUploading(false)
       }
     },
-    [deckId, imageUrl, onImageUrlChange, t]
+    [deckId, imageUrl, onImageUrlChange, t, tCommon]
   )
 
   const handleFileChange = useCallback(

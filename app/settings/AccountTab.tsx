@@ -8,6 +8,13 @@ import { useAuth } from "@/lib/AuthContext"
 import { cn } from "@/lib/utils"
 import { isReservedUsername } from "@/lib/reservedUsernames"
 import {
+  MAX_AVATAR_SOURCE_SIZE_BYTES,
+  MAX_UPLOAD_SIZE_BYTES,
+  formatUploadSize,
+  isUploadTooLargeError,
+  uploadErrorFromResponse,
+} from "@/lib/upload"
+import {
   AlertCircle,
   CheckCircle2,
   Upload,
@@ -319,6 +326,19 @@ function AccountForm({ user }: { user: UserProfile }) {
       return
     }
 
+    if (file.size > MAX_AVATAR_SOURCE_SIZE_BYTES) {
+      setError(
+        t("avatarSourceTooLarge", {
+          max: formatUploadSize(MAX_AVATAR_SOURCE_SIZE_BYTES),
+        })
+      )
+      scrollToTop()
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
+      return
+    }
+
     const reader = new FileReader()
     reader.onload = (event) => {
       if (typeof event.target?.result === "string") {
@@ -334,6 +354,16 @@ function AccountForm({ user }: { user: UserProfile }) {
   }
 
   const handleSaveCroppedAvatar = async (blob: Blob) => {
+    if (blob.size > MAX_UPLOAD_SIZE_BYTES) {
+      setError(
+        tCommon("imageTooLarge", {
+          max: formatUploadSize(MAX_UPLOAD_SIZE_BYTES),
+        })
+      )
+      scrollToTop()
+      return
+    }
+
     setIsUploadingAvatar(true)
     setError("")
     setSuccess("")
@@ -356,11 +386,16 @@ function AccountForm({ user }: { user: UserProfile }) {
         setSelectedImageSrc("")
         await refreshUser()
       } else {
-        const errData = await response.json().catch(() => ({}))
+        const uploadError = await uploadErrorFromResponse(
+          response,
+          t("avatarUploadFailed")
+        )
         setError(
-          typeof errData.detail === "string"
-            ? errData.detail
-            : t("avatarUploadFailed")
+          isUploadTooLargeError(uploadError)
+            ? tCommon("imageTooLarge", {
+                max: formatUploadSize(uploadError.maxBytes),
+              })
+            : uploadError.message
         )
         scrollToTop()
       }

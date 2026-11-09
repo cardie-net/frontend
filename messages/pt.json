@@ -41,7 +41,8 @@
     "areYouSure": "Tem certeza?",
     "settings": "Configurações",
     "notFound": "Não encontrado",
-    "importing": "Importando..."
+    "importing": "Importando...",
+    "imageTooLarge": "A imagem é muito grande. O tamanho máximo é {max}."
   },
   "Navbar": {
     "decks": "Baralhos",
@@ -348,6 +349,7 @@
       "saving": "Salvando...",
       "viewProfile": "Ver Perfil",
       "validImageRequired": "Por favor, selecione um arquivo de imagem válido.",
+      "avatarSourceTooLarge": "Esta imagem é muito grande para editar. Escolha uma imagem abaixo de {max}.",
       "avatarUpdated": "Foto de perfil atualizada com sucesso.",
       "avatarRemoved": "Foto de perfil removida com sucesso.",
       "avatarUploadFailed": "Falha ao enviar a foto de perfil.",

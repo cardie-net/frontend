@@ -25,6 +25,11 @@ import {
   LIMIT_COUNTER_THRESHOLD,
 } from "@/lib/constants"
 import { cn } from "@/lib/utils"
+import {
+  MAX_UPLOAD_SIZE_BYTES,
+  formatUploadSize,
+  isUploadTooLargeError,
+} from "@/lib/upload"
 
 interface EditDeckDialogProps {
   deck: Deck | null
@@ -36,6 +41,9 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
   const tCommon = useTranslations("Common")
   const updateDeck = useUpdateDeck()
   const uploadDeckCover = useUploadDeckCover()
+  const tooLargeMessage = tCommon("imageTooLarge", {
+    max: formatUploadSize(MAX_UPLOAD_SIZE_BYTES),
+  })
 
   const [editName, setEditName] = useState(deck?.name || "")
   const [editDescription, setEditDescription] = useState(
@@ -79,6 +87,11 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
 
     if (!deck) return
 
+    if (coverFile && coverFile.size > MAX_UPLOAD_SIZE_BYTES) {
+      setEditError(tooLargeMessage)
+      return
+    }
+
     try {
       if (coverFile) {
         await uploadDeckCover.mutateAsync({ deckId: deck.id, file: coverFile })
@@ -101,7 +114,15 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
         }
       )
     } catch (err) {
-      setEditError(err instanceof Error ? err.message : t("coverUploadError"))
+      setEditError(
+        isUploadTooLargeError(err)
+          ? tCommon("imageTooLarge", {
+              max: formatUploadSize(err.maxBytes),
+            })
+          : err instanceof Error
+            ? err.message
+            : t("coverUploadError")
+      )
     }
   }
 
@@ -197,8 +218,16 @@ export function EditDeckDialog({ deck, onClose }: EditDeckDialogProps) {
                 type="file"
                 accept="image/*"
                 onChange={(e) => {
-                  setCoverFile(e.target.files?.[0] || null)
-                  if (e.target.files?.[0]) setCoverUrl("")
+                  const file = e.target.files?.[0] || null
+                  if (file && file.size > MAX_UPLOAD_SIZE_BYTES) {
+                    setEditError(tooLargeMessage)
+                    setCoverFile(null)
+                    e.target.value = ""
+                    return
+                  }
+                  setEditError("")
+                  setCoverFile(file)
+                  if (file) setCoverUrl("")
                 }}
                 disabled={updateDeck.isPending || uploadDeckCover.isPending}
               />

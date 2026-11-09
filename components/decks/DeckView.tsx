@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useTranslations, useLocale } from "next-intl"
 import { LegalLinks } from "@/components/LegalLinks"
 import { useAuth } from "@/lib/AuthContext"
+import { formatUploadSize, isUploadTooLargeError } from "@/lib/upload"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
@@ -83,6 +84,7 @@ interface DeckViewProps {
 
 export function DeckView({ username, slug, deck }: DeckViewProps) {
   const t = useTranslations("DeckView")
+  const tCommon = useTranslations("Common")
   const locale = useLocale()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -297,7 +299,13 @@ export function DeckView({ username, slug, deck }: DeckViewProps) {
       })
     } catch (e) {
       console.error(e)
-      alert("Failed to upload image")
+      alert(
+        isUploadTooLargeError(e)
+          ? tCommon("imageTooLarge", {
+              max: formatUploadSize(e.maxBytes),
+            })
+          : "Failed to upload image"
+      )
     }
   }
 

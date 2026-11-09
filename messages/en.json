@@ -41,7 +41,8 @@
     "areYouSure": "Are you sure?",
     "settings": "Settings",
     "notFound": "Not found",
-    "importing": "Importing..."
+    "importing": "Importing...",
+    "imageTooLarge": "Image is too large. The maximum size is {max}."
   },
   "Navbar": {
     "decks": "Decks",
@@ -348,6 +349,7 @@
       "saving": "Saving...",
       "viewProfile": "View Profile",
       "validImageRequired": "Please select a valid image file.",
+      "avatarSourceTooLarge": "This image is too large to edit. Please choose an image under {max}.",
       "avatarUpdated": "Profile picture updated successfully.",
       "avatarRemoved": "Profile picture removed successfully.",
       "avatarUploadFailed": "Failed to upload profile picture.",

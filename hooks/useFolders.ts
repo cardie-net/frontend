@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiFetch, extractApiErrorMessage } from "@/lib/api"
+import { uploadErrorFromResponse } from "@/lib/upload"
 import { queryKeys } from "@/lib/queryKeys"
 import { Folder, UserItem } from "@/types"
 import { useAuth } from "@/lib/AuthContext"
@@ -232,8 +233,7 @@ export function useUploadFolderCover() {
       })
 
       if (!res.ok) {
-        const errData = await res.json().catch(() => ({}))
-        throw new Error(errData.detail || "Failed to upload cover image")
+        throw await uploadErrorFromResponse(res, "Failed to upload cover image")
       }
       return res.json()
     },

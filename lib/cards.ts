@@ -1,5 +1,6 @@
 import type { CardElement, ImageElement, TextElement } from "@/types"
 import { apiFetch } from "./api"
+import { assertUploadSize, uploadErrorFromResponse } from "./upload"
 
 /** Joins the text elements of a card side into a plain-text preview string. */
 export function getCardText(elements: CardElement[]): string {
@@ -34,6 +35,8 @@ export async function uploadCardImage(
   deckId: string,
   file: File
 ): Promise<string> {
+  assertUploadSize(file)
+
   const formData = new FormData()
   formData.append("file", file)
 
@@ -43,14 +46,7 @@ export async function uploadCardImage(
   })
 
   if (!res.ok) {
-    let detail = "Failed to upload image"
-    try {
-      const data = await res.json()
-      if (typeof data.detail === "string") detail = data.detail
-    } catch {
-      // Non-JSON error body — keep the default message.
-    }
-    throw new Error(detail)
+    throw await uploadErrorFromResponse(res, "Failed to upload image")
   }
 
   const data = await res.json()
