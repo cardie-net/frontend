@@ -10,16 +10,6 @@ export function AboutTab() {
     <div className="w-full space-y-3 text-sm leading-relaxed text-muted-foreground">
       <p>
         {t.rich("openSource", {
-          apache: (chunks) => (
-            <a
-              href="https://www.apache.org/licenses/LICENSE-2.0"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-foreground underline underline-offset-4 transition-colors hover:text-primary"
-            >
-              {chunks}
-            </a>
-          ),
           github: (chunks) => (
             <a
               href="https://github.com/cardie-net"

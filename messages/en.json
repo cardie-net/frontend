@@ -389,7 +389,7 @@
       "saveAndApply": "Save & Apply"
     },
     "about": {
-      "openSource": "Cardie is an open-source flashcards learning app with spaced repetition, licensed under <apache>Apache 2.0</apache> and source available on <github>GitHub</github>.",
+      "openSource": "Cardie is an open-source flashcards learning app with spaced repetition, licensed under CPAL 1.0 and source available on <github>GitHub</github>.",
       "legal": "Read our <tos>Terms of Service</tos> and <privacy>Privacy Policy</privacy>.",
       "contact": "Send DMCA requests to <legal>legal@cardie.net</legal>, content reports to <report>report@cardie.net</report>, or messages to <mail>mail@cardie.net</mail>."
     }

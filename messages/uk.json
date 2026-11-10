@@ -389,7 +389,7 @@
       "saveAndApply": "Зберегти та застосувати"
     },
     "about": {
-      "openSource": "Cardie — це відкритий застосунок для вивчення карток із інтервальним повторенням, ліцензований за <apache>Apache 2.0</apache>, з вихідним кодом на <github>GitHub</github>.",
+      "openSource": "Cardie — це відкритий застосунок для вивчення карток із інтервальним повторенням, ліцензований за CPAL 1.0, з вихідним кодом на <github>GitHub</github>.",
       "legal": "Ознайомтеся з нашими <tos>Умовами використання</tos> та <privacy>Політикою конфіденційності</privacy>.",
       "contact": "Надсилайте запити DMCA на <legal>legal@cardie.net</legal>, скарги на вміст на <report>report@cardie.net</report> або повідомлення на <mail>mail@cardie.net</mail>."
     }

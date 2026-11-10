@@ -389,7 +389,7 @@
       "saveAndApply": "Salvar e Aplicar"
     },
     "about": {
-      "openSource": "O Cardie é um aplicativo de código aberto para aprendizado com flashcards e repetição espaçada, licenciado sob <apache>Apache 2.0</apache> com código disponível no <github>GitHub</github>.",
+      "openSource": "O Cardie é um aplicativo de código aberto para aprendizado com flashcards e repetição espaçada, licenciado sob CPAL 1.0 com código disponível no <github>GitHub</github>.",
       "legal": "Leia nossos <tos>Termos de Serviço</tos> e a <privacy>Política de Privacidade</privacy>.",
       "contact": "Envie solicitações de DMCA para <legal>legal@cardie.net</legal>, denúncias de conteúdo para <report>report@cardie.net</report> ou mensagens para <mail>mail@cardie.net</mail>."
     }
