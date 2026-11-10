@@ -43,6 +43,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+const DEFAULT_EXAM_QUESTION_COUNT = 20
+
 export const ACTION_BUTTONS = [
   {
     key: "overview",
@@ -132,12 +134,19 @@ export function DeckActionButtons({
   const [emptyDeckDialogOpen, setEmptyDeckDialogOpen] = useState(false)
   const hasNoCards = cards.length === 0
 
-  const maxQuestions = cards.length
-  // Resolve the actual count for the link — default to all cards if empty
+  const maxQuestions = Math.max(1, cards.length)
+  // Default to 20 questions, or all cards when the deck is smaller
+  const defaultExamQuestionCount = Math.min(
+    DEFAULT_EXAM_QUESTION_COUNT,
+    maxQuestions
+  )
+  // Resolve the actual count for the link — fall back to the default if empty
   const resolvedExamCount =
     typeof examQuestionCount === "number"
       ? Math.min(Math.max(1, examQuestionCount), maxQuestions)
-      : maxQuestions
+      : defaultExamQuestionCount
+  const examQuestionCountValue =
+    examQuestionCount === "" ? defaultExamQuestionCount : examQuestionCount
 
   const formatTime = (ms: number) => {
     const totalSeconds = Math.floor(ms / 1000)
@@ -420,11 +429,8 @@ export function DeckActionButtons({
                         <Input
                           type="number"
                           min={1}
-                          max={maxQuestions || 1}
-                          placeholder={t("examDialog.allQuestions", {
-                            count: maxQuestions,
-                          })}
-                          value={examQuestionCount}
+                          max={maxQuestions}
+                          value={examQuestionCountValue}
                           onChange={(e) => {
                             const val = e.target.value
                             if (val === "") {
@@ -433,6 +439,17 @@ export function DeckActionButtons({
                               const num = parseInt(val, 10)
                               if (!isNaN(num)) {
                                 setExamQuestionCount(num)
+                              }
+                            }
+                          }}
+                          onBlur={() => {
+                            if (typeof examQuestionCount === "number") {
+                              const clamped = Math.min(
+                                Math.max(1, examQuestionCount),
+                                maxQuestions
+                              )
+                              if (clamped !== examQuestionCount) {
+                                setExamQuestionCount(clamped)
                               }
                             }
                           }}
