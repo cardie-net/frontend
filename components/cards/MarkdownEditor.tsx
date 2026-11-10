@@ -370,13 +370,21 @@ export function MarkdownEditor({
             )}
           </div>
           <TabsList className="h-7">
-            <TabsTrigger value="write">
+            <TabsTrigger
+              value="write"
+              aria-label={t("write")}
+              title={t("write")}
+            >
               <PenLine />
-              {t("write")}
+              <span className="hidden sm:inline">{t("write")}</span>
             </TabsTrigger>
-            <TabsTrigger value="preview">
+            <TabsTrigger
+              value="preview"
+              aria-label={t("preview")}
+              title={t("preview")}
+            >
               <Eye />
-              {t("preview")}
+              <span className="hidden sm:inline">{t("preview")}</span>
             </TabsTrigger>
           </TabsList>
         </div>
