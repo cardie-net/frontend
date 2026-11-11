@@ -391,6 +391,7 @@
     "about": {
       "openSource": "O Cardie é um aplicativo de código aberto para aprendizado com flashcards e repetição espaçada, licenciado sob CPAL 1.0 com código disponível no <github>GitHub</github>.",
       "legal": "Leia nossos <tos>Termos de Serviço</tos> e a <privacy>Política de Privacidade</privacy>.",
+      "community": "Junte-se à nossa <discord>comunidade no Discord</discord> para ajuda, feedback e discussões.",
       "contact": "Envie solicitações de DMCA para <legal>legal@cardie.net</legal>, denúncias de conteúdo para <report>report@cardie.net</report> ou mensagens para <mail>mail@cardie.net</mail>."
     }
   },
@@ -720,6 +721,7 @@
   "Legal": {
     "termsOfService": "Termos de Serviço",
     "privacyPolicy": "Política de Privacidade",
+    "discordCommunity": "Comunidade no Discord",
     "language": "Idioma",
     "precedenceNoticeTitle": "Aviso de Precedência Legal",
     "precedenceNoticeDesc": "Esta tradução em ucraniano é fornecida apenas para conveniência. Em caso de discrepâncias ou disputas legais, a versão original em inglês prevalece legalmente.",

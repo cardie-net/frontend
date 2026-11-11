@@ -391,6 +391,7 @@
     "about": {
       "openSource": "Cardie is an open-source flashcards learning app with spaced repetition, licensed under CPAL 1.0 and source available on <github>GitHub</github>.",
       "legal": "Read our <tos>Terms of Service</tos> and <privacy>Privacy Policy</privacy>.",
+      "community": "Join our <discord>Discord community</discord> for help, feedback, and discussion.",
       "contact": "Send DMCA requests to <legal>legal@cardie.net</legal>, content reports to <report>report@cardie.net</report>, or messages to <mail>mail@cardie.net</mail>."
     }
   },
@@ -720,6 +721,7 @@
   "Legal": {
     "termsOfService": "Terms of Service",
     "privacyPolicy": "Privacy Policy",
+    "discordCommunity": "Discord Community",
     "language": "Language",
     "precedenceNoticeTitle": "Legal Precedence Notice",
     "precedenceNoticeDesc": "This Ukrainian translation is provided for informational convenience only. In the event of any discrepancies or legal disputes, the original English version legally takes precedence.",

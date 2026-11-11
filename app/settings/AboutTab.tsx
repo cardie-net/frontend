@@ -45,6 +45,21 @@ export function AboutTab() {
       </p>
 
       <p>
+        {t.rich("community", {
+          discord: (chunks) => (
+            <a
+              href="https://discord.gg/JpWrkHz3BE"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+            >
+              {chunks}
+            </a>
+          ),
+        })}
+      </p>
+
+      <p>
         {t.rich("contact", {
           legal: (chunks) => (
             <a

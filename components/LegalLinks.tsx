@@ -10,6 +10,8 @@ interface LegalLinksProps {
 
 export function LegalLinks({ className }: LegalLinksProps) {
   const t = useTranslations("Legal")
+  // Inlined at build time; when unset the Discord entry is omitted entirely.
+  const discordUrl = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL
 
   return (
     <footer
@@ -31,6 +33,19 @@ export function LegalLinks({ className }: LegalLinksProps) {
       >
         {t("privacyPolicy")}
       </Link>
+      {discordUrl && (
+        <>
+          <span className="hidden text-border select-none sm:inline">•</span>
+          <a
+            href={discordUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-center underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            {t("discordCommunity")}
+          </a>
+        </>
+      )}
     </footer>
   )
 }
