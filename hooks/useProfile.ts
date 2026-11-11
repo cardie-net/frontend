@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { apiFetch } from "@/lib/api"
 import { queryKeys } from "@/lib/queryKeys"
-import { UserProfile, UserItem } from "@/types"
+import { PublicUserProfile, UserItem } from "@/types"
 
 /** Public profile for a username (`GET /api/v1/users/profile/{username}`). */
 export function useProfile(username: string) {
-  return useQuery<UserProfile>({
+  return useQuery<PublicUserProfile>({
     queryKey: queryKeys.profile(username),
     queryFn: async () => {
       const res = await apiFetch(`/api/v1/users/profile/${username}`)

@@ -93,7 +93,8 @@ export default function ProfilePage() {
     )
   }
 
-  if (error || !profileUser || profileUser.is_guest) {
+  // Guest profiles are rejected with 404 by the API, so a loaded profile is real.
+  if (error || !profileUser) {
     return (
       <div className="container mx-auto max-w-xl px-4 py-16 text-center">
         <Card className="rounded-3xl border-border/80 p-8 shadow-sm sm:p-12">

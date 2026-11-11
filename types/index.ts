@@ -129,7 +129,7 @@ export interface UserPreferences {
   overview_shuffle?: boolean
 }
 
-/** The authenticated user (`GET /api/v1/users/me`) or a public profile. */
+/** The authenticated user (`GET /api/v1/users/me`). */
 export interface UserProfile {
   id: string
   email: string
@@ -143,6 +143,17 @@ export interface UserProfile {
   preferences?: UserPreferences
   created_at?: string
   last_active_at?: string
+}
+
+/** A public profile (`GET /api/v1/users/profile/{username}`) — no account fields. */
+export interface PublicUserProfile {
+  id: string
+  username: string
+  display_name: string
+  avatar_url?: string
+  bio?: string
+  social_links?: SocialLinks
+  created_at?: string
 }
 
 export interface CardProgress {
